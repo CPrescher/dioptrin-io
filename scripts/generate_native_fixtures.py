@@ -31,8 +31,15 @@ def record(path, format, a, reference=True):
         "frame_sha256": [hashlib.sha256(f.tobytes()).hexdigest() for f in canonical], "fabio_compared": reference}
 
 
-for dtype in ["uint8", "uint16", "uint32", "uint64", "int8", "int16", "int32", "int64", "float32", "float64"]:
-    if dtype.startswith("float"):
+for dtype in ["uint8", "uint16", "uint32", "uint64", "int8", "int16", "int32", "int64", "float32", "float64", "complex64", "complex128"]:
+    if dtype.startswith("complex"):
+        component = np.dtype("float32" if dtype == "complex64" else "float64")
+        # Assign components separately: Python complex construction/arithmetic can
+        # canonicalize signed zero or nonfinite components before storage.
+        a = np.zeros((2, 3), dtype=dtype)
+        a.real[...] = np.array([0., -0., np.nan, np.inf, -np.inf, -1.25], dtype=component).reshape(2, 3)
+        a.imag[...] = np.array([-0., 0., np.inf, np.nan, 1.25, -np.inf], dtype=component).reshape(2, 3)
+    elif dtype.startswith("float"):
         a = np.array([0., -0., np.nan, np.inf, -np.inf, -1.25], dtype=dtype).reshape(2, 3)
     else:
         info = np.iinfo(dtype)

@@ -1201,6 +1201,198 @@
       ],
       "fabio_compared": true
     },
+    "npy-complex64-le-C.npy": {
+      "format": "Npy",
+      "shape": [
+        2,
+        3
+      ],
+      "source_shape": [
+        2,
+        3,
+        2,
+        3
+      ],
+      "dtype": "complex64",
+      "file_sha256": "488931b195e16012d3da938d5c2bfab27b104840517618af824be4c4e821a7cf",
+      "frame_sha256": [
+        "d0aee61be898d1697556bd1ff07a2816d77b00cc39a4cd77e799a806fa84fee7",
+        "e6e4c8289172c8d106bc9dbbcc2d276749f4a9c9d1cfee4e485be04cbfb6fa16",
+        "ab161e660797d740a394c7e91ad813d84febce20bcc42ea1c70e0fa081b512a2",
+        "31b6217226855598994973b5e6feeaec216b3103705a5f5ebd867721d523bb7d",
+        "82ea7ed6b66085d19a58f2c9163a34ef07606e63bee5de2b4877941d91bc7216",
+        "4e7c8bc21894f33cac6ac3d80fb133e9d94a7d317c5770ff0de1de2a8b95b102"
+      ],
+      "fabio_compared": true
+    },
+    "npy-complex64-le-F.npy": {
+      "format": "Npy",
+      "shape": [
+        2,
+        3
+      ],
+      "source_shape": [
+        2,
+        3,
+        2,
+        3
+      ],
+      "dtype": "complex64",
+      "file_sha256": "b0c56e91753a048db5f486d4af9f9ef6107844eca17577df3c1419d25c54a237",
+      "frame_sha256": [
+        "d0aee61be898d1697556bd1ff07a2816d77b00cc39a4cd77e799a806fa84fee7",
+        "e6e4c8289172c8d106bc9dbbcc2d276749f4a9c9d1cfee4e485be04cbfb6fa16",
+        "ab161e660797d740a394c7e91ad813d84febce20bcc42ea1c70e0fa081b512a2",
+        "31b6217226855598994973b5e6feeaec216b3103705a5f5ebd867721d523bb7d",
+        "82ea7ed6b66085d19a58f2c9163a34ef07606e63bee5de2b4877941d91bc7216",
+        "4e7c8bc21894f33cac6ac3d80fb133e9d94a7d317c5770ff0de1de2a8b95b102"
+      ],
+      "fabio_compared": true
+    },
+    "npy-complex64-be-C.npy": {
+      "format": "Npy",
+      "shape": [
+        2,
+        3
+      ],
+      "source_shape": [
+        2,
+        3,
+        2,
+        3
+      ],
+      "dtype": "complex64",
+      "file_sha256": "296999ebdd5c6448328aa5c43c875df0fe4bba03801d44ce2e46bb52e18afeaf",
+      "frame_sha256": [
+        "d0aee61be898d1697556bd1ff07a2816d77b00cc39a4cd77e799a806fa84fee7",
+        "e6e4c8289172c8d106bc9dbbcc2d276749f4a9c9d1cfee4e485be04cbfb6fa16",
+        "ab161e660797d740a394c7e91ad813d84febce20bcc42ea1c70e0fa081b512a2",
+        "31b6217226855598994973b5e6feeaec216b3103705a5f5ebd867721d523bb7d",
+        "82ea7ed6b66085d19a58f2c9163a34ef07606e63bee5de2b4877941d91bc7216",
+        "4e7c8bc21894f33cac6ac3d80fb133e9d94a7d317c5770ff0de1de2a8b95b102"
+      ],
+      "fabio_compared": true
+    },
+    "npy-complex64-be-F.npy": {
+      "format": "Npy",
+      "shape": [
+        2,
+        3
+      ],
+      "source_shape": [
+        2,
+        3,
+        2,
+        3
+      ],
+      "dtype": "complex64",
+      "file_sha256": "058e2b4727fc0fe0e19f54674329c5c436727600037d089142e4d1b2575913be",
+      "frame_sha256": [
+        "d0aee61be898d1697556bd1ff07a2816d77b00cc39a4cd77e799a806fa84fee7",
+        "e6e4c8289172c8d106bc9dbbcc2d276749f4a9c9d1cfee4e485be04cbfb6fa16",
+        "ab161e660797d740a394c7e91ad813d84febce20bcc42ea1c70e0fa081b512a2",
+        "31b6217226855598994973b5e6feeaec216b3103705a5f5ebd867721d523bb7d",
+        "82ea7ed6b66085d19a58f2c9163a34ef07606e63bee5de2b4877941d91bc7216",
+        "4e7c8bc21894f33cac6ac3d80fb133e9d94a7d317c5770ff0de1de2a8b95b102"
+      ],
+      "fabio_compared": true
+    },
+    "npy-complex128-le-C.npy": {
+      "format": "Npy",
+      "shape": [
+        2,
+        3
+      ],
+      "source_shape": [
+        2,
+        3,
+        2,
+        3
+      ],
+      "dtype": "complex128",
+      "file_sha256": "7d5645e6b6a720f30677ffb425488690c20aae10917aac133f556566fd812ca9",
+      "frame_sha256": [
+        "68728b500517b82fbdd4ca7f49468a199235bff0bf4b7c85ca1402276f4e4592",
+        "f483cb0e14bf981a71cab8e319966825766310149030dfb6b50c88297e75c769",
+        "22ff2a7346309fd60401ac52c673e35f4a262657e545da550115a1ce31c52f2f",
+        "94b66340d566ba76553f90a465e96ea6330afdbc4b670aaef63e4116448a573d",
+        "65efb6455453c2c849e40d7e822ba0e7d3801bba5c1f6cca5be21b95caa164ef",
+        "4c9611f045ae9a1e287d59e94e7b158ad4fb5320866dee1c8f2ca4eed0bfa1b9"
+      ],
+      "fabio_compared": true
+    },
+    "npy-complex128-le-F.npy": {
+      "format": "Npy",
+      "shape": [
+        2,
+        3
+      ],
+      "source_shape": [
+        2,
+        3,
+        2,
+        3
+      ],
+      "dtype": "complex128",
+      "file_sha256": "fc21fd4379db9ed4ba9c35bf4921446d844dc4e915c306bc712441df6afd2880",
+      "frame_sha256": [
+        "68728b500517b82fbdd4ca7f49468a199235bff0bf4b7c85ca1402276f4e4592",
+        "f483cb0e14bf981a71cab8e319966825766310149030dfb6b50c88297e75c769",
+        "22ff2a7346309fd60401ac52c673e35f4a262657e545da550115a1ce31c52f2f",
+        "94b66340d566ba76553f90a465e96ea6330afdbc4b670aaef63e4116448a573d",
+        "65efb6455453c2c849e40d7e822ba0e7d3801bba5c1f6cca5be21b95caa164ef",
+        "4c9611f045ae9a1e287d59e94e7b158ad4fb5320866dee1c8f2ca4eed0bfa1b9"
+      ],
+      "fabio_compared": true
+    },
+    "npy-complex128-be-C.npy": {
+      "format": "Npy",
+      "shape": [
+        2,
+        3
+      ],
+      "source_shape": [
+        2,
+        3,
+        2,
+        3
+      ],
+      "dtype": "complex128",
+      "file_sha256": "33b6b4df10c01f611313aeb7d400638dba56c9bc6f4104d118353a7f095aed0b",
+      "frame_sha256": [
+        "68728b500517b82fbdd4ca7f49468a199235bff0bf4b7c85ca1402276f4e4592",
+        "f483cb0e14bf981a71cab8e319966825766310149030dfb6b50c88297e75c769",
+        "22ff2a7346309fd60401ac52c673e35f4a262657e545da550115a1ce31c52f2f",
+        "94b66340d566ba76553f90a465e96ea6330afdbc4b670aaef63e4116448a573d",
+        "65efb6455453c2c849e40d7e822ba0e7d3801bba5c1f6cca5be21b95caa164ef",
+        "4c9611f045ae9a1e287d59e94e7b158ad4fb5320866dee1c8f2ca4eed0bfa1b9"
+      ],
+      "fabio_compared": true
+    },
+    "npy-complex128-be-F.npy": {
+      "format": "Npy",
+      "shape": [
+        2,
+        3
+      ],
+      "source_shape": [
+        2,
+        3,
+        2,
+        3
+      ],
+      "dtype": "complex128",
+      "file_sha256": "10386388b0644ab90e10899a883c4c8525a64685434e9384a40cb91ef7cd6d33",
+      "frame_sha256": [
+        "68728b500517b82fbdd4ca7f49468a199235bff0bf4b7c85ca1402276f4e4592",
+        "f483cb0e14bf981a71cab8e319966825766310149030dfb6b50c88297e75c769",
+        "22ff2a7346309fd60401ac52c673e35f4a262657e545da550115a1ce31c52f2f",
+        "94b66340d566ba76553f90a465e96ea6330afdbc4b670aaef63e4116448a573d",
+        "65efb6455453c2c849e40d7e822ba0e7d3801bba5c1f6cca5be21b95caa164ef",
+        "4c9611f045ae9a1e287d59e94e7b158ad4fb5320866dee1c8f2ca4eed0bfa1b9"
+      ],
+      "fabio_compared": true
+    },
     "npy-v1.npy": {
       "format": "Npy",
       "shape": [

@@ -872,6 +872,8 @@ fn npy(file: &mut File, limits: Limits) -> Result<(Metadata, Storage), Error> {
         "i8" => PixelType::I64,
         "f4" => PixelType::F32,
         "f8" => PixelType::F64,
+        "c8" => PixelType::C32,
+        "c16" => PixelType::C64,
         _ => return Err(Error(format!("unsupported NPY dtype {descr}"))),
     };
     let little = match order {
