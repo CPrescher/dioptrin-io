@@ -109,6 +109,14 @@ impl PreparedSource {
     pub fn compression(&self) -> Compression {
         self.compression
     }
+    pub fn check_input_handle(&self, file: &File) -> Result<(), Error> {
+        self.staged_snapshot
+            .as_ref()
+            .unwrap_or(&self.snapshot)
+            .check_handle(file)
+            .map_err(Error)?;
+        self.check()
+    }
     pub fn check(&self) -> Result<(), Error> {
         self.snapshot.check_handle(&self.handle).map_err(Error)?;
         if let (Some(snapshot), Some(file)) = (&self.staged_snapshot, &self.staged) {

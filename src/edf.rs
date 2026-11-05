@@ -79,8 +79,6 @@ struct Page {
     source: usize,
 }
 pub struct Reader {
-    // Close read handles before removing source staging files on Windows.
-    files: Vec<File>,
     sources: Vec<PreparedSource>,
     pages: Vec<Page>,
     general: Vec<GeneralHeader>,
@@ -115,7 +113,7 @@ impl Reader {
             .clone()
             .unwrap_or_else(|| first.original_path().parent().unwrap().to_path_buf());
         let mut input = BufReader::new(File::open(first.path())?);
-        let mut files = vec![File::open(first.path())?];
+        first.check_input_handle(input.get_ref())?;
         let mut records = vec![PayloadSource {
             path: first.original_path().to_path_buf(),
             bytes: first.bytes(),
@@ -259,10 +257,8 @@ impl Reader {
                     if !path.try_exists()?
                         && options.external_payloads == ExternalPayloads::FollowCompressedSnapshot
                     {
-                        let candidates = [
-                            PathBuf::from(format!("{}.gz", path.display())),
-                            PathBuf::from(format!("{}.bz2", path.display())),
-                        ];
+                        let candidates =
+                            [suffixed_path(&path, ".gz"), suffixed_path(&path, ".bz2")];
                         let found = candidates
                             .into_iter()
                             .filter_map(|p| match p.try_exists() {
@@ -317,7 +313,6 @@ impl Reader {
                             .ok_or_else(|| {
                                 Error("EDF source manifest exceeds metadata budget".into())
                             })?;
-                        files.push(File::open(prepared.path())?);
                         records.push(PayloadSource {
                             path: canonical,
                             bytes: prepared.bytes(),
@@ -374,7 +369,6 @@ impl Reader {
             source.check()?;
         }
         Ok(Self {
-            files,
             sources,
             pages,
             general,
@@ -418,10 +412,7 @@ impl Reader {
             .ok_or_else(|| Error("EDF frame index outside file".into()))?;
         let mut file = File::open(self.sources[page.source].path())?;
         file.seek(SeekFrom::Start(page.offset))?;
-        // The retained handle also binds this indexed source to its file identity.
-        if file.metadata()?.len() != self.files[page.source].metadata()?.len() {
-            return Err(Error("EDF payload source changed".into()));
-        }
+        self.sources[page.source].check_input_handle(&file)?;
         resize_bytes(&mut buffer.encoded, page.bytes)?;
         file.read_exact(&mut buffer.encoded)?;
         let meta = &page.metadata;
@@ -447,6 +438,7 @@ impl Reader {
             )?;
             copy_samples(&buffer.decoded, &mut buffer.pixels, meta.little_endian)?;
         }
+        self.sources[page.source].check_input_handle(&file)?;
         for source in &self.sources {
             source.check()?;
         }
@@ -622,4 +614,26 @@ fn edf_type(s: &str) -> Result<PixelType, Error> {
         "double" | "doublevalue" | "floatieee64" | "doubleieee64" => PixelType::F64,
         _ => return Err(Error(format!("unsupported EDF scalar type {s}"))),
     })
+}
+
+fn suffixed_path(path: &Path, suffix: &str) -> PathBuf {
+    let mut name = path.as_os_str().to_os_string();
+    name.push(suffix);
+    name.into()
+}
+
+#[cfg(all(test, unix))]
+mod path_tests {
+    use super::*;
+    use std::os::unix::ffi::{OsStrExt, OsStringExt};
+    #[test]
+    fn counterpart_paths_preserve_exact_source_bytes() {
+        let path = PathBuf::from(std::ffi::OsString::from_vec(
+            b"acquisition-\xff/data.bin".to_vec(),
+        ));
+        assert_eq!(
+            suffixed_path(&path, ".gz").as_os_str().as_bytes(),
+            b"acquisition-\xff/data.bin.gz"
+        );
+    }
 }

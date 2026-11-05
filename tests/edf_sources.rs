@@ -267,3 +267,36 @@ fn encoded_tails_and_additional_members_cannot_hide_unexplained_counts() {
         );
     }
 }
+
+#[cfg(all(unix, not(target_os = "macos")))]
+#[test]
+fn compressed_counterparts_preserve_non_utf8_directory_bytes() {
+    use std::os::unix::ffi::OsStringExt;
+    let dir = tempfile::tempdir().unwrap();
+    let nested = dir
+        .path()
+        .join(std::ffi::OsString::from_vec(b"acquisition-\xff".to_vec()));
+    fs::create_dir(&nested).unwrap();
+    let header = nested.join("frame.ehf");
+    fs::write(&header, external("counts.bin", 6)).unwrap();
+    fs::write(
+        nested.join("counts.bin.gz"),
+        gzip(&[99, 98, 0, 0, 255, 255, 1, 128]),
+    )
+    .unwrap();
+    let reader = Reader::open_with_options(
+        &header,
+        Limits::default(),
+        Options {
+            external_payloads: ExternalPayloads::FollowCompressedSnapshot,
+            ..Options::default()
+        },
+    )
+    .unwrap();
+    let mut output = FrameBuffer::default();
+    reader.read_frame_into(0, &mut output).unwrap();
+    assert_eq!(
+        output.pixels(),
+        Some(&PixelBuffer::U16(vec![0, 65535, 32769]))
+    );
+}
