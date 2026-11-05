@@ -1,0 +1,3765 @@
+{
+  "schema": 1,
+  "baseline": "docs/fabio-parity/2026-11-05-mar-sparse.json",
+  "baseline_sha256": "cea6a3410b379dd8462eae624dcf645112b0def766dc0624c72f99a8f236d0ae",
+  "audited_events": 68,
+  "audited_unique_sources": 16,
+  "malformed_sources": 16,
+  "reference": {
+    "fabio_version": "2026.6.0",
+    "fabio_commit": "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece"
+  },
+  "probe_sha256": "8d5226bc2220f329220ae4fe17def779b2c93dd2a7b14a8575e2fc1ad9b62d2b",
+  "captures": [
+    {
+      "path": "/tmp/dioptrin-rejections-baseline-capture.json",
+      "sha256": "5110a5a5da98e03ae71e8ea5e865c0dfae9cb466af0c9542a2c6a7571befea9b",
+      "source_probe_stable": true,
+      "sources_stable": true
+    },
+    {
+      "path": "/tmp/dioptrin-rejections-extra-capture.json",
+      "sha256": "def4ddb98d81f050e8e7ecf2d7352c29beff261529d3a3956205182010071cd0",
+      "source_probe_stable": true,
+      "sources_stable": true
+    }
+  ],
+  "summary": {
+    "input_conditions": {
+      "inconsistent_header": 58,
+      "intentionally_truncated": 10
+    },
+    "reader_actions": {
+      "explicit_compatibility_closed": 42,
+      "strict_reject": 26
+    },
+    "well_formed_native_codec_gaps": 0
+  },
+  "records": [
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/MultiFrame-Frame0.edf",
+      "filename": "MultiFrame-Frame0.edf",
+      "baseline_sha256": "a162fbcc75ca97856e2adfc84ebb4b0ef093c0b5ac0cec44e66bcb87a4d7ef75",
+      "baseline_event_count": 7,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_getFrame_mono",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_getFrame_multi",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_next_multi",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_openimage_multiframes",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_previous_mono",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_previous_mono",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_previous_multi"
+      ],
+      "baseline_errors": {
+        "truncated EDF binary payload": 7
+      },
+      "input_condition": "inconsistent_header",
+      "reader_action": "strict_reject",
+      "classification": "complete_samples_with_stale_inline_size_and_header_declarations",
+      "evidence": {
+        "path": "/private/tmp/dioptrin-io-fabio-corpus/MultiFrame-Frame0.edf",
+        "sha256": "a162fbcc75ca97856e2adfc84ebb4b0ef093c0b5ac0cec44e66bcb87a4d7ef75",
+        "exact_baseline_bytes": true,
+        "provenance": "original_source",
+        "bytes": 4094780,
+        "outer_envelope": {
+          "codec": "none",
+          "complete": true
+        },
+        "expanded_prefix_sha256": "a162fbcc75ca97856e2adfc84ebb4b0ef093c0b5ac0cec44e66bcb87a4d7ef75",
+        "expanded_prefix_bytes": 4094780,
+        "header_records": [
+          {
+            "header_offset": 0,
+            "actual_header_bytes": 2048,
+            "payload_offset": 2048,
+            "declared_header_bytes": 8192,
+            "shape": [
+              1043,
+              981
+            ],
+            "dtype": "float32",
+            "required_sample_bytes": 4092732,
+            "compression_tag": "None",
+            "legacy_size": 4092732,
+            "declared_inline_bytes": 4092928,
+            "available_bytes_to_eof": 4092732,
+            "complete_sample_bytes_available": true
+          }
+        ],
+        "scan_error": {
+          "offset": 2048,
+          "error": "declared_inline_window_exceeds_eof",
+          "declared": 4092928,
+          "available": 4092732,
+          "required_sample_bytes": 4092732
+        },
+        "strict_native": {
+          "exit_code": 2,
+          "error": "truncated EDF binary payload",
+          "frames": []
+        },
+        "authority": [
+          {
+            "path": "src/fabio/edfimage.py",
+            "sha256": "48c646050b3f43d63e15862e6ab8ae73e683b2fafe3e7dd06aa4e905dff7cf34",
+            "lines": [
+              371,
+              376
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/edfimage.py#L371-L376"
+          },
+          {
+            "path": "src/fabio/edfimage.py",
+            "sha256": "48c646050b3f43d63e15862e6ab8ae73e683b2fafe3e7dd06aa4e905dff7cf34",
+            "lines": [
+              1216,
+              1250
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/edfimage.py#L1216-L1250"
+          },
+          {
+            "path": "src/fabio/test/codecs/test_edfimage.py",
+            "sha256": "3543e6b6b5c703f19a626378c9d28d9c8a38c729934105b8b740484e1de74cb6",
+            "lines": [
+              269,
+              305
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/test/codecs/test_edfimage.py#L269-L305"
+          }
+        ],
+        "reference": {
+          "frames": [
+            {
+              "frame": 0,
+              "dtype": "float32",
+              "shape": [
+                1043,
+                981
+              ],
+              "sample_sha256": "dece326b8236d214436058c8221ca76905a9038f6dd86a97f7bc34e5ee9dada6",
+              "all_zero": false,
+              "incomplete_data": false
+            }
+          ],
+          "incomplete_file": false
+        },
+        "explicit_raw_layout_proof": {
+          "exit_code": 0,
+          "error": "",
+          "frames": [
+            {
+              "dtype": "F32",
+              "frame": 0,
+              "frames": 1,
+              "interpretation": "explicit raw layout, no EDF compression interpretation",
+              "sample_sha256": "dece326b8236d214436058c8221ca76905a9038f6dd86a97f7bc34e5ee9dada6",
+              "shape": [
+                1043,
+                981
+              ]
+            }
+          ]
+        },
+        "raw_layout_matches_reference": true,
+        "raw_layout_is_not_edf_acceptance": true,
+        "source_unchanged_after_audit": true
+      }
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/MultiFrame-Frame0.edf.bz2",
+      "filename": "MultiFrame-Frame0.edf.bz2",
+      "baseline_sha256": "9e876c886c6d97f80ce5b3a58e96ae7c30cae56f643c5a04f272ca2c93f1bb98",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestEdfFastRead.test_fastread"
+      ],
+      "baseline_errors": {
+        "truncated EDF binary payload": 1
+      },
+      "input_condition": "inconsistent_header",
+      "reader_action": "strict_reject",
+      "classification": "complete_samples_with_stale_inline_size_and_header_declarations",
+      "evidence": {
+        "path": "/private/tmp/dioptrin-io-fabio-corpus/MultiFrame-Frame0.edf.bz2",
+        "sha256": "9e876c886c6d97f80ce5b3a58e96ae7c30cae56f643c5a04f272ca2c93f1bb98",
+        "exact_baseline_bytes": true,
+        "provenance": "original_source",
+        "bytes": 622413,
+        "outer_envelope": {
+          "codec": "bzip2",
+          "complete": true
+        },
+        "expanded_prefix_sha256": "a162fbcc75ca97856e2adfc84ebb4b0ef093c0b5ac0cec44e66bcb87a4d7ef75",
+        "expanded_prefix_bytes": 4094780,
+        "header_records": [
+          {
+            "header_offset": 0,
+            "actual_header_bytes": 2048,
+            "payload_offset": 2048,
+            "declared_header_bytes": 8192,
+            "shape": [
+              1043,
+              981
+            ],
+            "dtype": "float32",
+            "required_sample_bytes": 4092732,
+            "compression_tag": "None",
+            "legacy_size": 4092732,
+            "declared_inline_bytes": 4092928,
+            "available_bytes_to_eof": 4092732,
+            "complete_sample_bytes_available": true
+          }
+        ],
+        "scan_error": {
+          "offset": 2048,
+          "error": "declared_inline_window_exceeds_eof",
+          "declared": 4092928,
+          "available": 4092732,
+          "required_sample_bytes": 4092732
+        },
+        "strict_native": {
+          "exit_code": 2,
+          "error": "truncated EDF binary payload",
+          "frames": []
+        },
+        "authority": [
+          {
+            "path": "src/fabio/edfimage.py",
+            "sha256": "48c646050b3f43d63e15862e6ab8ae73e683b2fafe3e7dd06aa4e905dff7cf34",
+            "lines": [
+              371,
+              376
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/edfimage.py#L371-L376"
+          },
+          {
+            "path": "src/fabio/edfimage.py",
+            "sha256": "48c646050b3f43d63e15862e6ab8ae73e683b2fafe3e7dd06aa4e905dff7cf34",
+            "lines": [
+              1216,
+              1250
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/edfimage.py#L1216-L1250"
+          },
+          {
+            "path": "src/fabio/test/codecs/test_edfimage.py",
+            "sha256": "3543e6b6b5c703f19a626378c9d28d9c8a38c729934105b8b740484e1de74cb6",
+            "lines": [
+              269,
+              305
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/test/codecs/test_edfimage.py#L269-L305"
+          }
+        ],
+        "reference": {
+          "frames": [
+            {
+              "frame": 0,
+              "dtype": "float32",
+              "shape": [
+                1043,
+                981
+              ],
+              "sample_sha256": "dece326b8236d214436058c8221ca76905a9038f6dd86a97f7bc34e5ee9dada6",
+              "all_zero": false,
+              "incomplete_data": false
+            }
+          ],
+          "incomplete_file": false
+        },
+        "explicit_raw_layout_proof": {
+          "exit_code": 0,
+          "error": "",
+          "frames": [
+            {
+              "dtype": "F32",
+              "frame": 0,
+              "frames": 1,
+              "interpretation": "explicit raw layout, no EDF compression interpretation",
+              "sample_sha256": "dece326b8236d214436058c8221ca76905a9038f6dd86a97f7bc34e5ee9dada6",
+              "shape": [
+                1043,
+                981
+              ]
+            }
+          ]
+        },
+        "raw_layout_matches_reference": true,
+        "raw_layout_is_not_edf_acceptance": true,
+        "source_unchanged_after_audit": true
+      }
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/MultiFrame-Frame1.edf",
+      "filename": "MultiFrame-Frame1.edf",
+      "baseline_sha256": "223a5d373ee8e08071f7fc2ecca9a19963e94302b16e83199868deee238f0d09",
+      "baseline_event_count": 7,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_getFrame_mono",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_getFrame_mono",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_getFrame_multi",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_next_multi",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_openimage_multiframes",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_previous_mono",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_previous_multi"
+      ],
+      "baseline_errors": {
+        "truncated EDF binary payload": 7
+      },
+      "input_condition": "inconsistent_header",
+      "reader_action": "strict_reject",
+      "classification": "complete_samples_with_stale_inline_size_and_header_declarations",
+      "evidence": {
+        "path": "/private/tmp/dioptrin-io-fabio-corpus/MultiFrame-Frame1.edf",
+        "sha256": "223a5d373ee8e08071f7fc2ecca9a19963e94302b16e83199868deee238f0d09",
+        "exact_baseline_bytes": true,
+        "provenance": "original_source",
+        "bytes": 4093756,
+        "outer_envelope": {
+          "codec": "none",
+          "complete": true
+        },
+        "expanded_prefix_sha256": "223a5d373ee8e08071f7fc2ecca9a19963e94302b16e83199868deee238f0d09",
+        "expanded_prefix_bytes": 4093756,
+        "header_records": [
+          {
+            "header_offset": 0,
+            "actual_header_bytes": 1024,
+            "payload_offset": 1024,
+            "declared_header_bytes": 8192,
+            "shape": [
+              1043,
+              981
+            ],
+            "dtype": "float32",
+            "required_sample_bytes": 4092732,
+            "compression_tag": "None",
+            "legacy_size": 4092732,
+            "declared_inline_bytes": 4092928,
+            "available_bytes_to_eof": 4092732,
+            "complete_sample_bytes_available": true
+          }
+        ],
+        "scan_error": {
+          "offset": 1024,
+          "error": "declared_inline_window_exceeds_eof",
+          "declared": 4092928,
+          "available": 4092732,
+          "required_sample_bytes": 4092732
+        },
+        "strict_native": {
+          "exit_code": 2,
+          "error": "truncated EDF binary payload",
+          "frames": []
+        },
+        "authority": [
+          {
+            "path": "src/fabio/edfimage.py",
+            "sha256": "48c646050b3f43d63e15862e6ab8ae73e683b2fafe3e7dd06aa4e905dff7cf34",
+            "lines": [
+              371,
+              376
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/edfimage.py#L371-L376"
+          },
+          {
+            "path": "src/fabio/edfimage.py",
+            "sha256": "48c646050b3f43d63e15862e6ab8ae73e683b2fafe3e7dd06aa4e905dff7cf34",
+            "lines": [
+              1216,
+              1250
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/edfimage.py#L1216-L1250"
+          },
+          {
+            "path": "src/fabio/test/codecs/test_edfimage.py",
+            "sha256": "3543e6b6b5c703f19a626378c9d28d9c8a38c729934105b8b740484e1de74cb6",
+            "lines": [
+              269,
+              305
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/test/codecs/test_edfimage.py#L269-L305"
+          }
+        ],
+        "reference": {
+          "frames": [
+            {
+              "frame": 0,
+              "dtype": "float32",
+              "shape": [
+                1043,
+                981
+              ],
+              "sample_sha256": "5e1e3db002ec982fc29a54938591150141e699507dfd4d4ee2c93469fb99abef",
+              "all_zero": false,
+              "incomplete_data": false
+            }
+          ],
+          "incomplete_file": false
+        },
+        "explicit_raw_layout_proof": {
+          "exit_code": 0,
+          "error": "",
+          "frames": [
+            {
+              "dtype": "F32",
+              "frame": 0,
+              "frames": 1,
+              "interpretation": "explicit raw layout, no EDF compression interpretation",
+              "sample_sha256": "5e1e3db002ec982fc29a54938591150141e699507dfd4d4ee2c93469fb99abef",
+              "shape": [
+                1043,
+                981
+              ]
+            }
+          ]
+        },
+        "raw_layout_matches_reference": true,
+        "raw_layout_is_not_edf_acceptance": true,
+        "source_unchanged_after_audit": true
+      }
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/d80_60s.edf",
+      "filename": "d80_60s.edf",
+      "baseline_sha256": "64992b70b52b78335fc12dc0e0174ef47a360ae8579be9e1d5d3e558674d700f",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_oxdimage.TestOxdBig.test_same"
+      ],
+      "baseline_errors": {
+        "unsupported EDF compression TY1": 1
+      },
+      "input_condition": "inconsistent_header",
+      "reader_action": "strict_reject",
+      "classification": "raw_samples_mislabelled_as_ty1_not_a_missing_ty1_decoder",
+      "evidence": {
+        "path": "/private/tmp/dioptrin-io-fabio-corpus/d80_60s.edf",
+        "sha256": "64992b70b52b78335fc12dc0e0174ef47a360ae8579be9e1d5d3e558674d700f",
+        "exact_baseline_bytes": true,
+        "provenance": "original_source",
+        "bytes": 16779776,
+        "outer_envelope": {
+          "codec": "none",
+          "complete": true
+        },
+        "expanded_prefix_sha256": "64992b70b52b78335fc12dc0e0174ef47a360ae8579be9e1d5d3e558674d700f",
+        "expanded_prefix_bytes": 16779776,
+        "header_records": [
+          {
+            "header_offset": 0,
+            "actual_header_bytes": 2560,
+            "payload_offset": 2560,
+            "declared_header_bytes": 3072,
+            "shape": [
+              2048,
+              2048
+            ],
+            "dtype": "int32",
+            "required_sample_bytes": 16777216,
+            "compression_tag": "TY1",
+            "legacy_size": 16777216,
+            "declared_inline_bytes": 16777216,
+            "available_bytes_to_eof": 16777216,
+            "complete_sample_bytes_available": true
+          }
+        ],
+        "scan_error": null,
+        "strict_native": {
+          "exit_code": 2,
+          "error": "unsupported EDF compression TY1",
+          "frames": []
+        },
+        "ty1_encoded_bytes_from_oi_ol": 8692088,
+        "raw_payload_bytes": 16777216,
+        "ty1_first_sample_would_be": -127,
+        "raw_i32_first_sample": 0,
+        "independent_oxford_source": {
+          "path": "/private/tmp/dioptrin-io-fabio-corpus/d80_60s.img",
+          "sha256": "7fd5ff9a06a356f58ff01643cef09ab339550c3ccb32f75e2d4b7f879159e8fb",
+          "decoded_sha256": "5c3755c7d4222c75659ea470b1732fec51453c47e220a74f54f07ddea7e2cab5",
+          "counts_match_edf_reference": true
+        },
+        "authority": [
+          {
+            "path": "src/fabio/edfimage.py",
+            "sha256": "48c646050b3f43d63e15862e6ab8ae73e683b2fafe3e7dd06aa4e905dff7cf34",
+            "lines": [
+              601,
+              635
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/edfimage.py#L601-L635"
+          },
+          {
+            "path": "src/fabio/test/codecs/test_oxdimage.py",
+            "sha256": "8f7d0a65722b8f046b18ac56c7e307dda05f25340f8c52ab23d6cba1914b4096",
+            "lines": [
+              144,
+              160
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/test/codecs/test_oxdimage.py#L144-L160"
+          }
+        ],
+        "reference": {
+          "frames": [
+            {
+              "frame": 0,
+              "dtype": "int32",
+              "shape": [
+                2048,
+                2048
+              ],
+              "sample_sha256": "5c3755c7d4222c75659ea470b1732fec51453c47e220a74f54f07ddea7e2cab5",
+              "all_zero": false,
+              "incomplete_data": false
+            }
+          ],
+          "incomplete_file": false
+        },
+        "explicit_raw_layout_proof": {
+          "exit_code": 0,
+          "error": "",
+          "frames": [
+            {
+              "dtype": "I32",
+              "frame": 0,
+              "frames": 1,
+              "interpretation": "explicit raw layout, no EDF compression interpretation",
+              "sample_sha256": "5c3755c7d4222c75659ea470b1732fec51453c47e220a74f54f07ddea7e2cab5",
+              "shape": [
+                2048,
+                2048
+              ]
+            }
+          ]
+        },
+        "raw_layout_matches_reference": true,
+        "raw_layout_is_not_edf_acceptance": true,
+        "source_unchanged_after_audit": true
+      }
+    },
+    {
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_vtdrf8sk_clemens/TestBadFiles/fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_half_header.edf",
+      "filename": "fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_half_header.edf",
+      "baseline_sha256": "0d68c733fd34e3c1928b61ebadb113d035d02dc4eac18d90d9e051ce8494c12d",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_half_header"
+      ],
+      "baseline_errors": {
+        "truncated EDF header": 1
+      },
+      "input_condition": "intentionally_truncated",
+      "reader_action": "strict_reject",
+      "classification": "strict_rejection_prevents_partial_sequence_or_invented_counts",
+      "evidence": {
+        "path": "/private/tmp/dioptrin-rejection-sources-20261105/0d68c733fd34e3c1928b61ebadb113d035d02dc4eac18d90d9e051ce8494c12d-fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_half_header.edf",
+        "sha256": "0d68c733fd34e3c1928b61ebadb113d035d02dc4eac18d90d9e051ce8494c12d",
+        "exact_baseline_bytes": true,
+        "provenance": "captured_exact_source",
+        "bytes": 262364,
+        "outer_envelope": {
+          "codec": "none",
+          "complete": true
+        },
+        "expanded_prefix_sha256": "0d68c733fd34e3c1928b61ebadb113d035d02dc4eac18d90d9e051ce8494c12d",
+        "expanded_prefix_bytes": 262364,
+        "header_records": [
+          {
+            "header_offset": 0,
+            "actual_header_bytes": 147,
+            "payload_offset": 147,
+            "shape": [
+              256,
+              256
+            ],
+            "dtype": "float32",
+            "required_sample_bytes": 262144,
+            "compression_tag": "NONE",
+            "legacy_size": 262144,
+            "declared_inline_bytes": 262144,
+            "available_bytes_to_eof": 262217,
+            "complete_sample_bytes_available": true
+          }
+        ],
+        "scan_error": {
+          "offset": 262291,
+          "error": "incomplete_or_invalid_header",
+          "available_header_bytes": 73
+        },
+        "strict_native": {
+          "exit_code": 2,
+          "error": "truncated EDF header",
+          "frames": []
+        },
+        "authority": [
+          {
+            "path": "src/fabio/test/codecs/test_edfimage.py",
+            "sha256": "3543e6b6b5c703f19a626378c9d28d9c8a38c729934105b8b740484e1de74cb6",
+            "lines": [
+              685,
+              776
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/test/codecs/test_edfimage.py#L685-L776"
+          },
+          {
+            "path": "src/fabio/edfimage.py",
+            "sha256": "48c646050b3f43d63e15862e6ab8ae73e683b2fafe3e7dd06aa4e905dff7cf34",
+            "lines": [
+              630,
+              650
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/edfimage.py#L630-L650"
+          }
+        ],
+        "reference_behavior": {
+          "frames": [
+            {
+              "frame": 0,
+              "dtype": "float32",
+              "shape": [
+                256,
+                256
+              ],
+              "sample_sha256": "c6e7ed6f00997d21f30c8f9544fc10588db893fd9711b098528ab7a068584c56",
+              "all_zero": false,
+              "incomplete_data": false
+            }
+          ],
+          "incomplete_file": true
+        },
+        "source_unchanged_after_audit": true
+      }
+    },
+    {
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_vtdrf8sk_clemens/TestBadFiles/fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_header_with_half_data.edf",
+      "filename": "fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_header_with_half_data.edf",
+      "baseline_sha256": "ed3bf8b40de3df52353f1846e98eb3d2321e0d345e56105903abaea6f7665587",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_header_with_half_data"
+      ],
+      "baseline_errors": {
+        "truncated EDF binary payload": 1
+      },
+      "input_condition": "intentionally_truncated",
+      "reader_action": "strict_reject",
+      "classification": "strict_rejection_prevents_partial_sequence_or_invented_counts",
+      "evidence": {
+        "path": "/private/tmp/dioptrin-rejection-sources-20261105/ed3bf8b40de3df52353f1846e98eb3d2321e0d345e56105903abaea6f7665587-fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_header_with_half_data.edf",
+        "sha256": "ed3bf8b40de3df52353f1846e98eb3d2321e0d345e56105903abaea6f7665587",
+        "exact_baseline_bytes": true,
+        "provenance": "captured_exact_source",
+        "bytes": 393510,
+        "outer_envelope": {
+          "codec": "none",
+          "complete": true
+        },
+        "expanded_prefix_sha256": "ed3bf8b40de3df52353f1846e98eb3d2321e0d345e56105903abaea6f7665587",
+        "expanded_prefix_bytes": 393510,
+        "header_records": [
+          {
+            "header_offset": 0,
+            "actual_header_bytes": 147,
+            "payload_offset": 147,
+            "shape": [
+              256,
+              256
+            ],
+            "dtype": "float32",
+            "required_sample_bytes": 262144,
+            "compression_tag": "NONE",
+            "legacy_size": 262144,
+            "declared_inline_bytes": 262144,
+            "available_bytes_to_eof": 393363,
+            "complete_sample_bytes_available": true
+          },
+          {
+            "header_offset": 262291,
+            "actual_header_bytes": 147,
+            "payload_offset": 262438,
+            "shape": [
+              256,
+              256
+            ],
+            "dtype": "float32",
+            "required_sample_bytes": 262144,
+            "compression_tag": "NONE",
+            "legacy_size": 262144,
+            "declared_inline_bytes": 262144,
+            "available_bytes_to_eof": 131072,
+            "complete_sample_bytes_available": false
+          }
+        ],
+        "scan_error": {
+          "offset": 262438,
+          "error": "declared_inline_window_exceeds_eof",
+          "declared": 262144,
+          "available": 131072,
+          "required_sample_bytes": 262144
+        },
+        "strict_native": {
+          "exit_code": 2,
+          "error": "truncated EDF binary payload",
+          "frames": []
+        },
+        "authority": [
+          {
+            "path": "src/fabio/test/codecs/test_edfimage.py",
+            "sha256": "3543e6b6b5c703f19a626378c9d28d9c8a38c729934105b8b740484e1de74cb6",
+            "lines": [
+              685,
+              776
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/test/codecs/test_edfimage.py#L685-L776"
+          },
+          {
+            "path": "src/fabio/edfimage.py",
+            "sha256": "48c646050b3f43d63e15862e6ab8ae73e683b2fafe3e7dd06aa4e905dff7cf34",
+            "lines": [
+              630,
+              650
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/edfimage.py#L630-L650"
+          }
+        ],
+        "reference_behavior": {
+          "frames": [
+            {
+              "frame": 0,
+              "dtype": "float32",
+              "shape": [
+                256,
+                256
+              ],
+              "sample_sha256": "c6e7ed6f00997d21f30c8f9544fc10588db893fd9711b098528ab7a068584c56",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 1,
+              "dtype": "float32",
+              "shape": [
+                256,
+                256
+              ],
+              "sample_sha256": "712af39034dde74d5a63d086e67569338f993bb447ca3a39b90d80f4423926f5",
+              "all_zero": false,
+              "incomplete_data": true
+            }
+          ],
+          "incomplete_file": true
+        },
+        "source_unchanged_after_audit": true
+      }
+    },
+    {
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_vtdrf8sk_clemens/TestBadFiles/fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_header_with_no_data.edf",
+      "filename": "fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_header_with_no_data.edf",
+      "baseline_sha256": "6424036260cd6dfd424d7085d3ad17da434e3f7e7605828037cec241031546cf",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_header_with_no_data"
+      ],
+      "baseline_errors": {
+        "truncated EDF binary payload": 1
+      },
+      "input_condition": "intentionally_truncated",
+      "reader_action": "strict_reject",
+      "classification": "strict_rejection_prevents_partial_sequence_or_invented_counts",
+      "evidence": {
+        "path": "/private/tmp/dioptrin-rejection-sources-20261105/6424036260cd6dfd424d7085d3ad17da434e3f7e7605828037cec241031546cf-fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_header_with_no_data.edf",
+        "sha256": "6424036260cd6dfd424d7085d3ad17da434e3f7e7605828037cec241031546cf",
+        "exact_baseline_bytes": true,
+        "provenance": "captured_exact_source",
+        "bytes": 262438,
+        "outer_envelope": {
+          "codec": "none",
+          "complete": true
+        },
+        "expanded_prefix_sha256": "6424036260cd6dfd424d7085d3ad17da434e3f7e7605828037cec241031546cf",
+        "expanded_prefix_bytes": 262438,
+        "header_records": [
+          {
+            "header_offset": 0,
+            "actual_header_bytes": 147,
+            "payload_offset": 147,
+            "shape": [
+              256,
+              256
+            ],
+            "dtype": "float32",
+            "required_sample_bytes": 262144,
+            "compression_tag": "NONE",
+            "legacy_size": 262144,
+            "declared_inline_bytes": 262144,
+            "available_bytes_to_eof": 262291,
+            "complete_sample_bytes_available": true
+          },
+          {
+            "header_offset": 262291,
+            "actual_header_bytes": 147,
+            "payload_offset": 262438,
+            "shape": [
+              256,
+              256
+            ],
+            "dtype": "float32",
+            "required_sample_bytes": 262144,
+            "compression_tag": "NONE",
+            "legacy_size": 262144,
+            "declared_inline_bytes": 262144,
+            "available_bytes_to_eof": 0,
+            "complete_sample_bytes_available": false
+          }
+        ],
+        "scan_error": {
+          "offset": 262438,
+          "error": "declared_inline_window_exceeds_eof",
+          "declared": 262144,
+          "available": 0,
+          "required_sample_bytes": 262144
+        },
+        "strict_native": {
+          "exit_code": 2,
+          "error": "truncated EDF binary payload",
+          "frames": []
+        },
+        "authority": [
+          {
+            "path": "src/fabio/test/codecs/test_edfimage.py",
+            "sha256": "3543e6b6b5c703f19a626378c9d28d9c8a38c729934105b8b740484e1de74cb6",
+            "lines": [
+              685,
+              776
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/test/codecs/test_edfimage.py#L685-L776"
+          },
+          {
+            "path": "src/fabio/edfimage.py",
+            "sha256": "48c646050b3f43d63e15862e6ab8ae73e683b2fafe3e7dd06aa4e905dff7cf34",
+            "lines": [
+              630,
+              650
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/edfimage.py#L630-L650"
+          }
+        ],
+        "reference_behavior": {
+          "frames": [
+            {
+              "frame": 0,
+              "dtype": "float32",
+              "shape": [
+                256,
+                256
+              ],
+              "sample_sha256": "c6e7ed6f00997d21f30c8f9544fc10588db893fd9711b098528ab7a068584c56",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 1,
+              "dtype": "float32",
+              "shape": [
+                256,
+                256
+              ],
+              "sample_sha256": "8a39d2abd3999ab73c34db2476849cddf303ce389b35826850f9a700589b4a90",
+              "all_zero": true,
+              "incomplete_data": true
+            }
+          ],
+          "incomplete_file": true
+        },
+        "source_unchanged_after_audit": true
+      }
+    },
+    {
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_vtdrf8sk_clemens/TestBadFiles/fabio.test.codecs.test_edfimage.TestBadFiles.test_header_with_half_data.edf",
+      "filename": "fabio.test.codecs.test_edfimage.TestBadFiles.test_header_with_half_data.edf",
+      "baseline_sha256": "0cb76337d20d80ef0a5ee4a5d1c0355af009a880eba098c0ba88662dc0aab01f",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestBadFiles.test_header_with_half_data"
+      ],
+      "baseline_errors": {
+        "truncated EDF binary payload": 1
+      },
+      "input_condition": "intentionally_truncated",
+      "reader_action": "strict_reject",
+      "classification": "strict_rejection_prevents_partial_sequence_or_invented_counts",
+      "evidence": {
+        "path": "/private/tmp/dioptrin-rejection-sources-20261105/0cb76337d20d80ef0a5ee4a5d1c0355af009a880eba098c0ba88662dc0aab01f-fabio.test.codecs.test_edfimage.TestBadFiles.test_header_with_half_data.edf",
+        "sha256": "0cb76337d20d80ef0a5ee4a5d1c0355af009a880eba098c0ba88662dc0aab01f",
+        "exact_baseline_bytes": true,
+        "provenance": "captured_exact_source",
+        "bytes": 131219,
+        "outer_envelope": {
+          "codec": "none",
+          "complete": true
+        },
+        "expanded_prefix_sha256": "0cb76337d20d80ef0a5ee4a5d1c0355af009a880eba098c0ba88662dc0aab01f",
+        "expanded_prefix_bytes": 131219,
+        "header_records": [
+          {
+            "header_offset": 0,
+            "actual_header_bytes": 147,
+            "payload_offset": 147,
+            "shape": [
+              256,
+              256
+            ],
+            "dtype": "float32",
+            "required_sample_bytes": 262144,
+            "compression_tag": "NONE",
+            "legacy_size": 262144,
+            "declared_inline_bytes": 262144,
+            "available_bytes_to_eof": 131072,
+            "complete_sample_bytes_available": false
+          }
+        ],
+        "scan_error": {
+          "offset": 147,
+          "error": "declared_inline_window_exceeds_eof",
+          "declared": 262144,
+          "available": 131072,
+          "required_sample_bytes": 262144
+        },
+        "strict_native": {
+          "exit_code": 2,
+          "error": "truncated EDF binary payload",
+          "frames": []
+        },
+        "authority": [
+          {
+            "path": "src/fabio/test/codecs/test_edfimage.py",
+            "sha256": "3543e6b6b5c703f19a626378c9d28d9c8a38c729934105b8b740484e1de74cb6",
+            "lines": [
+              685,
+              776
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/test/codecs/test_edfimage.py#L685-L776"
+          },
+          {
+            "path": "src/fabio/edfimage.py",
+            "sha256": "48c646050b3f43d63e15862e6ab8ae73e683b2fafe3e7dd06aa4e905dff7cf34",
+            "lines": [
+              630,
+              650
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/edfimage.py#L630-L650"
+          }
+        ],
+        "reference_behavior": {
+          "frames": [
+            {
+              "frame": 0,
+              "dtype": "float32",
+              "shape": [
+                256,
+                256
+              ],
+              "sample_sha256": "712af39034dde74d5a63d086e67569338f993bb447ca3a39b90d80f4423926f5",
+              "all_zero": false,
+              "incomplete_data": true
+            }
+          ],
+          "incomplete_file": true
+        },
+        "source_unchanged_after_audit": true
+      }
+    },
+    {
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_vtdrf8sk_clemens/TestBadFiles/fabio.test.codecs.test_edfimage.TestBadFiles.test_header_with_no_data.edf",
+      "filename": "fabio.test.codecs.test_edfimage.TestBadFiles.test_header_with_no_data.edf",
+      "baseline_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestBadFiles.test_header_with_no_data"
+      ],
+      "baseline_errors": {
+        "truncated EDF binary payload": 1
+      },
+      "input_condition": "intentionally_truncated",
+      "reader_action": "strict_reject",
+      "classification": "strict_rejection_prevents_partial_sequence_or_invented_counts",
+      "evidence": {
+        "path": "/private/tmp/dioptrin-rejection-sources-20261105/c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9-fabio.test.codecs.test_edfimage.TestBadFiles.test_header_with_no_data.edf",
+        "sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+        "exact_baseline_bytes": true,
+        "provenance": "captured_exact_source",
+        "bytes": 147,
+        "outer_envelope": {
+          "codec": "none",
+          "complete": true
+        },
+        "expanded_prefix_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+        "expanded_prefix_bytes": 147,
+        "header_records": [
+          {
+            "header_offset": 0,
+            "actual_header_bytes": 147,
+            "payload_offset": 147,
+            "shape": [
+              256,
+              256
+            ],
+            "dtype": "float32",
+            "required_sample_bytes": 262144,
+            "compression_tag": "NONE",
+            "legacy_size": 262144,
+            "declared_inline_bytes": 262144,
+            "available_bytes_to_eof": 0,
+            "complete_sample_bytes_available": false
+          }
+        ],
+        "scan_error": {
+          "offset": 147,
+          "error": "declared_inline_window_exceeds_eof",
+          "declared": 262144,
+          "available": 0,
+          "required_sample_bytes": 262144
+        },
+        "strict_native": {
+          "exit_code": 2,
+          "error": "truncated EDF binary payload",
+          "frames": []
+        },
+        "authority": [
+          {
+            "path": "src/fabio/test/codecs/test_edfimage.py",
+            "sha256": "3543e6b6b5c703f19a626378c9d28d9c8a38c729934105b8b740484e1de74cb6",
+            "lines": [
+              685,
+              776
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/test/codecs/test_edfimage.py#L685-L776"
+          },
+          {
+            "path": "src/fabio/edfimage.py",
+            "sha256": "48c646050b3f43d63e15862e6ab8ae73e683b2fafe3e7dd06aa4e905dff7cf34",
+            "lines": [
+              630,
+              650
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/edfimage.py#L630-L650"
+          }
+        ],
+        "reference_behavior": {
+          "frames": [
+            {
+              "frame": 0,
+              "dtype": "float32",
+              "shape": [
+                256,
+                256
+              ],
+              "sample_sha256": "8a39d2abd3999ab73c34db2476849cddf303ce389b35826850f9a700589b4a90",
+              "all_zero": true,
+              "incomplete_data": true
+            }
+          ],
+          "incomplete_file": true
+        },
+        "source_unchanged_after_audit": true
+      }
+    },
+    {
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_vtdrf8sk_clemens/TestBadGzFiles/fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_half_header.edf.gz",
+      "filename": "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_half_header.edf.gz",
+      "baseline_sha256": "a2c49993fde7c68fb222753e25f48776d32d4064384defa8003fe18f95dbf5b7",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_half_header"
+      ],
+      "baseline_errors": {
+        "incomplete deflate stream": 1
+      },
+      "input_condition": "intentionally_truncated",
+      "reader_action": "strict_reject",
+      "classification": "strict_rejection_prevents_partial_sequence_or_invented_counts",
+      "evidence": {
+        "path": "/private/tmp/dioptrin-rejection-sources-20261105/d8ee2fa5b92f6c2e6913815ee6e2540094c5d2a101dcc379cc466a7042c0b175-fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_half_header.edf.gz",
+        "sha256": "d8ee2fa5b92f6c2e6913815ee6e2540094c5d2a101dcc379cc466a7042c0b175",
+        "exact_baseline_bytes": false,
+        "provenance": "recreated_same_upstream_test",
+        "bytes": 522,
+        "outer_envelope": {
+          "codec": "gzip",
+          "complete": false,
+          "complete_members": 2,
+          "error": "incomplete gzip member/trailer"
+        },
+        "expanded_prefix_sha256": "8067274469549b635f9e9576f579bd1969ce2632a4eb8eecb53aa8f8e622707f",
+        "expanded_prefix_bytes": 262359,
+        "header_records": [
+          {
+            "header_offset": 0,
+            "actual_header_bytes": 147,
+            "payload_offset": 147,
+            "shape": [
+              256,
+              256
+            ],
+            "dtype": "float32",
+            "required_sample_bytes": 262144,
+            "compression_tag": "NONE",
+            "legacy_size": 262144,
+            "declared_inline_bytes": 262144,
+            "available_bytes_to_eof": 262212,
+            "complete_sample_bytes_available": true
+          }
+        ],
+        "scan_error": {
+          "offset": 262291,
+          "error": "incomplete_or_invalid_header",
+          "available_header_bytes": 68
+        },
+        "strict_native": {
+          "exit_code": 2,
+          "error": "incomplete deflate stream",
+          "frames": []
+        },
+        "authority": [
+          {
+            "path": "src/fabio/test/codecs/test_edfimage.py",
+            "sha256": "3543e6b6b5c703f19a626378c9d28d9c8a38c729934105b8b740484e1de74cb6",
+            "lines": [
+              685,
+              776
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/test/codecs/test_edfimage.py#L685-L776"
+          },
+          {
+            "path": "src/fabio/edfimage.py",
+            "sha256": "48c646050b3f43d63e15862e6ab8ae73e683b2fafe3e7dd06aa4e905dff7cf34",
+            "lines": [
+              630,
+              650
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/edfimage.py#L630-L650"
+          }
+        ],
+        "reference_behavior": {
+          "frames": [
+            {
+              "frame": 0,
+              "dtype": "float32",
+              "shape": [
+                256,
+                256
+              ],
+              "sample_sha256": "c6e7ed6f00997d21f30c8f9544fc10588db893fd9711b098528ab7a068584c56",
+              "all_zero": false,
+              "incomplete_data": false
+            }
+          ],
+          "incomplete_file": true
+        },
+        "original_compressed_bytes_unavailable": "Original baseline gzip envelope was deleted by upstream test cleanup. This is explicitly recreated evidence; timestamps change compressed SHA. Baseline hash/testID remain recorded and are not relabelled exact.",
+        "source_unchanged_after_audit": true
+      }
+    },
+    {
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_vtdrf8sk_clemens/TestBadGzFiles/fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_header_with_half_data.edf.gz",
+      "filename": "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_header_with_half_data.edf.gz",
+      "baseline_sha256": "b661ca7a7f9a9b70bfb670c9413e48576fd059ca2f40f09a6c174e83bb970997",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_header_with_half_data"
+      ],
+      "baseline_errors": {
+        "incomplete deflate stream": 1
+      },
+      "input_condition": "intentionally_truncated",
+      "reader_action": "strict_reject",
+      "classification": "strict_rejection_prevents_partial_sequence_or_invented_counts",
+      "evidence": {
+        "path": "/private/tmp/dioptrin-rejection-sources-20261105/ee29afca40db2ca59dbbc09c6c3331352faa8cf302c00e58274d1d9208f87444-fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_header_with_half_data.edf.gz",
+        "sha256": "ee29afca40db2ca59dbbc09c6c3331352faa8cf302c00e58274d1d9208f87444",
+        "exact_baseline_bytes": false,
+        "provenance": "recreated_same_upstream_test",
+        "bytes": 747,
+        "outer_envelope": {
+          "codec": "gzip",
+          "complete": false,
+          "complete_members": 3,
+          "error": "incomplete gzip member/trailer"
+        },
+        "expanded_prefix_sha256": "409eb886d1271e8f7f705f201919b52fe6d49809b047c5757feecbcac965c202",
+        "expanded_prefix_bytes": 374667,
+        "header_records": [
+          {
+            "header_offset": 0,
+            "actual_header_bytes": 147,
+            "payload_offset": 147,
+            "shape": [
+              256,
+              256
+            ],
+            "dtype": "float32",
+            "required_sample_bytes": 262144,
+            "compression_tag": "NONE",
+            "legacy_size": 262144,
+            "declared_inline_bytes": 262144,
+            "available_bytes_to_eof": 374520,
+            "complete_sample_bytes_available": true
+          },
+          {
+            "header_offset": 262291,
+            "actual_header_bytes": 147,
+            "payload_offset": 262438,
+            "shape": [
+              256,
+              256
+            ],
+            "dtype": "float32",
+            "required_sample_bytes": 262144,
+            "compression_tag": "NONE",
+            "legacy_size": 262144,
+            "declared_inline_bytes": 262144,
+            "available_bytes_to_eof": 112229,
+            "complete_sample_bytes_available": false
+          }
+        ],
+        "scan_error": {
+          "offset": 262438,
+          "error": "declared_inline_window_exceeds_eof",
+          "declared": 262144,
+          "available": 112229,
+          "required_sample_bytes": 262144
+        },
+        "strict_native": {
+          "exit_code": 2,
+          "error": "incomplete deflate stream",
+          "frames": []
+        },
+        "authority": [
+          {
+            "path": "src/fabio/test/codecs/test_edfimage.py",
+            "sha256": "3543e6b6b5c703f19a626378c9d28d9c8a38c729934105b8b740484e1de74cb6",
+            "lines": [
+              685,
+              776
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/test/codecs/test_edfimage.py#L685-L776"
+          },
+          {
+            "path": "src/fabio/edfimage.py",
+            "sha256": "48c646050b3f43d63e15862e6ab8ae73e683b2fafe3e7dd06aa4e905dff7cf34",
+            "lines": [
+              630,
+              650
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/edfimage.py#L630-L650"
+          }
+        ],
+        "reference_behavior": {
+          "frames": [
+            {
+              "frame": 0,
+              "dtype": "float32",
+              "shape": [
+                256,
+                256
+              ],
+              "sample_sha256": "c6e7ed6f00997d21f30c8f9544fc10588db893fd9711b098528ab7a068584c56",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 1,
+              "dtype": "float64",
+              "shape": [
+                256,
+                256
+              ],
+              "sample_sha256": "07854d2fef297a06ba81685e660c332de36d5d18d546927d30daad6d7fda1541",
+              "all_zero": true,
+              "incomplete_data": true
+            }
+          ],
+          "incomplete_file": true
+        },
+        "original_compressed_bytes_unavailable": "Original baseline gzip envelope was deleted by upstream test cleanup. This is explicitly recreated evidence; timestamps change compressed SHA. Baseline hash/testID remain recorded and are not relabelled exact.",
+        "source_unchanged_after_audit": true
+      }
+    },
+    {
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_vtdrf8sk_clemens/TestBadGzFiles/fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_header_with_no_data.edf.gz",
+      "filename": "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_header_with_no_data.edf.gz",
+      "baseline_sha256": "a43d3f714c78e1b464244c2cd7315f49e6997b59efd6fa824fd05ee987b1c68a",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_header_with_no_data"
+      ],
+      "baseline_errors": {
+        "truncated EDF binary payload": 1
+      },
+      "input_condition": "intentionally_truncated",
+      "reader_action": "strict_reject",
+      "classification": "strict_rejection_prevents_partial_sequence_or_invented_counts",
+      "evidence": {
+        "path": "/private/tmp/dioptrin-rejection-sources-20261105/44df9440058aa80652548df2d9347e0e95689be7aa887198381806f8693eeaf4-fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_header_with_no_data.edf.gz",
+        "sha256": "44df9440058aa80652548df2d9347e0e95689be7aa887198381806f8693eeaf4",
+        "exact_baseline_bytes": false,
+        "provenance": "recreated_same_upstream_test",
+        "bytes": 593,
+        "outer_envelope": {
+          "codec": "gzip",
+          "complete": true,
+          "complete_members": 3
+        },
+        "expanded_prefix_sha256": "6424036260cd6dfd424d7085d3ad17da434e3f7e7605828037cec241031546cf",
+        "expanded_prefix_bytes": 262438,
+        "header_records": [
+          {
+            "header_offset": 0,
+            "actual_header_bytes": 147,
+            "payload_offset": 147,
+            "shape": [
+              256,
+              256
+            ],
+            "dtype": "float32",
+            "required_sample_bytes": 262144,
+            "compression_tag": "NONE",
+            "legacy_size": 262144,
+            "declared_inline_bytes": 262144,
+            "available_bytes_to_eof": 262291,
+            "complete_sample_bytes_available": true
+          },
+          {
+            "header_offset": 262291,
+            "actual_header_bytes": 147,
+            "payload_offset": 262438,
+            "shape": [
+              256,
+              256
+            ],
+            "dtype": "float32",
+            "required_sample_bytes": 262144,
+            "compression_tag": "NONE",
+            "legacy_size": 262144,
+            "declared_inline_bytes": 262144,
+            "available_bytes_to_eof": 0,
+            "complete_sample_bytes_available": false
+          }
+        ],
+        "scan_error": {
+          "offset": 262438,
+          "error": "declared_inline_window_exceeds_eof",
+          "declared": 262144,
+          "available": 0,
+          "required_sample_bytes": 262144
+        },
+        "strict_native": {
+          "exit_code": 2,
+          "error": "truncated EDF binary payload",
+          "frames": []
+        },
+        "authority": [
+          {
+            "path": "src/fabio/test/codecs/test_edfimage.py",
+            "sha256": "3543e6b6b5c703f19a626378c9d28d9c8a38c729934105b8b740484e1de74cb6",
+            "lines": [
+              685,
+              776
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/test/codecs/test_edfimage.py#L685-L776"
+          },
+          {
+            "path": "src/fabio/edfimage.py",
+            "sha256": "48c646050b3f43d63e15862e6ab8ae73e683b2fafe3e7dd06aa4e905dff7cf34",
+            "lines": [
+              630,
+              650
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/edfimage.py#L630-L650"
+          }
+        ],
+        "reference_behavior": {
+          "frames": [
+            {
+              "frame": 0,
+              "dtype": "float32",
+              "shape": [
+                256,
+                256
+              ],
+              "sample_sha256": "c6e7ed6f00997d21f30c8f9544fc10588db893fd9711b098528ab7a068584c56",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 1,
+              "dtype": "float32",
+              "shape": [
+                256,
+                256
+              ],
+              "sample_sha256": "8a39d2abd3999ab73c34db2476849cddf303ce389b35826850f9a700589b4a90",
+              "all_zero": true,
+              "incomplete_data": true
+            }
+          ],
+          "incomplete_file": true
+        },
+        "original_compressed_bytes_unavailable": "Original baseline gzip envelope was deleted by upstream test cleanup. This is explicitly recreated evidence; timestamps change compressed SHA. Baseline hash/testID remain recorded and are not relabelled exact.",
+        "source_unchanged_after_audit": true
+      }
+    },
+    {
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_vtdrf8sk_clemens/TestBadGzFiles/fabio.test.codecs.test_edfimage.TestBadGzFiles.test_header_with_half_data.edf.gz",
+      "filename": "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_header_with_half_data.edf.gz",
+      "baseline_sha256": "81a4f7540535d4d7503cf00303e053da24fe9cd0e2e32d22334a4473566c856f",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_header_with_half_data"
+      ],
+      "baseline_errors": {
+        "incomplete deflate stream": 1
+      },
+      "input_condition": "intentionally_truncated",
+      "reader_action": "strict_reject",
+      "classification": "strict_rejection_prevents_partial_sequence_or_invented_counts",
+      "evidence": {
+        "path": "/private/tmp/dioptrin-rejection-sources-20261105/985fdce3de8e101d40104e7e4a502ece450423c1cd180b47a2e0ccc76d078c4b-fabio.test.codecs.test_edfimage.TestBadGzFiles.test_header_with_half_data.edf.gz",
+        "sha256": "985fdce3de8e101d40104e7e4a502ece450423c1cd180b47a2e0ccc76d078c4b",
+        "exact_baseline_bytes": false,
+        "provenance": "recreated_same_upstream_test",
+        "bytes": 296,
+        "outer_envelope": {
+          "codec": "gzip",
+          "complete": false,
+          "complete_members": 1,
+          "error": "incomplete gzip member/trailer"
+        },
+        "expanded_prefix_sha256": "511755b97243e1b9594867018cf4fbb59d6be839362d8a00e39e43e9b6c931f2",
+        "expanded_prefix_bytes": 112376,
+        "header_records": [
+          {
+            "header_offset": 0,
+            "actual_header_bytes": 147,
+            "payload_offset": 147,
+            "shape": [
+              256,
+              256
+            ],
+            "dtype": "float32",
+            "required_sample_bytes": 262144,
+            "compression_tag": "NONE",
+            "legacy_size": 262144,
+            "declared_inline_bytes": 262144,
+            "available_bytes_to_eof": 112229,
+            "complete_sample_bytes_available": false
+          }
+        ],
+        "scan_error": {
+          "offset": 147,
+          "error": "declared_inline_window_exceeds_eof",
+          "declared": 262144,
+          "available": 112229,
+          "required_sample_bytes": 262144
+        },
+        "strict_native": {
+          "exit_code": 2,
+          "error": "incomplete deflate stream",
+          "frames": []
+        },
+        "authority": [
+          {
+            "path": "src/fabio/test/codecs/test_edfimage.py",
+            "sha256": "3543e6b6b5c703f19a626378c9d28d9c8a38c729934105b8b740484e1de74cb6",
+            "lines": [
+              685,
+              776
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/test/codecs/test_edfimage.py#L685-L776"
+          },
+          {
+            "path": "src/fabio/edfimage.py",
+            "sha256": "48c646050b3f43d63e15862e6ab8ae73e683b2fafe3e7dd06aa4e905dff7cf34",
+            "lines": [
+              630,
+              650
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/edfimage.py#L630-L650"
+          }
+        ],
+        "reference_behavior": {
+          "frames": [
+            {
+              "frame": 0,
+              "dtype": "float64",
+              "shape": [
+                256,
+                256
+              ],
+              "sample_sha256": "07854d2fef297a06ba81685e660c332de36d5d18d546927d30daad6d7fda1541",
+              "all_zero": true,
+              "incomplete_data": true
+            }
+          ],
+          "incomplete_file": true
+        },
+        "original_compressed_bytes_unavailable": "Original baseline gzip envelope was deleted by upstream test cleanup. This is explicitly recreated evidence; timestamps change compressed SHA. Baseline hash/testID remain recorded and are not relabelled exact.",
+        "source_unchanged_after_audit": true
+      }
+    },
+    {
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_vtdrf8sk_clemens/TestBadGzFiles/fabio.test.codecs.test_edfimage.TestBadGzFiles.test_header_with_no_data.edf.gz",
+      "filename": "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_header_with_no_data.edf.gz",
+      "baseline_sha256": "0efa834491c81d4ffbba79c08a30c0d4ae5bc303da8620c7f8abe4e276b94352",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_header_with_no_data"
+      ],
+      "baseline_errors": {
+        "truncated EDF binary payload": 1
+      },
+      "input_condition": "intentionally_truncated",
+      "reader_action": "strict_reject",
+      "classification": "strict_rejection_prevents_partial_sequence_or_invented_counts",
+      "evidence": {
+        "path": "/private/tmp/dioptrin-rejection-sources-20261105/b41e336704653983e8379d073cb91914bda685fa4afd91be56c1713c8ba1eafd-fabio.test.codecs.test_edfimage.TestBadGzFiles.test_header_with_no_data.edf.gz",
+        "sha256": "b41e336704653983e8379d073cb91914bda685fa4afd91be56c1713c8ba1eafd",
+        "exact_baseline_bytes": false,
+        "provenance": "recreated_same_upstream_test",
+        "bytes": 142,
+        "outer_envelope": {
+          "codec": "gzip",
+          "complete": true,
+          "complete_members": 1
+        },
+        "expanded_prefix_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+        "expanded_prefix_bytes": 147,
+        "header_records": [
+          {
+            "header_offset": 0,
+            "actual_header_bytes": 147,
+            "payload_offset": 147,
+            "shape": [
+              256,
+              256
+            ],
+            "dtype": "float32",
+            "required_sample_bytes": 262144,
+            "compression_tag": "NONE",
+            "legacy_size": 262144,
+            "declared_inline_bytes": 262144,
+            "available_bytes_to_eof": 0,
+            "complete_sample_bytes_available": false
+          }
+        ],
+        "scan_error": {
+          "offset": 147,
+          "error": "declared_inline_window_exceeds_eof",
+          "declared": 262144,
+          "available": 0,
+          "required_sample_bytes": 262144
+        },
+        "strict_native": {
+          "exit_code": 2,
+          "error": "truncated EDF binary payload",
+          "frames": []
+        },
+        "authority": [
+          {
+            "path": "src/fabio/test/codecs/test_edfimage.py",
+            "sha256": "3543e6b6b5c703f19a626378c9d28d9c8a38c729934105b8b740484e1de74cb6",
+            "lines": [
+              685,
+              776
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/test/codecs/test_edfimage.py#L685-L776"
+          },
+          {
+            "path": "src/fabio/edfimage.py",
+            "sha256": "48c646050b3f43d63e15862e6ab8ae73e683b2fafe3e7dd06aa4e905dff7cf34",
+            "lines": [
+              630,
+              650
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/edfimage.py#L630-L650"
+          }
+        ],
+        "reference_behavior": {
+          "frames": [
+            {
+              "frame": 0,
+              "dtype": "float32",
+              "shape": [
+                256,
+                256
+              ],
+              "sample_sha256": "8a39d2abd3999ab73c34db2476849cddf303ce389b35826850f9a700589b4a90",
+              "all_zero": true,
+              "incomplete_data": true
+            }
+          ],
+          "incomplete_file": true
+        },
+        "original_compressed_bytes_unavailable": "Original baseline gzip envelope was deleted by upstream test cleanup. This is explicitly recreated evidence; timestamps change compressed SHA. Baseline hash/testID remain recorded and are not relabelled exact.",
+        "source_unchanged_after_audit": true
+      }
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/00_edfblocktypes/../02_multi_raw_bf_gblk/rh28a_saxs_00022_raw_binned.ehf",
+      "filename": "rh28a_saxs_00022_raw_binned.ehf",
+      "baseline_sha256": "f01226c20d1cefb4bfc0f12a16cd41e446a4a67a25c5f8cd2c1e8e62662c1c1a",
+      "baseline_event_count": 21,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk"
+      ],
+      "baseline_errors": {
+        "invalid/truncated EDF payload window": 21
+      },
+      "input_condition": "inconsistent_header",
+      "reader_action": "explicit_compatibility_closed",
+      "classification": "complete_samples_with_inconsistent_oversized_external_window",
+      "evidence": {
+        "path": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/00_edfblocktypes/../02_multi_raw_bf_gblk/rh28a_saxs_00022_raw_binned.ehf",
+        "sha256": "f01226c20d1cefb4bfc0f12a16cd41e446a4a67a25c5f8cd2c1e8e62662c1c1a",
+        "exact_baseline_bytes": true,
+        "provenance": "original_source",
+        "bytes": 33247,
+        "outer_envelope": {
+          "codec": "none",
+          "complete": true
+        },
+        "expanded_prefix_sha256": "f01226c20d1cefb4bfc0f12a16cd41e446a4a67a25c5f8cd2c1e8e62662c1c1a",
+        "expanded_prefix_bytes": 33247,
+        "header_records": [
+          {
+            "header_offset": 0,
+            "actual_header_bytes": 5772,
+            "payload_offset": 5772,
+            "general_header": true,
+            "declared_data_blocks": "20"
+          },
+          {
+            "header_offset": 5772,
+            "actual_header_bytes": 1375,
+            "payload_offset": 7147,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00001_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 7147,
+            "actual_header_bytes": 1373,
+            "payload_offset": 8520,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00002_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 8520,
+            "actual_header_bytes": 1373,
+            "payload_offset": 9893,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00003_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 9893,
+            "actual_header_bytes": 1376,
+            "payload_offset": 11269,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00004_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 11269,
+            "actual_header_bytes": 1375,
+            "payload_offset": 12644,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00005_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 12644,
+            "actual_header_bytes": 1374,
+            "payload_offset": 14018,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00006_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 14018,
+            "actual_header_bytes": 1375,
+            "payload_offset": 15393,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00007_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 15393,
+            "actual_header_bytes": 1375,
+            "payload_offset": 16768,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00008_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 16768,
+            "actual_header_bytes": 1375,
+            "payload_offset": 18143,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00009_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 18143,
+            "actual_header_bytes": 1377,
+            "payload_offset": 19520,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00010_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 19520,
+            "actual_header_bytes": 1377,
+            "payload_offset": 20897,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00011_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 20897,
+            "actual_header_bytes": 1376,
+            "payload_offset": 22273,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00012_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 22273,
+            "actual_header_bytes": 1376,
+            "payload_offset": 23649,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00013_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 23649,
+            "actual_header_bytes": 1375,
+            "payload_offset": 25024,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00014_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 25024,
+            "actual_header_bytes": 1376,
+            "payload_offset": 26400,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00015_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 26400,
+            "actual_header_bytes": 1374,
+            "payload_offset": 27774,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00016_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 27774,
+            "actual_header_bytes": 1375,
+            "payload_offset": 29149,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00017_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 29149,
+            "actual_header_bytes": 1344,
+            "payload_offset": 30493,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00018_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 30493,
+            "actual_header_bytes": 1377,
+            "payload_offset": 31870,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00019_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 29184
+          },
+          {
+            "header_offset": 31870,
+            "actual_header_bytes": 1377,
+            "payload_offset": 33247,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00020_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 140000
+          }
+        ],
+        "scan_error": null,
+        "strict_native": {
+          "exit_code": 2,
+          "error": "invalid/truncated EDF payload window",
+          "frames": []
+        },
+        "compatibility_native": {
+          "exit_code": 0,
+          "error": "",
+          "frames": [
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 0,
+              "frames": 20,
+              "outer_compression": "None",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/02_multi_raw_bf_gblk/rh28a_saxs_00022_00001_raw_binned.edf",
+              "sample_sha256": "6a9c968ffa3ff02ce731373f0751be0c135f44a4507bb35eb0b54cca12224e15",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "6e57cb1aab459ee019b33a2c1ab260fbce1bca38826557001dc63d9cdc29fb60",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 1,
+              "frames": 20,
+              "outer_compression": "None",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/02_multi_raw_bf_gblk/rh28a_saxs_00022_00002_raw_binned.edf",
+              "sample_sha256": "c544142417fcd20693be4d5ebd1dc26928bdf38ce0e0946b156a0c788b68d9f5",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "c02d246519ce9844ac7dcd827fefca794ab362e7bc5b4b0dd82a7e03dbd3cb4b",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 2,
+              "frames": 20,
+              "outer_compression": "None",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/02_multi_raw_bf_gblk/rh28a_saxs_00022_00003_raw_binned.edf",
+              "sample_sha256": "5a4f345f3945018c176979c5d513fd7531b4815a537cf4e76ccb3c9f960e1cd4",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "e399879555862d2b0057e8098fe234cf7607e35fd5ae2b656e48a2481812c920",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 3,
+              "frames": 20,
+              "outer_compression": "None",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/02_multi_raw_bf_gblk/rh28a_saxs_00022_00004_raw_binned.edf",
+              "sample_sha256": "d8d5570bd81ea2441f1fc4b933d1956985ae956fe133d945e0acf0bebe123449",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "aa607dc6ba7a47c107a31ca9641fbc2a7d329fc2f853757c0b68d16ddb19cad6",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 4,
+              "frames": 20,
+              "outer_compression": "None",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/02_multi_raw_bf_gblk/rh28a_saxs_00022_00005_raw_binned.edf",
+              "sample_sha256": "84d76caf91212a0445c5db92fb9316bf9bc1158bff8b2607ecad41a74316d772",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "7296393a98e49f4d07eded24df56b71e04b74f207873335d79ad48fe24c9eab4",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 5,
+              "frames": 20,
+              "outer_compression": "None",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/02_multi_raw_bf_gblk/rh28a_saxs_00022_00006_raw_binned.edf",
+              "sample_sha256": "a77bbcfa7d2c3a15b70b190fc9a2642bddad241a03e3baf209fd407757ca1173",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "a8348a8d5daa48fb0d9e7a085d309a8cc94f1c359227aeb09ed86ebcda220a76",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 6,
+              "frames": 20,
+              "outer_compression": "None",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/02_multi_raw_bf_gblk/rh28a_saxs_00022_00007_raw_binned.edf",
+              "sample_sha256": "c2560a1ae413df4405118c6c7901755cacf3028a2d0984c02775d84c58b0fb88",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "8d4a7206bdc28993c938cc43020cdb1efed42ced0b167f6d52b1a99862db3037",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 7,
+              "frames": 20,
+              "outer_compression": "None",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/02_multi_raw_bf_gblk/rh28a_saxs_00022_00008_raw_binned.edf",
+              "sample_sha256": "70c076166fbabe212e635af9c755e8f4a1777e2608c63d9b92e914fab1bd9b7e",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "bd9162aba420efdb077a030f4cbf90be0e84b953b2d479491f2299a2ae82a497",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 8,
+              "frames": 20,
+              "outer_compression": "None",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/02_multi_raw_bf_gblk/rh28a_saxs_00022_00009_raw_binned.edf",
+              "sample_sha256": "5194ff90ed1e823137dc6d3482a95fcd68fc1e16095f4f19c1463399f03c8ee0",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "30ffb6c814347ce4d14ae4b346afcb5db452fe9cb8a1de3d48105aa96e7587e0",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 9,
+              "frames": 20,
+              "outer_compression": "None",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/02_multi_raw_bf_gblk/rh28a_saxs_00022_00010_raw_binned.edf",
+              "sample_sha256": "3a6f68ebf24c0bb61d052793a1e4b0335ade0790f4683be88313836eecf5027a",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "42e3672af7725464c35a276cefee04fd564b821dbeedbdbe56a3c7c93f7d8b08",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 10,
+              "frames": 20,
+              "outer_compression": "None",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/02_multi_raw_bf_gblk/rh28a_saxs_00022_00011_raw_binned.edf",
+              "sample_sha256": "fbfa45a29978d2cb7e8d4c67e58ea9d80b344e4fe646b05411ad6bd0fb964d20",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "07f7943c2344e950bbeedffe6e13f02e5993a1c881842a8a9b783c243e4e858b",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 11,
+              "frames": 20,
+              "outer_compression": "None",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/02_multi_raw_bf_gblk/rh28a_saxs_00022_00012_raw_binned.edf",
+              "sample_sha256": "7fb2bbc64cbdca331c94891989d1a8c0bf84aae5763de0b1a4a3d2c2402e8303",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "f593968cd183b4fdd965bf98c8378c2616ca1692fc635a110cac570f6ad8322e",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 12,
+              "frames": 20,
+              "outer_compression": "None",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/02_multi_raw_bf_gblk/rh28a_saxs_00022_00013_raw_binned.edf",
+              "sample_sha256": "074f79777cda896a76fa03a00c2ebccb64696e3d16bc7eaa3f85c84ac26f9a60",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "4a739660733ec734a3fe2914cc6fad25bfd846bad5e6b4cbc262dd250c6a4d3b",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 13,
+              "frames": 20,
+              "outer_compression": "None",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/02_multi_raw_bf_gblk/rh28a_saxs_00022_00014_raw_binned.edf",
+              "sample_sha256": "1581a9ca95b2047362dc69fa1a7333904dc3bf131bb27dbafce39a90df7fe6c4",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "6eb69a7de512a70a47d74fc8e4ad6825656766c04b9f76cbab6c02365e879413",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 14,
+              "frames": 20,
+              "outer_compression": "None",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/02_multi_raw_bf_gblk/rh28a_saxs_00022_00015_raw_binned.edf",
+              "sample_sha256": "ed88efcf346e8a033e8667a6813c85d210176e1f967ef3be45537043476c8524",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "973363d3413b7633cefd3d02b98dc3acc3c24d4a3f7f9bc46be3b0c99d80d286",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 15,
+              "frames": 20,
+              "outer_compression": "None",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/02_multi_raw_bf_gblk/rh28a_saxs_00022_00016_raw_binned.edf",
+              "sample_sha256": "28509c7721f1d20a0ebc072e3ed0d884baf090fb9fcdd08cb6bb11f35ec03361",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "ab9d5e8a870881f0e1f5298423bdfb302f1b293233a7cb23d4a08b3dea20a14e",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 16,
+              "frames": 20,
+              "outer_compression": "None",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/02_multi_raw_bf_gblk/rh28a_saxs_00022_00017_raw_binned.edf",
+              "sample_sha256": "fb0cbcff8fff8c9d841a528116a35246134030818363e5a88dbd72c54c426249",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "f74f58c4c15fdda5231fcbae60dfd91512152ad0216b31c113d6c8f524477c87",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 17,
+              "frames": 20,
+              "outer_compression": "None",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/02_multi_raw_bf_gblk/rh28a_saxs_00022_00018_raw_binned.edf",
+              "sample_sha256": "46d81d5b7aa75d1864d1b45bc996622d436b1ac6f83bca027f95f1801605fd21",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "cff9217abf9db8073d221b242aebd43fa37410cf031add31166c75804781bec9",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 29184,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 18,
+              "frames": 20,
+              "outer_compression": "None",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/02_multi_raw_bf_gblk/rh28a_saxs_00022_00019_raw_binned.edf",
+              "sample_sha256": "fabf6304e94235e29c2e09749369e2d5f5975dbd73d2f8edc5a50d8222156ea7",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 29184,
+              "payload_source_sha256": "6fe6b2593b964afc3ddf25c2bf80558acbcb2b257af82c9388a4ce9fecc3cd2c",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 140000,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 19,
+              "frames": 20,
+              "outer_compression": "None",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/02_multi_raw_bf_gblk/rh28a_saxs_00022_00020_raw_binned.edf",
+              "sample_sha256": "4c25abfdecb5e534d68566741eb33fbc6f5c1d062558162ee0bfca6e0818b162",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 29184,
+              "payload_source_sha256": "e7dc5e5285f9baf8cef1d252803bbc1819ae0336943e858bfb517115829a4328",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            }
+          ]
+        },
+        "reference": {
+          "frames": [
+            {
+              "frame": 0,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "6a9c968ffa3ff02ce731373f0751be0c135f44a4507bb35eb0b54cca12224e15",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 1,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "c544142417fcd20693be4d5ebd1dc26928bdf38ce0e0946b156a0c788b68d9f5",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 2,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "5a4f345f3945018c176979c5d513fd7531b4815a537cf4e76ccb3c9f960e1cd4",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 3,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "d8d5570bd81ea2441f1fc4b933d1956985ae956fe133d945e0acf0bebe123449",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 4,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "84d76caf91212a0445c5db92fb9316bf9bc1158bff8b2607ecad41a74316d772",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 5,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "a77bbcfa7d2c3a15b70b190fc9a2642bddad241a03e3baf209fd407757ca1173",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 6,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "c2560a1ae413df4405118c6c7901755cacf3028a2d0984c02775d84c58b0fb88",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 7,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "70c076166fbabe212e635af9c755e8f4a1777e2608c63d9b92e914fab1bd9b7e",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 8,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "5194ff90ed1e823137dc6d3482a95fcd68fc1e16095f4f19c1463399f03c8ee0",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 9,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "3a6f68ebf24c0bb61d052793a1e4b0335ade0790f4683be88313836eecf5027a",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 10,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "fbfa45a29978d2cb7e8d4c67e58ea9d80b344e4fe646b05411ad6bd0fb964d20",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 11,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "7fb2bbc64cbdca331c94891989d1a8c0bf84aae5763de0b1a4a3d2c2402e8303",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 12,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "074f79777cda896a76fa03a00c2ebccb64696e3d16bc7eaa3f85c84ac26f9a60",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 13,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "1581a9ca95b2047362dc69fa1a7333904dc3bf131bb27dbafce39a90df7fe6c4",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 14,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "ed88efcf346e8a033e8667a6813c85d210176e1f967ef3be45537043476c8524",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 15,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "28509c7721f1d20a0ebc072e3ed0d884baf090fb9fcdd08cb6bb11f35ec03361",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 16,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "fb0cbcff8fff8c9d841a528116a35246134030818363e5a88dbd72c54c426249",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 17,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "46d81d5b7aa75d1864d1b45bc996622d436b1ac6f83bca027f95f1801605fd21",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 18,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "fabf6304e94235e29c2e09749369e2d5f5975dbd73d2f8edc5a50d8222156ea7",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 19,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "4c25abfdecb5e534d68566741eb33fbc6f5c1d062558162ee0bfca6e0818b162",
+              "all_zero": false,
+              "incomplete_data": false
+            }
+          ],
+          "incomplete_file": false
+        },
+        "all20_frames_match": true,
+        "default_contract_unchanged": true,
+        "authority": [
+          {
+            "path": "src/fabio/test/codecs/test_edfimage_expg.py",
+            "sha256": "580fe56a234919da234e82c944ba207d16b96b44e3238f6c71b31c9a05b28ac2",
+            "lines": [
+              417,
+              431
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/test/codecs/test_edfimage_expg.py#L417-L431"
+          },
+          {
+            "path": "src/fabio/edfimage.py",
+            "sha256": "48c646050b3f43d63e15862e6ab8ae73e683b2fafe3e7dd06aa4e905dff7cf34",
+            "lines": [
+              324,
+              354
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/edfimage.py#L324-L354"
+          }
+        ],
+        "source_unchanged_after_audit": true
+      }
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/00_edfblocktypes/../07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_raw_binned.ehf.gz",
+      "filename": "rh28a_saxs_00022_raw_binned.ehf.gz",
+      "baseline_sha256": "d78959a8699438561df7ef6afe6febebd61b02d86bf67b46eabc29181b4bd423",
+      "baseline_event_count": 21,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk_gz",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk_gz",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk_gz",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk_gz",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk_gz",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk_gz",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk_gz",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk_gz",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk_gz",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk_gz",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk_gz",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk_gz",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk_gz",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk_gz",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk_gz",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk_gz",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk_gz",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk_gz",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk_gz",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk_gz",
+        "fabio.test.codecs.test_edfimage_expg.EdfBlockBoundaryCases.test_edfmulti_raw_bf_gblk_gz"
+      ],
+      "baseline_errors": {
+        "invalid/truncated EDF payload window": 21
+      },
+      "input_condition": "inconsistent_header",
+      "reader_action": "explicit_compatibility_closed",
+      "classification": "complete_samples_with_inconsistent_oversized_external_window",
+      "evidence": {
+        "path": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/00_edfblocktypes/../07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_raw_binned.ehf.gz",
+        "sha256": "d78959a8699438561df7ef6afe6febebd61b02d86bf67b46eabc29181b4bd423",
+        "exact_baseline_bytes": true,
+        "provenance": "original_source",
+        "bytes": 4855,
+        "outer_envelope": {
+          "codec": "gzip",
+          "complete": true,
+          "complete_members": 1
+        },
+        "expanded_prefix_sha256": "f01226c20d1cefb4bfc0f12a16cd41e446a4a67a25c5f8cd2c1e8e62662c1c1a",
+        "expanded_prefix_bytes": 33247,
+        "header_records": [
+          {
+            "header_offset": 0,
+            "actual_header_bytes": 5772,
+            "payload_offset": 5772,
+            "general_header": true,
+            "declared_data_blocks": "20"
+          },
+          {
+            "header_offset": 5772,
+            "actual_header_bytes": 1375,
+            "payload_offset": 7147,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00001_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 7147,
+            "actual_header_bytes": 1373,
+            "payload_offset": 8520,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00002_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 8520,
+            "actual_header_bytes": 1373,
+            "payload_offset": 9893,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00003_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 9893,
+            "actual_header_bytes": 1376,
+            "payload_offset": 11269,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00004_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 11269,
+            "actual_header_bytes": 1375,
+            "payload_offset": 12644,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00005_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 12644,
+            "actual_header_bytes": 1374,
+            "payload_offset": 14018,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00006_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 14018,
+            "actual_header_bytes": 1375,
+            "payload_offset": 15393,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00007_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 15393,
+            "actual_header_bytes": 1375,
+            "payload_offset": 16768,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00008_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 16768,
+            "actual_header_bytes": 1375,
+            "payload_offset": 18143,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00009_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 18143,
+            "actual_header_bytes": 1377,
+            "payload_offset": 19520,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00010_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 19520,
+            "actual_header_bytes": 1377,
+            "payload_offset": 20897,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00011_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 20897,
+            "actual_header_bytes": 1376,
+            "payload_offset": 22273,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00012_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 22273,
+            "actual_header_bytes": 1376,
+            "payload_offset": 23649,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00013_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 23649,
+            "actual_header_bytes": 1375,
+            "payload_offset": 25024,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00014_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 25024,
+            "actual_header_bytes": 1376,
+            "payload_offset": 26400,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00015_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 26400,
+            "actual_header_bytes": 1374,
+            "payload_offset": 27774,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00016_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 27774,
+            "actual_header_bytes": 1375,
+            "payload_offset": 29149,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00017_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 29149,
+            "actual_header_bytes": 1344,
+            "payload_offset": 30493,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00018_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 28800
+          },
+          {
+            "header_offset": 30493,
+            "actual_header_bytes": 1377,
+            "payload_offset": 31870,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00019_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 29184
+          },
+          {
+            "header_offset": 31870,
+            "actual_header_bytes": 1377,
+            "payload_offset": 33247,
+            "shape": [
+              120,
+              120
+            ],
+            "dtype": "uint16",
+            "required_sample_bytes": 28800,
+            "compression_tag": "None",
+            "legacy_size": 28800,
+            "declared_inline_bytes": 0,
+            "external_filename": "rh28a_saxs_00022_00020_raw_binned.edf",
+            "external_offset": 8192,
+            "declared_external_window": 140000
+          }
+        ],
+        "scan_error": null,
+        "strict_native": {
+          "exit_code": 2,
+          "error": "invalid/truncated EDF payload window",
+          "frames": []
+        },
+        "compatibility_native": {
+          "exit_code": 0,
+          "error": "",
+          "frames": [
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 0,
+              "frames": 20,
+              "outer_compression": "Gzip",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_00001_raw_binned.edf.gz",
+              "sample_sha256": "6a9c968ffa3ff02ce731373f0751be0c135f44a4507bb35eb0b54cca12224e15",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "48664648a92464bf0b4af44f3c922aa6cb25ed7c4adfc98e6c44b0dced71a573",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 1,
+              "frames": 20,
+              "outer_compression": "Gzip",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_00002_raw_binned.edf.gz",
+              "sample_sha256": "c544142417fcd20693be4d5ebd1dc26928bdf38ce0e0946b156a0c788b68d9f5",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "feb41412977c36a4767f2ea0d771ff10a327145d2cff8d97a41dfb0d889e99e9",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 2,
+              "frames": 20,
+              "outer_compression": "Gzip",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_00003_raw_binned.edf.gz",
+              "sample_sha256": "5a4f345f3945018c176979c5d513fd7531b4815a537cf4e76ccb3c9f960e1cd4",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "3a8ec59ac5c87ebfd73aac66a34405b9d92e2c0eae591187012a37e58fbd5e8b",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 3,
+              "frames": 20,
+              "outer_compression": "Gzip",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_00004_raw_binned.edf.gz",
+              "sample_sha256": "d8d5570bd81ea2441f1fc4b933d1956985ae956fe133d945e0acf0bebe123449",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "6ae438651cb16a97814cfe7ebc413086016631c5432c911fc72d87e61cda008b",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 4,
+              "frames": 20,
+              "outer_compression": "Gzip",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_00005_raw_binned.edf.gz",
+              "sample_sha256": "84d76caf91212a0445c5db92fb9316bf9bc1158bff8b2607ecad41a74316d772",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "3e53e29e5353530bb6e0b3bdd0553a4ed5c2bb7a7a018adf354bb2decce16f35",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 5,
+              "frames": 20,
+              "outer_compression": "Gzip",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_00006_raw_binned.edf.gz",
+              "sample_sha256": "a77bbcfa7d2c3a15b70b190fc9a2642bddad241a03e3baf209fd407757ca1173",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "b04bc15bdc0ae6e92fac4d9b2c1e20c61d8a570857f0e02b81ae72a583977362",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 6,
+              "frames": 20,
+              "outer_compression": "Gzip",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_00007_raw_binned.edf.gz",
+              "sample_sha256": "c2560a1ae413df4405118c6c7901755cacf3028a2d0984c02775d84c58b0fb88",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "360890040d11739fe8d9c9aa68ffab38fed9f2958e3cc74705040b7bf750ae4d",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 7,
+              "frames": 20,
+              "outer_compression": "Gzip",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_00008_raw_binned.edf.gz",
+              "sample_sha256": "70c076166fbabe212e635af9c755e8f4a1777e2608c63d9b92e914fab1bd9b7e",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "2042d4e8f3a3f58ab242254f3baaa22a6b8a9ecf21f4333f9055cd81b5f92c9a",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 8,
+              "frames": 20,
+              "outer_compression": "Gzip",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_00009_raw_binned.edf.gz",
+              "sample_sha256": "5194ff90ed1e823137dc6d3482a95fcd68fc1e16095f4f19c1463399f03c8ee0",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "0c96e9e8a9e39f48c5c2132d01a372fc7c1a33d851cf53e92a8c7c6835277724",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 9,
+              "frames": 20,
+              "outer_compression": "Gzip",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_00010_raw_binned.edf.gz",
+              "sample_sha256": "3a6f68ebf24c0bb61d052793a1e4b0335ade0790f4683be88313836eecf5027a",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "d36f294c02f1f760fc4feec549b50a0eddeba21ee4e9182c1ffca80b1fd48266",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 10,
+              "frames": 20,
+              "outer_compression": "Gzip",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_00011_raw_binned.edf.gz",
+              "sample_sha256": "fbfa45a29978d2cb7e8d4c67e58ea9d80b344e4fe646b05411ad6bd0fb964d20",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "8c4d2fd13827a6d0b495dc8f4f1ad038ff27c668e823316dd0712d7ea5a401a0",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 11,
+              "frames": 20,
+              "outer_compression": "Gzip",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_00012_raw_binned.edf.gz",
+              "sample_sha256": "7fb2bbc64cbdca331c94891989d1a8c0bf84aae5763de0b1a4a3d2c2402e8303",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "c8e05a092d7006d9947021c3a6e7fb7a8caf7811a4217568c2cab01f0b9ba0c1",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 12,
+              "frames": 20,
+              "outer_compression": "Gzip",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_00013_raw_binned.edf.gz",
+              "sample_sha256": "074f79777cda896a76fa03a00c2ebccb64696e3d16bc7eaa3f85c84ac26f9a60",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "82eb182ec83f25508737ae3fc5910553e5c4e31ec0c0aa104288fee685f5127a",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 13,
+              "frames": 20,
+              "outer_compression": "Gzip",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_00014_raw_binned.edf.gz",
+              "sample_sha256": "1581a9ca95b2047362dc69fa1a7333904dc3bf131bb27dbafce39a90df7fe6c4",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "3390f9115ac9542646d11481bf02c0693a1ef4d0071b71658abe815f91d7b52f",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 14,
+              "frames": 20,
+              "outer_compression": "Gzip",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_00015_raw_binned.edf.gz",
+              "sample_sha256": "ed88efcf346e8a033e8667a6813c85d210176e1f967ef3be45537043476c8524",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "0a88b27d310e2062091a920e1b72a908ef146990e3d26a2afeeaf980266fedd6",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 15,
+              "frames": 20,
+              "outer_compression": "Gzip",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_00016_raw_binned.edf.gz",
+              "sample_sha256": "28509c7721f1d20a0ebc072e3ed0d884baf090fb9fcdd08cb6bb11f35ec03361",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "47e0a310f422386b0420e93ac5cffb9888278067b6d6e106d972b278eca58bbe",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 16,
+              "frames": 20,
+              "outer_compression": "Gzip",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_00017_raw_binned.edf.gz",
+              "sample_sha256": "fb0cbcff8fff8c9d841a528116a35246134030818363e5a88dbd72c54c426249",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "e45318efe15dc9342664babe6e37f065a13a855c223b5451adf66f1518f036c5",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 28800,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 17,
+              "frames": 20,
+              "outer_compression": "Gzip",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_00018_raw_binned.edf.gz",
+              "sample_sha256": "46d81d5b7aa75d1864d1b45bc996622d436b1ac6f83bca027f95f1801605fd21",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 28800,
+              "payload_source_sha256": "256a73d1dfd35ef92c5049f03163bdaff371de8a1a50bd4f1f8461f8cbf4fc03",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 29184,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 18,
+              "frames": 20,
+              "outer_compression": "Gzip",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_00019_raw_binned.edf.gz",
+              "sample_sha256": "fabf6304e94235e29c2e09749369e2d5f5975dbd73d2f8edc5a50d8222156ea7",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 29184,
+              "payload_source_sha256": "ae3442eb1cbe1df183d41e7d6ba25f2549c7c7e48ed805238ffa9b09095654c7",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            },
+            {
+              "declared_stored_bytes": 140000,
+              "dtype": "U16",
+              "external_window_policy": "UpToDeclared",
+              "frame": 19,
+              "frames": 20,
+              "outer_compression": "Gzip",
+              "payload_offset": 8192,
+              "payload_source": "/private/tmp/dioptrin-io-fabio-corpus/ehf_images2.tar.bz2__content/07_multi_raw_bf_gblk_gz/rh28a_saxs_00022_00020_raw_binned.edf.gz",
+              "sample_sha256": "4c25abfdecb5e534d68566741eb33fbc6f5c1d062558162ee0bfca6e0818b162",
+              "shape": [
+                120,
+                120
+              ],
+              "source_bytes": 37376,
+              "stored_bytes": 29184,
+              "payload_source_sha256": "ce6e90a0f3cccf194600680a8a2baf515e41702cb6a5d02e037b8fcbb2016a54",
+              "available_from_offset": 29184,
+              "required_sample_bytes": 28800,
+              "counts_match_reference": true
+            }
+          ]
+        },
+        "reference": {
+          "frames": [
+            {
+              "frame": 0,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "6a9c968ffa3ff02ce731373f0751be0c135f44a4507bb35eb0b54cca12224e15",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 1,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "c544142417fcd20693be4d5ebd1dc26928bdf38ce0e0946b156a0c788b68d9f5",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 2,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "5a4f345f3945018c176979c5d513fd7531b4815a537cf4e76ccb3c9f960e1cd4",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 3,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "d8d5570bd81ea2441f1fc4b933d1956985ae956fe133d945e0acf0bebe123449",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 4,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "84d76caf91212a0445c5db92fb9316bf9bc1158bff8b2607ecad41a74316d772",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 5,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "a77bbcfa7d2c3a15b70b190fc9a2642bddad241a03e3baf209fd407757ca1173",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 6,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "c2560a1ae413df4405118c6c7901755cacf3028a2d0984c02775d84c58b0fb88",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 7,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "70c076166fbabe212e635af9c755e8f4a1777e2608c63d9b92e914fab1bd9b7e",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 8,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "5194ff90ed1e823137dc6d3482a95fcd68fc1e16095f4f19c1463399f03c8ee0",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 9,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "3a6f68ebf24c0bb61d052793a1e4b0335ade0790f4683be88313836eecf5027a",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 10,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "fbfa45a29978d2cb7e8d4c67e58ea9d80b344e4fe646b05411ad6bd0fb964d20",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 11,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "7fb2bbc64cbdca331c94891989d1a8c0bf84aae5763de0b1a4a3d2c2402e8303",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 12,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "074f79777cda896a76fa03a00c2ebccb64696e3d16bc7eaa3f85c84ac26f9a60",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 13,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "1581a9ca95b2047362dc69fa1a7333904dc3bf131bb27dbafce39a90df7fe6c4",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 14,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "ed88efcf346e8a033e8667a6813c85d210176e1f967ef3be45537043476c8524",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 15,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "28509c7721f1d20a0ebc072e3ed0d884baf090fb9fcdd08cb6bb11f35ec03361",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 16,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "fb0cbcff8fff8c9d841a528116a35246134030818363e5a88dbd72c54c426249",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 17,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "46d81d5b7aa75d1864d1b45bc996622d436b1ac6f83bca027f95f1801605fd21",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 18,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "fabf6304e94235e29c2e09749369e2d5f5975dbd73d2f8edc5a50d8222156ea7",
+              "all_zero": false,
+              "incomplete_data": false
+            },
+            {
+              "frame": 19,
+              "dtype": "uint16",
+              "shape": [
+                120,
+                120
+              ],
+              "sample_sha256": "4c25abfdecb5e534d68566741eb33fbc6f5c1d062558162ee0bfca6e0818b162",
+              "all_zero": false,
+              "incomplete_data": false
+            }
+          ],
+          "incomplete_file": false
+        },
+        "all20_frames_match": true,
+        "default_contract_unchanged": true,
+        "authority": [
+          {
+            "path": "src/fabio/test/codecs/test_edfimage_expg.py",
+            "sha256": "580fe56a234919da234e82c944ba207d16b96b44e3238f6c71b31c9a05b28ac2",
+            "lines": [
+              417,
+              431
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/test/codecs/test_edfimage_expg.py#L417-L431"
+          },
+          {
+            "path": "src/fabio/edfimage.py",
+            "sha256": "48c646050b3f43d63e15862e6ab8ae73e683b2fafe3e7dd06aa4e905dff7cf34",
+            "lines": [
+              324,
+              354
+            ],
+            "url": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/edfimage.py#L324-L354"
+          }
+        ],
+        "source_unchanged_after_audit": true
+      }
+    }
+  ]
+}

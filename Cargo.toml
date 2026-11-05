@@ -84,3 +84,7 @@ required-features = ["tiff", "jpeg"]
 [[example]]
 name = "sparse_probe"
 required-features = ["sparse"]
+
+[[example]]
+name = "edf_rejection_probe"
+required-features = ["edf", "native"]

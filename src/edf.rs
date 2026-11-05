@@ -23,9 +23,21 @@ pub enum ExternalPayloads {
     /// is absent. Ambiguous counterparts fail; a present corrupt file is never retried.
     FollowCompressedSnapshot,
 }
+/// Interpretation of a declared external binary-file read window.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub enum ExternalWindow {
+    /// The complete declared window must exist, including any storage padding.
+    #[default]
+    Exact,
+    /// Explicit compatibility with an oversized external read request. Read up
+    /// to EOF, retaining declared/effective sizes; every sample/codec byte needed
+    /// for a complete image must still exist. Inline blocks are never shortened.
+    UpToDeclared,
+}
 #[derive(Debug, Clone)]
 pub struct Options {
     pub external_payloads: ExternalPayloads,
+    pub external_window: ExternalWindow,
     /// Directory of the original header when a caller has staged its wrapper.
     pub source_directory: Option<PathBuf>,
     /// Explicit FabIO acquisition-file relocation convention. Default false:
@@ -38,6 +50,7 @@ impl Default for Options {
     fn default() -> Self {
         Self {
             external_payloads: ExternalPayloads::Reject,
+            external_window: ExternalWindow::Exact,
             source_directory: None,
             external_basenames: false,
             transport: TransportLimits::default(),
@@ -62,7 +75,12 @@ pub struct Metadata {
     pub pixel_type: PixelType,
     pub little_endian: bool,
     pub compression: String,
+    /// Effective bytes read from the admitted source window.
     pub stored_bytes: usize,
+    /// Original declared physical/window byte count (or shape-derived default).
+    pub declared_stored_bytes: usize,
+    /// None for inline physical blocks, which always retain exact-size admission.
+    pub external_window_policy: Option<ExternalWindow>,
     /// Exact local header through its closing newline, including original padding.
     pub header: Vec<u8>,
     /// Case-normalized keys, last local assignment wins; raw bytes retain repeats.
@@ -234,7 +252,7 @@ impl Reader {
                 .checked_add(physical as u64)
                 .filter(|&n| n <= sources[0].bytes())
                 .ok_or_else(|| Error("truncated EDF binary payload".into()))?;
-            let (source, frame_offset, bytes) =
+            let (source, frame_offset, declared_bytes) =
                 if let Some(name) = fields.get("EDF_BINARYFILENAME") {
                     if options.external_payloads == ExternalPayloads::Reject {
                         return Err(Error(
@@ -334,6 +352,18 @@ impl Reader {
                 } else {
                     (0, payload, physical)
                 };
+            let external_window_policy = (source != 0).then_some(options.external_window);
+            let bytes = if external_window_policy == Some(ExternalWindow::UpToDeclared) {
+                let available = sources[source]
+                    .bytes()
+                    .checked_sub(frame_offset)
+                    .ok_or_else(|| Error("EDF external window starts beyond its source".into()))?;
+                u64::try_from(declared_bytes)
+                    .map_err(|_| Error("EDF external window exceeds u64".into()))?
+                    .min(available) as usize
+            } else {
+                declared_bytes
+            };
             if bytes == 0
                 || bytes > limits.encoded_bytes
                 || (plain && bytes < decoded)
@@ -349,6 +379,8 @@ impl Reader {
                 little_endian,
                 compression,
                 stored_bytes: bytes,
+                declared_stored_bytes: declared_bytes,
+                external_window_policy,
                 header,
                 fields,
                 general_header: active_general,
