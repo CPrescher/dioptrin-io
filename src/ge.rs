@@ -165,6 +165,35 @@ impl Reader {
                         "GE EDF metadata contradicts APS storage convention".into(),
                     ));
                 }
+                for (key, value) in &edf_fields {
+                    let normalized = key.to_ascii_lowercase();
+                    if normalized == "compression" {
+                        if !matches!(value.trim().to_ascii_lowercase().as_str(), "none" | "no") {
+                            return Err(Error(
+                                "compressed APS EDF-in-GE storage is unsupported".into(),
+                            ));
+                        }
+                    } else if normalized == "edf_datablockid" {
+                        let parts: Vec<_> = value.trim().split('.').collect();
+                        if parts.len() != 3
+                            || parts[0].is_empty()
+                            || !parts[0].bytes().all(|b| b.is_ascii_digit())
+                            || !parts[1].eq_ignore_ascii_case("Image")
+                            || !parts[2].eq_ignore_ascii_case("Psd")
+                        {
+                            return Err(Error("unsupported APS EDF-in-GE data-block kind".into()));
+                        }
+                    } else if normalized.starts_with("edf_binaryfile")
+                        || normalized == "edf_dataformatversion"
+                        || (normalized.starts_with("dim_")
+                            && !matches!(normalized.as_str(), "dim_1" | "dim_2"))
+                        || normalized == "edf_binarysize"
+                    {
+                        return Err(Error(format!(
+                            "unsupported APS EDF-in-GE layout declaration {key}"
+                        )));
+                    }
+                }
                 Some(number("Num_Images")?)
             }
         };

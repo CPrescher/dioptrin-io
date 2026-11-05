@@ -28,7 +28,12 @@ frame strides, multiple regions, region padding and per-frame metadata bytes;
 folding padding or metadata into counts. `read_frame_into` selects region zero.
 A bounded gap between frame payloads and the footer may contain original
 non-pixel data; it is never interpreted as counts. Multiple repeated Region
-blocks (`count != 1`) remain unsupported.
+blocks (`count != 1`) remain unsupported. The XML source must have one
+`SpeFormat/DataFormat/DataBlock type="Frame"` layout in the known SPE2009
+namespace (or an unnamespaced legacy document). Duplicate/misplaced frame blocks,
+foreign structural namespaces and unknown Frame/Region children are rejected;
+metadata with similarly named blocks cannot redirect frame offsets. Explicit
+per-region pixel formats must agree with the frame and binary header.
 
 SPE metadata includes the original file version, dtype code, region shapes and
 byte offsets, primary ROI, selected common exposure/device/time/grating fields,
@@ -56,7 +61,14 @@ big-endian 11 11 are admitted. The original stamp remains in both raw and typed
 metadata even under explicit override.
 
 All pinned FabIO MRC modes are supported: 0=i8, 1=i16, 2=f32, 3=CI16 pairs,
-4=C32 pairs, 6=u16. The original raw main header and NSYMBT extended header remain
+4=C32 pairs, 6=u16. For mode0 an explicit numeric IMOD stamp1146047817
+and flags are decoded in the already selected byte order: flag1 selects signed
+bytes, and a clear flag1 selects u8. Original mode/header/flags remain metadata.
+This follows the [IMOD header contract](https://bio3d.colorado.edu/imod/doc/mrc_format.txt)
+without guessing from sample values. Packed-byte flag16 is unsupported and fails;
+a recognizable stamp in the opposite order fails rather than changing byte order.
+Without an explicit IMOD stamp, mode0 retains the standard i8 interpretation.
+The original raw main header and NSYMBT extended header remain
 available, along with the existing library's typed header. MAPC/MAPR/MAPS,
 origin and cell metadata do not reorient sections. Exact stack length is checked;
 negative dimensions/NSYMBT, unknown modes, truncation and unexplained trailing
@@ -79,7 +91,10 @@ comes from its original header. Supported tag descriptors include scalar
 short/long/ushort/ulong/float/double/bool/char/octet, UTF16 strings, structs,
 arrays, nested arrays and arrays of structs. Raw descriptors and small payloads
 remain in hierarchical tags; large arrays retain checked source ranges.
-`read_tag_raw` explicitly reads a chosen tag under the metadata budget. Original
+`read_tag_raw` explicitly reads a chosen tag under the metadata budget. Image-associated
+Data must have supported scalar-array storage and complete Dimensions; an
+unsupported nested/structured main image fails instead of selecting an earlier
+thumbnail. Non-image metadata arrays remain original tag payloads. Original
 name bytes survive, including unnamed entries and non-ASCII names. Directory
 entry count, depth, descriptor words/nesting, shape products and all payload
 ranges have limits. Dimensions are indexed once rather than scanning the entire

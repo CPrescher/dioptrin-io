@@ -28,6 +28,8 @@ pub struct Metadata {
     pub mode: i32,
     pub little_endian: bool,
     pub byte_order_policy: ByteOrder,
+    /// Explicit IMOD extension flags, decoded in the selected header byte order.
+    pub imod_flags: Option<u32>,
     /// Original 1024-byte header, including source stamp and labels.
     pub header: Vec<u8>,
     /// Typed header decoded by the permissively licensed existing MRC library.
@@ -106,7 +108,32 @@ impl Reader {
         if frames > limits.frames {
             return Err(Error("MRC stack exceeds frame limit".into()));
         }
+        let integer = |offset| {
+            let word = header[offset..offset + 4].try_into().unwrap();
+            if little {
+                u32::from_le_bytes(word)
+            } else {
+                u32::from_be_bytes(word)
+            }
+        };
+        let imod_stamp = integer(152);
+        let imod_flags = if imod_stamp == 1146047817 {
+            Some(integer(156))
+        } else {
+            if &header[152..156] == b"IMOD" || &header[152..156] == b"DOMI" {
+                return Err(Error(
+                    "MRC IMOD stamp contradicts selected byte order".into(),
+                ));
+            }
+            None
+        };
+        if parsed.mode == 0 && imod_flags.is_some_and(|flags| flags & 16 != 0) {
+            return Err(Error(
+                "unsupported MRC IMOD packed 4-bit byte layout".into(),
+            ));
+        }
         let pixel_type = match parsed.mode {
+            0 if imod_flags.is_some_and(|flags| flags & 1 == 0) => PixelType::U8,
             0 => PixelType::I8,
             1 => PixelType::I16,
             2 => PixelType::F32,
@@ -149,6 +176,7 @@ impl Reader {
             mode: parsed.mode,
             little_endian: little,
             byte_order_policy: policy,
+            imod_flags,
             header: header.to_vec(),
             parsed,
             extended_header,

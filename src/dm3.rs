@@ -250,12 +250,23 @@ impl Reader {
             .enumerate()
             .filter(|(_, t)| t.path.last().is_some_and(|p| p == "Data"))
         {
-            let Some((pixel_type, count)) = parse_type(&tag.descriptor)?.scalar_array() else {
-                continue;
-            };
             let parent = &tag.path[..tag.path.len() - 1];
+            let associated_dimensions = dimension_tags.get(parent);
+            if parent.last().is_none_or(|name| name != "ImageData")
+                && associated_dimensions.is_none()
+            {
+                continue;
+            }
+            let Some((pixel_type, count)) = parse_type(&tag.descriptor)?.scalar_array() else {
+                return Err(Error(
+                    "unsupported DM3 image-associated Data array layout; no thumbnail substitution"
+                        .into(),
+                ));
+            };
+            let associated_dimensions = associated_dimensions
+                .ok_or_else(|| Error("DM3 ImageData/Data is missing Dimensions".into()))?;
             let mut dimensions: Vec<(usize, usize)> = Vec::new();
-            for dimension in dimension_tags.get(parent).into_iter().flatten() {
+            for dimension in associated_dimensions {
                 let ordinal = dimension
                     .path
                     .last()
@@ -268,7 +279,7 @@ impl Reader {
             }
             dimensions.sort_by_key(|d| d.0);
             if dimensions.is_empty() {
-                continue;
+                return Err(Error("DM3 image Data has no Dimensions".into()));
             }
             if dimensions.len() > 32
                 || dimensions

@@ -27,7 +27,12 @@ number of complete 2048x2048-u16 frames from source length. It does not repair
 partially blank/nonzero metadata. `ApsEdf8192` retains the original 8192-byte EDF
 header and Latin-1 assignments. Num_Images must match the complete source and
 header size/dimensions/type/byte-order/per-frame Size must agree with that APS
-layout. Other EDF-in-GE layouts require a separately established source contract.
+layout. Explicit Compression declarations must be NONE/NO; compressed data,
+external binary-file declarations, general/unknown data-block kinds, declared
+binary size variants and dimensions beyond two are rejected. The established
+`number.Image.Psd` APS header identifier remains supported. These fields cannot be
+ignored while compressed/foreign bytes are exposed as raw counts. Other
+EDF-in-GE layouts require a separately established source contract.
 General EDF reading remains the separate EDF reader's responsibility.
 
 The adapter retains provenance of derived blank/EDF layout fields through

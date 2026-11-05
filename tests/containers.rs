@@ -375,3 +375,208 @@ fn malformed_layouts_fail_before_exposing_counts() {
     assert!(mrc::Reader::open(&path, Limits::default()).is_err());
     std::fs::remove_dir_all(directory).unwrap();
 }
+
+#[test]
+fn spe_xml_frame_layout_cannot_be_selected_from_unrelated_or_duplicate_blocks() {
+    let temp = std::env::temp_dir().join(format!("dioptrin-spe-layout-{}", std::process::id()));
+    std::fs::create_dir_all(&temp).unwrap();
+    let path = temp.join("layout.spe");
+    let original = std::fs::read(fixture("spe-v3-multiple-regions.spe")).unwrap();
+    let offset = u64::from_le_bytes(original[678..686].try_into().unwrap()) as usize;
+    let xml = std::str::from_utf8(&original[offset..]).unwrap();
+    let fake = "<DataBlock type=\"Frame\" count=\"2\" pixelFormat=\"MonochromeUnsigned16\" size=\"12\" stride=\"12\"><DataBlock type=\"Region\" count=\"1\" width=\"3\" height=\"2\" size=\"12\" stride=\"12\"/></DataBlock>";
+    let cases = [
+        xml.replace(
+            "<SpeFormat>",
+            &format!("<SpeFormat><Ignored>{fake}</Ignored>"),
+        ),
+        xml.replace("</DataFormat>", &format!("{fake}</DataFormat>")),
+        xml.replace(
+            "</DataFormat>",
+            &format!("</DataFormat><DataFormat>{fake}</DataFormat>"),
+        ),
+        xml.replace("<DataFormat>", "<Ignored>")
+            .replace("</DataFormat>", "</Ignored>"),
+        xml.replace(
+            "type=\"Region\" count=\"1\" width=\"3\"",
+            "type=\"Region\" pixelFormat=\"MonochromeSigned16\" count=\"1\" width=\"3\"",
+        ),
+        xml.replace("<SpeFormat>", "<SpeFormat xmlns=\"urn:unrelated\">"),
+    ];
+    for text in cases {
+        let mut bytes = original[..offset].to_vec();
+        bytes.extend(text.as_bytes());
+        std::fs::write(&path, bytes).unwrap();
+        assert!(
+            spe::Reader::open(&path, Limits::default()).is_err(),
+            "{text}"
+        );
+    }
+    // The known source namespace remains supported and real frame2 keeps its ROI counts.
+    let text = xml.replace(
+        "<SpeFormat>",
+        "<SpeFormat xmlns=\"http://www.princetoninstruments.com/spe/2009\">",
+    );
+    let mut bytes = original[..offset].to_vec();
+    bytes.extend(text.as_bytes());
+    std::fs::write(&path, bytes).unwrap();
+    let reader = spe::Reader::open(&path, Limits::default()).unwrap();
+    let mut buffer = FrameBuffer::default();
+    reader.read_frame_into(1, &mut buffer).unwrap();
+    assert_eq!(
+        buffer.pixels(),
+        Some(&PixelBuffer::U16(vec![6, 7, 8, 9, 10, 11]))
+    );
+    std::fs::remove_dir_all(temp).unwrap();
+}
+
+#[test]
+fn mrc_explicit_imod_signedness_is_decoded_in_selected_byte_order() {
+    let temp = std::env::temp_dir().join(format!("dioptrin-mrc-imod-{}", std::process::id()));
+    std::fs::create_dir_all(&temp).unwrap();
+    let path = temp.join("imod.mrc");
+    for little in [true, false] {
+        let original = std::fs::read(fixture(if little {
+            "mrc-mode0-le.mrc"
+        } else {
+            "mrc-mode0-be.mrc"
+        }))
+        .unwrap();
+        for flags in [0u32, 1, 2, 3] {
+            let mut bytes = original.clone();
+            bytes[152..156].copy_from_slice(&if little {
+                1146047817u32.to_le_bytes()
+            } else {
+                1146047817u32.to_be_bytes()
+            });
+            bytes[156..160].copy_from_slice(&if little {
+                flags.to_le_bytes()
+            } else {
+                flags.to_be_bytes()
+            });
+            std::fs::write(&path, &bytes).unwrap();
+            let reader = mrc::Reader::open(&path, Limits::default()).unwrap();
+            assert_eq!(reader.metadata().mode, 0);
+            assert_eq!(reader.metadata().imod_flags, Some(flags));
+            assert_eq!(reader.metadata().header, &bytes[..1024]);
+            assert_eq!(reader.metadata().parsed.extra.as_slice(), &bytes[96..196]);
+            let mut buffer = FrameBuffer::default();
+            reader.read_frame_into(0, &mut buffer).unwrap();
+            if flags & 1 == 0 {
+                assert_eq!(
+                    buffer.pixels(),
+                    Some(&PixelBuffer::U8(vec![0, 128, 127, 1, 2, 3]))
+                );
+            } else {
+                assert_eq!(
+                    buffer.pixels(),
+                    Some(&PixelBuffer::I8(vec![0, -128, 127, 1, 2, 3]))
+                );
+            }
+        }
+        let mut bytes = original.clone();
+        bytes[152..156].copy_from_slice(&if little {
+            1146047817u32.to_le_bytes()
+        } else {
+            1146047817u32.to_be_bytes()
+        });
+        bytes[156..160].copy_from_slice(&if little {
+            16u32.to_le_bytes()
+        } else {
+            16u32.to_be_bytes()
+        });
+        std::fs::write(&path, &bytes).unwrap();
+        assert!(mrc::Reader::open(&path, Limits::default()).is_err());
+        // A recognizable extension encoded in the opposite byte order is rejected,
+        // rather than guessing flags or silently returning the standard signed type.
+        bytes[152..156].reverse();
+        bytes[156..160].fill(0);
+        std::fs::write(&path, &bytes).unwrap();
+        assert!(mrc::Reader::open(&path, Limits::default()).is_err());
+    }
+    std::fs::remove_dir_all(temp).unwrap();
+}
+
+#[test]
+fn dm3_unsupported_main_image_layout_cannot_substitute_a_prior_thumbnail() {
+    fn tag(name: &str, descriptor: &[u32], raw: &[u8]) -> Vec<u8> {
+        let mut output = vec![21];
+        output.extend((name.len() as u16).to_be_bytes());
+        output.extend(name.as_bytes());
+        output.extend(b"%%%%");
+        output.extend((descriptor.len() as u32).to_be_bytes());
+        for value in descriptor {
+            output.extend(value.to_be_bytes());
+        }
+        output.extend(raw);
+        output
+    }
+    fn group(name: &str, entries: &[Vec<u8>]) -> Vec<u8> {
+        let mut output = vec![20];
+        output.extend((name.len() as u16).to_be_bytes());
+        output.extend(name.as_bytes());
+        output.extend([1, 0]);
+        output.extend((entries.len() as u32).to_be_bytes());
+        for entry in entries {
+            output.extend(entry);
+        }
+        output
+    }
+    let thumbnail = group(
+        "",
+        &[group(
+            "ImageData",
+            &[
+                tag("Data", &[20, 4, 1], &999u16.to_le_bytes()),
+                group(
+                    "Dimensions",
+                    &[
+                        tag("", &[5], &1u32.to_le_bytes()),
+                        tag("", &[5], &1u32.to_le_bytes()),
+                    ],
+                ),
+            ],
+        )],
+    );
+    let temp =
+        std::env::temp_dir().join(format!("dioptrin-dm3-substitution-{}", std::process::id()));
+    std::fs::create_dir_all(&temp).unwrap();
+    let path = temp.join("main.dm3");
+    let mut raw = Vec::new();
+    for value in [10i32, 20, 30, 40, 50, 60] {
+        raw.extend(value.to_le_bytes());
+    }
+    for descriptor in [&[20, 20, 3, 3, 2][..], &[20, 15, 0, 2, 0, 3, 0, 3, 3][..]] {
+        let main = group(
+            "",
+            &[group(
+                "ImageData",
+                &[
+                    tag("Data", descriptor, &raw),
+                    group(
+                        "Dimensions",
+                        &[
+                            tag("", &[5], &3u32.to_le_bytes()),
+                            tag("", &[5], &2u32.to_le_bytes()),
+                        ],
+                    ),
+                ],
+            )],
+        );
+        let mut body = vec![1, 0];
+        body.extend(1u32.to_be_bytes());
+        body.extend(group("ImageList", &[thumbnail.clone(), main]));
+        let mut bytes = 3u32.to_be_bytes().to_vec();
+        bytes.extend((body.len() as u32 + 4).to_be_bytes());
+        bytes.extend(1u32.to_be_bytes());
+        bytes.extend(body);
+        bytes.extend([0; 8]);
+        std::fs::write(&path, bytes).unwrap();
+        let error = dm3::Reader::open(&path, Limits::default())
+            .err()
+            .unwrap()
+            .to_string();
+        assert!(error.contains("image-associated Data"), "{error}");
+    }
+    std::fs::remove_dir_all(temp).unwrap();
+}

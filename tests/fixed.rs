@@ -318,3 +318,58 @@ fn actual_upstream_ge_and_test_generated_pixi_files() {
         );
     }
 }
+
+#[test]
+fn aps_edf_cannot_silently_decode_compressed_external_or_volume_storage_as_raw() {
+    let temp = temporary("edf-layout");
+    let path = temp.join("image.ge");
+    let base = "{ EDF_HeaderSize = 8192 ; Num_Images = 1 ; DataType = UnsignedShort ; ByteOrder = LowByteFirst ; Dim_1 = 2048 ; Dim_2 = 2048 ; Size = 8388608 ; ";
+    for declaration in [
+        "Compression = GZIP ;",
+        "compression = ZLIB ;",
+        "Compression = BYTE_OFFSET ;",
+        "EDF_BinaryFileName = other.bin ;",
+        "EDF_BinaryFilePosition = 64 ;",
+        "EDF_BinarySize = 8388608 ;",
+        "Dim_3 = 2 ;",
+        "Dim_4 = 2 ;",
+        "EDF_DataBlockID = 0.General ;",
+    ] {
+        let text = format!("{base}{declaration}");
+        let mut header = vec![b' '; 8192];
+        header[..text.len()].copy_from_slice(text.as_bytes());
+        header[8191] = b'}';
+        let mut file = std::fs::File::create(&path).unwrap();
+        file.write_all(&header).unwrap();
+        file.set_len(8192 + 8388608).unwrap();
+        drop(file);
+        assert!(
+            ge::Reader::open(&path, Limits::default()).is_err(),
+            "{declaration}"
+        );
+    }
+    for declaration in [
+        "Compression = NONE ;",
+        "Compression = No ;",
+        "EDF_DataBlockID = 1.Image.Psd ;",
+    ] {
+        let text = format!("{base}{declaration}");
+        let mut header = vec![b' '; 8192];
+        header[..text.len()].copy_from_slice(text.as_bytes());
+        header[8191] = b'}';
+        let mut file = std::fs::File::create(&path).unwrap();
+        file.write_all(&header).unwrap();
+        file.set_len(8192 + 8388608).unwrap();
+        file.seek(SeekFrom::Start(8192)).unwrap();
+        file.write_all(&[255, 255, 0, 128]).unwrap();
+        drop(file);
+        let reader = ge::Reader::open(&path, Limits::default()).unwrap();
+        let mut buffer = FrameBuffer::default();
+        reader.read_frame_into(0, &mut buffer).unwrap();
+        let PixelBuffer::U16(pixels) = buffer.pixels().unwrap() else {
+            panic!("type")
+        };
+        assert_eq!(&pixels[..2], &[65535, 32768]);
+    }
+    std::fs::remove_dir_all(temp).unwrap();
+}

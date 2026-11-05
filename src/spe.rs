@@ -173,10 +173,50 @@ impl Reader {
                 },
             )
             .map_err(|e| Error(format!("invalid SPE XML: {e}")))?;
-            let frame = document
+            let root = document.root_element();
+            let namespace = root.tag_name().namespace();
+            if root.tag_name().name() != "SpeFormat"
+                || !matches!(
+                    namespace,
+                    None | Some("http://www.princetoninstruments.com/spe/2009")
+                )
+            {
+                return Err(Error("unsupported SPE XML root/namespace".into()));
+            }
+            let structural = |node: roxmltree::Node<'_, '_>, name: &str| {
+                node.is_element()
+                    && node.tag_name().name() == name
+                    && node.tag_name().namespace() == namespace
+            };
+            let mut formats = root.children().filter(|&n| structural(n, "DataFormat"));
+            let format = formats
+                .next()
+                .ok_or_else(|| Error("missing SPE XML DataFormat".into()))?;
+            if formats.next().is_some() {
+                return Err(Error("multiple SPE XML DataFormat elements".into()));
+            }
+            let mut blocks = format.children().filter(|n| n.is_element());
+            let frame = blocks
+                .next()
+                .filter(|&n| structural(n, "DataBlock") && n.attribute("type") == Some("Frame"))
+                .ok_or_else(|| Error("SPE XML requires one Frame DataBlock".into()))?;
+            if blocks.next().is_some() {
+                return Err(Error(
+                    "multiple/unsupported SPE XML DataFormat blocks".into(),
+                ));
+            }
+            // DataBlock-like metadata cannot redirect the image byte layout.
+            if document
                 .descendants()
-                .find(|n| n.has_tag_name("DataBlock") && n.attribute("type") == Some("Frame"))
-                .ok_or_else(|| Error("missing SPE XML frame DataBlock".into()))?;
+                .filter(|n| {
+                    n.is_element()
+                        && n.tag_name().name() == "DataBlock"
+                        && n.attribute("type") == Some("Frame")
+                })
+                .any(|n| n != frame)
+            {
+                return Err(Error("ambiguous/misplaced SPE XML Frame DataBlock".into()));
+            }
             let number = |node: roxmltree::Node<'_, '_>, key: &str| -> Result<usize, Error> {
                 node.attribute(key)
                     .ok_or_else(|| Error(format!("missing SPE XML {key}")))?
@@ -205,10 +245,21 @@ impl Reader {
             }
             regions.clear();
             let mut offset = 0usize;
-            for region in frame
-                .children()
-                .filter(|n| n.has_tag_name("DataBlock") && n.attribute("type") == Some("Region"))
-            {
+            for region in frame.children().filter(|n| n.is_element()) {
+                if !structural(region, "DataBlock")
+                    || region.attribute("type") != Some("Region")
+                    || region.children().any(|n| n.is_element())
+                {
+                    return Err(Error(
+                        "unsupported SPE XML Frame/Region child layout".into(),
+                    ));
+                }
+                if region
+                    .attribute("pixelFormat")
+                    .is_some_and(|s| s != expected_format)
+                {
+                    return Err(Error("SPE Region pixel type contradicts frame".into()));
+                }
                 if regions.len() >= limits.frames {
                     return Err(Error("SPE region count exceeds limit".into()));
                 }
