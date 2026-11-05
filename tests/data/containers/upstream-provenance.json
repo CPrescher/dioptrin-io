@@ -1,0 +1,136 @@
+{
+  "directory": "/private/tmp/dioptrin-io-fabio-corpus",
+  "fabio_version": "2026.6.0",
+  "fabio_commit": "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece",
+  "files": {
+    "v2.SPE": {
+      "format": "spe",
+      "sha256": "b968f2e3aba7dd1f03d56f4ca61e640ff498fdabdf7cb653a6c8163858754bc7",
+      "shape": [
+        1,
+        100,
+        1340
+      ],
+      "dtype": "int32",
+      "frame_sha256": [
+        "467a5c9e0cf5d64e4de80a5af611265ea0c4c6bcd1ecc9fe08ee7533eec3e2ee"
+      ]
+    },
+    "v2_converted.SPE": {
+      "format": "spe",
+      "sha256": "c085383602fb89fa282df67eacba2ff8c3bde23367c236bbec93b78b7760e832",
+      "shape": [
+        1,
+        100,
+        1340
+      ],
+      "dtype": "float32",
+      "frame_sha256": [
+        "f1eea3dac5619b6a47ef4f56e21e6e33b810067862372b1fe8ca05a897d2964b"
+      ]
+    },
+    "v3.spe": {
+      "format": "spe",
+      "sha256": "1c07e51cfe5554a65487c80a19a356f01093b1e1e2fa44780d62c6544e2025db",
+      "shape": [
+        1,
+        100,
+        1024
+      ],
+      "dtype": "uint16",
+      "frame_sha256": [
+        "0bdee2b3d6d79b0e8673730e056993355a23df6734102c8566d24fcec246266c"
+      ]
+    },
+    "v3_custom_roi.spe": {
+      "format": "spe",
+      "sha256": "95033b536ed9b54f1dc00eb409d7896f1ae178d182e99ec23df38bffb1399822",
+      "shape": [
+        1,
+        50,
+        500
+      ],
+      "dtype": "uint16",
+      "frame_sha256": [
+        "118cabbe46821761920fd0cf60a71fa85e255fb682078c642be60b4f5f3f5bfb"
+      ]
+    },
+    "v3_2frames.spe": {
+      "format": "spe",
+      "sha256": "7b55fe54ec0c9db8b5f97d8c76abb138c3830baad9661411debb7842270838ee",
+      "shape": [
+        2,
+        255,
+        1024
+      ],
+      "dtype": "float32",
+      "frame_sha256": [
+        "110b80d7fe0ae30ce333cd9482fd192221591f94bc036359b70709a815f77469",
+        "8589e69ba529b36c1c88488e714843398af610f28e9635e1f302c69399161d45"
+      ]
+    },
+    "EMD-3001.map": {
+      "format": "mrc",
+      "sha256": "c423c29e4704aaadcb6c10c954295f826de86ca7f6e3fb8a479a73da9949e32a",
+      "shape": [
+        25,
+        43,
+        73
+      ],
+      "dtype": "float32",
+      "frame_sha256": [
+        "1477a764630092477a834cdcde49c7f59e0dfa209d8dba01c80ccc13b1543783",
+        "be46e2d71d42980e73a4ad0571e7ada4ed136a741a0d204246db9726f2b2d8d0",
+        "50a68d36f47714563481421dbc22df4e73dce54ed21838bb597d3631a3c96883",
+        "2b7d13a5f1ff4d17ee7218b439af553352a34716d944fc0eab59250e5755c4b1",
+        "3419b5d58b6623d0223b8b05982964399bff61afe60018bd5e907fa65ac48ecb",
+        "9be1daebf77f7365a99b358fb641f1a86c9cd2814569740d0a4b445ca4cf4ac5",
+        "09be23c8b5c469e13b6b8e27cf444e4abd3d976b3666d49901461b19d6db1b6a",
+        "f833ba267e818bbd679ca57888cba8179325422f20e9dcafbe58e76be73bc219",
+        "0481f52e876eebc2094240eef99f6b69b9d9f4e03764bbdccbcfe13bd02813a1",
+        "2c57611d8b0de23f3b207cd0f186070deeef21f81acd4df1cc61a1ebc15c0f4a",
+        "37ba563cfc48f2754a32e489ad47542dde62d72ed4a8da8b72e588aed1b1cea8",
+        "73de4854c7939d5493626b6e77b8de9362a52f398af8909f620051b23c424aa0",
+        "1477a764630092477a834cdcde49c7f59e0dfa209d8dba01c80ccc13b1543783",
+        "be46e2d71d42980e73a4ad0571e7ada4ed136a741a0d204246db9726f2b2d8d0",
+        "50a68d36f47714563481421dbc22df4e73dce54ed21838bb597d3631a3c96883",
+        "2b7d13a5f1ff4d17ee7218b439af553352a34716d944fc0eab59250e5755c4b1",
+        "3419b5d58b6623d0223b8b05982964399bff61afe60018bd5e907fa65ac48ecb",
+        "9be1daebf77f7365a99b358fb641f1a86c9cd2814569740d0a4b445ca4cf4ac5",
+        "09be23c8b5c469e13b6b8e27cf444e4abd3d976b3666d49901461b19d6db1b6a",
+        "f833ba267e818bbd679ca57888cba8179325422f20e9dcafbe58e76be73bc219",
+        "0481f52e876eebc2094240eef99f6b69b9d9f4e03764bbdccbcfe13bd02813a1",
+        "2c57611d8b0de23f3b207cd0f186070deeef21f81acd4df1cc61a1ebc15c0f4a",
+        "37ba563cfc48f2754a32e489ad47542dde62d72ed4a8da8b72e588aed1b1cea8",
+        "73de4854c7939d5493626b6e77b8de9362a52f398af8909f620051b23c424aa0",
+        "1477a764630092477a834cdcde49c7f59e0dfa209d8dba01c80ccc13b1543783"
+      ]
+    },
+    "0p67_5s_0000.mrc": {
+      "format": "mrc",
+      "sha256": "1438d6a48e3d6c9086d0d5d24ab677b88564a7208276a146e543ff0309fd29b3",
+      "shape": [
+        1,
+        2048,
+        2048
+      ],
+      "dtype": "float32",
+      "frame_sha256": [
+        "c5884fd209f26cdf185fb78bdbeccad8bdefb80fba44a87363c4cb5c4f18266c"
+      ]
+    },
+    "ref_d20x_310mm.dm3": {
+      "format": "dm3",
+      "sha256": "a64485c873062c86a3b7e9f981003cc71136b54c0bb4785436508970a4308543",
+      "shape": [
+        1,
+        2048,
+        2048
+      ],
+      "dtype": "float32",
+      "frame_sha256": [
+        "8f7049bd0721f005c559b924b6d68c15c53383e4ed317eb289359a4ab58f91f3"
+      ]
+    }
+  }
+}

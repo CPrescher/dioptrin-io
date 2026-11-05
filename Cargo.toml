@@ -16,6 +16,7 @@ cbf = ["dep:md-5"]
 edf = ["dep:bytemuck", "dep:flate2", "dep:bzip2", "dep:tempfile"]
 native = ["dep:bytemuck"]
 xsd = ["native", "dep:roxmltree", "dep:data-encoding", "dep:md-5"]
+containers = ["native", "dep:roxmltree", "dep:mrc-backend"]
 wrappers = ["native", "tiff", "cbf", "edf", "dep:tempfile"]
 
 [dependencies]
@@ -30,8 +31,9 @@ md-5 = { version = "0.10", optional = true }
 flate2 = { version = "1.1", optional = true, default-features = false, features = ["rust_backend"] }
 bzip2 = { version = "0.6", optional = true }
 tempfile = { version = "3.27", optional = true }
-
 roxmltree = { version = "=0.21.2", optional = true }
+mrc-backend = { package = "mrc", version = "=0.8.0", optional = true, default-features = false }
+
 data-encoding = { version = "=2.11.1", optional = true }
 
 [dev-dependencies]
