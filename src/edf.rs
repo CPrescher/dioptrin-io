@@ -136,13 +136,14 @@ impl Reader {
             }
             blocks += 1;
             input.seek(SeekFrom::Start(offset))?;
-            // Classic acquisition files may finish at the next 512-byte boundary
-            // with zero-filled storage padding. Admit only that exact suffix.
+            // Classic acquisition files may finish with up to one block of
+            // zero/ASCII-space storage padding, including leading-newline variants.
+            // Retain its size explicitly; never ignore non-padding tail records.
             let remaining = sources[0].bytes() - offset;
-            if !pages.is_empty() && remaining < 512 && sources[0].bytes().is_multiple_of(512) {
+            if !pages.is_empty() && remaining < 512 {
                 let mut tail = vec![0; remaining as usize];
                 input.read_exact(&mut tail)?;
-                if tail.iter().all(|&b| b == 0) {
+                if tail.iter().all(|&b| b == 0 || b.is_ascii_whitespace()) {
                     trailing_padding = tail.len();
                     break;
                 }

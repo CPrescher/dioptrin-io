@@ -178,7 +178,7 @@ fn padded_compressed_slots_preserve_exact_decoded_size_and_crc() {
 }
 
 #[test]
-fn only_zero_filled_final_alignment_padding_is_admitted() {
+fn only_bounded_zero_and_whitespace_final_padding_is_admitted() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("aligned.edf");
     let mut bytes = block(
@@ -198,6 +198,9 @@ fn only_zero_filled_final_alignment_padding_is_admitted() {
         Some(&PixelBuffer::U16(vec![0, 65535, 32769]))
     );
     drop(reader);
+    bytes.extend_from_slice(b" \n");
+    fs::write(&path, &bytes).unwrap();
+    assert!(Reader::open(&path, Limits::default()).is_ok());
     bytes[511] = 1;
     fs::write(&path, bytes).unwrap();
     assert!(Reader::open(&path, Limits::default()).is_err());

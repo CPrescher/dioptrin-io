@@ -110,8 +110,8 @@ The EDF reader now retains general headers, raw repeated fields and the actual
 closing-newline boundary, including CRLF and boundaries crossing a 512-byte
 block. Local fields override inherited general fields. Compressed storage slots
 may contain encoded padding, while decoded sample counts and checksums remain
-strict. A final zero-filled suffix ending at the next 512-byte boundary is
-reported as storage padding rather than another frame.
+strict. A final suffix shorter than 512 bytes containing only zeros and ASCII
+whitespace is reported as storage padding rather than another frame.
 
 External payloads are rejected by default. `edf::Options` explicitly selects
 snapshot following, optional basename relocation and optional `.gz`/`.bz2`
