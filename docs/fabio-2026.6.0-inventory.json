@@ -1,0 +1,605 @@
+{
+  "reference": {
+    "package": "FabIO",
+    "version": "2026.6.0",
+    "tag": "v2026.06",
+    "commit": "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece",
+    "registry_entries": 36,
+    "unique_registered_codecs": 35,
+    "registry_source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/fabioformats.py",
+    "registry_sha256": "f983ecb1ffbebe3de851f5ed7d51b2e1eaa439d4a1c991c9afdb52c917619889"
+  },
+  "scope": "All default readers, aliases, explicit raw input, format discovery, source types/headers, subformats, compression and stack semantics. No format-level parity claim without independent fixtures. Write/conversion APIs are out of scope.",
+  "cross_cutting_targets": {
+    "outer_file_compression": {
+      "reference": [
+        "gzip (.gz)",
+        "bzip2 (.bz2)"
+      ],
+      "implementation": "pending; internal EDF gzip/bzip2 is separate",
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/fabioutils.py"
+    },
+    "file_series": "pending explicit series API; numbered neighboring files must not be silently substituted",
+    "autodetection": "pending; current backends are explicitly selected by caller",
+    "orientation": "return stored rows/columns and metadata; consumer transformations are explicit",
+    "source_mutation": "immutable snapshots check normal filesystem changes; no adversarial metadata-preserving writes or live refresh",
+    "header_coverage": "raw EDF/CBF headers and typed TIFF tags; HDF5 finite scalar API only; semantic detector header maps pending"
+  },
+  "formats": [
+    {
+      "module": "edfimage",
+      "class": "EdfImage",
+      "extensions": [
+        "edf",
+        "cor"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/edfimage.py",
+      "source_sha256": "48c646050b3f43d63e15862e6ab8ae73e683b2fafe3e7dd06aa4e905dff7cf34",
+      "subformats_and_types": "EDF 0/1/2/3; concatenated frames; general headers; inline/external binary; 2D/volume; integer/float aliases including optional float128",
+      "compression": "none; internal gzip/zlib/bzip2; optional byte-offset; outer gzip/bzip2",
+      "stack": "concatenated frames",
+      "implementation": "partial: inline 2D, ten scalar types, both byte orders, none/gzip/zlib/bzip2; general/external/volume/float128/offset/outer wrappers pending",
+      "validation": [
+        "tests/data/edf/*.edf",
+        "tests/binary.rs"
+      ],
+      "parity_verified": false
+    },
+    {
+      "module": "dtrekimage",
+      "class": "DtrekImage",
+      "extensions": [
+        "img"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/dtrekimage.py",
+      "source_sha256": "e97b9bbb41c32d07f6eec661b9cd7dd6a9733f483bf4b8cd2351dd4c5aed899f",
+      "subformats_and_types": "d*TREK / ADSC; Rigaku 1.1; endian scalar data and text header",
+      "compression": "uncompressed",
+      "stack": "single image; external file series",
+      "implementation": "pending",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "tifimage",
+      "class": "TifImage",
+      "extensions": [
+        "tif",
+        "tiff"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/tifimage.py",
+      "source_sha256": "7a9ec6f5dd9e0cd80b211ad4d2a430aa2ee6312677e90bcd1ecb5ebca4df6082",
+      "subformats_and_types": "classic TIFF/BigTIFF; endian scalar/color; strip/tile/IFD; photometric/predictor variants",
+      "compression": "reference TiffIO/Pillow capabilities vary; none/PackBits/LZW/Deflate/JPEG require distinct fixtures",
+      "stack": "primary IFD pages",
+      "implementation": "partial: ten grayscale BlackIsZero scalar types, both byte orders, IFD stacks, strips/edge tiles, none/PackBits/LZW/Deflate; WhiteIsZero/packed/color/lossy codecs/subIFDs pending",
+      "validation": [
+        "tests/data/tiff/*.tif",
+        "tests/tiff.rs"
+      ],
+      "parity_verified": false
+    },
+    {
+      "module": "marccdimage",
+      "class": "MarccdImage",
+      "extensions": [
+        "mccd"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/marccdimage.py",
+      "source_sha256": "a0c3c3a9278fd12d1312437002b04b21fd8f0fec2f2f2946e1243caa0fefd0ff",
+      "subformats_and_types": "MAR CCD/Mosaic TIFF pixels plus binary acquisition header",
+      "compression": "TIFF codecs",
+      "stack": "inherits TIFF pages",
+      "implementation": "pending detector-specific header parser; generic TIFF pixels only, not validated with MAR files",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "mar345image",
+      "class": "Mar345Image",
+      "extensions": [
+        "mar2300",
+        "mar1200",
+        "mar1600",
+        "mar2000",
+        "mar3450",
+        "mar3000",
+        "mar2400",
+        "mar1800"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/mar345image.py",
+      "source_sha256": "307c02f85e79fa07a2706c64b961854aa85e67f32921cf68de2edabfdc15ebd7",
+      "subformats_and_types": "MAR345 imaging plate / MAR555; supported detector dimensions; overflow table",
+      "compression": "CCP4/PCK packed and uncompressed branches",
+      "stack": "single image; file series",
+      "implementation": "pending",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "fit2dmaskimage",
+      "class": "Fit2dMaskImage",
+      "extensions": [
+        "msk"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/fit2dmaskimage.py",
+      "source_sha256": "a20d1dcb217806eaf0a4944c8322f3f0a92a4c8ecdf4004fcef8e8c5710d41d4",
+      "subformats_and_types": "Fit2D packed bit mask; width alignment and stored orientation",
+      "compression": "packed bits",
+      "stack": "single image",
+      "implementation": "pending",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "brukerimage",
+      "class": "BrukerImage",
+      "extensions": [],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/brukerimage.py",
+      "source_sha256": "561533d729aa6a42207aef1f572897cb14fe0de5e27e5147eec5d9f49b97f74e",
+      "subformats_and_types": "Bruker format 86; 8/16/32-bit storage, overflow records, LINEAR header handling",
+      "compression": "overflow tables / linear encoding",
+      "stack": "single image; NFRAMES metadata can describe series",
+      "implementation": "pending",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "bruker100image",
+      "class": "Bruker100Image",
+      "extensions": [
+        "sfrm"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/bruker100image.py",
+      "source_sha256": "a4848009ea17fc4c08a1ea9b2b834813cb9ad965674769c11b29659b535c7680",
+      "subformats_and_types": "Bruker format 100; base counts, underflow/16/32-bit overflow arrays",
+      "compression": "underflow/overflow tables",
+      "stack": "single image",
+      "implementation": "pending",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "pnmimage",
+      "class": "PnmImage",
+      "extensions": [
+        "pnm",
+        "pgm",
+        "pbm"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/pnmimage.py",
+      "source_sha256": "bbc827b5853338841413b7b39525fa30b8aa96bac3e768c1fc1ca3607f0b80f0",
+      "subformats_and_types": "PBM/PGM/PPM/PAM registry: P1/P2/P5 read branches; P3/P4/P6/P7 explicitly not implemented by pinned reference",
+      "compression": "ASCII / raw big-endian P5",
+      "stack": "single image",
+      "implementation": "pending; unsupported reference branches are not counted as working parity targets",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "GEimage",
+      "class": "GeImage",
+      "extensions": [],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/GEimage.py",
+      "source_sha256": "cadaf3e4de69901e819901248f02cb3c48259ce1dc4c8d440b9e5fc9c53df943",
+      "subformats_and_types": "GE Angio; standard, EDF-prefixed and blank/ADEPT headers; fixed default dimensions",
+      "compression": "uncompressed",
+      "stack": "multiple fixed-size frames",
+      "implementation": "pending",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "OXDimage",
+      "class": "OxdImage",
+      "extensions": [
+        "img"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/OXDimage.py",
+      "source_sha256": "0e33333333adcf400d190e7186d1e6a567f94ccfd04aa6da0de5e29222ce10aa",
+      "subformats_and_types": "Oxford Sapphire/KM4CCD; uncompressed/TY1; TY5 reference explicitly marked known broken",
+      "compression": "none; TY1 differential plus exception arrays; experimental TY5",
+      "stack": "single image",
+      "implementation": "pending; TY5 needs an independent authority, not sole reliance on the broken reference",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "dm3image",
+      "class": "Dm3Image",
+      "extensions": [
+        "dm3"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/dm3image.py",
+      "source_sha256": "0f353268f46abf47735cc3e9157023b7297e4c8ce9d7f9401dc056e935aedf42",
+      "subformats_and_types": "DigitalMicrograph DM3 tagged binary structures; nested tags / type codes",
+      "compression": "uncompressed tagged data",
+      "stack": "one selected image exposed",
+      "implementation": "pending",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "HiPiCimage",
+      "class": "HipicImage",
+      "extensions": [
+        "img"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/HiPiCimage.py",
+      "source_sha256": "b7d818e95d7a29b7a01cab00c8f1721dd1d8b66dc225c98df458c7cddcac6e61",
+      "subformats_and_types": "Hamamatsu HiPiC IM header, comments and integer pixels",
+      "compression": "uncompressed",
+      "stack": "single image",
+      "implementation": "pending",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "pilatusimage",
+      "class": "PilatusImage",
+      "extensions": [
+        "tif",
+        "tiff"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/pilatusimage.py",
+      "source_sha256": "080c78fd0a418ca83210b2bf756672a217076fb208882d4b3c2b64c980ec2e5d",
+      "subformats_and_types": "Pilatus TIFF + image-description detector header",
+      "compression": "TIFF codecs",
+      "stack": "inherits TIFF pages",
+      "implementation": "pending detector-specific header parser; generic TIFF headers retained but no Pilatus fixture",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "fit2dspreadsheetimage",
+      "class": "Fit2dSpreadsheetImage",
+      "extensions": [
+        "spr"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/fit2dspreadsheetimage.py",
+      "source_sha256": "940c590186b18046c5ff530cfaea0a113d8918262da7e427c8358f9b3773ceaa",
+      "subformats_and_types": "Fit2D spreadsheet dimensions and numeric text",
+      "compression": "ASCII",
+      "stack": "single image",
+      "implementation": "pending",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "kcdimage",
+      "class": "KcdImage",
+      "extensions": [
+        "kcd"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/kcdimage.py",
+      "source_sha256": "b105661cfa4a646df8b0f12952f8f41eb8b43f891718f7d606edbf499d20d373",
+      "subformats_and_types": "Nonius KappaCCD; header byte type and multiple readouts",
+      "compression": "uncompressed multiple readouts combined by reference",
+      "stack": "single resulting image",
+      "implementation": "pending; preserve per-readout data and document any explicit combination",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "cbfimage",
+      "class": "CbfImage",
+      "extensions": [
+        "cbf"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/cbfimage.py",
+      "source_sha256": "0161b83dce84114421767969ccfef6ae8d51bf90739ab84cc5cf390da1e844d3",
+      "subformats_and_types": "CBF/imgCIF and miniCBF/Pilatus; signed/unsigned integers 8/16/32/64; raw CIF/MIME headers",
+      "compression": "x-CBF_BYTE_OFFSET only in pinned FabIO; distinguish terminal32 and extended64 escapes",
+      "stack": "single 2D image in pinned reference",
+      "implementation": "partial: all eight integer types; explicit Legacy32/Extended64 dialects; MD5; raw CIF headers. Semantic CIF/Pilatus parsing, outer wrappers and multiple sections pending",
+      "validation": [
+        "tests/data/cbf/*.cbf",
+        "tests/binary.rs"
+      ],
+      "parity_verified": false
+    },
+    {
+      "module": "xsdimage",
+      "class": "XsdImage",
+      "extensions": [
+        "xml",
+        "xsd"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/xsdimage.py",
+      "source_sha256": "08f989744f3560210c3a568dd886731a700717c9689e2de38a4e306eb6104893",
+      "subformats_and_types": "XSDataImage XML; base64 binary array; dimension/type descriptors",
+      "compression": "base64; storage interpretation in XML",
+      "stack": "single image",
+      "implementation": "pending",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "binaryimage",
+      "class": "BinaryImage",
+      "extensions": [
+        "bin"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/binaryimage.py",
+      "source_sha256": "71a18c144dccd3ef8a5b69b304110802050b8f80160a8cee1c481889632b2d28",
+      "subformats_and_types": "caller-specified dimensions/offset/type/endianness; no autodetection",
+      "compression": "uncompressed",
+      "stack": "single explicitly configured image",
+      "implementation": "pending",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "pixiimage",
+      "class": "PixiImage",
+      "extensions": [],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/pixiimage.py",
+      "source_sha256": "87066c155502ed24f8ad091e54ec8b7eb8e2e93fa5c99edfd90cecbaedd0df0f",
+      "subformats_and_types": "Pixirad fixed-frame record header and uint16 data",
+      "compression": "uncompressed",
+      "stack": "multiple fixed-size frames",
+      "implementation": "pending",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "raxisimage",
+      "class": "RaxisImage",
+      "extensions": [
+        "img"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/raxisimage.py",
+      "source_sha256": "7759d2273a1885b4470a984d46a05c954442d0a57879afb8d01f6c7e838317c8",
+      "subformats_and_types": "Rigaku R-AXIS binary/text header, endian data and high-bit dynamic-range flag",
+      "compression": "high-bit intensity-range encoding",
+      "stack": "single image",
+      "implementation": "pending; document source u16 flag versus decoded intensity semantics",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "numpyimage",
+      "class": "NumpyImage",
+      "extensions": [
+        "npy"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/numpyimage.py",
+      "source_sha256": "fea03f10ef6b0857bd9d9fbec5f81bdbb392cd6b66650be1ca31b34e567cc0f8",
+      "subformats_and_types": "NPY array; 2D image / higher-dimensional reshaped frame sequence",
+      "compression": "NPY binary; do not assume NPZ support",
+      "stack": "array-leading frame dimension",
+      "implementation": "pending",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "eigerimage",
+      "class": "EigerImage",
+      "extensions": [
+        "h5",
+        "hdf5"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/eigerimage.py",
+      "source_sha256": "1e5fd47a1bc5344a714f71cb687de5bb168ccacbc9746cf680d1a3c0b7d903cf",
+      "subformats_and_types": "Eiger/Dectris HDF5; direct dataset, grouped data_NNNNNN, master/external links; detector metadata",
+      "compression": "dataset HDF5 filter pipeline (Bitshuffle/LZ4, gzip etc.)",
+      "stack": "dataset(s) mapped to frame sequence",
+      "implementation": "partial: explicitly named self-contained 3D u16/u32 dataset; full-file Eiger counts validated. Master discovery/link sequences/metadata/live acquisition pending",
+      "validation": [
+        "tests/data/counts-bitshuffle-lz4.h5",
+        "tests/reader.rs",
+        "tests/raw.rs",
+        "docs/benchmarks/2026-11-05-native-eiger/count-reference.json"
+      ],
+      "parity_verified": false
+    },
+    {
+      "module": "hdf5image",
+      "class": "Hdf5Image",
+      "extensions": [
+        "h5"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/hdf5image.py",
+      "source_sha256": "ea40ca15d8737d305e2f1c768b303a29e2333c0bff20a2199639a3e8cf105a7c",
+      "subformats_and_types": "explicit file::dataset HDF5 image or stack, nested frame selection",
+      "compression": "native HDF5 filters",
+      "stack": "2D/3D datasets",
+      "implementation": "partial: explicit 3D u16/u32 dataset; 2D/signed/float/generic headers pending. VDS rejected; raw snapshot also rejects indirect/missing/partial chunks",
+      "validation": [
+        "tests/reader.rs",
+        "tests/raw.rs",
+        "tests/cache.rs"
+      ],
+      "parity_verified": false
+    },
+    {
+      "module": "fit2dimage",
+      "class": "Fit2dImage",
+      "extensions": [
+        "f2d"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/fit2dimage.py",
+      "source_sha256": "71b5abd9d24a29c0d57c1628fd25db092a053a650c9d0e56cc260c3c76a537a5",
+      "subformats_and_types": "Fit2D binary $FFF_START records and endian numeric arrays",
+      "compression": "uncompressed records",
+      "stack": "single image",
+      "implementation": "pending",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "speimage",
+      "class": "SpeImage",
+      "extensions": [
+        "spe"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/speimage.py",
+      "source_sha256": "062ccda1e37885170fc1b8a715508dae09f2f755e805119f34ae472dea82526b",
+      "subformats_and_types": "Princeton SPE versions 2/3; binary header and v3 XML metadata/ROI",
+      "compression": "uncompressed typed pixels",
+      "stack": "frame selection (no generic getframe override)",
+      "implementation": "pending",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "jpegimage",
+      "class": "JpegImage",
+      "extensions": [
+        "jpg",
+        "jpeg"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/jpegimage.py",
+      "source_sha256": "740b6ca95d1005b1a142550e50b59bd1d0fb72b90ea0fcedebba28280e1adba2",
+      "subformats_and_types": "JPEG/JFIF/Exif via Pillow; lossy source samples must retain decoded values and provenance",
+      "compression": "JPEG",
+      "stack": "single image",
+      "implementation": "pending",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "jpeg2kimage",
+      "class": "Jpeg2KImage",
+      "extensions": [
+        "jp2",
+        "jpx",
+        "j2k",
+        "jpf",
+        "jpg2"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/jpeg2kimage.py",
+      "source_sha256": "afe077151f61ac4117fa675a279ada29895e4c6d9a234ff43c46fcae2c6b219a",
+      "subformats_and_types": "JPEG2000 codestream/JP2/JPX via optional Glymur/Pillow",
+      "compression": "JPEG2000 lossless/lossy require separate fixtures",
+      "stack": "single image",
+      "implementation": "pending",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "mpaimage",
+      "class": "MpaImage",
+      "extensions": [
+        "mpa"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/mpaimage.py",
+      "source_sha256": "55d9c6a726960fbd1ac090b8754b8143a22ba002b4fccf56e06bf076b36243ee",
+      "subformats_and_types": "MPA multiwire; text configuration + spectrum/data blocks",
+      "compression": "ASCII or binary branches per source",
+      "stack": "single image",
+      "implementation": "pending",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "mrcimage",
+      "class": "MrcImage",
+      "extensions": [
+        "mrc",
+        "map",
+        "fei"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/mrcimage.py",
+      "source_sha256": "9c2c5c7a0eb954930ba6d8e81d7983ac1f9b583fa95ed1b6f2e241439a0ce88f",
+      "subformats_and_types": "MRC/CCP4/MAP/FEI; endian header, supported mode codes and extended header",
+      "compression": "uncompressed typed arrays",
+      "stack": "NZ image stack",
+      "implementation": "pending",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "esperantoimage",
+      "class": "EsperantoImage",
+      "extensions": [
+        "eseperanto",
+        "esper"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/esperantoimage.py",
+      "source_sha256": "1417a9cd2b0efaf00e798b39f8d57fb5a75be1b74cc57bde266fa42596d2d33e",
+      "subformats_and_types": "CrysAlisPro Esperanto; ASCII header, int32 image, raw or compressed format selector",
+      "compression": "4-byte integers / AGI bitfield",
+      "stack": "single image",
+      "implementation": "pending",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "limaimage",
+      "class": "LimaImage",
+      "extensions": [
+        "h5",
+        "hdf5"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/limaimage.py",
+      "source_sha256": "c6b4e25e8fca1b55ef45e722df60a46b2a4d27b06b646b3296959849a15ede8e",
+      "subformats_and_types": "LImA HDF5 creator/default path discovery and acquisition metadata",
+      "compression": "HDF5 filters",
+      "stack": "3D detector dataset",
+      "implementation": "pending discovery/metadata fixtures; explicit compatible dataset can use general HDF5 API",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "lambdaimage",
+      "class": "LambdaImage",
+      "extensions": [
+        "h5",
+        "hdf5",
+        "nxs"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/lambdaimage.py",
+      "source_sha256": "cb8dd699dc5baa825c04ce5735392a85b7de4bd5536c565fcb2ca376a32d0cd0",
+      "subformats_and_types": "Lambda HDF5/NeXus detector-description/path convention",
+      "compression": "HDF5 filters",
+      "stack": "3D detector dataset",
+      "implementation": "pending discovery/metadata fixtures; explicit compatible dataset can use general HDF5 API",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "adscimage",
+      "class": "AdscImage",
+      "extensions": [],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/adscimage.py",
+      "source_sha256": "f51b08ab8d75afdd5e107d2fdb1d2e06ce50f282be5e6d40e6b05826be311ac4",
+      "subformats_and_types": "compatibility alias to DtrekImage (same registered codec identity)",
+      "compression": "same as dtrekimage",
+      "stack": "same as dtrekimage",
+      "implementation": "pending alias; not a distinct 36th decoder",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "sparseimage",
+      "class": "SparseImage",
+      "extensions": [
+        "h5",
+        "hdf5",
+        "nxs"
+      ],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/sparseimage.py",
+      "source_sha256": "c5d6ca99bfe4f76bdc21b8020183e3b1fbd401b6d2b99eeb500fd62df81651fa",
+      "subformats_and_types": "pyFAI/LImA sparse Bragg HDF5: frame pointers/index/intensity/background/noise; reconstruction policy matters",
+      "compression": "HDF5 filters plus sparse/background representation",
+      "stack": "sparse frame sequence",
+      "implementation": "pending; no stochastic or invented dense counts by default",
+      "validation": [],
+      "parity_verified": false
+    },
+    {
+      "module": "xcaliburimage",
+      "class": "XcaliburImage",
+      "extensions": [],
+      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/xcaliburimage.py",
+      "source_sha256": "f8bf057585d3ae26bde5139ea0bb5ae4b594e8b3d729e35fff0e4eec87dfd611",
+      "subformats_and_types": "Xcalibur CCD/masked-pixel binary structs and masks",
+      "compression": "binary records",
+      "stack": "single mask/image exposed",
+      "implementation": "pending",
+      "validation": [],
+      "parity_verified": false
+    }
+  ]
+}

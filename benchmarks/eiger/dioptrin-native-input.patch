@@ -1,0 +1,150 @@
+diff --git a/Cargo.toml b/Cargo.toml
+index 0c3379a..f546a18 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -11,6 +11,7 @@ readme = "README.md"
+
+ [dependencies]
+ tiff = "0.8"
++dioptrin-io = { path = "../dioptrin-io", optional = true }
+ rayon = "1.5"
+ pyo3 = { version = "0.29", optional = true, features = ["extension-module"] }
+ numpy = { version = "0.29", optional = true }
+@@ -38,6 +39,7 @@ opt-level = 3
+ strip = "symbols"
+
+ [features]
++native-input = ["dep:dioptrin-io"]
+ python = ["numpy", "pyo3", "pyo3/extension-module"]
+
+ [lib]
+diff --git a/src/integration.rs b/src/integration.rs
+index e2989a1..e0b8522 100644
+--- a/src/integration.rs
++++ b/src/integration.rs
+@@ -3,6 +3,8 @@ mod arithmetic;
+ mod cache;
+ mod corrections;
+ mod methods;
++#[cfg(feature = "native-input")]
++mod native_input;
+ #[cfg(test)]
+ mod tests;
+ mod tiff_input;
+diff --git a/src/integration/native_input.rs b/src/integration/native_input.rs
+new file mode 100644
+index 0000000..dc3b1dd
+--- /dev/null
++++ b/src/integration/native_input.rs
+@@ -0,0 +1,111 @@
++//! Optional shared native-buffer adapter. No input copies or orientation changes.
++use super::{IntegrationMethod, Integrator, cache::OneDKey};
++use dioptrin_io::PixelBuffer;
++
++impl Integrator {
++    /// Integrate native scalar samples with existing f64 arithmetic and mask
++    /// semantics. Shape is `[height,width]` in this integrator's geometry order.
++    /// The caller owns any required orientation change. `ERRORS` requests the
++    /// existing Poisson uncertainty calculation. Histogram is not supported.
++    ///
++    /// # Errors
++    /// Invalid shape/count/bin count or the Histogram integration method.
++    pub fn integrate_native1d<const ERRORS: bool>(
++        &self,
++        pixels: &PixelBuffer,
++        shape: [usize; 2],
++        n_points: usize,
++    ) -> Result<(Vec<f64>, Vec<f64>, Vec<f64>), &'static str> {
++        let [h, w] = shape;
++        if h == 0 || w == 0 || n_points == 0 || h.checked_mul(w) != Some(pixels.len()) {
++            return Err("invalid native frame dimensions or bin count");
++        }
++        if matches!(self.method, IntegrationMethod::Histogram) {
++            return Err("native scalar input requires a CSR integration method");
++        }
++        self.update_geometry_arrays(h, w);
++        let norm = self.get_normalization();
++        let mask = self.mask.as_ref().map(|m| {
++            m.assert_compatible(h, w);
++            m.data.as_slice()
++        });
++        let unit = self.radial_unit;
++        let radial_range = self.radial_range_key();
++        let key = match self.method {
++            IntegrationMethod::Counting => OneDKey::Counting {
++                n_points,
++                unit,
++                radial_range,
++            },
++            IntegrationMethod::PixelSplit => OneDKey::PixelSplit {
++                n_points,
++                unit,
++                radial_range,
++            },
++            IntegrationMethod::Supersampled { n_ss } => OneDKey::Supersampled {
++                n_points,
++                n_ss,
++                unit,
++                radial_range,
++            },
++            IntegrationMethod::Histogram => unreachable!(),
++        };
++        let lut = self.ensure_lut1d(key);
++        macro_rules! integrate { ($($variant:ident),*) => { match pixels { $(PixelBuffer::$variant(data)=>{
++            if self.fast_math { lut.integrate_pixels::<true,ERRORS,_>(data,mask,&norm) }
++            else { lut.integrate_pixels::<false,ERRORS,_>(data,mask,&norm) }
++        }),* } }; }
++        Ok(integrate!(U8, U16, U32, U64, I8, I16, I32, I64, F32, F64))
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use crate::{geometry::Geometry, integration::MaskMode, mask::Mask, poni::Poni};
++    #[test]
++    fn native_samples_use_existing_mask_precision_and_poisson_semantics() {
++        let mut poni = Poni::new();
++        poni.pixel1 = 0.1;
++        poni.pixel2 = 0.1;
++        poni.distance = 1.0;
++        for mode in [MaskMode::Fixed, MaskMode::Dynamic] {
++            for fast in [false, true] {
++                for method in [
++                    IntegrationMethod::Counting,
++                    IntegrationMethod::PixelSplit,
++                    IntegrationMethod::Supersampled { n_ss: 2 },
++                ] {
++                    let integrator = Integrator::new(Geometry::new(2, 3, poni.clone()))
++                        .with_method(method)
++                        .with_mask_mode(mode)
++                        .with_fast_math(fast)
++                        .with_mask(Mask {
++                            data: vec![0, 1, 0, 0, 0, 0],
++                            dim1: 2,
++                            dim2: 3,
++                        });
++                    let expected = integrator.integrate1d_with_errors_from_slice(
++                        &[0., 1., 70000., 3., 4., 5.],
++                        2,
++                        3,
++                        8,
++                    );
++                    let got = integrator
++                        .integrate_native1d::<true>(
++                            &PixelBuffer::U32(vec![0, 1, 70000, 3, 4, 5]),
++                            [2, 3],
++                            8,
++                        )
++                        .unwrap();
++                    assert_eq!(expected, got);
++                    assert!(
++                        integrator
++                            .integrate_native1d::<false>(&PixelBuffer::U8(vec![1]), [2, 3], 8)
++                            .is_err()
++                    );
++                }
++            }
++        }
++    }
++}

@@ -1,0 +1,368 @@
+{
+  "license": "CC0-1.0",
+  "generator": "scripts/generate_tiff_fixtures.py",
+  "versions": {
+    "numpy": "2.5.4",
+    "tifffile": "2026.10.15"
+  },
+  "files": {
+    "uint8.tif": {
+      "sha256": "881b6098433b179749fa89ffe0f18c76e41460ab3584908d62a8e1eac77f6416",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "uint8",
+      "sample_sha256": [
+        "b052ad5c5bed89ef5d16e65c94032f8d742e9c38ecd363b9c3e883790baab4ce"
+      ],
+      "options": {
+        "extratags": [
+          [
+            274,
+            "H",
+            1,
+            6,
+            false
+          ],
+          [
+            65000,
+            "s",
+            0,
+            "original header",
+            false
+          ]
+        ]
+      }
+    },
+    "uint16.tif": {
+      "sha256": "23350dc928a11c9afb62d0c0bdbac54871675fe4e50875915bfaed75d4ea821a",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "uint16",
+      "sample_sha256": [
+        "3d665459c8ecf9381eaceb397b0cf68c45b94473134de505eade3100d8648646"
+      ],
+      "options": {
+        "extratags": [
+          [
+            274,
+            "H",
+            1,
+            6,
+            false
+          ],
+          [
+            65000,
+            "s",
+            0,
+            "original header",
+            false
+          ]
+        ]
+      }
+    },
+    "uint32.tif": {
+      "sha256": "d45d5a0772ac26bf407f9d8b5f3227215e2e9c3511e1833aa6eaebd34180d6b7",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "uint32",
+      "sample_sha256": [
+        "c7d3705b8260e14bd7625bab55458c1156acbdae096cc9769c946222a45b6a05"
+      ],
+      "options": {
+        "extratags": [
+          [
+            274,
+            "H",
+            1,
+            6,
+            false
+          ],
+          [
+            65000,
+            "s",
+            0,
+            "original header",
+            false
+          ]
+        ]
+      }
+    },
+    "uint64.tif": {
+      "sha256": "1f8076c4758f61a44323d9956ce4727309b43e36a8f25b958948079f848d67a4",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "uint64",
+      "sample_sha256": [
+        "13895166aceaa20762af347d87e9c4bf3194a38efedccef1253507fc047c8c4b"
+      ],
+      "options": {
+        "extratags": [
+          [
+            274,
+            "H",
+            1,
+            6,
+            false
+          ],
+          [
+            65000,
+            "s",
+            0,
+            "original header",
+            false
+          ]
+        ]
+      }
+    },
+    "int8.tif": {
+      "sha256": "273b3d84b2a3d8a057bd422027fe07ec9350514757ab83d526e23f59fbd37411",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "int8",
+      "sample_sha256": [
+        "b878f1c31afc9e748bece21645d21a3f6b565a6f783aa2c426529205f757acf9"
+      ],
+      "options": {
+        "extratags": [
+          [
+            274,
+            "H",
+            1,
+            6,
+            false
+          ],
+          [
+            65000,
+            "s",
+            0,
+            "original header",
+            false
+          ]
+        ]
+      }
+    },
+    "int16.tif": {
+      "sha256": "0a9dc3d89a0c1fc2443466e532b5bfdfdb0d1b0043b5d6c85409ac82aa433bf3",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "int16",
+      "sample_sha256": [
+        "d231113e0bf3b42b44939f1bfdb15017ccee17b15ef9c817c0feaea198eeb30d"
+      ],
+      "options": {
+        "extratags": [
+          [
+            274,
+            "H",
+            1,
+            6,
+            false
+          ],
+          [
+            65000,
+            "s",
+            0,
+            "original header",
+            false
+          ]
+        ]
+      }
+    },
+    "int32.tif": {
+      "sha256": "de8f574da64f642a78f45ddba9a4576a3c134408f2cbaec50498495e636b937f",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "int32",
+      "sample_sha256": [
+        "e7fbb6dcf74d93928958000ed50fea5d4fc9f633381c544ab2868884cc3aeeed"
+      ],
+      "options": {
+        "extratags": [
+          [
+            274,
+            "H",
+            1,
+            6,
+            false
+          ],
+          [
+            65000,
+            "s",
+            0,
+            "original header",
+            false
+          ]
+        ]
+      }
+    },
+    "int64.tif": {
+      "sha256": "d7092839267d58734b4fbc582bd9811ff4b28767fc81abf59b3527f52fea93e2",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "int64",
+      "sample_sha256": [
+        "91f62d49c3a949acd8f93d3cbd6c6cbaba737c288e3852a184737ef1be51748c"
+      ],
+      "options": {
+        "extratags": [
+          [
+            274,
+            "H",
+            1,
+            6,
+            false
+          ],
+          [
+            65000,
+            "s",
+            0,
+            "original header",
+            false
+          ]
+        ]
+      }
+    },
+    "float32.tif": {
+      "sha256": "aa66b71bfd312ced80a3c248077763291ff519dfd9c33f1fecc99dfecffead60",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "float32",
+      "sample_sha256": [
+        "dd99f3973976f0a4f7bec0ce610fea6ac2e663872f2f5abce50be0402a136ac8"
+      ],
+      "options": {}
+    },
+    "float64.tif": {
+      "sha256": "131ecdc66258e7eecb5c7f38043f2b1cca25063e97dee7644dfcfa064ffad58f",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "float64",
+      "sample_sha256": [
+        "17e6e6f322920374dfba74c27aaf1a508d809859a9ee597c21cca8c206570f9f"
+      ],
+      "options": {}
+    },
+    "deflate-tiles.tif": {
+      "sha256": "caa2fdff3da9fe6ee86f49701670b713265422fed53d57a1ba67067e9b2e2125",
+      "shape": [
+        2,
+        17,
+        19
+      ],
+      "dtype": "uint32",
+      "sample_sha256": [
+        "00c5c778e2baced77754c3f189f7d015e080d9882ad36a5dbfbbb8266e4f0fdd",
+        "f602db343ed90c47503d54d26fe636d4d330b9c823abad4dd0b4452bbd63557c"
+      ],
+      "options": {
+        "tile": [
+          16,
+          16
+        ],
+        "compression": "deflate"
+      }
+    },
+    "lzw-tiles.tif": {
+      "sha256": "58ff11fa00c7a7416e04237c53675b6e86a78eabe70f16bc9622941382e3b3e2",
+      "shape": [
+        2,
+        17,
+        19
+      ],
+      "dtype": "uint32",
+      "sample_sha256": [
+        "00c5c778e2baced77754c3f189f7d015e080d9882ad36a5dbfbbb8266e4f0fdd",
+        "f602db343ed90c47503d54d26fe636d4d330b9c823abad4dd0b4452bbd63557c"
+      ],
+      "options": {
+        "tile": [
+          16,
+          16
+        ],
+        "compression": "lzw"
+      }
+    },
+    "packbits-tiles.tif": {
+      "sha256": "0ca1a4932e175a2a4a71ade3296fb7da1500404c80f2a76a8a6ad527eddb4a15",
+      "shape": [
+        2,
+        17,
+        19
+      ],
+      "dtype": "uint32",
+      "sample_sha256": [
+        "00c5c778e2baced77754c3f189f7d015e080d9882ad36a5dbfbbb8266e4f0fdd",
+        "f602db343ed90c47503d54d26fe636d4d330b9c823abad4dd0b4452bbd63557c"
+      ],
+      "options": {
+        "tile": [
+          16,
+          16
+        ],
+        "compression": "packbits"
+      }
+    },
+    "le-bigtiff.tif": {
+      "sha256": "6efcc39a7ec6830db4b8b7256e4dca022b59ee8b04503f6f6cb0dbe324d6b7c3",
+      "shape": [
+        2,
+        17,
+        19
+      ],
+      "dtype": "int32",
+      "sample_sha256": [
+        "00c5c778e2baced77754c3f189f7d015e080d9882ad36a5dbfbbb8266e4f0fdd",
+        "f602db343ed90c47503d54d26fe636d4d330b9c823abad4dd0b4452bbd63557c"
+      ],
+      "options": {
+        "bigtiff": true,
+        "byteorder": "<",
+        "compression": "deflate",
+        "predictor": 2
+      }
+    },
+    "be-bigtiff.tif": {
+      "sha256": "fc49a9db799cd7f546d44ffdf3685916180846f52e0155746257d83eb7d32f80",
+      "shape": [
+        2,
+        17,
+        19
+      ],
+      "dtype": "int32",
+      "sample_sha256": [
+        "00c5c778e2baced77754c3f189f7d015e080d9882ad36a5dbfbbb8266e4f0fdd",
+        "f602db343ed90c47503d54d26fe636d4d330b9c823abad4dd0b4452bbd63557c"
+      ],
+      "options": {
+        "bigtiff": true,
+        "byteorder": ">",
+        "compression": "deflate",
+        "predictor": 2
+      }
+    },
+    "white-is-zero.tif": {
+      "sha256": "aeea39884612f6773afeb5cb24f5f1c87ed734dd6e225b3815a352a1b46c5b30",
+      "expected": "explicit rejection"
+    }
+  }
+}

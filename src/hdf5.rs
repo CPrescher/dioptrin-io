@@ -6,6 +6,7 @@
 //! This adapter never flips, normalizes, masks or otherwise changes counts.
 
 pub mod cache;
+pub mod raw;
 
 use hdf5_backend::{Dataset, File};
 use std::fmt::{Display, Formatter};
@@ -20,6 +21,16 @@ impl Display for Error {
     }
 }
 impl std::error::Error for Error {}
+impl From<std::io::Error> for Error {
+    fn from(value: std::io::Error) -> Self {
+        Self(value.to_string())
+    }
+}
+impl From<String> for Error {
+    fn from(value: String) -> Self {
+        Self(value)
+    }
+}
 impl From<hdf5_backend::Error> for Error {
     fn from(value: hdf5_backend::Error) -> Self {
         Self(value.to_string())

@@ -1,0 +1,34 @@
+{
+  "io_base_commit": "21562e680821caa231d79f8e291ee4cccc6eac69",
+  "consumer_base_commit": "e558cf71402fe9b035088f21b7cead5e23da31a4",
+  "consumer_adapter_commit": "0971f2a512ced0bb920d7ab9cdf8e6ad48d14a22",
+  "benchmark_binary_sha256": "5807791df78f69ad824e4414876a559707c33b3d6e3a9d9c6e6811d20c0927e3",
+  "implementation_sources_sha256": {
+    "Cargo.toml": "33d8cd42ae6371ccde19c6a84fbb9fcc030fdaf6613b067455c65164a77c2eda",
+    "Cargo.lock": "406e8d31ea67a9914a80794ca390dce07adafcc010d47f9d991ca4ff2537b12e",
+    "src/hdf5.rs": "160a288aaa1b71a485a5d512325d89e513b0d0ff6e2605872c593a0cae90cd73",
+    "src/hdf5/raw.rs": "aa1c6fa0a31303cc769214393039fec9975bff9c1e1d54eca59808e98d3927fc",
+    "src/pixels.rs": "f8846c1558b6aae2af1fb2373b90a295678627efe99ea01dea881911489789d8",
+    "src/source.rs": "41b22988349539b1b9890917aeacf147cc88aeba1acec1a9aac52ca298335490",
+    "benchmarks/eiger/Cargo.toml": "38aec7a4fa5c84d3108119dabb85d2c7d7b028304b74c6c69e14034b8c65f1bb",
+    "benchmarks/eiger/Cargo.lock": "c8c174de4bf85d460dfb2aca7f52e317870f669297bcec41666f958843a98f87",
+    "benchmarks/eiger/src/main.rs": "65af9af74c5ce4942bec73bed3afcbb238e4b92ceb80abd8b9125628f317fd42",
+    "benchmarks/eiger/dioptrin-native-input.patch": "9463a60508b12bb36a9077eed2012c9b469d452dd1262f83747c10e01378af5f",
+    "scripts/eiger_reference.py": "93a83ed4f553faa74aa349d57287f27637aa4447d02954039a95e873e98f9632",
+    "scripts/eiger_consumer_reference.py": "cbcdd0e186716a67846d4d955924e36957b3842908c787069311ac343031ae26",
+    "src/lib.rs": "26f54eea114ee61ac6b6ff208f2acc8dec2d0909a3b6aac38f85bee3d407d224"
+  },
+  "cache": "warm OS page cache; no cache purge",
+  "workers": 8,
+  "measurement": "3 alternating complete-file passes per reader/error mode after whole-file warmups; index/calibration/LUT setup excluded; worker allocations/read/decode/orientation/consumer/output included",
+  "validation": "all 625 independent count hashes; all 625x2000 intensity and Poisson std bins bit-identical to independent existing h5py/float64 Dioptrin output",
+  "host": {
+    "cpu": "Apple M4 Pro",
+    "physical_cores": 14,
+    "logical_cores": 14,
+    "ram_bytes": 51539607552,
+    "macos": "26.6.2",
+    "rustc": "1.99.1 (58cf8f9c3 2026-10-13)"
+  },
+  "native_hdf5_version": "2.2.0"
+}

@@ -1,2 +1,4 @@
 /target/
+/benchmarks/eiger/target/
 *.crate
+__pycache__/

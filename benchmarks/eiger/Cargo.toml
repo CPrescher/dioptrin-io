@@ -1,0 +1,16 @@
+[package]
+name = "dioptrin-io-eiger-bench"
+version = "0.0.0"
+edition = "2024"
+publish = false
+[workspace]
+[dependencies]
+dioptrin-io = { path = "../..", features = ["hdf5"] }
+dioptrin = { path = "../../../Dioptrin-io-adapter", features = ["native-input"] }
+rayon = "1.12"
+serde_json = "1"
+sha2 = "0.10"
+bytemuck = "1"
+[profile.release]
+lto = true
+codegen-units = 1

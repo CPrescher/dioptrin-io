@@ -1,0 +1,93 @@
+{
+  "extra_u32_orientation_buffer_per_worker": 40553184,
+  "frames": 625,
+  "index_seconds": 0.010824958,
+  "timings": [
+    {
+      "fps": 29.47239937156313,
+      "pass": 1,
+      "poisson": false,
+      "reader": "library",
+      "seconds": 21.206281583
+    },
+    {
+      "fps": 134.74940463600478,
+      "pass": 1,
+      "poisson": false,
+      "reader": "raw",
+      "seconds": 4.638239417
+    },
+    {
+      "fps": 30.593223591409835,
+      "pass": 2,
+      "poisson": false,
+      "reader": "library",
+      "seconds": 20.429360709
+    },
+    {
+      "fps": 140.94607779739047,
+      "pass": 2,
+      "poisson": false,
+      "reader": "raw",
+      "seconds": 4.434319917
+    },
+    {
+      "fps": 30.441870631593268,
+      "pass": 3,
+      "poisson": false,
+      "reader": "library",
+      "seconds": 20.530932792
+    },
+    {
+      "fps": 145.96346645366899,
+      "pass": 3,
+      "poisson": false,
+      "reader": "raw",
+      "seconds": 4.281893375
+    },
+    {
+      "fps": 30.57108448942149,
+      "pass": 1,
+      "poisson": true,
+      "reader": "library",
+      "seconds": 20.444155333
+    },
+    {
+      "fps": 132.44427785746805,
+      "pass": 1,
+      "poisson": true,
+      "reader": "raw",
+      "seconds": 4.718965667
+    },
+    {
+      "fps": 29.284902221433473,
+      "pass": 2,
+      "poisson": true,
+      "reader": "library",
+      "seconds": 21.342055209
+    },
+    {
+      "fps": 125.14501804691275,
+      "pass": 2,
+      "poisson": true,
+      "reader": "raw",
+      "seconds": 4.994206
+    },
+    {
+      "fps": 29.931034347346493,
+      "pass": 3,
+      "poisson": true,
+      "reader": "library",
+      "seconds": 20.8813365
+    },
+    {
+      "fps": 130.232109755348,
+      "pass": 3,
+      "poisson": true,
+      "reader": "raw",
+      "seconds": 4.799123666
+    }
+  ],
+  "worker_decoder_payload_bound": 130935415,
+  "workers": 8
+}

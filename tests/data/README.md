@@ -1,0 +1,26 @@
+# Small independent detector fixtures
+
+The original `counts-bitshuffle-lz4.h5` and its JSON retain their extracted
+PhaseSmith provenance and MIT attribution.
+
+New synthetic TIFF, CBF and EDF arrays and generated fixture files are dedicated
+to the public domain under CC0-1.0 by the dioptrin-io authors. They contain no
+facility/user measurement data. File SHA256, reference versions and generation
+settings are recorded in `tiff/provenance.json` and `binary-provenance.json`.
+
+- `scripts/generate_tiff_fixtures.py`: NumPy arrays written and independently
+  read back by tifffile. Covers ten scalar types, native values beyond f64 exact
+  integer precision, endian BigTIFF, multiple frames, padded edge tiles,
+  PackBits/LZW/Deflate, Orientation/private tags and explicit WhiteIsZero rejection.
+- `scripts/generate_binary_fixtures.py`: FabIO 2026.6.0 CBF writer/reader with
+  byte-offset escapes and signed/unsigned types. The signed32 fixture uses the
+  terminal32 dialect; other fixtures exercise extended64. EDF headers are
+  independently assembled with NumPy and Python standard gzip/zlib/bzip2, then
+  read/verified with pinned FabIO. Ten scalar types and both byte orders include
+  reserved/extreme integers, nonfinite floats and signed zero.
+
+Fixture generation dependencies are separate from the Rust runtime and tests.
+Reference environment used NumPy 2.5.4, FabIO 2026.6.0, tifffile 2026.10.15 and
+imagecodecs 2026.10.10. Reproduction versions and the binary files' own hashes are
+in the manifests. Full real Eiger data is external; its provenance/count hashes
+are in `docs/benchmarks/2026-11-05-native-eiger/`.

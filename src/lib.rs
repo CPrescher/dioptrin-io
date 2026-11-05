@@ -1,9 +1,24 @@
 //! Native detector-file input, independent of integration and Python.
 //!
-//! Format backends are optional. The initial `hdf5` feature provides the
-//! validated unsigned-count reader adapted from PhaseSmith. It preserves raw
-//! counts and stored orientation; geometry, masks and normalization belong to
-//! consumers. Parallel raw-chunk decoding is a subsequent performance step.
+//! Optional HDF5, TIFF/BigTIFF, CBF and EDF backends expose bounded original
+//! detector samples. Native buffers retain integer/floating types and stored
+//! orientation. Geometry, masks, corrections and normalization belong to consumers.
+
+mod pixels;
+pub use pixels::{PixelBuffer, PixelType};
+
+#[cfg(any(feature = "hdf5", feature = "tiff", feature = "cbf", feature = "edf"))]
+mod source;
+
+#[cfg(any(feature = "cbf", feature = "edf"))]
+mod binary;
+#[cfg(feature = "cbf")]
+pub mod cbf;
+#[cfg(feature = "edf")]
+pub mod edf;
 
 #[cfg(feature = "hdf5")]
 pub mod hdf5;
+
+#[cfg(feature = "tiff")]
+pub mod tiff;
