@@ -355,3 +355,62 @@ fn malformed_detector_headers_and_packed_fill_order_fail_explicitly() {
     assert!(tiff::Reader::open(&path, tiff::Limits::default()).is_err());
     std::fs::remove_file(path).unwrap();
 }
+
+#[cfg(feature = "jpeg")]
+#[test]
+fn jpeg_point_transforms_in_every_lossless_scan_retain_lossy_provenance() {
+    use dioptrin_io::jpeg::{FrameBuffer, Limits, Reader};
+    for (name, points) in [
+        ("point-transform.jpg", vec![2]),
+        ("point-transform12.jpg", vec![3]),
+        ("later-point-transform.jpg", vec![0, 2, 0]),
+        ("lossless8-scans.jpg", vec![0, 0, 0]),
+    ] {
+        let reader = Reader::open(fixture(name), Limits::default()).unwrap();
+        let mut buffer = FrameBuffer::default();
+        reader.read_frame_into(&mut buffer).unwrap();
+        assert_eq!(reader.metadata().lossy, points.iter().any(|&p| p != 0));
+        assert_eq!(reader.metadata().lossless_point_transforms, points);
+        check(name, buffer.pixels().unwrap());
+    }
+    let error = Reader::open(fixture("precision7.jpg"), Limits::default())
+        .err()
+        .expect("unsupported precision must fail at admission");
+    assert!(error.to_string().contains("below 8 bits"));
+    // A later scan must not silently replace an already decoded component.
+    let path = std::env::temp_dir().join(format!("dioptrin-jpeg-scans-{}", std::process::id()));
+    let source = std::fs::read(fixture("later-point-transform.jpg")).unwrap();
+    let scans: Vec<_> = source
+        .windows(2)
+        .enumerate()
+        .filter_map(|(i, v)| (v == [255, 218]).then_some(i))
+        .collect();
+    // Reject unsupported component counts before jpeg-decoder::info(), which
+    // assumes 1/3/4 channels internally.
+    let frame = source.windows(2).position(|v| v == [255, 195]).unwrap();
+    let mut two_channels = source.clone();
+    two_channels[frame + 9] = 2;
+    two_channels.drain(frame + 16..frame + 19);
+    two_channels[frame + 2..frame + 4].copy_from_slice(&14u16.to_be_bytes());
+    std::fs::write(&path, two_channels).unwrap();
+    assert!(
+        Reader::open(&path, Limits::default())
+            .err()
+            .unwrap()
+            .to_string()
+            .contains("component table")
+    );
+    let mut repeated = source.clone();
+    repeated[scans[1] + 5] = 1;
+    std::fs::write(&path, repeated).unwrap();
+    assert!(Reader::open(&path, Limits::default()).is_err());
+    let mut missing = source[..scans[2]].to_vec();
+    missing.extend([255, 217]);
+    std::fs::write(&path, missing).unwrap();
+    assert!(Reader::open(&path, Limits::default()).is_err());
+    let mut truncated = source.clone();
+    truncated.drain(scans[1] + 5..scans[1] + 7);
+    std::fs::write(&path, truncated).unwrap();
+    assert!(Reader::open(&path, Limits::default()).is_err());
+    std::fs::remove_file(path).unwrap();
+}

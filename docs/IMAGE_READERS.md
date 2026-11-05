@@ -51,10 +51,14 @@ snapshots and joint TIFF/semantic metadata admission are checked.
 ## JPEG
 
 Feature/module `jpeg` uses vendored libjpeg-turbo 3.1.0 through `turbojpeg` 1.5.1
-for 8-bit lossy JPEG, with `jpeg-decoder` 0.3.2 for native lossless 12/16-bit
+for 8-bit JPEG (including predictive lossless), with `jpeg-decoder` 0.3.2 for native lossless 12/16-bit
 grayscale. Original precision, SOF marker, lossy provenance, decoded colorspace
 and raw pre-first-scan marker segments (Exif/ICC/JFIF/Adobe/comments/tables) are
-retained. Intrinsic JPEG YCbCr-to-RGB decoding produces RGB channels; EXIF
+retained. Every predictive lossless SOS is scanned through entropy marker
+boundaries, retaining `lossless_point_transforms`; a nonzero transform marks
+`lossy=true` because source low bits were discarded. Component IDs must occur
+exactly once across lossless scans. Precision below 8 bits is rejected at open;
+the lossless fallback's sub-byte buffer convention is not admitted. Intrinsic JPEG YCbCr-to-RGB decoding produces RGB channels; EXIF
 orientation and ICC profiles are not applied. Native CMYK output retains the
 backend's Adobe inversion convention; CMYK display conversion is not provided.
 Inter-scan/trailing metadata is not indexed. A terminal EOI is required; files

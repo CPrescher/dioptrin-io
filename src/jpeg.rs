@@ -22,6 +22,9 @@ pub struct Metadata {
     pub precision: u8,
     pub sof_marker: u8,
     pub lossy: bool,
+    /// Original low-bit point transform for every lossless SOS, in source order.
+    /// Empty for DCT JPEG; a nonzero transform discards source low bits.
+    pub lossless_point_transforms: Vec<u8>,
     pub encoded_bytes: u64,
     /// Original marker segments before the first scan, including JFIF/Adobe,
     /// EXIF, ICC, comments and quantization/Huffman tables.
@@ -68,10 +71,30 @@ impl Reader {
                 "JPEG requires terminal EOI; trailing bytes unsupported".into(),
             ));
         }
-        let (segments, precision, sof) = header(
-            &mut BufReader::new(File::open(&snapshot.path)?),
-            limits.metadata_bytes,
-        )?;
+        let mut source = BufReader::new(File::open(&snapshot.path)?).take(encoded);
+        let (segments, precision, sof) = header(&mut source, limits.metadata_bytes)?;
+        if precision < 8 {
+            return Err(Error(
+                "JPEG source precision below 8 bits is unsupported".into(),
+            ));
+        }
+        let frame = &segments
+            .iter()
+            .find(|segment| segment.marker == sof)
+            .expect("validated SOF")
+            .payload;
+        // jpeg-decoder's info() assumes one, three or four components. Reject
+        // all other legal/invalid counts before entering that backend API.
+        if ![1, 3, 4].contains(&frame[5]) || frame.len() != 6 + 3 * usize::from(frame[5]) {
+            return Err(Error("unsupported JPEG frame component table".into()));
+        }
+        let lossless = matches!(sof, 0xc3 | 0xc7 | 0xcb | 0xcf);
+        let point_transforms = if lossless {
+            let scan = &segments.last().expect("validated SOS").payload;
+            lossless_scans(&mut source, frame, scan, precision)?
+        } else {
+            Vec::new()
+        };
         let mut decoder = Decoder::new(BufReader::new(File::open(&snapshot.path)?));
         decoder.set_max_decoding_buffer_size(limits.decoder_bytes);
         decoder.read_info().map_err(|e| Error(e.to_string()))?;
@@ -101,7 +124,8 @@ impl Reader {
                 pixel_type,
                 precision,
                 sof_marker: sof,
-                lossy: !matches!(sof, 0xc3 | 0xc7 | 0xcb | 0xcf),
+                lossy: !lossless || point_transforms.iter().any(|&point| point != 0),
+                lossless_point_transforms: point_transforms,
                 encoded_bytes: encoded,
                 segments,
                 decoded_color_space: color.into(),
@@ -127,7 +151,7 @@ impl Reader {
         self.snapshot.check_handle(&file).map_err(Error)?;
         let mut decoder = Decoder::new(BufReader::new(file));
         decoder.set_max_decoding_buffer_size(self.limits.decoder_bytes);
-        let bytes = if self.metadata.precision == 8 && self.metadata.lossy {
+        let bytes = if self.metadata.precision == 8 {
             let expected = self.metadata.shape[0] * self.metadata.shape[1] * self.metadata.channels;
             if expected > self.limits.decoder_bytes {
                 return Err(Error("JPEG decoded payload exceeds decoder limit".into()));
@@ -248,4 +272,110 @@ fn header(input: &mut impl Read, limit: usize) -> Result<(Vec<Segment>, u8, u8),
     }
     let (precision, sof) = coding.ok_or_else(|| Error("JPEG has no frame header".into()))?;
     Ok((segments, precision, sof))
+}
+
+/// Inspect every lossless scan without decoding entropy data. The entropy marker
+/// escape/restart rules identify SOS boundaries; native codecs decode samples.
+fn lossless_scans(
+    input: &mut impl Read,
+    frame: &[u8],
+    first_scan: &[u8],
+    precision: u8,
+) -> Result<Vec<u8>, Error> {
+    let channels = usize::from(frame[5]);
+    if channels == 0 || channels > 4 || frame.len() != 6 + channels * 3 {
+        return Err(Error(
+            "unsupported lossless JPEG frame component table".into(),
+        ));
+    }
+    let ids: Vec<_> = frame[6..].as_chunks::<3>().0.iter().map(|c| c[0]).collect();
+    if ids.iter().enumerate().any(|(i, id)| ids[..i].contains(id)) {
+        return Err(Error("duplicate lossless JPEG frame component".into()));
+    }
+    let mut seen = Vec::with_capacity(channels);
+    let mut transforms = Vec::with_capacity(channels);
+    let mut scan = first_scan.to_vec();
+    loop {
+        let count = usize::from(
+            *scan
+                .first()
+                .ok_or_else(|| Error("empty lossless JPEG SOS".into()))?,
+        );
+        if count == 0 || count > channels || scan.len() != 4 + count * 2 {
+            return Err(Error("invalid lossless JPEG SOS component table".into()));
+        }
+        let predictor = scan[scan.len() - 3];
+        let spectral_end = scan[scan.len() - 2];
+        let transform = scan[scan.len() - 1];
+        if !(1..=7).contains(&predictor)
+            || spectral_end != 0
+            || transform >> 4 != 0
+            || transform >= precision
+        {
+            return Err(Error("invalid lossless JPEG scan parameters".into()));
+        }
+        for component in scan[1..1 + 2 * count].as_chunks::<2>().0 {
+            if !ids.contains(&component[0]) || seen.contains(&component[0]) {
+                return Err(Error(
+                    "unknown/repeated lossless JPEG scan component".into(),
+                ));
+            }
+            seen.push(component[0]);
+        }
+        transforms.push(transform);
+        // Skip compressed entropy bytes, escaped FF00, and standalone restart
+        // markers. Every other marker ends the current scan.
+        let mut marker = loop {
+            if byte(input)? != 0xff {
+                continue;
+            }
+            let mut next = byte(input)?;
+            while next == 0xff {
+                next = byte(input)?;
+            }
+            if next == 0 || (0xd0..=0xd7).contains(&next) {
+                continue;
+            }
+            break next;
+        };
+        loop {
+            if marker == 0xd9 {
+                if seen.len() != channels {
+                    return Err(Error("incomplete lossless JPEG component scans".into()));
+                }
+                let mut extra = [0];
+                if input.read(&mut extra)? != 0 {
+                    return Err(Error("bytes after lossless JPEG EOI unsupported".into()));
+                }
+                return Ok(transforms);
+            }
+            if !matches!(marker, 0xda | 0xc4 | 0xcc | 0xdd | 0xfe | 0xe0..=0xef) {
+                return Err(Error(
+                    "unsupported marker between lossless JPEG scans".into(),
+                ));
+            }
+            let len = usize::from(u16::from_be_bytes([byte(input)?, byte(input)?]));
+            if len < 2 {
+                return Err(Error("invalid lossless JPEG segment length".into()));
+            }
+            let mut payload = vec![0; len - 2];
+            input.read_exact(&mut payload)?;
+            if marker == 0xda {
+                scan = payload;
+                break;
+            }
+            if byte(input)? != 0xff {
+                return Err(Error("invalid lossless JPEG inter-scan boundary".into()));
+            }
+            marker = byte(input)?;
+            while marker == 0xff {
+                marker = byte(input)?;
+            }
+        }
+    }
+}
+fn byte(input: &mut impl Read) -> Result<u8, Error> {
+    let mut value = [0];
+    input.read_exact(&mut value)?;
+    Ok(value[0])
 }

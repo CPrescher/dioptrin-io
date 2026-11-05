@@ -95,6 +95,22 @@ for codecformat in ['JP2','J2K']:
     name='rgb.'+('jp2' if codecformat=='JP2' else 'j2k');(root/name).write_bytes(imagecodecs.jpeg2k_encode(a,level=0,reversible=True,codecformat=codecformat));record(name,a)
 a=np.arange(12,dtype='u2').reshape(3,4)*317
 (root/'uint12.jp2').write_bytes(imagecodecs.jpeg2k_encode(a,level=0,reversible=True,bitspersample=12));record('uint12.jp2',a,precision=12)
+# Minimal independently authored predictive JPEG streams. A zero difference
+# uses Huffman category 0 (one-bit code 0); remaining entropy bits are pad ones.
+# This makes point-transform provenance and separate component scans explicit.
+def predictive_jpeg(precision, transforms):
+    def marker(code,payload):return bytes([255,code])+struct.pack('>H',len(payload)+2)+payload
+    components=len(transforms)
+    frame=bytes([precision])+struct.pack('>HHB',1,1,components)+b''.join(bytes([i+1,0x11,0]) for i in range(components))
+    raw=b'\xff\xd8'+marker(0xc3,frame)+marker(0xc4,bytes([0,1])+bytes(15)+bytes([0]))
+    for i,point in enumerate(transforms):
+        if i:raw+=marker(0xfe,b'CC0 between component scans')
+        raw+=marker(0xda,bytes([1,i+1,0,1,0,point]))+b'\x7f'
+    return raw+b'\xff\xd9'
+for name,precision,transforms in [('point-transform.jpg',8,[2]),('point-transform12.jpg',12,[3]),('later-point-transform.jpg',8,[0,2,0]),('lossless8-scans.jpg',8,[0,0,0]),('precision7.jpg',7,[0])]:
+    (root/name).write_bytes(predictive_jpeg(precision,transforms))
+    a=imagecodecs.jpeg_decode((root/name).read_bytes())
+    record(name,a,precision=precision,point_transforms=transforms,lossy=any(transforms))
 # Irreversible JPEG 2000: retain lossy provenance and compare decoded samples.
 a=(np.arange(77,dtype='u2')*37%256).astype('u1').reshape(7,11)
 (root/'lossy.jp2').write_bytes(imagecodecs.jpeg2k_encode(a,level=35,reversible=False))
