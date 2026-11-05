@@ -13,6 +13,12 @@ pub enum PixelType {
     I64,
     F32,
     F64,
+    /// Complex sample with IEEE f32 real/imaginary components (NumPy complex64).
+    C32,
+    /// Complex sample with IEEE f64 components (NumPy complex128).
+    C64,
+    /// Complex sample stored as an exact signed-i16 real/imaginary pair.
+    CI16,
 }
 impl PixelType {
     /// Bytes per scalar in the returned native buffer.
@@ -21,8 +27,20 @@ impl PixelType {
         match self {
             Self::U8 | Self::I8 => 1,
             Self::U16 | Self::I16 => 2,
-            Self::U32 | Self::I32 | Self::F32 => 4,
-            Self::U64 | Self::I64 | Self::F64 => 8,
+            Self::U32 | Self::I32 | Self::F32 | Self::CI16 => 4,
+            Self::U64 | Self::I64 | Self::F64 | Self::C32 => 8,
+            Self::C64 => 16,
+        }
+    }
+    /// Width of one endian-converted component; complex pairs keep real before
+    /// imaginary. Reversing the entire pair would silently exchange components.
+    #[must_use]
+    pub const fn component_bytes(self) -> usize {
+        match self {
+            Self::C32 => 4,
+            Self::C64 => 8,
+            Self::CI16 => 2,
+            _ => self.bytes(),
         }
     }
 }
@@ -41,6 +59,9 @@ pub enum PixelBuffer {
     I64(Vec<i64>),
     F32(Vec<f32>),
     F64(Vec<f64>),
+    C32(Vec<[f32; 2]>),
+    C64(Vec<[f64; 2]>),
+    CI16(Vec<[i16; 2]>),
 }
 impl Default for PixelBuffer {
     fn default() -> Self {
@@ -62,6 +83,9 @@ impl PixelBuffer {
             Self::I64(_) => PixelType::I64,
             Self::F32(_) => PixelType::F32,
             Self::F64(_) => PixelType::F64,
+            Self::C32(_) => PixelType::C32,
+            Self::C64(_) => PixelType::C64,
+            Self::CI16(_) => PixelType::CI16,
         }
     }
     /// Number of scalar samples.
@@ -78,6 +102,9 @@ impl PixelBuffer {
             Self::I64(v) => v.len(),
             Self::F32(v) => v.len(),
             Self::F64(v) => v.len(),
+            Self::C32(v) => v.len(),
+            Self::C64(v) => v.len(),
+            Self::CI16(v) => v.len(),
         }
     }
     /// Whether the buffer contains no samples.
@@ -111,6 +138,9 @@ impl PixelBuffer {
             PixelType::I64 => resize!(I64, 0),
             PixelType::F32 => resize!(F32, 0.0),
             PixelType::F64 => resize!(F64, 0.0),
+            PixelType::C32 => resize!(C32, [0.0; 2]),
+            PixelType::C64 => resize!(C64, [0.0; 2]),
+            PixelType::CI16 => resize!(CI16, [0; 2]),
         }
         Ok(())
     }
@@ -127,6 +157,9 @@ impl PixelBuffer {
             Self::I64(v) => bytemuck::cast_slice_mut(v),
             Self::F32(v) => bytemuck::cast_slice_mut(v),
             Self::F64(v) => bytemuck::cast_slice_mut(v),
+            Self::C32(v) => bytemuck::cast_slice_mut(v),
+            Self::C64(v) => bytemuck::cast_slice_mut(v),
+            Self::CI16(v) => bytemuck::cast_slice_mut(v),
         }
     }
 }

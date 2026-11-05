@@ -92,7 +92,7 @@ pub(crate) fn copy_samples(
     output: &mut PixelBuffer,
     little: bool,
 ) -> Result<(), Error> {
-    let size = output.pixel_type().bytes();
+    let size = output.pixel_type().component_bytes();
     let bytes = output.bytes_mut();
     if input.len() != bytes.len() {
         return Err(Error("decoded detector payload size mismatch".into()));
@@ -104,6 +104,42 @@ pub(crate) fn copy_samples(
         }
     }
     Ok(())
+}
+
+#[cfg(all(test, any(feature = "native", feature = "edf")))]
+mod complex_tests {
+    use super::*;
+    #[test]
+    fn complex_endian_conversion_preserves_components_bits_and_integer_storage() {
+        macro_rules! check {
+            ($variant:ident,$ty:ty,$a:expr,$b:expr) => {{
+                let expected: [$ty; 2] = [$a, $b];
+                for little in [true, false] {
+                    let mut bytes = Vec::new();
+                    for value in expected {
+                        bytes.extend(if little {
+                            value.to_le_bytes()
+                        } else {
+                            value.to_be_bytes()
+                        });
+                    }
+                    let mut output = PixelBuffer::default();
+                    output.resize(PixelType::$variant, 1).unwrap();
+                    copy_samples(&bytes, &mut output, little).unwrap();
+                    let PixelBuffer::$variant(values) = output else {
+                        panic!("type")
+                    };
+                    assert_eq!(values.len(), 1);
+                    for (actual, expected) in values[0].iter().zip(expected) {
+                        assert_eq!(actual.to_le_bytes(), expected.to_le_bytes());
+                    }
+                }
+            }};
+        }
+        check!(C32, f32, f32::from_bits(0x7fc12345), -0.0f32);
+        check!(C64, f64, f64::from_bits(0x7ff8123456789abc), -0.0f64);
+        check!(CI16, i16, i16::MIN, i16::MAX);
+    }
 }
 
 #[cfg(feature = "cbf")]

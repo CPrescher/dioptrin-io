@@ -272,6 +272,7 @@ fn into_native(pixels: PixelBuffer) -> DecodingResult {
         PixelBuffer::I64(v) => DecodingResult::I64(v),
         PixelBuffer::F32(v) => DecodingResult::F32(v),
         PixelBuffer::F64(v) => DecodingResult::F64(v),
+        _ => unreachable!("TIFF backend cannot produce complex sample buffers"),
     }
 }
 fn from_native(pixels: DecodingResult) -> Result<PixelBuffer, Error> {

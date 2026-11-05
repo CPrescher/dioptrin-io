@@ -454,12 +454,12 @@ fn standard_type(dtype: &Datatype) -> Result<(PixelType, bool), Error> {
     })
 }
 fn memory_type(ty: PixelType) -> Result<Datatype, Error> {
-    macro_rules! types {($($v:ident,$t:ty);*)=>{match ty {$(PixelType::$v=>Datatype::from_type::<$t>()?),*}};}
+    macro_rules! types {($($v:ident,$t:ty);*)=>{match ty {$(PixelType::$v=>Datatype::from_type::<$t>()?),*,_=>return Err(Error("complex HDF5 samples need a separate dtype contract".into()))}};}
     Ok(types!(U8,u8;I8,i8;U16,u16;I16,i16;U32,u32;I32,i32;U64,u64;I64,i64;F32,f32;F64,f64))
 }
 fn fill(dataset: &Dataset, ty: PixelType) -> Result<Option<PixelBuffer>, Error> {
     let plist = dataset.dcpl()?;
-    macro_rules! types {($($v:ident,$t:ty);*)=>{match ty {$(PixelType::$v=>plist.get_fill_value_as::<$t>()?.map(|v|PixelBuffer::$v(vec![v]))),*}};}
+    macro_rules! types {($($v:ident,$t:ty);*)=>{match ty {$(PixelType::$v=>plist.get_fill_value_as::<$t>()?.map(|v|PixelBuffer::$v(vec![v]))),*,_=>return Err(Error("complex HDF5 fill needs a separate dtype contract".into()))}};}
     Ok(types!(U8,u8;I8,i8;U16,u16;I16,i16;U32,u32;I32,i32;U64,u64;I64,i64;F32,f32;F64,f64))
 }
 fn read_text(container: &Container, limit: usize, attribute: bool) -> Result<String, Error> {

@@ -13,7 +13,35 @@ fn fixture(name: &str) -> PathBuf {
 }
 fn hash(pixels: &PixelBuffer) -> String {
     let mut hash = Sha256::new();
-    macro_rules! values { ($($v:ident);*) => {match pixels { $(PixelBuffer::$v(v) => {for x in v {hash.update(x.to_le_bytes());}}),* }}; }
+    match pixels {
+        PixelBuffer::C32(v) => {
+            for pair in v {
+                for x in pair {
+                    hash.update(x.to_le_bytes());
+                }
+            }
+            return format!("{:x}", hash.finalize());
+        }
+        PixelBuffer::C64(v) => {
+            for pair in v {
+                for x in pair {
+                    hash.update(x.to_le_bytes());
+                }
+            }
+            return format!("{:x}", hash.finalize());
+        }
+        PixelBuffer::CI16(v) => {
+            for pair in v {
+                for x in pair {
+                    hash.update(x.to_le_bytes());
+                }
+            }
+            return format!("{:x}", hash.finalize());
+        }
+        _ => {}
+    }
+
+    macro_rules! values { ($($v:ident);*) => {match pixels { $(PixelBuffer::$v(v) => {for x in v {hash.update(x.to_le_bytes());}}),*,_=>unreachable!() }}; }
     values!(U8;U16;U32;U64;I8;I16;I32;I64;F32;F64);
     format!("{:x}", hash.finalize())
 }
