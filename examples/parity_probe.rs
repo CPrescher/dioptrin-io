@@ -439,9 +439,10 @@ fn run() -> Result<(), Box<dyn Error>> {
         }
         #[cfg(feature = "xsd")]
         "xsd" => wrapped::Format::Xsd,
-        "edf" => wrapped::Format::EdfExternal {
+        "edf" => wrapped::Format::EdfExternalWindow {
             policy: dioptrin_io::edf::ExternalPayloads::FollowCompressedSnapshot,
             basenames: true,
+            window: dioptrin_io::edf::ExternalWindow::UpToDeclared,
         },
         "cbf" => wrapped::Format::Cbf(cbf::ByteOffsetMode::Legacy32),
         "cbf64" => wrapped::Format::Cbf(cbf::ByteOffsetMode::Extended64),
@@ -509,6 +510,42 @@ fn run() -> Result<(), Box<dyn Error>> {
             fields,
             &reader.source_paths(),
         );
+        if let wrapped::Metadata::Edf(metadata) = reader.metadata(i).unwrap() {
+            row["payload_window"] = json!({
+                "declared_bytes":metadata.declared_stored_bytes,
+                "effective_bytes":metadata.stored_bytes,
+                "external_policy":metadata.external_window_policy.map(|policy|format!("{policy:?}")),
+                "source":metadata.payload_source,"offset":metadata.payload_offset});
+        }
+        #[cfg(feature = "oxford")]
+        if let wrapped::Metadata::Oxford(metadata) = reader.metadata(i).unwrap()
+            && metadata.compression == dioptrin_io::oxford::Compression::Ty5
+        {
+            let PixelBuffer::I32(values) = buffer.pixels().unwrap() else {
+                return Err("Oxford TY5 native output must retain signed32 integers".into());
+            };
+            if values
+                .len()
+                .checked_mul(8)
+                .is_none_or(|bytes| bytes > limits.frame_bytes)
+            {
+                row["view_error"] =
+                    json!("Oxford reference float64 representation exceeds output limit");
+            } else {
+                // Exact representation conversion for this pinned Python API;
+                // native production reads and the signature above stay I32.
+                let pixels = PixelBuffer::F64(values.iter().copied().map(f64::from).collect());
+                row["reference_view"] = frame_record(
+                    i,
+                    reader.frames(),
+                    buffer.sample_shape().unwrap(),
+                    &pixels,
+                    json!({}),
+                    &reader.source_paths(),
+                );
+                row["view_policy"] = json!({"name":"OxfordTY5.FabIO2026.6.Float64","kind":"reference_dtype_view", "source_type":"I32","output_type":"F64","exact_integer_conversion":true});
+            }
+        }
         if args[1] == "tiff-pillow13" || args[1] == "tiff-tiffio" {
             let policy = if args[1] == "tiff-pillow13" {
                 tiff::view::Policy::Pillow13

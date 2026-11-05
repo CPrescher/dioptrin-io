@@ -50,6 +50,12 @@ pub enum Format {
         policy: edf::ExternalPayloads,
         basenames: bool,
     },
+    /// Explicit external-source and declared-window compatibility policies.
+    EdfExternalWindow {
+        policy: edf::ExternalPayloads,
+        basenames: bool,
+        window: edf::ExternalWindow,
+    },
     Cbf(cbf::ByteOffsetMode),
     Tiff,
 }
@@ -266,10 +272,21 @@ impl Reader {
             #[cfg(feature = "xsd")]
             Format::Xsd => Backend::Xsd(crate::xsd::Reader::open(input, image)?),
             Format::Native(format) => Backend::Native(native::Reader::open(input, format, image)?),
-            Format::Edf | Format::EdfExternal { .. } => {
-                let (external_payloads, external_basenames) = match format {
-                    Format::EdfExternal { policy, basenames } => (policy, basenames),
-                    _ => (edf::ExternalPayloads::Reject, false),
+            Format::Edf | Format::EdfExternal { .. } | Format::EdfExternalWindow { .. } => {
+                let (external_payloads, external_basenames, external_window) = match format {
+                    Format::EdfExternal { policy, basenames } => {
+                        (policy, basenames, edf::ExternalWindow::Exact)
+                    }
+                    Format::EdfExternalWindow {
+                        policy,
+                        basenames,
+                        window,
+                    } => (policy, basenames, window),
+                    _ => (
+                        edf::ExternalPayloads::Reject,
+                        false,
+                        edf::ExternalWindow::Exact,
+                    ),
                 };
                 Backend::Edf(edf::Reader::open_with_options(
                     input,
@@ -277,6 +294,7 @@ impl Reader {
                     edf::Options {
                         external_payloads,
                         external_basenames,
+                        external_window,
                         source_directory: source.original_path().parent().map(Path::to_path_buf),
                         transport,
                         ..edf::Options::default()

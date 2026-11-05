@@ -47,6 +47,32 @@ def sha_file(path):
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
+def capture_rejected_source(path, record, directory):
+    """Retain exact rejected bytes before upstream temporary-file cleanup."""
+    if directory is None:
+        return
+    expected = record["file_sha256"]
+    destination = directory / (expected + "-" + path.name)
+    try:
+        if not destination.exists():
+            with tempfile.NamedTemporaryFile(dir=directory, delete=False) as temporary:
+                staging = pathlib.Path(temporary.name)
+            try:
+                shutil.copyfile(path, staging)
+                if sha_file(staging) != expected:
+                    raise ValueError("source changed before rejected-input capture")
+                staging.replace(destination)
+            finally:
+                staging.unlink(missing_ok=True)
+        if sha_file(destination) != expected:
+            raise ValueError("existing rejected-input capture has a different hash")
+        record["rejected_source_copy"] = {"path": str(destination),
+                                           "sha256": expected,
+                                           "bytes": destination.stat().st_size}
+    except (OSError, ValueError) as error:
+        record["source_capture_error"] = str(error)
+
+
 def flatten(suite):
     for item in suite:
         if isinstance(item, unittest.TestSuite):
@@ -64,9 +90,16 @@ def main():
     parser.add_argument("--modules", nargs="*", help="test module stems; default all 35 codec modules")
     parser.add_argument("--download-base", default="https://www.silx.org/pub/fabio/testimages")
     parser.add_argument("--probe-timeout", type=float, default=120)
+    parser.add_argument("--rejected-source-dir", type=pathlib.Path,
+                        help="optional external directory retaining exact rejected inputs before upstream cleanup")
     parser.add_argument("--reference-filters", choices=["bundled", "default"], default="bundled",
                         help="register the installed test-only hdf5plugin codecs explicitly (avoid host plugin ABI conflicts)")
     args = parser.parse_args()
+    if args.rejected_source_dir is not None:
+        args.rejected_source_dir = args.rejected_source_dir.resolve()
+        if args.rejected_source_dir.is_relative_to(ROOT):
+            parser.error("rejected detector inputs must stay outside the Git repository")
+        args.rejected_source_dir.mkdir(parents=True, exist_ok=True)
     commit = subprocess.check_output(["git", "-C", str(args.fabio_source), "rev-parse", "HEAD"], text=True).strip()
     if commit != PIN:
         parser.error(f"FabIO checkout must be {PIN}, found {commit}")
@@ -119,6 +152,7 @@ def main():
     except ImportError:
         report["reference_native_libraries"] = {"glymur_openjpeg": None}
     report["probe_sha256"] = sha_file(probe_path)
+    report["rejected_source_capture"] = str(args.rejected_source_dir) if args.rejected_source_dir else None
     report["runtime_capabilities"] = capabilities
     report["reference_filters"] = args.reference_filters
     report["rust_sources_sha256"] = {str(p.relative_to(ROOT)): sha_file(p) for p in sorted((ROOT/"src").rglob("*.rs"))}
@@ -242,10 +276,12 @@ def main():
             record["interpretation_policy"] = "native stored channels and photometric samples; reference may invert WhiteIsZero or convert RGB to grayscale"
         if codec == "raxisimage":
             record["interpretation_policy"] = "PhotomultiplierExpanded explicitly selected; default native reader preserves stored uint16 words and flags"
+        if codec == "OXDimage":
+            record["interpretation_policy"] = "native signed32 counts; TY5 pinned float64 API representation selected explicitly and exactly, raw signature retained"
         if codec in {"speimage", "mrcimage"}:
             record["reference_frame_policy"] = "fresh .read(path, frame=i) for every declared frame; pinned generic getframe/nframes behavior is incomplete"
         if codec == "edfimage":
-            record["source_policy"] = "snapshot external payloads; explicit basename relocation; unique .gz/.bz2 counterpart only if exact path is absent; no missing-count repair"
+            record["source_policy"] = "snapshot external payloads; explicit basename relocation; unique .gz/.bz2 counterpart only if exact path is absent; explicit UpToDeclared external windows bounded to available source bytes with complete samples/codecs mandatory; default native Exact policy remains strict"
         if codec == "cbfimage" and image.data.dtype != np.dtype("int32"):
             # Explicit source-type policy, never a retry after decoding failure.
             adapter = "cbf64"
@@ -277,7 +313,9 @@ def main():
                 record.update(status="native_timeout")
                 return
             if native.returncode:
-                record.update(status="native_rejected", error=native.stderr.strip()[:2000])
+                record.update(status="native_rejected" if native.returncode == 2 else "native_process_failure",
+                              native_exit_code=native.returncode, error=native.stderr.strip()[:2000])
+                capture_rejected_source(path, record, args.rejected_source_dir)
                 return
             try:
                 frames = [json.loads(line) for line in native.stdout.splitlines()]
@@ -289,6 +327,8 @@ def main():
                 if manifest:
                     record["source_manifest"] = manifest
                     report["source_files"].update(manifest)
+                if codec == "edfimage":
+                    record["payload_windows"]=[{"frame":frame["frame"],**frame["payload_window"]} for frame in frames]
                 if codec == "sparseimage":
                     import h5py
                     component_checks=[]
