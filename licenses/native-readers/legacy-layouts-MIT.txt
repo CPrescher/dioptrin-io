@@ -13,6 +13,14 @@ and the authors listed in the pinned upstream source.
 src/fabio/OXDimage.py
 Copyright Jerome Kieffer
 
+src/fabio/fit2dimage.py, src/fabio/kcdimage.py
+Copyright 2010-2016 European Synchrotron Radiation Facility
+Author Jerome Kieffer
+
+src/fabio/mpaimage.py
+Copyright 2017 Cornell High Energy Synchrotron Source
+Author Jesse Hopkins
+
 The broader original notices are retained in FabIO-2026.6.0-copyright.txt.
 No FabIO Python runtime, GPL or LGPL reader is incorporated. The independent
 fixture generator and all generated detector fixtures are CC0-1.0.

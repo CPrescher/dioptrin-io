@@ -23,6 +23,9 @@ bruker = ["native"]
 oxford = ["native"]
 raxis = ["native"]
 fixed = ["native"]
+fit2d = ["native"]
+kcd = ["native"]
+mpa = ["native"]
 wrappers = ["native", "tiff", "cbf", "edf", "dep:tempfile"]
 
 [dependencies]
@@ -65,3 +68,7 @@ required-features = ["bruker", "oxford", "raxis"]
 [[example]]
 name = "image_probe"
 required-features = ["tiff", "jpeg", "jpeg2000"]
+
+[[example]]
+name = "record_probe"
+required-features = ["fit2d", "kcd", "mpa"]

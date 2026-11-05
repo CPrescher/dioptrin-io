@@ -19,6 +19,12 @@ impl Source {
         snapshot.check_handle(&file).map_err(Error)?;
         Ok(Self { snapshot, file })
     }
+    pub fn file(&self) -> Result<File, Error> {
+        self.check()?;
+        let file = File::open(&self.snapshot.path)?;
+        self.snapshot.check_handle(&file).map_err(Error)?;
+        Ok(file)
+    }
     pub fn bytes(&self) -> u64 {
         self.snapshot.bytes()
     }
@@ -33,8 +39,7 @@ impl Source {
         {
             return Err(Error("truncated detector source".into()));
         }
-        let mut file = File::open(&self.snapshot.path)?;
-        self.snapshot.check_handle(&file).map_err(Error)?;
+        let mut file = self.file()?;
         file.seek(SeekFrom::Start(offset))?;
         resize_bytes(output, len)?;
         file.read_exact(output)?;
@@ -42,11 +47,24 @@ impl Source {
         Ok(())
     }
 }
+#[cfg(any(
+    feature = "bruker",
+    feature = "oxford",
+    feature = "raxis",
+    feature = "fit2d",
+    feature = "kcd"
+))]
 pub(crate) fn product(a: usize, b: usize) -> Result<usize, Error> {
     a.checked_mul(b)
         .ok_or_else(|| Error("detector payload size overflow".into()))
 }
-#[cfg(any(feature = "bruker", feature = "oxford"))]
+#[cfg(any(
+    feature = "bruker",
+    feature = "oxford",
+    feature = "fit2d",
+    feature = "kcd",
+    feature = "mpa"
+))]
 pub(crate) fn sum(a: usize, b: usize) -> Result<usize, Error> {
     a.checked_add(b)
         .ok_or_else(|| Error("detector payload offset overflow".into()))

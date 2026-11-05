@@ -1,0 +1,241 @@
+{
+  "license": "CC0-1.0",
+  "generator": "scripts/generate_record_fixtures.py",
+  "source": "Independent explicit arrays, manually packed records; no upstream data",
+  "files": {
+    "fit2d-512-little.f2d": {
+      "family": "fit2d",
+      "file_sha256": "ce6168088c51fe2ed0a0b0aea80586727134dbcaa4451ad5ad30505eb602f317",
+      "arrays": [
+        {
+          "name": "data_array",
+          "shape": [
+            2,
+            3
+          ],
+          "dtype": "I32",
+          "frame_sha256": "b253d87797d1fe828727695f39f221246a86d020dc3c8087cb7199191d535e42"
+        },
+        {
+          "name": "data_mask",
+          "shape": [
+            2,
+            35
+          ],
+          "dtype": "U8",
+          "frame_sha256": "7f58cc1575704ff3d80b0cfefb0cdeb8a9bf72880727f30c8524f4fd8627ac9d"
+        },
+        {
+          "name": "x_axis",
+          "shape": [
+            1,
+            3
+          ],
+          "dtype": "F32",
+          "frame_sha256": "75664b4da1c08de9e8fad52303cc458b3e420edde6591e58761e138cc5e3f163"
+        }
+      ],
+      "little_endian": true,
+      "block_bytes": 512,
+      "expected_reference_difference": null
+    },
+    "fit2d-512-big.f2d": {
+      "family": "fit2d",
+      "file_sha256": "b1aeaf7835bf0fad58fa4e02c3a3f1e36413d03b5caff83e7a1db0c4082caebc",
+      "arrays": [
+        {
+          "name": "data_array",
+          "shape": [
+            2,
+            3
+          ],
+          "dtype": "I32",
+          "frame_sha256": "b253d87797d1fe828727695f39f221246a86d020dc3c8087cb7199191d535e42"
+        },
+        {
+          "name": "data_mask",
+          "shape": [
+            2,
+            35
+          ],
+          "dtype": "U8",
+          "frame_sha256": "7f58cc1575704ff3d80b0cfefb0cdeb8a9bf72880727f30c8524f4fd8627ac9d"
+        },
+        {
+          "name": "x_axis",
+          "shape": [
+            1,
+            3
+          ],
+          "dtype": "F32",
+          "frame_sha256": "75664b4da1c08de9e8fad52303cc458b3e420edde6591e58761e138cc5e3f163"
+        }
+      ],
+      "little_endian": false,
+      "block_bytes": 512,
+      "expected_reference_difference": "Pinned FabIO scalar/mask decoder ignores source byte-order flag"
+    },
+    "fit2d-2048-little.f2d": {
+      "family": "fit2d",
+      "file_sha256": "d97c98d43ee15440e4cbabd11620212032ac96a003bd678a2b6657bc52dd5af0",
+      "arrays": [
+        {
+          "name": "data_array",
+          "shape": [
+            2,
+            100
+          ],
+          "dtype": "F32",
+          "frame_sha256": "b45c947a8aeb906ec1b1370ce0eb527ac434411104ebf1ee89e97a7e5ba32cc5"
+        },
+        {
+          "name": "data_mask",
+          "shape": [
+            2,
+            35
+          ],
+          "dtype": "U8",
+          "frame_sha256": "7f58cc1575704ff3d80b0cfefb0cdeb8a9bf72880727f30c8524f4fd8627ac9d"
+        },
+        {
+          "name": "x_axis",
+          "shape": [
+            1,
+            3
+          ],
+          "dtype": "F32",
+          "frame_sha256": "75664b4da1c08de9e8fad52303cc458b3e420edde6591e58761e138cc5e3f163"
+        }
+      ],
+      "little_endian": true,
+      "block_bytes": 2048,
+      "expected_reference_difference": null
+    },
+    "fit2d-2048-big.f2d": {
+      "family": "fit2d",
+      "file_sha256": "4a643319c652062667462274c3ddee4d947d90ddd8dd6e22a8947b16529ca7de",
+      "arrays": [
+        {
+          "name": "data_array",
+          "shape": [
+            2,
+            100
+          ],
+          "dtype": "F32",
+          "frame_sha256": "b45c947a8aeb906ec1b1370ce0eb527ac434411104ebf1ee89e97a7e5ba32cc5"
+        },
+        {
+          "name": "data_mask",
+          "shape": [
+            2,
+            35
+          ],
+          "dtype": "U8",
+          "frame_sha256": "7f58cc1575704ff3d80b0cfefb0cdeb8a9bf72880727f30c8524f4fd8627ac9d"
+        },
+        {
+          "name": "x_axis",
+          "shape": [
+            1,
+            3
+          ],
+          "dtype": "F32",
+          "frame_sha256": "75664b4da1c08de9e8fad52303cc458b3e420edde6591e58761e138cc5e3f163"
+        }
+      ],
+      "little_endian": false,
+      "block_bytes": 2048,
+      "expected_reference_difference": "Pinned FabIO scalar/mask decoder ignores source byte-order flag"
+    },
+    "readouts.kcd": {
+      "family": "kcd",
+      "file_sha256": "5d17ad0759822866192de21ddb23870246994a01607f8919ebd0f1f30a96f8b4",
+      "arrays": [
+        {
+          "name": "readout0",
+          "shape": [
+            2,
+            3
+          ],
+          "dtype": "U16",
+          "frame_sha256": "426ed16755197175c29c73b8b401e49038807097c78d0bc06562125de999c8f7"
+        },
+        {
+          "name": "readout1",
+          "shape": [
+            2,
+            3
+          ],
+          "dtype": "U16",
+          "frame_sha256": "12f1972eb8a145f47ddc23a3b050a1fc2a23f7721dca99ca1693b174db925c28"
+        },
+        {
+          "name": "readout2",
+          "shape": [
+            2,
+            3
+          ],
+          "dtype": "U16",
+          "frame_sha256": "f18023ecd06b969e7f5d76b87460d1271bc24a28d99ae919b85043fdf37d6af6"
+        }
+      ],
+      "summed": {
+        "name": "sum",
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "I32",
+        "frame_sha256": "34ec63f58143c2b4800f7603ce64270eaacef4d4b70692a5213d2ca4ff9d184f"
+      }
+    },
+    "overflow.kcd": {
+      "family": "kcd",
+      "file_sha256": "dbf6560a82e0eb38f8c34542d0c03690825922715612a944801622f2f1a4185c",
+      "arrays": [],
+      "overflow": true
+    },
+    "sections.mpa": {
+      "family": "mpa",
+      "file_sha256": "91fbadbf7f753ea856d0f0fcbf2a568d79b2950b952e04047c81f6e7bf4dedde",
+      "arrays": [
+        {
+          "name": "DATA0",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "F64",
+          "frame_sha256": "dc91ce9a50ddc828740aa26743716897fdb2bb64f1db662fe263a59be56145ae"
+        },
+        {
+          "name": "DATA1",
+          "shape": [
+            1,
+            3
+          ],
+          "dtype": "F64",
+          "frame_sha256": "56fcc26564632ce3e423387f0c91a3038388fcb2ab6811ac4dcbd75a403abb24"
+        },
+        {
+          "name": "CDAT0",
+          "shape": [
+            2,
+            3
+          ],
+          "dtype": "F64",
+          "frame_sha256": "6e4cd6801d1bf742cfedbaa28d8ecb21122a5cd91e576d9d74b75672460096c7"
+        },
+        {
+          "name": "CDAT1",
+          "shape": [
+            2,
+            3
+          ],
+          "dtype": "F64",
+          "frame_sha256": "7747e30de839c6dab50809f220bd146852dbac924139d59c1e1cae84eddc40fc"
+        }
+      ]
+    }
+  }
+}

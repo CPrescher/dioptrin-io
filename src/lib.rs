@@ -24,7 +24,14 @@ mod binary;
 pub mod bruker;
 #[cfg(feature = "cbf")]
 pub mod cbf;
-#[cfg(any(feature = "bruker", feature = "oxford", feature = "raxis"))]
+#[cfg(any(
+    feature = "bruker",
+    feature = "oxford",
+    feature = "raxis",
+    feature = "fit2d",
+    feature = "kcd",
+    feature = "mpa"
+))]
 #[path = "bruker/common.rs"]
 mod detector_common;
 #[cfg(feature = "containers")]
@@ -66,3 +73,9 @@ pub mod tiff;
 pub mod ge;
 #[cfg(feature = "fixed")]
 pub mod pixi;
+#[cfg(feature = "fit2d")]
+pub mod fit2d;
+#[cfg(feature = "kcd")]
+pub mod kcd;
+#[cfg(feature = "mpa")]
+pub mod mpa;

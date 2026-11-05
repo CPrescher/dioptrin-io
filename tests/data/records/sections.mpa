@@ -1,0 +1,29 @@
+mpafmt=asc
+fmt=asc
+sephead=0
+[ADC1]
+range=2
+[ADC2]
+range=3
+[MAP0] source coincidence
+[DATA0,2 ]
+1
+2
+[DATA1,3 ]
+3
+4
+5
+[CDAT0,6 ]
+0
+-1
+1.5
+42
+65535
+9007199254740992
+[CDAT1,6 ]
+6
+5
+4
+3
+2
+1
