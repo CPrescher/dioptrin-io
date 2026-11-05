@@ -1,0 +1,25 @@
+[package]
+name = "dioptrin-io"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.89"
+license = "MIT"
+description = "Native detector-image input shared by diffraction applications"
+repository = "https://github.com/CPrescher/dioptrin-io"
+readme = "README.md"
+
+[features]
+default = []
+hdf5 = ["dep:hdf5-backend", "dep:hdf5-bitshuffle", "dep:libz-sys"]
+
+[dependencies]
+hdf5-backend = { package = "hdf5-metno", version = "=0.15.1", optional = true, features = ["static", "zlib", "lzf"] }
+hdf5-bitshuffle = { version = "=1.0.0", optional = true }
+libz-sys = { version = "1.1", optional = true, features = ["static"] }
+
+[dev-dependencies]
+sha2 = "0.10"
+
+[[example]]
+name = "inspect_frames"
+required-features = ["hdf5"]

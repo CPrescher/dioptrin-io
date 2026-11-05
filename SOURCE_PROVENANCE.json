@@ -1,0 +1,24 @@
+{
+  "source_repository": "https://github.com/CPrescher/PhaseSmith",
+  "source_commit": "f0925305c70fc8ea5965d14f03aa51b8399621d8",
+  "source_crate": "crates/phasesmith-hdf5",
+  "source_version": "0.8.0",
+  "license": "MIT; original PhaseSmith contributor copyright retained in LICENSE",
+  "changes": [
+    "Place reader under optional dioptrin_io::hdf5 module",
+    "Rename external HDF5 dependency alias and internal module paths",
+    "Retain all source reader/cache contracts and fixture bytes",
+    "Adapt imports, temporary-file prefixes and example to new crate name"
+  ],
+  "source_sha256": {
+    "Cargo.toml": "d13e121515f42d9c2243c2549c20472bfc516df2db6ea0521e22483fc98b74ae",
+    "LICENSE": "365e7aed98ecaf6d8438b9fadf973e7157e89384bb318b73daac67d1af9419e6",
+    "tests/cache.rs": "c96de465df7dd719f29b23f91fe0b3b1fce8184cb822c8aadc96cac6dd939774",
+    "tests/reader.rs": "6bc4fa8dc04ce2072d533fb0df0a6bb008fce4c2a60f7281a6359d9a9865bed7",
+    "examples/inspect_frames.rs": "32a636290f4d3f27bc0ff91cd4bad35762db5aa5a25a8406141c1c9203e04a7a",
+    "src/cache.rs": "e58f5808abf2cce8ac094ae9db0657417207397738daa3c197c83cfbd406f715",
+    "src/lib.rs": "216e105fa593d62c35c40216f4124d1436739ef6e2102ea45d20e9493453cd38",
+    "tests/data/counts-bitshuffle-lz4.h5": "49b5b575bfb9137151e7dcf2f3f5def5c54f2b1430c8fcdec8a90fe53c62ccfe",
+    "tests/data/counts-bitshuffle-lz4.json": "80ea9108a023516d61937f7c799b7ed769f1607bc14bf74d28c36fe48eabc7e1"
+  }
+}
