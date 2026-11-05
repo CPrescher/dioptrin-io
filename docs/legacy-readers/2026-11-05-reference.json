@@ -1,0 +1,621 @@
+{
+  "reference": {
+    "version": "2026.6.0",
+    "upstream_commit": "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece"
+  },
+  "files": [
+    {
+      "file": "tests/data/legacy/bruker86-u8.sfrm",
+      "file_sha256": "7a8d29eb071fe108fe4c66b2e712183171efa2cb53d578b6a85365e692387900",
+      "policy": "bruker",
+      "reference": {
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "uint8",
+        "frame_sha256": "33af6c91a27b5c78233290b56fdd67513b0c8a9f2420118e68cd58af7cfc5d7a"
+      },
+      "native": {
+        "dtype": "U8",
+        "frame_sha256": "33af6c91a27b5c78233290b56fdd67513b0c8a9f2420118e68cd58af7cfc5d7a",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "tests/data/legacy/bruker86-overflow.sfrm",
+      "file_sha256": "a8e094685a06f40ea3b4c316f2f4f4de03d0ed634b0f261877d0a6275f129c87",
+      "policy": "bruker",
+      "reference": {
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "uint32",
+        "frame_sha256": "bb48ec159f88290aa915943a92b0648a610537b74cb4a1983c5daf2dca6eb4f5"
+      },
+      "native": {
+        "dtype": "U32",
+        "frame_sha256": "bb48ec159f88290aa915943a92b0648a610537b74cb4a1983c5daf2dca6eb4f5",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "tests/data/legacy/bruker86-u32.sfrm",
+      "file_sha256": "d354aa44bbd759a18e5faedfd690a321371a00f0909ec1bd0a391d0803cad44c",
+      "policy": "bruker",
+      "reference": {
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "uint32",
+        "frame_sha256": "5019bbaa7ccab04839ccfa7fd7e54ef29d0c9de30d1b1cbc075f4b28e40444ee"
+      },
+      "native": {
+        "dtype": "U32",
+        "frame_sha256": "5019bbaa7ccab04839ccfa7fd7e54ef29d0c9de30d1b1cbc075f4b28e40444ee",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "tests/data/legacy/bruker86-linear.sfrm",
+      "file_sha256": "4b810e40d63043718aa5c94be37eac1a68767afa909d1352f0b4de3593119488",
+      "policy": "bruker",
+      "reference": {
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "float32",
+        "frame_sha256": "a73a7e84d52450cde4510c653619e159a10b903d7e491273a2e256311b20ec2e"
+      },
+      "native": {
+        "dtype": "U16",
+        "frame_sha256": "a2354c0609ddbd6a2e8f5fd4044d1a73420c3a3575d6dcf192eaeb14d72e1f62",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "equal": false,
+      "expected_difference": "FabIO implicitly applies LINEAR and emits float32; native counts stay unchanged"
+    },
+    {
+      "file": "tests/data/legacy/bruker100-under1.sfrm",
+      "file_sha256": "62ec124235b343d4b4e67d2b83ed91ec663102af39ae8cc025b64c90620c9ecd",
+      "policy": "bruker",
+      "reference": {
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "int32",
+        "frame_sha256": "007035831579e766ebec48043756bc5c520294321b81fbc296ba75d1f62739d7"
+      },
+      "native": {
+        "dtype": "I32",
+        "frame_sha256": "007035831579e766ebec48043756bc5c520294321b81fbc296ba75d1f62739d7",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "tests/data/legacy/bruker100-under2.sfrm",
+      "file_sha256": "5b3c0ca87b8d3fdd51bcb8213f65362bf256ae0d1c93590f8361ab7e50e438d6",
+      "policy": "bruker",
+      "reference": {
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "int32",
+        "frame_sha256": "4a6c11cb8dadb2cb77316edcf89450115311752ebb920ac5b176721381fbcc7d"
+      },
+      "native": {
+        "dtype": "I32",
+        "frame_sha256": "4a6c11cb8dadb2cb77316edcf89450115311752ebb920ac5b176721381fbcc7d",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "tests/data/legacy/bruker100-under4.sfrm",
+      "file_sha256": "7f663e3924a6e778c32e4eacde96dd006a647ee8c521954a39ea015cfa2440c7",
+      "policy": "bruker",
+      "reference": {
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "int32",
+        "frame_sha256": "0fc99fc98340423b76e0c5ac55baa09576da2c2940ba92e12aa3568d2771e9cf"
+      },
+      "native": {
+        "dtype": "I32",
+        "frame_sha256": "0fc99fc98340423b76e0c5ac55baa09576da2c2940ba92e12aa3568d2771e9cf",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "tests/data/legacy/bruker100-baseline.sfrm",
+      "file_sha256": "0ce456b5f0416d92bb14e0208630fc1b50209708ba75a5352e0a082f538f9a9d",
+      "policy": "bruker",
+      "reference": {
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "int32",
+        "frame_sha256": "fbcef4b600f9fa4bd6cd3405d3b8caaa0239fbbf93dd5c743c1edac1db78307e"
+      },
+      "native": {
+        "dtype": "I32",
+        "frame_sha256": "fbcef4b600f9fa4bd6cd3405d3b8caaa0239fbbf93dd5c743c1edac1db78307e",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "tests/data/legacy/bruker100-u16.sfrm",
+      "file_sha256": "9b6517a3b0f4e667a75b2fa3bf6260d69cfd0ae2360069059c7196e30c689666",
+      "policy": "bruker",
+      "reference": {
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "int32",
+        "frame_sha256": "52bbf3d4fd7105e7d9d1a762cdff83a2108a043f16036e658cde524fc96773d6"
+      },
+      "native": {
+        "dtype": "I32",
+        "frame_sha256": "52bbf3d4fd7105e7d9d1a762cdff83a2108a043f16036e658cde524fc96773d6",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "tests/data/legacy/bruker100-i32.sfrm",
+      "file_sha256": "2a61d0c45b628314587e98099e61eee1e26ca0cc61cbe4bbe36ccab934eea294",
+      "policy": "bruker",
+      "reference": {
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "int32",
+        "frame_sha256": "814d4981b91838e94f4548d31519d8b02f983540064093b37518bdfa1e864b67"
+      },
+      "native": {
+        "dtype": "I32",
+        "frame_sha256": "814d4981b91838e94f4548d31519d8b02f983540064093b37518bdfa1e864b67",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "tests/data/legacy/oxford-ty1-i8.img",
+      "file_sha256": "360eb4c073e5b426fd43a1c956b9b3f13dff42859d5d6f010d8d4d44b8f583b7",
+      "policy": "oxford",
+      "reference": {
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "int8",
+        "frame_sha256": "b2c4a068c4ae95ba4767d90c4ce776ccdeeb4c7b0a2285fa95f6901d8466bb48"
+      },
+      "native": {
+        "dtype": "I8",
+        "frame_sha256": "b2c4a068c4ae95ba4767d90c4ce776ccdeeb4c7b0a2285fa95f6901d8466bb48",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "tests/data/legacy/oxford-ty1-i16.img",
+      "file_sha256": "c314a52311c78c5c7bce4bec9033b830eb69f82d5ee9195b28ff64b4470d598f",
+      "policy": "oxford",
+      "reference": {
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "int16",
+        "frame_sha256": "7896592e4bbdef9c796b7883c69c6a49bd422e7790aab6e14ba92c9fea99ad23"
+      },
+      "native": {
+        "dtype": "I16",
+        "frame_sha256": "7896592e4bbdef9c796b7883c69c6a49bd422e7790aab6e14ba92c9fea99ad23",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "tests/data/legacy/oxford-ty1-i32.img",
+      "file_sha256": "0c66a464afed8818aef0507883484155583fbee69a721840b562de21b60d2a28",
+      "policy": "oxford",
+      "reference": {
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "int32",
+        "frame_sha256": "487099482f775755dba348f54d8963e2e89c968c4cfff46cf19300fc49918e87"
+      },
+      "native": {
+        "dtype": "I32",
+        "frame_sha256": "487099482f775755dba348f54d8963e2e89c968c4cfff46cf19300fc49918e87",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "tests/data/legacy/oxford-ty1-i64.img",
+      "file_sha256": "ac2b53effa0a9656abcafe8cc87fa28120048da4c6b0a913749f03947dde540a",
+      "policy": "oxford",
+      "reference": {
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "int64",
+        "frame_sha256": "bc5974bb548274a3de8c335732bae412aebd2cc0d4ca980f5febd88307c04a04"
+      },
+      "native": {
+        "dtype": "I64",
+        "frame_sha256": "bc5974bb548274a3de8c335732bae412aebd2cc0d4ca980f5febd88307c04a04",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "tests/data/legacy/oxford-ty1-negative.img",
+      "file_sha256": "a244f9140bc0a5e6c1f346ddb91c7525232c900ee222ba2c653c43fe3a87b47b",
+      "policy": "oxford",
+      "reference": {
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "int8",
+        "frame_sha256": "a5726fc861ade2fd5256798c6fec00fbc7eed6a5d67cf18603eec92e8683bcb6"
+      },
+      "native": {
+        "dtype": "I16",
+        "frame_sha256": "9809a8c15caf997900b71dce175e4eec16a45903b7e3bdab3912f272471074b3",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "equal": false,
+      "expected_difference": "FabIO selects dtype from maximum only and wraps negative counts"
+    },
+    {
+      "file": "tests/data/legacy/oxford-raw.img",
+      "file_sha256": "c87bdc0aeb587026f0f5aae84df59c9cfb30480e3ceb5f6455b95609f21c6ab3",
+      "policy": "oxford",
+      "reference": {
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "int32",
+        "frame_sha256": "355518477f92e1da7473174c0a7189888c4d36bba5576046f8f33d93ec5c2883"
+      },
+      "native": {
+        "dtype": "I32",
+        "frame_sha256": "355518477f92e1da7473174c0a7189888c4d36bba5576046f8f33d93ec5c2883",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "tests/data/legacy/oxford-v4-raw.img",
+      "file_sha256": "ff3dce56767001fba451b66e6fc37225a2ff0ca4ebbb658632dd4bc7e3178421",
+      "policy": "oxford",
+      "reference": {
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "int32",
+        "frame_sha256": "8dc58a8cc459efdb9884754e00da449b34589a2c81d892065bafb5fa9cccb119"
+      },
+      "native": {
+        "dtype": "I32",
+        "frame_sha256": "8dc58a8cc459efdb9884754e00da449b34589a2c81d892065bafb5fa9cccb119",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "tests/data/legacy/raxis-big.img",
+      "file_sha256": "301917e5d2a201373f2406a14c4cb21ee2a86ef4da036338c57e142dba536723",
+      "policy": "raxis-expanded",
+      "reference": {
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "uint32",
+        "frame_sha256": "2cda00d476bc5973baffb48cc7ebe82db068a9987c77aa20df832e7f466e2c01"
+      },
+      "native": {
+        "dtype": "U32",
+        "frame_sha256": "2cda00d476bc5973baffb48cc7ebe82db068a9987c77aa20df832e7f466e2c01",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "tests/data/legacy/raxis-little.img",
+      "file_sha256": "ac0afb05d5dc71c4b4117322a27f710335510f786929d2a7f17e0969dcc0a441",
+      "policy": "raxis-little-expanded",
+      "reference": {
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "uint32",
+        "frame_sha256": "2cda00d476bc5973baffb48cc7ebe82db068a9987c77aa20df832e7f466e2c01"
+      },
+      "native": {
+        "dtype": "U32",
+        "frame_sha256": "2cda00d476bc5973baffb48cc7ebe82db068a9987c77aa20df832e7f466e2c01",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "tests/data/legacy/raxis-no-flags.img",
+      "file_sha256": "6d9d770dc35b5865c39375f9f485c848a9096fd6c96f1bc99fc60b007ca9c41e",
+      "policy": "raxis-expanded",
+      "reference": {
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "uint16",
+        "frame_sha256": "2fd48097b06354c1fe422d1f70c211060d4155a2475446ad3e9558c13bd35879"
+      },
+      "native": {
+        "dtype": "U16",
+        "frame_sha256": "2fd48097b06354c1fe422d1f70c211060d4155a2475446ad3e9558c13bd35879",
+        "shape": [
+          2,
+          3
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "external-corpus/Cr8F8140k103.0026",
+      "file_sha256": "702bc232bda07ba445eebee7993927748856d0379ea54823ce400c4c0e4f67dd",
+      "policy": "bruker",
+      "reference": {
+        "shape": [
+          512,
+          512
+        ],
+        "dtype": "uint32",
+        "frame_sha256": "4c9a703f6b791d8583cdb43474760cdc3ddb09d3fb3f043f3ec628cb547aaf08"
+      },
+      "native": {
+        "dtype": "U32",
+        "frame_sha256": "4c9a703f6b791d8583cdb43474760cdc3ddb09d3fb3f043f3ec628cb547aaf08",
+        "shape": [
+          512,
+          512
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "external-corpus/NaCl_10_01_0009.sfrm",
+      "file_sha256": "ff03fa579c6cabb928cadb9b5f9e55cb3308346f555b6d58a9fb20f20871c37b",
+      "policy": "bruker",
+      "reference": {
+        "shape": [
+          512,
+          512
+        ],
+        "dtype": "int32",
+        "frame_sha256": "4925a1d649a7e8cd444c5731a3a023eddb5116c97ed510a56070eaed812420ea"
+      },
+      "native": {
+        "dtype": "I32",
+        "frame_sha256": "4925a1d649a7e8cd444c5731a3a023eddb5116c97ed510a56070eaed812420ea",
+        "shape": [
+          512,
+          512
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "external-corpus/b191_1_9_1.img",
+      "file_sha256": "261ffd27363692c0e94fa99a61e20e9983ff9c48023adaea02ba277ea9124947",
+      "policy": "oxford",
+      "reference": {
+        "shape": [
+          512,
+          512
+        ],
+        "dtype": "int16",
+        "frame_sha256": "bd728f80ed7547027dcf7ed3b54ceac2c22f9da99f9c0014ded80b74b93f1aa9"
+      },
+      "native": {
+        "dtype": "I16",
+        "frame_sha256": "bd728f80ed7547027dcf7ed3b54ceac2c22f9da99f9c0014ded80b74b93f1aa9",
+        "shape": [
+          512,
+          512
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "external-corpus/b191_1_9_1_uncompressed.img",
+      "file_sha256": "33dc1609e557b0ea0cdad98650c7f425c0cc95940b22db57e5ce908bc52bb9f2",
+      "policy": "oxford",
+      "reference": {
+        "shape": [
+          512,
+          512
+        ],
+        "dtype": "int32",
+        "frame_sha256": "ebfae75e47b3b178997d2a7d3ed59ff651a8c242f908bd1b07efe66462798946"
+      },
+      "native": {
+        "dtype": "I32",
+        "frame_sha256": "ebfae75e47b3b178997d2a7d3ed59ff651a8c242f908bd1b07efe66462798946",
+        "shape": [
+          512,
+          512
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "external-corpus/d80_60s.img",
+      "file_sha256": "7fd5ff9a06a356f58ff01643cef09ab339550c3ccb32f75e2d4b7f879159e8fb",
+      "policy": "oxford",
+      "reference": {
+        "shape": [
+          2048,
+          2048
+        ],
+        "dtype": "int32",
+        "frame_sha256": "5c3755c7d4222c75659ea470b1732fec51453c47e220a74f54f07ddea7e2cab5"
+      },
+      "native": {
+        "dtype": "I32",
+        "frame_sha256": "5c3755c7d4222c75659ea470b1732fec51453c47e220a74f54f07ddea7e2cab5",
+        "shape": [
+          2048,
+          2048
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "external-corpus/pilatus300k.rod_img",
+      "file_sha256": "7d9485215d19ef32394ddd4317e58e63afbd13f929ddf92f48444b5cb183ae6e",
+      "policy": "oxford",
+      "reference": {
+        "shape": [
+          619,
+          487
+        ],
+        "dtype": "int32",
+        "frame_sha256": "e6142f9091fc0621e3deee45a152b30fb5d983a18c16377b374f2a11d89dae68"
+      },
+      "native": {
+        "dtype": "I32",
+        "frame_sha256": "e6142f9091fc0621e3deee45a152b30fb5d983a18c16377b374f2a11d89dae68",
+        "shape": [
+          619,
+          487
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "external-corpus/mgzn-20hpt.img",
+      "file_sha256": "67a4ae749ff05c3a1f8939cfd7f6690f91f463865940826b222dc1370c1b5fcb",
+      "policy": "raxis-expanded",
+      "reference": {
+        "shape": [
+          1280,
+          2300
+        ],
+        "dtype": "uint32",
+        "frame_sha256": "d9b89b9b3ac7e701a34fb65cdf7e375e6dd68ef42456bf9d6b2098e24631d128"
+      },
+      "native": {
+        "dtype": "U32",
+        "frame_sha256": "d9b89b9b3ac7e701a34fb65cdf7e375e6dd68ef42456bf9d6b2098e24631d128",
+        "shape": [
+          1280,
+          2300
+        ]
+      },
+      "equal": true
+    },
+    {
+      "file": "external-corpus/100nmfilmonglass_1_1.img",
+      "file_sha256": "8bb9119e24de97e0748f95bb2f5f32c9e333f90b81bfa2c91f80f171dd53c1b1",
+      "policy": "oxford",
+      "reference": {
+        "shape": [
+          1024,
+          1024
+        ],
+        "dtype": "float64",
+        "frame_sha256": "1d1afd868a8064ba591072df16f8e3941b48dc7b15b54730b539d51abc2bbe2b"
+      },
+      "native_error": "Error: Error(\"Oxford TY5 is known unreliable in the pinned reference; independent authority required\")",
+      "equal": false,
+      "expected_difference": "Oxford TY5 explicitly rejected; known unreliable reference"
+    }
+  ],
+  "origin": "Pinned FabIO test suite; external detector corpus from http://www.edna-site.org/pub/fabio/testimages. No detector corpus redistributed."
+}

@@ -18,10 +18,15 @@ mod source;
 
 #[cfg(any(feature = "cbf", feature = "edf", feature = "native"))]
 mod binary;
+#[cfg(feature = "bruker")]
+pub mod bruker;
 #[cfg(feature = "cbf")]
 pub mod cbf;
 #[cfg(feature = "containers")]
 pub mod dm3;
+#[cfg(any(feature = "bruker", feature = "oxford", feature = "raxis"))]
+#[path = "bruker/common.rs"]
+mod detector_common;
 #[cfg(feature = "edf")]
 pub mod edf;
 #[cfg(feature = "containers")]
@@ -32,6 +37,10 @@ pub mod native;
 mod transport;
 #[cfg(feature = "containers")]
 pub mod spe;
+#[cfg(feature = "oxford")]
+pub mod oxford;
+#[cfg(feature = "raxis")]
+pub mod raxis;
 #[cfg(feature = "wrappers")]
 pub mod wrapped;
 #[cfg(feature = "xsd")]

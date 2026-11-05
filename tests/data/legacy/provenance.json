@@ -1,0 +1,395 @@
+{
+  "license": "CC0-1.0",
+  "generator": "scripts/generate_legacy_fixtures.py",
+  "source": "Independent explicit arrays and manually packed format records; no upstream detector data",
+  "files": {
+    "bruker86-u8.sfrm": {
+      "family": "bruker",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "U8",
+      "values": [
+        0,
+        1,
+        255,
+        2,
+        3,
+        4
+      ],
+      "file_sha256": "7a8d29eb071fe108fe4c66b2e712183171efa2cb53d578b6a85365e692387900",
+      "frame_sha256": "33af6c91a27b5c78233290b56fdd67513b0c8a9f2420118e68cd58af7cfc5d7a"
+    },
+    "bruker86-overflow.sfrm": {
+      "family": "bruker",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "U32",
+      "values": [
+        0,
+        70000,
+        2,
+        123456789,
+        4,
+        5
+      ],
+      "file_sha256": "a8e094685a06f40ea3b4c316f2f4f4de03d0ed634b0f261877d0a6275f129c87",
+      "frame_sha256": "bb48ec159f88290aa915943a92b0648a610537b74cb4a1983c5daf2dca6eb4f5"
+    },
+    "bruker86-u32.sfrm": {
+      "family": "bruker",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "U32",
+      "values": [
+        0,
+        1,
+        4294967295,
+        2147483648,
+        65535,
+        42
+      ],
+      "file_sha256": "d354aa44bbd759a18e5faedfd690a321371a00f0909ec1bd0a391d0803cad44c",
+      "frame_sha256": "5019bbaa7ccab04839ccfa7fd7e54ef29d0c9de30d1b1cbc075f4b28e40444ee"
+    },
+    "bruker86-linear.sfrm": {
+      "family": "bruker",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "U16",
+      "values": [
+        0,
+        4,
+        8,
+        12,
+        16,
+        20
+      ],
+      "file_sha256": "4b810e40d63043718aa5c94be37eac1a68767afa909d1352f0b4de3593119488",
+      "frame_sha256": "a2354c0609ddbd6a2e8f5fd4044d1a73420c3a3575d6dcf192eaeb14d72e1f62",
+      "reference_difference": "FabIO implicitly applies LINEAR and emits float32; native counts stay unchanged"
+    },
+    "bruker100-under1.sfrm": {
+      "family": "bruker",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "I32",
+      "values": [
+        -10,
+        287,
+        80032,
+        39,
+        0,
+        33
+      ],
+      "file_sha256": "62ec124235b343d4b4e67d2b83ed91ec663102af39ae8cc025b64c90620c9ecd",
+      "frame_sha256": "007035831579e766ebec48043756bc5c520294321b81fbc296ba75d1f62739d7"
+    },
+    "bruker100-under2.sfrm": {
+      "family": "bruker",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "I32",
+      "values": [
+        -32768,
+        287,
+        80032,
+        39,
+        -500,
+        33
+      ],
+      "file_sha256": "5b3c0ca87b8d3fdd51bcb8213f65362bf256ae0d1c93590f8361ab7e50e438d6",
+      "frame_sha256": "4a6c11cb8dadb2cb77316edcf89450115311752ebb920ac5b176721381fbcc7d"
+    },
+    "bruker100-under4.sfrm": {
+      "family": "bruker",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "I32",
+      "values": [
+        -2147483648,
+        287,
+        80032,
+        39,
+        2147483647,
+        33
+      ],
+      "file_sha256": "7f663e3924a6e778c32e4eacde96dd006a647ee8c521954a39ea015cfa2440c7",
+      "frame_sha256": "0fc99fc98340423b76e0c5ac55baa09576da2c2940ba92e12aa3568d2771e9cf"
+    },
+    "bruker100-baseline.sfrm": {
+      "family": "bruker",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "I32",
+      "values": [
+        32,
+        33,
+        34,
+        287,
+        36,
+        37
+      ],
+      "file_sha256": "0ce456b5f0416d92bb14e0208630fc1b50209708ba75a5352e0a082f538f9a9d",
+      "frame_sha256": "fbcef4b600f9fa4bd6cd3405d3b8caaa0239fbbf93dd5c743c1edac1db78307e"
+    },
+    "bruker100-u16.sfrm": {
+      "family": "bruker",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "I32",
+      "values": [
+        0,
+        100000,
+        255,
+        7,
+        0,
+        1
+      ],
+      "file_sha256": "9b6517a3b0f4e667a75b2fa3bf6260d69cfd0ae2360069059c7196e30c689666",
+      "frame_sha256": "52bbf3d4fd7105e7d9d1a762cdff83a2108a043f16036e658cde524fc96773d6"
+    },
+    "bruker100-i32.sfrm": {
+      "family": "bruker",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "I32",
+      "values": [
+        -2147483648,
+        -12,
+        2147483647,
+        2,
+        3,
+        4
+      ],
+      "file_sha256": "2a61d0c45b628314587e98099e61eee1e26ca0cc61cbe4bbe36ccab934eea294",
+      "frame_sha256": "814d4981b91838e94f4548d31519d8b02f983540064093b37518bdfa1e864b67"
+    },
+    "oxford-ty1-i8.img": {
+      "family": "oxford",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "I8",
+      "values": [
+        1,
+        0,
+        126,
+        127,
+        0,
+        -1
+      ],
+      "file_sha256": "360eb4c073e5b426fd43a1c956b9b3f13dff42859d5d6f010d8d4d44b8f583b7",
+      "frame_sha256": "b2c4a068c4ae95ba4767d90c4ce776ccdeeb4c7b0a2285fa95f6901d8466bb48"
+    },
+    "oxford-ty1-i16.img": {
+      "family": "oxford",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "I16",
+      "values": [
+        0,
+        127,
+        200,
+        32767,
+        32700,
+        100
+      ],
+      "file_sha256": "c314a52311c78c5c7bce4bec9033b830eb69f82d5ee9195b28ff64b4470d598f",
+      "frame_sha256": "7896592e4bbdef9c796b7883c69c6a49bd422e7790aab6e14ba92c9fea99ad23"
+    },
+    "oxford-ty1-i32.img": {
+      "family": "oxford",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "I32",
+      "values": [
+        0,
+        40000,
+        30000,
+        1000000,
+        1000001,
+        42
+      ],
+      "file_sha256": "0c66a464afed8818aef0507883484155583fbee69a721840b562de21b60d2a28",
+      "frame_sha256": "487099482f775755dba348f54d8963e2e89c968c4cfff46cf19300fc49918e87"
+    },
+    "oxford-ty1-i64.img": {
+      "family": "oxford",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "I64",
+      "values": [
+        2000000000,
+        4000000000,
+        6000000000,
+        6000000001,
+        6000000000,
+        6000000000
+      ],
+      "file_sha256": "ac2b53effa0a9656abcafe8cc87fa28120048da4c6b0a913749f03947dde540a",
+      "frame_sha256": "bc5974bb548274a3de8c335732bae412aebd2cc0d4ca980f5febd88307c04a04"
+    },
+    "oxford-ty1-negative.img": {
+      "family": "oxford",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "I16",
+      "values": [
+        0,
+        -200,
+        -1000,
+        -900,
+        -500,
+        0
+      ],
+      "file_sha256": "a244f9140bc0a5e6c1f346ddb91c7525232c900ee222ba2c653c43fe3a87b47b",
+      "frame_sha256": "9809a8c15caf997900b71dce175e4eec16a45903b7e3bdab3912f272471074b3",
+      "reference_difference": "FabIO selects dtype from maximum only and wraps negative counts"
+    },
+    "oxford-raw.img": {
+      "family": "oxford",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "I32",
+      "values": [
+        -2147483648,
+        -7,
+        0,
+        1,
+        2147483647,
+        9
+      ],
+      "file_sha256": "c87bdc0aeb587026f0f5aae84df59c9cfb30480e3ceb5f6455b95609f21c6ab3",
+      "frame_sha256": "355518477f92e1da7473174c0a7189888c4d36bba5576046f8f33d93ec5c2883"
+    },
+    "oxford-v4-raw.img": {
+      "family": "oxford",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "I32",
+      "values": [
+        6,
+        5,
+        4,
+        3,
+        2,
+        1
+      ],
+      "file_sha256": "ff3dce56767001fba451b66e6fc37225a2ff0ca4ebbb658632dd4bc7e3178421",
+      "frame_sha256": "8dc58a8cc459efdb9884754e00da449b34589a2c81d892065bafb5fa9cccb119"
+    },
+    "raxis-big.img": {
+      "family": "raxis",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "U16",
+      "values": [
+        0,
+        32767,
+        32769,
+        65535,
+        42,
+        32784
+      ],
+      "file_sha256": "301917e5d2a201373f2406a14c4cb21ee2a86ef4da036338c57e142dba536723",
+      "frame_sha256": "c7157a9d335852f4eb8edbcab8c95e449b2dbe325a2ea55950d2b43b8490c750",
+      "little_endian": false,
+      "expanded": [
+        0,
+        32767,
+        2,
+        81917,
+        42,
+        40
+      ]
+    },
+    "raxis-little.img": {
+      "family": "raxis",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "U16",
+      "values": [
+        0,
+        32767,
+        32769,
+        65535,
+        42,
+        32784
+      ],
+      "file_sha256": "ac0afb05d5dc71c4b4117322a27f710335510f786929d2a7f17e0969dcc0a441",
+      "frame_sha256": "c7157a9d335852f4eb8edbcab8c95e449b2dbe325a2ea55950d2b43b8490c750",
+      "little_endian": true,
+      "expanded": [
+        0,
+        32767,
+        2,
+        81917,
+        42,
+        40
+      ]
+    },
+    "raxis-no-flags.img": {
+      "family": "raxis",
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "U16",
+      "values": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        32767
+      ],
+      "file_sha256": "6d9d770dc35b5865c39375f9f485c848a9096fd6c96f1bc99fc60b007ca9c41e",
+      "frame_sha256": "2fd48097b06354c1fe422d1f70c211060d4155a2475446ad3e9558c13bd35879",
+      "expanded": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        32767
+      ]
+    }
+  }
+}
