@@ -4,6 +4,7 @@
 //! Unpack.c; copyright/license notice: licenses/native-readers/Pillow-13.0.0-LICENSE.txt.
 #[cfg(feature = "jpeg")]
 pub use super::view_jpeg::read_pillow13;
+pub use super::view_ycbcr::{convert_ycbcr, render_ycbcr_rgb472};
 use super::{Error, FrameBuffer, Metadata, SampleLayout};
 use crate::{PixelBuffer, PixelType};
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

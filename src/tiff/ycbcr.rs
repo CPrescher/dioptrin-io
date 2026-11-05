@@ -125,6 +125,8 @@ struct Geometry {
     stored: [usize; 2],
     grid: [usize; 2],
     samples: usize,
+    max_rows: usize,
+    max_samples: usize,
 }
 fn geometries(page: &Metadata) -> Result<Vec<Geometry>, Error> {
     let [h, v] = subsampling(page)?;
@@ -181,7 +183,18 @@ fn geometries(page: &Metadata) -> Result<Vec<Geometry>, Error> {
             .checked_mul(grid[1])
             .and_then(|n| n.checked_mul(h * v + 2))
             .ok_or_else(|| Error("YCbCr sample count overflow".into()))?;
+        let max_rows = if tiled {
+            stored[0]
+        } else {
+            rows.div_ceil(v) * v
+        };
+        let max_samples = (max_rows / v)
+            .checked_mul(grid[1])
+            .and_then(|n| n.checked_mul(h * v + 2))
+            .ok_or_else(|| Error("YCbCr full strip padding overflow".into()))?;
         out.push(Geometry {
+            max_rows,
+            max_samples,
             origin,
             image,
             stored,
@@ -208,7 +221,7 @@ pub(super) fn validate(page: &Metadata, limits: Limits) -> Result<(), Error> {
     let geometries = geometries(page)?;
     let total = geometries
         .iter()
-        .try_fold(0usize, |n, g| n.checked_add(g.samples))
+        .try_fold(0usize, |n, g| n.checked_add(g.max_samples))
         .and_then(|n| n.checked_mul(2));
     if total.is_none_or(|n| n > limits.frame_bytes) {
         return Err(Error(
@@ -228,13 +241,13 @@ pub(super) fn validate(page: &Metadata, limits: Limits) -> Result<(), Error> {
             || page.compression == 5
                 && usize::try_from(bytes)
                     .ok()
-                    .and_then(|n| n.checked_add(g.samples))
+                    .and_then(|n| n.checked_add(g.max_samples))
                     .and_then(|n| n.checked_add(1))
                     .is_none_or(|n| n > limits.intermediate_bytes)
             || g.samples
                 .checked_add(1)
                 .is_none_or(|n| n > limits.intermediate_bytes)
-            || page.compression == 1 && bytes != g.samples as u64
+            || page.compression == 1 && bytes != g.samples as u64 && bytes != g.max_samples as u64
         {
             return Err(Error(
                 "YCbCr chunk exceeds scratch limit or exact uncompressed size".into(),
@@ -288,7 +301,9 @@ pub fn colorimetry(page: &Metadata) -> Result<Colorimetry, Error> {
     if ![1, 2].contains(&positioning)
         || coefficients.iter().any(|&n| n <= 0.0 || n >= 1.0)
         || reference_black_white
-            .chunks_exact(2)
+            .as_chunks::<2>()
+            .0
+            .iter()
             .any(|pair| pair[1] <= pair[0])
     {
         return Err(Error(
@@ -321,7 +336,7 @@ pub(super) fn decode(
     chunks
         .try_reserve_exact(geometries.len())
         .map_err(|e| Error(e.to_string()))?;
-    for ((geometry, offset), length) in geometries.into_iter().zip(offsets).zip(lengths) {
+    for ((mut geometry, offset), length) in geometries.into_iter().zip(offsets).zip(lengths) {
         let length = usize::try_from(length)
             .map_err(|_| Error("YCbCr encoded length exceeds platform".into()))?;
         if length > limit
@@ -337,8 +352,13 @@ pub(super) fn decode(
         let units = if page.compression == 1 {
             encoded
         } else {
-            decode_lzw(&encoded, geometry.samples)?
+            decode_lzw(&encoded, geometry.samples, geometry.max_samples)?
         };
+        if units.len() == geometry.max_samples {
+            geometry.samples = geometry.max_samples;
+            geometry.stored[0] = geometry.max_rows;
+            geometry.grid[0] = geometry.max_rows / v;
+        }
         if units.len() != geometry.samples {
             return Err(Error("YCbCr source sampling-unit count mismatch".into()));
         }
@@ -397,17 +417,27 @@ fn allocate(n: usize) -> Result<Vec<u8>, Error> {
 fn io(error: std::io::Error) -> Error {
     Error(error.to_string())
 }
-fn decode_lzw(encoded: &[u8], expected: usize) -> Result<Vec<u8>, Error> {
+fn decode_lzw(encoded: &[u8], minimum: usize, expected: usize) -> Result<Vec<u8>, Error> {
     let mut output = allocate(
         expected
             .checked_add(1)
             .ok_or_else(|| Error("YCbCr output size overflow".into()))?,
     )?;
+    if encoded.len() < 2 || encoded[0] != 0x80 || encoded[1] & 0x80 != 0 {
+        return Err(Error(
+            "YCbCr LZW requires the modern MSB initial clear code; no dialect retry".into(),
+        ));
+    }
     let mut decoder = weezl::decode::Decoder::with_tiff_size_switch(weezl::BitOrder::Msb, 8);
-    let mut input = 0;
+    let mut input = 0usize;
     let mut written = 0;
     loop {
-        let result = decoder.decode_bytes(&encoded[input..], &mut output[written..]);
+        // Give the mature codec only the current source byte: bulk bit-buffer
+        // prefetch can otherwise hide declared bytes after a real EOI marker.
+        let result = decoder.decode_bytes(
+            &encoded[input..input.saturating_add(1).min(encoded.len())],
+            &mut output[written..],
+        );
         input += result.consumed_in;
         written += result.consumed_out;
         match result.status.map_err(|e| Error(e.to_string()))? {
@@ -417,18 +447,19 @@ fn decode_lzw(encoded: &[u8], expected: usize) -> Result<Vec<u8>, Error> {
             }
             weezl::LzwStatus::Ok => {
                 if written > expected || result.consumed_in == 0 && result.consumed_out == 0 {
-                    return Err(Error(
-                        "YCbCr LZW output exceeds declared units or stalled".into(),
-                    ));
+                    return Err(Error(format!(
+                        "YCbCr LZW output exceeds declared units or stalled: {written}/{expected}, input {input}/{}",
+                        encoded.len()
+                    )));
                 }
             }
         }
     }
-    if written != expected || input != encoded.len() {
+    if (written != minimum && written != expected) || input != encoded.len() {
         return Err(Error(
             "YCbCr LZW exact output/end-marker/window mismatch".into(),
         ));
     }
-    output.truncate(expected);
+    output.truncate(written);
     Ok(output)
 }

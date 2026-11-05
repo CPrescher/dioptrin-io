@@ -23,6 +23,12 @@ pub fn read_pillow13(
     let page = reader
         .metadata(index)
         .ok_or_else(|| Error("TIFF view page index outside file".into()))?;
+    if page.photometric_interpretation == 6 && [1, 5, 6].contains(&page.compression) {
+        let metadata = page.clone();
+        let mut components = super::ycbcr::Buffer::default();
+        reader.read_ycbcr_into(index, &mut components)?;
+        return view::convert_ycbcr(&metadata, &components, Policy::Pillow13, max_output_bytes);
+    }
     if page.compression != 7 {
         let mut frame = FrameBuffer::default();
         reader.read_frame_into(index, &mut frame)?;

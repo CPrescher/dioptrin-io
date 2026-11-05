@@ -17,6 +17,7 @@ use ifd_view::{Admission, ChunkWindows, FileView, OriginalPhoto};
 pub mod view;
 #[cfg(feature = "jpeg")]
 mod view_jpeg;
+mod view_ycbcr;
 pub mod ycbcr;
 use std::{
     collections::BTreeMap,

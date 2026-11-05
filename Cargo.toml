@@ -94,3 +94,7 @@ required-features = ["edf", "native"]
 [[example]]
 name = "ojpeg_probe"
 required-features = ["tiff", "jpeg"]
+
+[[example]]
+name = "ycbcr_probe"
+required-features = ["tiff"]
