@@ -1,0 +1,72 @@
+{
+  "fabio_version": "2026.6.0",
+  "fabio_commit": "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece",
+  "files": {
+    "/private/tmp/dioptrin-io-fabio-corpus/example.mar2300": {
+      "sha256": "cac8e4e64608ffa29b181a06733d1e519b01719f042b9f64a36dfdba64c41768",
+      "shape": [
+        2300,
+        2300
+      ],
+      "dtype": "uint32",
+      "little_endian": true,
+      "sample_sha256": "f2063ddb32f7b4fa03543ebd562c92e090ddfcca4567affc1567c42e3da8f68e",
+      "num_high": 155
+    },
+    "/private/tmp/dioptrin-mar345-writer-capture/example.mar2300-le.mar345": {
+      "sha256": "1d39a670d620e580b818b7d387efd7ec16c3fd4a4a097e2f1e742bcf6a750897",
+      "shape": [
+        2300,
+        2300
+      ],
+      "dtype": "uint32",
+      "little_endian": true,
+      "sample_sha256": "f2063ddb32f7b4fa03543ebd562c92e090ddfcca4567affc1567c42e3da8f68e",
+      "num_high": 155
+    },
+    "/private/tmp/dioptrin-mar345-writer-capture/example.mar2300-be.mar345": {
+      "sha256": "5d831748a870ee08292869d4be25b02c749d115a9e81d27123b67d30a950091b",
+      "shape": [
+        2300,
+        2300
+      ],
+      "dtype": "uint32",
+      "little_endian": false,
+      "sample_sha256": "f2063ddb32f7b4fa03543ebd562c92e090ddfcca4567affc1567c42e3da8f68e",
+      "num_high": 155
+    },
+    "/private/tmp/dioptrin-io-fabio-corpus/Fe3O4_023_101.mar2560": {
+      "sha256": "ba1b5d9596577e2af4133d0068d62797c51b9e3e82d759b442b47f803c29b054",
+      "shape": [
+        3072,
+        2560
+      ],
+      "dtype": "uint32",
+      "little_endian": true,
+      "sample_sha256": "ab5f911dbfa222d6e85e8e20b28a94630e8d880344fb63654ae5777d843a917f",
+      "num_high": 4
+    },
+    "/private/tmp/dioptrin-mar345-writer-capture/Fe3O4_023_101.mar2560-le.mar345": {
+      "sha256": "b32f23c89baee29411d24d9b466f782a506586cf646f8f51dd5a97a27c2f1b03",
+      "shape": [
+        3072,
+        2560
+      ],
+      "dtype": "uint32",
+      "little_endian": true,
+      "sample_sha256": "ab5f911dbfa222d6e85e8e20b28a94630e8d880344fb63654ae5777d843a917f",
+      "num_high": 4
+    },
+    "/private/tmp/dioptrin-mar345-writer-capture/Fe3O4_023_101.mar2560-be.mar345": {
+      "sha256": "a064a4dae51432f3e127c8dcf158a19ad3c72a443d0f1c356ab1ef41aa8b4f53",
+      "shape": [
+        3072,
+        2560
+      ],
+      "dtype": "uint32",
+      "little_endian": false,
+      "sample_sha256": "ab5f911dbfa222d6e85e8e20b28a94630e8d880344fb63654ae5777d843a917f",
+      "num_high": 4
+    }
+  }
+}

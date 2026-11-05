@@ -29,7 +29,9 @@ but default dispatch still invokes that V1 function. A valid adaptation must
 establish complete output count/input bounds, exact 16-bit predictor wrapping,
 high-value records, endian variants and corrupt/truncated behavior against the
 same upstream files. V2 remains a separate contract rather than being guessed
-from a recognized marker. No new PCK implementation was added by this audit.
+from a recognized marker. The later bounded MIT V1 adaptation and its
+source-correct oracle differences are now documented in `MAR345_READER.md`;
+V2 remains explicitly unsupported.
 
 Registry evaluation found cryiorust 0.6.0 (GPL-3.0+) and bioformats 0.1.8
 (GPL-2.0-or-later), neither admitted as an MIT production dependency. No already

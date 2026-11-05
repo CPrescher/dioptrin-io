@@ -82,3 +82,6 @@ pub mod pixi;
 
 #[cfg(feature = "esperanto")]
 pub mod esperanto;
+
+#[cfg(feature = "mar345")]
+pub mod mar345;

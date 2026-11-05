@@ -27,6 +27,7 @@ fit2d = ["native"]
 kcd = ["native"]
 mpa = ["native"]
 esperanto = ["native"]
+mar345 = ["native"]
 wrappers = ["native", "tiff", "cbf", "edf", "dep:tempfile"]
 
 [dependencies]
