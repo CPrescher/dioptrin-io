@@ -8,6 +8,12 @@ use std::path::Path;
 
 #[derive(Debug, Clone, Copy)]
 pub enum Format {
+    #[cfg(feature = "fit2d")]
+    Fit2d,
+    #[cfg(feature = "kcd")]
+    Kcd(crate::kcd::Interpretation),
+    #[cfg(feature = "mpa")]
+    Mpa,
     DetectorTiff(crate::detector_tiff::Format),
     #[cfg(feature = "fixed")]
     Ge,
@@ -43,6 +49,12 @@ pub enum Format {
 }
 
 enum Backend {
+    #[cfg(feature = "fit2d")]
+    Fit2d(crate::fit2d::Reader),
+    #[cfg(feature = "kcd")]
+    Kcd(crate::kcd::Reader),
+    #[cfg(feature = "mpa")]
+    Mpa(crate::mpa::Reader),
     DetectorTiff(Box<crate::detector_tiff::Reader>),
     #[cfg(feature = "fixed")]
     Ge(crate::ge::Reader),
@@ -128,6 +140,12 @@ impl FrameBuffer {
 }
 
 pub enum Metadata<'a> {
+    #[cfg(feature = "fit2d")]
+    Fit2d(&'a crate::fit2d::Metadata),
+    #[cfg(feature = "kcd")]
+    Kcd(&'a crate::kcd::Metadata),
+    #[cfg(feature = "mpa")]
+    Mpa(&'a crate::mpa::Metadata),
     DetectorTiff(crate::detector_tiff::Metadata<'a>),
     #[cfg(feature = "fixed")]
     Ge(&'a crate::ge::Metadata),
@@ -176,6 +194,14 @@ impl Reader {
         let source = PreparedSource::open(path, transport)?;
         let input = source.path();
         let backend = match format {
+            #[cfg(feature = "fit2d")]
+            Format::Fit2d => Backend::Fit2d(crate::fit2d::Reader::open(input, image)?),
+            #[cfg(feature = "kcd")]
+            Format::Kcd(interpretation) => Backend::Kcd(
+                crate::kcd::Reader::open_with_interpretation(input, image, interpretation)?,
+            ),
+            #[cfg(feature = "mpa")]
+            Format::Mpa => Backend::Mpa(crate::mpa::Reader::open(input, image)?),
             Format::DetectorTiff(format) => Backend::DetectorTiff(Box::new(
                 crate::detector_tiff::Reader::open(input, format, tiff)
                     .map_err(|e| Error(e.to_string()))?,
@@ -262,6 +288,12 @@ impl Reader {
     #[must_use]
     pub fn frames(&self) -> usize {
         match &self.backend {
+            #[cfg(feature = "fit2d")]
+            Backend::Fit2d(r) => r.frames(),
+            #[cfg(feature = "kcd")]
+            Backend::Kcd(r) => r.frames(),
+            #[cfg(feature = "mpa")]
+            Backend::Mpa(r) => r.frames(),
             Backend::DetectorTiff(r) => r.frames(),
             #[cfg(feature = "fixed")]
             Backend::Ge(r) => r.frames(),
@@ -297,6 +329,12 @@ impl Reader {
             return None;
         }
         match &self.backend {
+            #[cfg(feature = "fit2d")]
+            Backend::Fit2d(r) => Some(Metadata::Fit2d(r.metadata())),
+            #[cfg(feature = "kcd")]
+            Backend::Kcd(r) => Some(Metadata::Kcd(r.metadata())),
+            #[cfg(feature = "mpa")]
+            Backend::Mpa(r) => Some(Metadata::Mpa(r.metadata())),
             Backend::DetectorTiff(r) => r.metadata(index).map(Metadata::DetectorTiff),
             #[cfg(feature = "fixed")]
             Backend::Ge(r) => Some(Metadata::Ge(r.metadata())),
@@ -385,6 +423,12 @@ impl Reader {
                     unreachable!()
                 };
                 match backend {
+                    #[cfg(feature = "fit2d")]
+                    Backend::Fit2d(r) => r.read_frame_into(b)?,
+                    #[cfg(feature = "kcd")]
+                    Backend::Kcd(r) => r.read_frame_into(index, b)?,
+                    #[cfg(feature = "mpa")]
+                    Backend::Mpa(r) => r.read_frame_into(index, b)?,
                     #[cfg(feature = "fixed")]
                     Backend::Ge(r) => r.read_frame_into(index, b)?,
                     #[cfg(feature = "fixed")]

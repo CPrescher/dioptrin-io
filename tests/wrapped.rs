@@ -49,6 +49,15 @@ fn same_files_through_both_wrappers_keep_counts_headers_and_stacks() {
         ("edf/compressed-stack.edf", Format::Edf),
         ("cbf/int32.cbf", Format::Cbf(cbf::ByteOffsetMode::Legacy32)),
         ("tiff/le-bigtiff.tif", Format::Tiff),
+        #[cfg(feature = "fit2d")]
+        ("records/fit2d-512-big.f2d", Format::Fit2d),
+        #[cfg(feature = "kcd")]
+        (
+            "records/readouts.kcd",
+            Format::Kcd(dioptrin_io::kcd::Interpretation::StoredReadouts),
+        ),
+        #[cfg(feature = "mpa")]
+        ("records/sections.mpa", Format::Mpa),
         ("images/rgb-separate.tif", Format::Tiff),
         (
             "images/pilatus.tif",

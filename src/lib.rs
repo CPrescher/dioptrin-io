@@ -69,13 +69,13 @@ mod raster;
 #[cfg(feature = "tiff")]
 pub mod tiff;
 
-#[cfg(feature = "fixed")]
-pub mod ge;
-#[cfg(feature = "fixed")]
-pub mod pixi;
 #[cfg(feature = "fit2d")]
 pub mod fit2d;
+#[cfg(feature = "fixed")]
+pub mod ge;
 #[cfg(feature = "kcd")]
 pub mod kcd;
 #[cfg(feature = "mpa")]
 pub mod mpa;
+#[cfg(feature = "fixed")]
+pub mod pixi;

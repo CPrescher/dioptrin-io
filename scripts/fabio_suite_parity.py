@@ -30,7 +30,7 @@ ADAPTERS = {
     "numpyimage": "npy", "dtrekimage": "dtrek", "fit2dmaskimage": "mask",
     "HiPiCimage": "hipic", "pnmimage": "pnm", "edfimage": "edf",
     "cbfimage": "cbf", "tifimage": "tiff", "binaryimage": "raw",
-    "fit2dspreadsheetimage": "spreadsheet",
+    "fit2dspreadsheetimage": "spreadsheet", "fit2dimage":"fit2d", "kcdimage":"kcd", "mpaimage":"mpa",
     "hdf5image":"hdf5", "eigerimage":"eiger", "limaimage":"lima", "lambdaimage":"lambda",
     "marccdimage":"marccd", "pilatusimage":"pilatus",
     "speimage":"spe", "mrcimage":"mrc", "dm3image":"dm3",
@@ -111,6 +111,11 @@ def main():
             report["environment"]["packages"][name] = importlib.metadata.version(name)
         except importlib.metadata.PackageNotFoundError:
             report["environment"]["packages"][name] = None
+    try:
+        import glymur
+        report["reference_native_libraries"] = {"glymur_openjpeg": glymur.version.openjpeg_version}
+    except ImportError:
+        report["reference_native_libraries"] = {"glymur_openjpeg": None}
     report["probe_sha256"] = sha_file(probe_path)
     report["runtime_capabilities"] = capabilities
     report["reference_filters"] = args.reference_filters
@@ -150,6 +155,10 @@ def main():
             return
         record["adapter"] = adapter
         extra = []
+        if codec == "kcdimage":
+            record["interpretation_policy"] = "SumReadouts explicitly selected with checked i32 arithmetic; default native reader exposes original per-readout u16 words"
+        if codec == "tifimage":
+            record["interpretation_policy"] = "native stored channels and photometric samples; reference may invert WhiteIsZero or convert RGB to grayscale"
         if codec == "raxisimage":
             record["interpretation_policy"] = "PhotomultiplierExpanded explicitly selected; default native reader preserves stored uint16 words and flags"
         if codec in {"speimage", "mrcimage"}:

@@ -102,6 +102,9 @@ fn run() -> Result<(), Box<dyn Error>> {
             "pilatus",
         ];
         for (enabled, feature, names) in [
+            (cfg!(feature = "fit2d"), "fit2d", &["fit2d"][..]),
+            (cfg!(feature = "kcd"), "kcd", &["kcd"][..]),
+            (cfg!(feature = "mpa"), "mpa", &["mpa"][..]),
             (cfg!(feature = "fixed"), "fixed", &["ge", "pixi"][..]),
             (cfg!(feature = "jpeg"), "jpeg", &["jpeg"][..]),
             (cfg!(feature = "jpeg2000"), "jpeg2000", &["jpeg2000"][..]),
@@ -137,7 +140,8 @@ fn run() -> Result<(), Box<dyn Error>> {
                 "eigerimage":"hdf5","limaimage":"hdf5","lambdaimage":"hdf5",
                 "speimage":"containers","mrcimage":"containers","dm3image":"containers",
                 "brukerimage":"bruker","bruker100image":"bruker","OXDimage":"oxford","raxisimage":"raxis","xsdimage":"xsd",
-                "GEimage":"fixed","pixiimage":"fixed","jpegimage":"jpeg","jpeg2kimage":"jpeg2000"
+                "GEimage":"fixed","pixiimage":"fixed","jpegimage":"jpeg","jpeg2kimage":"jpeg2000",
+                "fit2dimage":"fit2d","kcdimage":"kcd","mpaimage":"mpa"
             }})
         );
         return Ok(());
@@ -237,6 +241,12 @@ fn run() -> Result<(), Box<dyn Error>> {
         return Ok(());
     }
     let format = match args[1].as_str() {
+        #[cfg(feature = "fit2d")]
+        "fit2d" => wrapped::Format::Fit2d,
+        #[cfg(feature = "kcd")]
+        "kcd" => wrapped::Format::Kcd(dioptrin_io::kcd::Interpretation::SumReadouts),
+        #[cfg(feature = "mpa")]
+        "mpa" => wrapped::Format::Mpa,
         "marccd" => wrapped::Format::DetectorTiff(dioptrin_io::detector_tiff::Format::MarCcd),
         "pilatus" => wrapped::Format::DetectorTiff(dioptrin_io::detector_tiff::Format::Pilatus),
         #[cfg(feature = "fixed")]
@@ -291,6 +301,12 @@ fn run() -> Result<(), Box<dyn Error>> {
     for i in 0..reader.frames() {
         reader.read_frame_into(i, &mut buffer)?;
         let fields = match reader.metadata(i).unwrap() {
+            #[cfg(feature = "fit2d")]
+            wrapped::Metadata::Fit2d(_) => json!({}),
+            #[cfg(feature = "kcd")]
+            wrapped::Metadata::Kcd(_) => json!({}),
+            #[cfg(feature = "mpa")]
+            wrapped::Metadata::Mpa(_) => json!({}),
             wrapped::Metadata::DetectorTiff(m) => detector_fields(m.header),
             #[cfg(feature = "fixed")]
             wrapped::Metadata::Ge(_) | wrapped::Metadata::Pixi(_) => json!({}),
