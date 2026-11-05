@@ -1,6 +1,7 @@
 //! Bruker format 86/100 counts, with storage overflow/underflow expansion.
-//! LINEAR calibration is retained as metadata and never applied implicitly.
+//! LINEAR float encoding is retained as metadata and never applied implicitly.
 pub use crate::binary::{Error, FrameBuffer, Limits};
+pub mod view;
 use crate::{
     PixelBuffer, PixelType,
     binary::copy_samples,
@@ -38,6 +39,7 @@ pub struct Reader {
     bytes: usize,
     main: usize,
     table_sizes: [usize; 3],
+    frame_bytes: usize,
 }
 impl Reader {
     /// Open exactly one immutable Bruker frame. Numbered series are metadata,
@@ -227,6 +229,7 @@ impl Reader {
             bytes,
             main,
             table_sizes,
+            frame_bytes: limits.frame_bytes,
         })
     }
     #[must_use]
@@ -237,8 +240,8 @@ impl Reader {
     pub fn frames(&self) -> usize {
         1
     }
-    /// Expand only the declared storage tables. LINEAR is not a correction
-    /// performed here; consumers can explicitly interpret that metadata.
+    /// Expand only the declared storage tables. Optional LINEAR float decoding
+    /// belongs to an explicitly selected consumer view, not this stored read.
     /// # Errors
     /// Mutation, malformed table markers/positions, duplicate entries or count overflow.
     pub fn read_frame_into(&self, buffer: &mut FrameBuffer) -> Result<(), Error> {

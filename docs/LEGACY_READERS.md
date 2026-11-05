@@ -125,3 +125,23 @@ three families. The bounded parsers use pinned MIT FabIO format/codec references
 the R-AXIS field-layout table is adapted with Brian R. Pauw's attribution retained
 in `licenses/native-readers/legacy-layouts-MIT.txt`. Existing GPL reader candidates
 are not incorporated, and no Python runtime is part of this crate.
+
+## Explicit Bruker86 floating-image view
+
+The pinned Bruker writer encodes floating images as rounded unsigned words using
+`LINEAR` slope/offset, and its reader decodes them into f32. These coefficients
+are file encoding metadata; their presence does not authorize applying a detector
+calibration. `bruker::view::read_linear_into(&reader, &mut buffer)` explicitly
+selects that file view. It uses separate f64 multiplication/addition followed by
+f32 conversion, matching the pinned reader's order. Missing or identity
+coefficients preserve the integer representation, and format100 is rejected by
+this specific view. `wrapped::Format::BrukerLinear` provides the same explicit
+choice through bounded outer compression.
+
+The ordinary reader continues to expose stored counts and original type; its
+metadata does not change when a view is requested. The returned buffer's type
+identifies the selected representation. The wider f32 output has its own frame
+admission check, source changes invalidate the operation, and original words
+remain available through another ordinary read. No normalization, geometry or
+other correction is performed. The comparison bridge hashes the stored output
+and the selected float view separately and reports a view match distinctly.

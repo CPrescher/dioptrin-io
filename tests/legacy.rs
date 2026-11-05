@@ -433,3 +433,45 @@ fn bruker_declared_underflows_require_nonzero_supported_storage_width() {
         );
     }
 }
+
+#[cfg(feature = "bruker")]
+#[test]
+fn explicit_bruker_linear_view_decodes_float_encoding_without_changing_raw_reads() {
+    use dioptrin_io::bruker::{FrameBuffer, Limits, Reader, view};
+    let reader = Reader::open(fixture("bruker86-linear.sfrm"), Limits::default()).unwrap();
+    let mut buffer = FrameBuffer::default();
+    view::read_linear_into(&reader, &mut buffer).unwrap();
+    assert_eq!(
+        buffer.pixels(),
+        Some(&PixelBuffer::F32(vec![2., 3., 4., 5., 6., 7.]))
+    );
+    assert_eq!(reader.metadata().storage_type, PixelType::U16);
+    assert_eq!(reader.metadata().linear, Some([0.25, 2.]));
+    reader.read_frame_into(&mut buffer).unwrap();
+    assert_eq!(
+        buffer.pixels(),
+        Some(&PixelBuffer::U16(vec![0, 4, 8, 12, 16, 20]))
+    );
+    let identity = Reader::open(fixture("bruker86-u8.sfrm"), Limits::default()).unwrap();
+    view::read_linear_into(&identity, &mut buffer).unwrap();
+    assert!(matches!(buffer.pixels(), Some(PixelBuffer::U8(_))));
+    let small = Reader::open(
+        fixture("bruker86-linear.sfrm"),
+        Limits {
+            frame_bytes: 12,
+            ..Limits::default()
+        },
+    )
+    .unwrap();
+    assert!(view::read_linear_into(&small, &mut buffer).is_err());
+    assert!(buffer.pixels().is_none());
+    let v100 = Reader::open(fixture("bruker100-u16.sfrm"), Limits::default()).unwrap();
+    assert!(view::read_linear_into(&v100, &mut buffer).is_err());
+    assert!(buffer.pixels().is_none());
+    let bytes = std::fs::read(fixture("bruker86-linear.sfrm")).unwrap();
+    let temp = Temp::new(&bytes);
+    let changed = Reader::open(temp.path(), Limits::default()).unwrap();
+    std::fs::write(temp.path(), b"changed").unwrap();
+    assert!(view::read_linear_into(&changed, &mut buffer).is_err());
+    assert!(buffer.pixels().is_none());
+}
