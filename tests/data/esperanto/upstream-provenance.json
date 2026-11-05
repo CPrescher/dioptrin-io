@@ -1,0 +1,66 @@
+{
+  "fabio_version": "2026.6.0",
+  "fabio_commit": "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece",
+  "files": {
+    "/private/tmp/dioptrin-io-fabio-corpus/reference.esperanto": {
+      "sha256": "cd5ade3c3b9ca96ca41448244d3e0ba98a0ad6723baf23694e1c30806b0dd759",
+      "encoding": "AGI_BITFIELD",
+      "shape": [
+        256,
+        256
+      ],
+      "native_sha256": "fd7bd7751a45eccc67cb00b58c37f0063b4ebfeb2ec7386f0f564ae1a43d8aa1",
+      "file_reader_dtype": "int32"
+    },
+    "/private/tmp/dioptrin-esperanto-writer-capture/reference-4BYTE_LONG.esperanto": {
+      "sha256": "5f13128bc7c766871d73f357658e4ab0e978d0eb936d47a012343eb69b5242e0",
+      "encoding": "4BYTE_LONG",
+      "shape": [
+        256,
+        256
+      ],
+      "native_sha256": "fd7bd7751a45eccc67cb00b58c37f0063b4ebfeb2ec7386f0f564ae1a43d8aa1",
+      "file_reader_dtype": "int32"
+    },
+    "/private/tmp/dioptrin-esperanto-writer-capture/reference-AGI_BITFIELD.esperanto": {
+      "sha256": "f855366e916caf93cccb7ece51a974ef85376cf0c1454afd62702ef660f0588c",
+      "encoding": "AGI_BITFIELD",
+      "shape": [
+        256,
+        256
+      ],
+      "native_sha256": "fd7bd7751a45eccc67cb00b58c37f0063b4ebfeb2ec7386f0f564ae1a43d8aa1",
+      "file_reader_dtype": "int32"
+    },
+    "/private/tmp/dioptrin-io-fabio-corpus/sucrose_1s__1_1.esperanto": {
+      "sha256": "959267e3f2cd4db286ab4fdf3c1735d69e501925d4b0f55ae7f278239e9c7382",
+      "encoding": "AGI_BITFIELD",
+      "shape": [
+        2048,
+        2048
+      ],
+      "native_sha256": "7faa2f7311bdc83685503a84885443b9a0f399d85cf0367437ac6dea128b72b3",
+      "file_reader_dtype": "int32"
+    },
+    "/private/tmp/dioptrin-esperanto-writer-capture/sucrose_1s__1_1-4BYTE_LONG.esperanto": {
+      "sha256": "af1e059d4720baca449675ac38d585057f4a61fba137d498aa5f844714bd00b6",
+      "encoding": "4BYTE_LONG",
+      "shape": [
+        2048,
+        2048
+      ],
+      "native_sha256": "7faa2f7311bdc83685503a84885443b9a0f399d85cf0367437ac6dea128b72b3",
+      "file_reader_dtype": "int32"
+    },
+    "/private/tmp/dioptrin-esperanto-writer-capture/sucrose_1s__1_1-AGI_BITFIELD.esperanto": {
+      "sha256": "6fece593640aa173ee9a1550bcc40eebcc1d078be961e230747088ae762750d3",
+      "encoding": "AGI_BITFIELD",
+      "shape": [
+        2048,
+        2048
+      ],
+      "native_sha256": "7faa2f7311bdc83685503a84885443b9a0f399d85cf0367437ac6dea128b72b3",
+      "file_reader_dtype": "int32"
+    }
+  }
+}

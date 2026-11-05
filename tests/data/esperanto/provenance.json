@@ -1,0 +1,226 @@
+{
+  "license": "CC0-1.0",
+  "fabio_version": "2026.6.0",
+  "files": {
+    "agi-field1.esperanto": {
+      "sha256": "7c2128a645ab6299f678006995f0837aabc0a1b79b97a42aeb3cd7eca1f42ab9",
+      "shape": [
+        2,
+        33
+      ],
+      "encoding": "AGI_BITFIELD",
+      "native_sha256": "6ddfecf505cbe3f3716ac65aa4d4abf91a982d602fdbf3d53c7b061418b1fa4b",
+      "intermediate_dtype": "int64",
+      "intermediate_sha256": "38db90550c5dd2555fb1a419fccf6a472ab54056697d0442c42e5e24b4425b9f"
+    },
+    "agi-field2.esperanto": {
+      "sha256": "5aab9a02c48c5ede97e1a6d7350704079012f319f80938bce47ffd4d7672c7bd",
+      "shape": [
+        2,
+        33
+      ],
+      "encoding": "AGI_BITFIELD",
+      "native_sha256": "195818cd848f8df494b9da07b5ea280d80df60e8f2628d30d24be7df7972b1ca",
+      "intermediate_dtype": "int64",
+      "intermediate_sha256": "970aad09a17cdc84846ab1decbf1c1272f6450a68265c8783be21f97211f08ec"
+    },
+    "agi-field3.esperanto": {
+      "sha256": "253b0c625f12395c3ba92b674c5135324dbee16776c8e84242289265972bbbe2",
+      "shape": [
+        2,
+        33
+      ],
+      "encoding": "AGI_BITFIELD",
+      "native_sha256": "5d95cdc7fdc5856a485142a7fd01e9fbb1fa58ced4e161829dc381f6cf3eb076",
+      "intermediate_dtype": "int64",
+      "intermediate_sha256": "273a295688fe9c80b7ad0c851858e6c4d0e80740e25139026a822ee512f8aeb6"
+    },
+    "agi-field4.esperanto": {
+      "sha256": "e8364b8e33847850d14accfbba64f240772959fa518dcf41d1cc2de3c9116af4",
+      "shape": [
+        2,
+        33
+      ],
+      "encoding": "AGI_BITFIELD",
+      "native_sha256": "50318d797d435059d32a1ff6cbf262370a449dbdce3f0cd8d60d71897f5e2b3d",
+      "intermediate_dtype": "int64",
+      "intermediate_sha256": "05eb2322f1b949e8d437c04521496d951379ed45bc97ff5d74ae90434bae6064"
+    },
+    "agi-field5.esperanto": {
+      "sha256": "73484bbfbf5fb97d3156ad634bec469b02af78a4dc54f62ee2d86d8c41a2c647",
+      "shape": [
+        2,
+        33
+      ],
+      "encoding": "AGI_BITFIELD",
+      "native_sha256": "b345c655662ad55bfce4ed407203b888b2c5b09d103c4ccc4da0003acb37aee4",
+      "intermediate_dtype": "int64",
+      "intermediate_sha256": "c3f9cd8755c88531a853287a0980ecd13126a4c5191ffda6652547363e59a052"
+    },
+    "agi-field6.esperanto": {
+      "sha256": "3b3d81f5f26b0e8d4ef3b995b855be2f901bf498bb1cafea572b029cb26c13ad",
+      "shape": [
+        2,
+        33
+      ],
+      "encoding": "AGI_BITFIELD",
+      "native_sha256": "b15d5bd18cf7989f3debe3221def59dbdc996135a01ddcb18f0fe6633f190625",
+      "intermediate_dtype": "int64",
+      "intermediate_sha256": "8043798c84fb0a260e2efdd2090b09ba1ecc380d6991742b2a74a8476905494f"
+    },
+    "agi-field7.esperanto": {
+      "sha256": "ffff5cbb49d7359fead411e942e9c08591c3344fb2eb69404c3d66315a3cce95",
+      "shape": [
+        2,
+        33
+      ],
+      "encoding": "AGI_BITFIELD",
+      "native_sha256": "311368b0c693f4e38c064c90bdf61e0b5877ac8ea44855605e3b45bd492fba91",
+      "intermediate_dtype": "int64",
+      "intermediate_sha256": "74c576fde64cf4da4dbcbd03705cf18ef76bed2474c9fbe67d70a7624ea7f9c1"
+    },
+    "agi-field8.esperanto": {
+      "sha256": "dc0a17be7b9cc9b7f0bfd9bae94cfa196f279bf384453c8b5df1180b7e31fe03",
+      "shape": [
+        2,
+        33
+      ],
+      "encoding": "AGI_BITFIELD",
+      "native_sha256": "d49badf3ffbf23def7c0df0cc7654b7a3a5e3e66667a5d19c61645f01d0303c8",
+      "intermediate_dtype": "int64",
+      "intermediate_sha256": "62e70c852672cd72f0032cda4d89263a6ea7a7b19c78be79a5f632ca885a60c0"
+    },
+    "agi-extrema-cols1.esperanto": {
+      "sha256": "e1eb29fc7f7ec750adb2367b5c5d15cd58daf246d936bd2393d38b28ad8e515e",
+      "shape": [
+        2,
+        1
+      ],
+      "encoding": "AGI_BITFIELD",
+      "native_sha256": "072082ae50f1346898f40082ed6cea2aa3b0e2260cf83def34cfe9727634adca",
+      "intermediate_dtype": "int64",
+      "intermediate_sha256": "14b141ede6827dd942a2bc9939117196ff57cda4b77967fe5ab26cbaea2b9de3"
+    },
+    "long32-extrema-cols1.esperanto": {
+      "sha256": "7c1e28b648d2eed55eea360fd41f902ea8a8ea90301e565635e88826374102fc",
+      "shape": [
+        2,
+        1
+      ],
+      "encoding": "4BYTE_LONG",
+      "native_sha256": "072082ae50f1346898f40082ed6cea2aa3b0e2260cf83def34cfe9727634adca",
+      "intermediate_dtype": "int32",
+      "intermediate_sha256": "072082ae50f1346898f40082ed6cea2aa3b0e2260cf83def34cfe9727634adca"
+    },
+    "agi-extrema-cols2.esperanto": {
+      "sha256": "0bf66b827a78fea81e3fe9ab398b5fa9635d6e06f38d8d50ef46e594f8cab611",
+      "shape": [
+        2,
+        2
+      ],
+      "encoding": "AGI_BITFIELD",
+      "native_sha256": "569718c65a23e38f27a3e99bcd7d74c3d5a796a9dd75e0e3e0398b9594ecf84b",
+      "intermediate_dtype": "int64",
+      "intermediate_sha256": "4fac8fb1f29a97dd0c926752ed17e2fea21414fed10f75ab667001a5834e103f"
+    },
+    "long32-extrema-cols2.esperanto": {
+      "sha256": "bddbe6777af8ac759f4b3977164a1e7f6c26536ed995cfaf149ff8ef0195af18",
+      "shape": [
+        2,
+        2
+      ],
+      "encoding": "4BYTE_LONG",
+      "native_sha256": "569718c65a23e38f27a3e99bcd7d74c3d5a796a9dd75e0e3e0398b9594ecf84b",
+      "intermediate_dtype": "int32",
+      "intermediate_sha256": "569718c65a23e38f27a3e99bcd7d74c3d5a796a9dd75e0e3e0398b9594ecf84b"
+    },
+    "agi-extrema-cols16.esperanto": {
+      "sha256": "d9215041a5829469400eb12303b5de9ec00eb5e23f8e685b23d226c035107ef7",
+      "shape": [
+        2,
+        16
+      ],
+      "encoding": "AGI_BITFIELD",
+      "native_sha256": "bf5c7eda6d5fe376e6de5423b2b914eabfafd2325136c30e7f29c0991b330470",
+      "intermediate_dtype": "int64",
+      "intermediate_sha256": "dc401c0aacf7e93e6f062369f936e70e1231fe67cb44b74cc3cd91013a170ed6"
+    },
+    "long32-extrema-cols16.esperanto": {
+      "sha256": "a23f71d094d3dd9f0bc550b3041cb18a4863fce50425d7cc82ce573e7aad986f",
+      "shape": [
+        2,
+        16
+      ],
+      "encoding": "4BYTE_LONG",
+      "native_sha256": "bf5c7eda6d5fe376e6de5423b2b914eabfafd2325136c30e7f29c0991b330470",
+      "intermediate_dtype": "int32",
+      "intermediate_sha256": "bf5c7eda6d5fe376e6de5423b2b914eabfafd2325136c30e7f29c0991b330470"
+    },
+    "agi-extrema-cols17.esperanto": {
+      "sha256": "678eb7ce253aa2fb8339deb87e1e5c2f5ca91b7d226fdaaf6cf7cbe15b53829f",
+      "shape": [
+        2,
+        17
+      ],
+      "encoding": "AGI_BITFIELD",
+      "native_sha256": "9e25221651bebda72653e316008f8ec408c2627be7caacde684555543cf8c071",
+      "intermediate_dtype": "int64",
+      "intermediate_sha256": "b0b28a88d81ed08809aeaa30902fa1c5d716c5e3e6f3c14642591f799e443c7a"
+    },
+    "long32-extrema-cols17.esperanto": {
+      "sha256": "468dfd41ef1c7dd725448932a85333d8e852ef3d853200ad5ecb4909399fdd1c",
+      "shape": [
+        2,
+        17
+      ],
+      "encoding": "4BYTE_LONG",
+      "native_sha256": "9e25221651bebda72653e316008f8ec408c2627be7caacde684555543cf8c071",
+      "intermediate_dtype": "int32",
+      "intermediate_sha256": "9e25221651bebda72653e316008f8ec408c2627be7caacde684555543cf8c071"
+    },
+    "agi-extrema-cols18.esperanto": {
+      "sha256": "cfbf00545b1226d3530fe05626a957b81bd197382cf64fefa294824c2a322bda",
+      "shape": [
+        2,
+        18
+      ],
+      "encoding": "AGI_BITFIELD",
+      "native_sha256": "81930a3cf06f0b7d9287c0d9379de3e6b47f167a3a4f6da1816a9ad821064d5d",
+      "intermediate_dtype": "int64",
+      "intermediate_sha256": "d35856050c1fe8becd6604786c3ca2bfa2d82a02721244162592c57795033618"
+    },
+    "long32-extrema-cols18.esperanto": {
+      "sha256": "20d5e36a32631c902ec2d3f7bfa6a1dd50e615d8f2b12f3c752346059f9fa81e",
+      "shape": [
+        2,
+        18
+      ],
+      "encoding": "4BYTE_LONG",
+      "native_sha256": "81930a3cf06f0b7d9287c0d9379de3e6b47f167a3a4f6da1816a9ad821064d5d",
+      "intermediate_dtype": "int32",
+      "intermediate_sha256": "81930a3cf06f0b7d9287c0d9379de3e6b47f167a3a4f6da1816a9ad821064d5d"
+    },
+    "agi-extrema-cols34.esperanto": {
+      "sha256": "fefcbfbf3ee1862851ae1a371d599ed96815abac238e2afcd6a13057943ed296",
+      "shape": [
+        2,
+        34
+      ],
+      "encoding": "AGI_BITFIELD",
+      "native_sha256": "5352a43803e63c3868d496aa2236cde59813f85c3757594522c6667503cf5f57",
+      "intermediate_dtype": "int64",
+      "intermediate_sha256": "3a39206653964b47893b7ae9dc0aaeb145d5495701d4078803b853c8514d0199"
+    },
+    "long32-extrema-cols34.esperanto": {
+      "sha256": "2b0d429e06ed56c0bc2ed2f50c797a24a779a233adf62141c0885c2b22f85391",
+      "shape": [
+        2,
+        34
+      ],
+      "encoding": "4BYTE_LONG",
+      "native_sha256": "5352a43803e63c3868d496aa2236cde59813f85c3757594522c6667503cf5f57",
+      "intermediate_dtype": "int32",
+      "intermediate_sha256": "5352a43803e63c3868d496aa2236cde59813f85c3757594522c6667503cf5f57"
+    }
+  }
+}

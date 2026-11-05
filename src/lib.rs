@@ -79,3 +79,6 @@ pub mod kcd;
 pub mod mpa;
 #[cfg(feature = "fixed")]
 pub mod pixi;
+
+#[cfg(feature = "esperanto")]
+pub mod esperanto;

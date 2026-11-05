@@ -26,6 +26,7 @@ fixed = ["native"]
 fit2d = ["native"]
 kcd = ["native"]
 mpa = ["native"]
+esperanto = ["native"]
 wrappers = ["native", "tiff", "cbf", "edf", "dep:tempfile"]
 
 [dependencies]
