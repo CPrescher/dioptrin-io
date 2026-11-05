@@ -27,7 +27,7 @@ PIN = "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece"
 VERSION = "2026.6.0"
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 ADAPTERS = {
-    "numpyimage": "npy", "dtrekimage": "dtrek", "fit2dmaskimage": "mask",
+    "esperantoimage":"esperanto", "numpyimage": "npy", "dtrekimage": "dtrek", "fit2dmaskimage": "mask",
     "HiPiCimage": "hipic", "pnmimage": "pnm", "edfimage": "edf",
     "cbfimage": "cbf", "tifimage": "tiff", "binaryimage": "raw",
     "fit2dspreadsheetimage": "spreadsheet", "fit2dimage":"fit2d", "kcdimage":"kcd", "mpaimage":"mpa",
@@ -120,6 +120,8 @@ def main():
     report["runtime_capabilities"] = capabilities
     report["reference_filters"] = args.reference_filters
     report["rust_sources_sha256"] = {str(p.relative_to(ROOT)): sha_file(p) for p in sorted((ROOT/"src").rglob("*.rs"))}
+    report["bridge_sources_sha256"] = {name: sha_file(ROOT/name) for name in [
+        "scripts/fabio_suite_parity.py", "scripts/inventory_fabio.py", "examples/parity_probe.rs", "docs/fabio-2026.6.0-inventory.json"]}
     active = False
     current_test = None
 
@@ -201,11 +203,10 @@ def main():
             try:
                 frames = [json.loads(line) for line in native.stdout.splitlines()]
                 manifest = {}
-                for frame in frames:
-                    for name in frame.get("sources", []):
-                        source_path = pathlib.Path(name)
-                        source_hash = sha_file(source_path)
-                        manifest[source_hash] = {"name": source_path.name, "bytes": source_path.stat().st_size}
+                source_paths = {pathlib.Path(name) for frame in frames for name in frame.get("sources", [])}
+                for source_path in sorted(source_paths):
+                    source_hash = sha_file(source_path)
+                    manifest[source_hash] = {"name": source_path.name, "bytes": source_path.stat().st_size}
                 if manifest:
                     record["source_manifest"] = manifest
                     report["source_files"].update(manifest)
@@ -333,7 +334,7 @@ def main():
     compared_codecs = {r["codec"] for r in report["reads"] if r["status"] == "counts_match"}
     required = set(canonical_modules.values())
     report["unexercised_codecs"] = sorted(required - compared_codecs)
-    report["full_reading_parity"] = (result.wasSuccessful() and not result.skipped
+    report["full_reading_parity"] = (not args.modules and result.wasSuccessful() and not result.skipped
         and not report["reference_import_errors"] and not report["unexercised_codecs"]
         and not report["gaps"] and all(r["status"] in {"counts_match", "reference_no_pixels"}
             and not r.get("header_field_differences") for r in report["reads"])
@@ -342,7 +343,8 @@ def main():
     report["download_hashes"] = UtilsTest.resources.all_data
     report["probe_unchanged_during_run"] = report["probe_sha256"] == sha_file(probe_path)
     report["sources_unchanged_during_run"] = all(sha_file(ROOT/p) == h for p,h in report["rust_sources_sha256"].items())
-    if not report["probe_unchanged_during_run"] or not report["sources_unchanged_during_run"]:
+    report["bridge_unchanged_during_run"] = all(sha_file(ROOT/p) == h for p,h in report["bridge_sources_sha256"].items())
+    if not report["probe_unchanged_during_run"] or not report["sources_unchanged_during_run"] or not report["bridge_unchanged_during_run"]:
         report["full_reading_parity"] = False
     args.report.parent.mkdir(parents=True, exist_ok=True)
     def json_scalar(value):

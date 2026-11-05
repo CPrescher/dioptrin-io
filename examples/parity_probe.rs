@@ -102,6 +102,7 @@ fn run() -> Result<(), Box<dyn Error>> {
             "pilatus",
         ];
         for (enabled, feature, names) in [
+            (cfg!(feature = "esperanto"), "esperanto", &["esperanto"][..]),
             (cfg!(feature = "fit2d"), "fit2d", &["fit2d"][..]),
             (cfg!(feature = "kcd"), "kcd", &["kcd"][..]),
             (cfg!(feature = "mpa"), "mpa", &["mpa"][..]),
@@ -141,7 +142,7 @@ fn run() -> Result<(), Box<dyn Error>> {
                 "speimage":"containers","mrcimage":"containers","dm3image":"containers",
                 "brukerimage":"bruker","bruker100image":"bruker","OXDimage":"oxford","raxisimage":"raxis","xsdimage":"xsd",
                 "GEimage":"fixed","pixiimage":"fixed","jpegimage":"jpeg","jpeg2kimage":"jpeg2000",
-                "fit2dimage":"fit2d","kcdimage":"kcd","mpaimage":"mpa"
+                "fit2dimage":"fit2d","kcdimage":"kcd","mpaimage":"mpa","esperantoimage":"esperanto"
             }})
         );
         return Ok(());
@@ -172,6 +173,11 @@ fn run() -> Result<(), Box<dyn Error>> {
                 ..Options::default()
             },
         )?;
+        let paths: Vec<_> = reader
+            .sources()
+            .iter()
+            .map(|source| source.path.as_path())
+            .collect();
         let mut buffer = FrameBuffer::default();
         for i in 0..reader.frames() {
             reader.read_frame_into(i, &mut buffer)?;
@@ -181,7 +187,7 @@ fn run() -> Result<(), Box<dyn Error>> {
                 buffer.shape().unwrap(),
                 buffer.pixels().unwrap(),
                 json!(reader.fields()),
-                &[],
+                &paths,
             );
         }
         return Ok(());
@@ -241,6 +247,8 @@ fn run() -> Result<(), Box<dyn Error>> {
         return Ok(());
     }
     let format = match args[1].as_str() {
+        #[cfg(feature = "esperanto")]
+        "esperanto" => wrapped::Format::Esperanto,
         #[cfg(feature = "fit2d")]
         "fit2d" => wrapped::Format::Fit2d,
         #[cfg(feature = "kcd")]
@@ -301,6 +309,8 @@ fn run() -> Result<(), Box<dyn Error>> {
     for i in 0..reader.frames() {
         reader.read_frame_into(i, &mut buffer)?;
         let fields = match reader.metadata(i).unwrap() {
+            #[cfg(feature = "esperanto")]
+            wrapped::Metadata::Esperanto(m) => json!(m.fields),
             #[cfg(feature = "fit2d")]
             wrapped::Metadata::Fit2d(_) => json!({}),
             #[cfg(feature = "kcd")]

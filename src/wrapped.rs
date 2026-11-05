@@ -8,6 +8,8 @@ use std::path::Path;
 
 #[derive(Debug, Clone, Copy)]
 pub enum Format {
+    #[cfg(feature = "esperanto")]
+    Esperanto,
     #[cfg(feature = "fit2d")]
     Fit2d,
     #[cfg(feature = "kcd")]
@@ -49,6 +51,8 @@ pub enum Format {
 }
 
 enum Backend {
+    #[cfg(feature = "esperanto")]
+    Esperanto(crate::esperanto::Reader),
     #[cfg(feature = "fit2d")]
     Fit2d(crate::fit2d::Reader),
     #[cfg(feature = "kcd")]
@@ -140,6 +144,8 @@ impl FrameBuffer {
 }
 
 pub enum Metadata<'a> {
+    #[cfg(feature = "esperanto")]
+    Esperanto(&'a crate::esperanto::Metadata),
     #[cfg(feature = "fit2d")]
     Fit2d(&'a crate::fit2d::Metadata),
     #[cfg(feature = "kcd")]
@@ -194,6 +200,8 @@ impl Reader {
         let source = PreparedSource::open(path, transport)?;
         let input = source.path();
         let backend = match format {
+            #[cfg(feature = "esperanto")]
+            Format::Esperanto => Backend::Esperanto(crate::esperanto::Reader::open(input, image)?),
             #[cfg(feature = "fit2d")]
             Format::Fit2d => Backend::Fit2d(crate::fit2d::Reader::open(input, image)?),
             #[cfg(feature = "kcd")]
@@ -288,6 +296,8 @@ impl Reader {
     #[must_use]
     pub fn frames(&self) -> usize {
         match &self.backend {
+            #[cfg(feature = "esperanto")]
+            Backend::Esperanto(r) => r.frames(),
             #[cfg(feature = "fit2d")]
             Backend::Fit2d(r) => r.frames(),
             #[cfg(feature = "kcd")]
@@ -329,6 +339,8 @@ impl Reader {
             return None;
         }
         match &self.backend {
+            #[cfg(feature = "esperanto")]
+            Backend::Esperanto(r) => Some(Metadata::Esperanto(r.metadata())),
             #[cfg(feature = "fit2d")]
             Backend::Fit2d(r) => Some(Metadata::Fit2d(r.metadata())),
             #[cfg(feature = "kcd")]
@@ -423,6 +435,8 @@ impl Reader {
                     unreachable!()
                 };
                 match backend {
+                    #[cfg(feature = "esperanto")]
+                    Backend::Esperanto(r) => r.read_frame_into(index, b)?,
                     #[cfg(feature = "fit2d")]
                     Backend::Fit2d(r) => r.read_frame_into(b)?,
                     #[cfg(feature = "kcd")]
