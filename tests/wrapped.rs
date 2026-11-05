@@ -49,6 +49,17 @@ fn same_files_through_both_wrappers_keep_counts_headers_and_stacks() {
         ("edf/compressed-stack.edf", Format::Edf),
         ("cbf/int32.cbf", Format::Cbf(cbf::ByteOffsetMode::Legacy32)),
         ("tiff/le-bigtiff.tif", Format::Tiff),
+        ("images/rgb-separate.tif", Format::Tiff),
+        (
+            "images/pilatus.tif",
+            Format::DetectorTiff(dioptrin_io::detector_tiff::Format::Pilatus),
+        ),
+        #[cfg(feature = "jpeg")]
+        ("images/rgb.jpg", Format::Jpeg(Default::default())),
+        #[cfg(feature = "jpeg2000")]
+        ("images/uint16.jp2", Format::Jpeg2000(Default::default())),
+        #[cfg(feature = "fixed")]
+        ("fixed/ge-uint16.ge", Format::Ge),
         #[cfg(feature = "containers")]
         ("containers/spe-v3-int32.spe", Format::Spe),
         #[cfg(feature = "containers")]
@@ -88,6 +99,7 @@ fn same_files_through_both_wrappers_keep_counts_headers_and_stacks() {
                 reference.read_frame_into(i, &mut expected).unwrap();
                 reader.read_frame_into(i, &mut actual).unwrap();
                 assert_eq!(expected.shape(), actual.shape());
+                assert_eq!(expected.sample_shape(), actual.sample_shape());
                 assert_eq!(expected.pixels(), actual.pixels(), "{name}");
             }
             assert!(

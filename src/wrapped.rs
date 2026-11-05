@@ -8,6 +8,15 @@ use std::path::Path;
 
 #[derive(Debug, Clone, Copy)]
 pub enum Format {
+    DetectorTiff(crate::detector_tiff::Format),
+    #[cfg(feature = "fixed")]
+    Ge,
+    #[cfg(feature = "fixed")]
+    Pixi,
+    #[cfg(feature = "jpeg")]
+    Jpeg(crate::jpeg::Limits),
+    #[cfg(feature = "jpeg2000")]
+    Jpeg2000(crate::jpeg2000::Limits),
     #[cfg(feature = "containers")]
     Spe,
     #[cfg(feature = "containers")]
@@ -34,6 +43,15 @@ pub enum Format {
 }
 
 enum Backend {
+    DetectorTiff(Box<crate::detector_tiff::Reader>),
+    #[cfg(feature = "fixed")]
+    Ge(crate::ge::Reader),
+    #[cfg(feature = "fixed")]
+    Pixi(crate::pixi::Reader),
+    #[cfg(feature = "jpeg")]
+    Jpeg(crate::jpeg::Reader),
+    #[cfg(feature = "jpeg2000")]
+    Jpeg2000(crate::jpeg2000::Reader),
     #[cfg(feature = "containers")]
     Spe(crate::spe::Reader),
     #[cfg(feature = "containers")]
@@ -57,6 +75,8 @@ enum Backend {
 enum Buffer {
     #[default]
     Empty,
+    #[cfg(any(feature = "jpeg", feature = "jpeg2000"))]
+    Raster(crate::raster::FrameBuffer),
     Native(native::FrameBuffer),
     Tiff(tiff::FrameBuffer),
 }
@@ -67,12 +87,27 @@ pub struct FrameBuffer {
 }
 impl FrameBuffer {
     #[must_use]
+    pub fn sample_shape(&self) -> Option<Vec<usize>> {
+        if !self.valid {
+            return None;
+        }
+        match &self.buffer {
+            Buffer::Empty => None,
+            Buffer::Native(b) => b.shape().map(|s| s.to_vec()),
+            Buffer::Tiff(b) => b.sample_shape(),
+            #[cfg(any(feature = "jpeg", feature = "jpeg2000"))]
+            Buffer::Raster(b) => b.sample_shape(),
+        }
+    }
+    #[must_use]
     pub fn pixels(&self) -> Option<&PixelBuffer> {
         if !self.valid {
             return None;
         }
         match &self.buffer {
             Buffer::Empty => None,
+            #[cfg(any(feature = "jpeg", feature = "jpeg2000"))]
+            Buffer::Raster(b) => b.pixels(),
             Buffer::Native(b) => b.pixels(),
             Buffer::Tiff(b) => b.pixels(),
         }
@@ -84,6 +119,8 @@ impl FrameBuffer {
         }
         match &self.buffer {
             Buffer::Empty => None,
+            #[cfg(any(feature = "jpeg", feature = "jpeg2000"))]
+            Buffer::Raster(b) => b.shape(),
             Buffer::Native(b) => b.shape(),
             Buffer::Tiff(b) => b.shape(),
         }
@@ -91,6 +128,15 @@ impl FrameBuffer {
 }
 
 pub enum Metadata<'a> {
+    DetectorTiff(crate::detector_tiff::Metadata<'a>),
+    #[cfg(feature = "fixed")]
+    Ge(&'a crate::ge::Metadata),
+    #[cfg(feature = "fixed")]
+    Pixi(&'a crate::pixi::Metadata),
+    #[cfg(feature = "jpeg")]
+    Jpeg(&'a crate::jpeg::Metadata),
+    #[cfg(feature = "jpeg2000")]
+    Jpeg2000(&'a crate::jpeg2000::Metadata),
     #[cfg(feature = "containers")]
     Spe(&'a crate::spe::Metadata),
     #[cfg(feature = "containers")]
@@ -130,6 +176,22 @@ impl Reader {
         let source = PreparedSource::open(path, transport)?;
         let input = source.path();
         let backend = match format {
+            Format::DetectorTiff(format) => Backend::DetectorTiff(Box::new(
+                crate::detector_tiff::Reader::open(input, format, tiff)
+                    .map_err(|e| Error(e.to_string()))?,
+            )),
+            #[cfg(feature = "fixed")]
+            Format::Ge => Backend::Ge(crate::ge::Reader::open(input, image)?),
+            #[cfg(feature = "fixed")]
+            Format::Pixi => Backend::Pixi(crate::pixi::Reader::open(input, image)?),
+            #[cfg(feature = "jpeg")]
+            Format::Jpeg(limits) => Backend::Jpeg(
+                crate::jpeg::Reader::open(input, limits).map_err(|e| Error(e.to_string()))?,
+            ),
+            #[cfg(feature = "jpeg2000")]
+            Format::Jpeg2000(limits) => Backend::Jpeg2000(
+                crate::jpeg2000::Reader::open(input, limits).map_err(|e| Error(e.to_string()))?,
+            ),
             #[cfg(feature = "containers")]
             Format::Spe => Backend::Spe(crate::spe::Reader::open(input, image)?),
             #[cfg(feature = "containers")]
@@ -200,6 +262,15 @@ impl Reader {
     #[must_use]
     pub fn frames(&self) -> usize {
         match &self.backend {
+            Backend::DetectorTiff(r) => r.frames(),
+            #[cfg(feature = "fixed")]
+            Backend::Ge(r) => r.frames(),
+            #[cfg(feature = "fixed")]
+            Backend::Pixi(r) => r.frames(),
+            #[cfg(feature = "jpeg")]
+            Backend::Jpeg(r) => r.frames(),
+            #[cfg(feature = "jpeg2000")]
+            Backend::Jpeg2000(r) => r.frames(),
             #[cfg(feature = "containers")]
             Backend::Spe(r) => r.frames(),
             #[cfg(feature = "containers")]
@@ -226,6 +297,15 @@ impl Reader {
             return None;
         }
         match &self.backend {
+            Backend::DetectorTiff(r) => r.metadata(index).map(Metadata::DetectorTiff),
+            #[cfg(feature = "fixed")]
+            Backend::Ge(r) => Some(Metadata::Ge(r.metadata())),
+            #[cfg(feature = "fixed")]
+            Backend::Pixi(r) => Some(Metadata::Pixi(r.metadata())),
+            #[cfg(feature = "jpeg")]
+            Backend::Jpeg(r) => Some(Metadata::Jpeg(r.metadata())),
+            #[cfg(feature = "jpeg2000")]
+            Backend::Jpeg2000(r) => Some(Metadata::Jpeg2000(r.metadata())),
             #[cfg(feature = "containers")]
             Backend::Spe(r) => Some(Metadata::Spe(r.metadata())),
             #[cfg(feature = "containers")]
@@ -257,6 +337,36 @@ impl Reader {
             return Err(Error("wrapped frame index outside source".into()));
         }
         match &mut self.backend {
+            #[cfg(feature = "jpeg")]
+            Backend::Jpeg(r) => {
+                if !matches!(buffer.buffer, Buffer::Raster(_)) {
+                    buffer.buffer = Buffer::Raster(crate::raster::FrameBuffer::default());
+                }
+                let Buffer::Raster(b) = &mut buffer.buffer else {
+                    unreachable!()
+                };
+                r.read_frame_into(b).map_err(|e| Error(e.to_string()))?;
+            }
+            #[cfg(feature = "jpeg2000")]
+            Backend::Jpeg2000(r) => {
+                if !matches!(buffer.buffer, Buffer::Raster(_)) {
+                    buffer.buffer = Buffer::Raster(crate::raster::FrameBuffer::default());
+                }
+                let Buffer::Raster(b) = &mut buffer.buffer else {
+                    unreachable!()
+                };
+                r.read_frame_into(b).map_err(|e| Error(e.to_string()))?;
+            }
+            Backend::DetectorTiff(r) => {
+                if !matches!(buffer.buffer, Buffer::Tiff(_)) {
+                    buffer.buffer = Buffer::Tiff(tiff::FrameBuffer::default());
+                }
+                let Buffer::Tiff(b) = &mut buffer.buffer else {
+                    unreachable!()
+                };
+                r.read_frame_into(index, b)
+                    .map_err(|e| Error(e.to_string()))?;
+            }
             Backend::Tiff(r) => {
                 if !matches!(buffer.buffer, Buffer::Tiff(_)) {
                     buffer.buffer = Buffer::Tiff(tiff::FrameBuffer::default());
@@ -275,6 +385,15 @@ impl Reader {
                     unreachable!()
                 };
                 match backend {
+                    #[cfg(feature = "fixed")]
+                    Backend::Ge(r) => r.read_frame_into(index, b)?,
+                    #[cfg(feature = "fixed")]
+                    Backend::Pixi(r) => r.read_frame_into(index, b)?,
+                    #[cfg(feature = "jpeg")]
+                    Backend::Jpeg(_) => unreachable!(),
+                    #[cfg(feature = "jpeg2000")]
+                    Backend::Jpeg2000(_) => unreachable!(),
+                    Backend::DetectorTiff(_) => unreachable!(),
                     #[cfg(feature = "containers")]
                     Backend::Spe(r) => r.read_frame_into(index, b)?,
                     #[cfg(feature = "containers")]

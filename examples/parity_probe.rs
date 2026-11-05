@@ -56,6 +56,31 @@ fn report(
     );
 }
 
+fn detector_fields(header: &dioptrin_io::detector_tiff::Header) -> serde_json::Value {
+    use dioptrin_io::detector_tiff::{Header, Value};
+    match header {
+        Header::Pilatus(h) => json!(h.fields),
+        Header::MarCcd(h) => serde_json::Value::Object(
+            h.fields
+                .iter()
+                .map(|(k, v)| {
+                    (
+                        k.clone(),
+                        match v {
+                            Value::Unsigned(v) => json!(v),
+                            Value::Signed(v) => json!(v),
+                            Value::UnsignedArray(v) => json!(v),
+                            Value::SignedArray(v) => json!(v),
+                            Value::ShortArray(v) => json!(v),
+                            Value::Bytes(v) => json!(v),
+                        },
+                    )
+                })
+                .collect(),
+        ),
+    }
+}
+
 fn run() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = std::env::args().collect();
     if args.get(1).is_some_and(|s| s == "--capabilities") {
@@ -73,8 +98,13 @@ fn run() -> Result<(), Box<dyn Error>> {
             "cbf",
             "cbf64",
             "tiff",
+            "marccd",
+            "pilatus",
         ];
         for (enabled, feature, names) in [
+            (cfg!(feature = "fixed"), "fixed", &["ge", "pixi"][..]),
+            (cfg!(feature = "jpeg"), "jpeg", &["jpeg"][..]),
+            (cfg!(feature = "jpeg2000"), "jpeg2000", &["jpeg2000"][..]),
             (
                 cfg!(feature = "containers"),
                 "containers",
@@ -106,7 +136,8 @@ fn run() -> Result<(), Box<dyn Error>> {
                 "edfimage":"edf","cbfimage":"cbf","tifimage":"tiff","marccdimage":"tiff","pilatusimage":"tiff","hdf5image":"hdf5",
                 "eigerimage":"hdf5","limaimage":"hdf5","lambdaimage":"hdf5",
                 "speimage":"containers","mrcimage":"containers","dm3image":"containers",
-                "brukerimage":"bruker","bruker100image":"bruker","OXDimage":"oxford","raxisimage":"raxis","xsdimage":"xsd"
+                "brukerimage":"bruker","bruker100image":"bruker","OXDimage":"oxford","raxisimage":"raxis","xsdimage":"xsd",
+                "GEimage":"fixed","pixiimage":"fixed","jpegimage":"jpeg","jpeg2kimage":"jpeg2000"
             }})
         );
         return Ok(());
@@ -206,6 +237,16 @@ fn run() -> Result<(), Box<dyn Error>> {
         return Ok(());
     }
     let format = match args[1].as_str() {
+        "marccd" => wrapped::Format::DetectorTiff(dioptrin_io::detector_tiff::Format::MarCcd),
+        "pilatus" => wrapped::Format::DetectorTiff(dioptrin_io::detector_tiff::Format::Pilatus),
+        #[cfg(feature = "fixed")]
+        "ge" => wrapped::Format::Ge,
+        #[cfg(feature = "fixed")]
+        "pixi" => wrapped::Format::Pixi,
+        #[cfg(feature = "jpeg")]
+        "jpeg" => wrapped::Format::Jpeg(Default::default()),
+        #[cfg(feature = "jpeg2000")]
+        "jpeg2000" => wrapped::Format::Jpeg2000(Default::default()),
         #[cfg(feature = "containers")]
         "spe" => wrapped::Format::Spe,
         #[cfg(feature = "containers")]
@@ -250,6 +291,13 @@ fn run() -> Result<(), Box<dyn Error>> {
     for i in 0..reader.frames() {
         reader.read_frame_into(i, &mut buffer)?;
         let fields = match reader.metadata(i).unwrap() {
+            wrapped::Metadata::DetectorTiff(m) => detector_fields(m.header),
+            #[cfg(feature = "fixed")]
+            wrapped::Metadata::Ge(_) | wrapped::Metadata::Pixi(_) => json!({}),
+            #[cfg(feature = "jpeg")]
+            wrapped::Metadata::Jpeg(_) => json!({}),
+            #[cfg(feature = "jpeg2000")]
+            wrapped::Metadata::Jpeg2000(_) => json!({}),
             #[cfg(feature = "containers")]
             wrapped::Metadata::Spe(m) => json!(m.fields),
             #[cfg(feature = "containers")]
@@ -270,7 +318,7 @@ fn run() -> Result<(), Box<dyn Error>> {
         report(
             i,
             reader.frames(),
-            buffer.shape().unwrap(),
+            buffer.sample_shape().unwrap(),
             buffer.pixels().unwrap(),
             fields,
             &reader.source_paths(),

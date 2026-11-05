@@ -36,7 +36,7 @@ ADAPTERS = {
     "speimage":"spe", "mrcimage":"mrc", "dm3image":"dm3",
     "brukerimage":"bruker86", "bruker100image":"bruker100",
     "OXDimage":"oxford", "raxisimage":"raxis",
-    "jpegimage":"jpeg", "jpeg2kimage":"jpeg2000", "xsdimage":"xsd",
+    "jpegimage":"jpeg", "jpeg2kimage":"jpeg2000", "xsdimage":"xsd", "GEimage":"ge", "pixiimage":"pixi",
 }
 
 
@@ -221,17 +221,28 @@ def main():
                         if frame[key] != value:
                             failures.append({"frame": index, "field": key, "native": frame[key], "reference": value})
                 record.update(status="mismatch" if failures else "counts_match", frames=len(frames), mismatches=failures)
-                if codec in {"dtrekimage", "edfimage"}:
+                if codec in {"dtrekimage", "edfimage", "pilatusimage", "marccdimage"}:
                     # These two maps expose directly comparable text fields.
                     # Preserve full header coverage as a separate gate: CBF CIF,
                     # TIFF private detector fields etc. still need schemas.
                     header_differences = []
                     for index, frame in enumerate(frames):
                         ref_header = image.header if len(frames) == 1 else image.getframe(index).header
+                        if codec == "marccdimage":
+                            semantic = type(image)()
+                            with semantic._open(str(path), "rb") as header_source:
+                                semantic._readheader(header_source)
+                            ref_header = semantic.header
                         for key, value in ref_header.items():
                             key = str(key).upper() if codec == "edfimage" else str(key)
-                            if frame["fields"].get(key) != str(value):
-                                header_differences.append({"frame": index, "key": key, "reference": str(value), "native": frame["fields"].get(key)})
+                            if codec == "marccdimage":
+                                if isinstance(value, bytes): value = list(value)
+                                elif isinstance(value, (tuple, list)):
+                                    value = list(b"".join(value)) if value and isinstance(value[0], bytes) else list(value)
+                            else:
+                                value = str(value)
+                            if frame["fields"].get(key) != value:
+                                header_differences.append({"frame": index, "key": key, "reference": value, "native": frame["fields"].get(key)})
                     record["header_field_differences"] = header_differences
             except Exception as error:
                 record.update(status="comparison_error", error=f"{type(error).__name__}: {error}")
