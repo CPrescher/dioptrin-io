@@ -28,6 +28,8 @@ pub mod native;
 mod transport;
 #[cfg(feature = "wrappers")]
 pub mod wrapped;
+#[cfg(feature = "xsd")]
+pub mod xsd;
 
 #[cfg(feature = "hdf5")]
 pub mod hdf5;

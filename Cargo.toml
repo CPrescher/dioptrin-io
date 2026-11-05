@@ -15,6 +15,7 @@ tiff = ["dep:tiff-backend"]
 cbf = ["dep:md-5"]
 edf = ["dep:bytemuck", "dep:flate2", "dep:bzip2", "dep:tempfile"]
 native = ["dep:bytemuck"]
+xsd = ["native", "dep:roxmltree", "dep:data-encoding", "dep:md-5"]
 wrappers = ["native", "tiff", "cbf", "edf", "dep:tempfile"]
 
 [dependencies]
@@ -30,7 +31,11 @@ flate2 = { version = "1.1", optional = true, default-features = false, features 
 bzip2 = { version = "0.6", optional = true }
 tempfile = { version = "3.27", optional = true }
 
+roxmltree = { version = "=0.21.2", optional = true }
+data-encoding = { version = "=2.11.1", optional = true }
+
 [dev-dependencies]
+tempfile = "3.27"
 sha2 = "0.10"
 serde_json = "1.0"
 
