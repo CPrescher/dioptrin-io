@@ -1,0 +1,294 @@
+--- a/src/decoder/image.rs
++++ b/src/decoder/image.rs
+@@ -530,6 +530,8 @@
+         reader: R,
+         compression_method: CompressionMethod,
+         compressed_length: u64,
++        #[cfg_attr(not(feature = "lzw"), allow(unused_variables))] lzw_source_bytes: usize,
++        #[cfg_attr(not(feature = "lzw"), allow(unused_variables))] intermediate_limit: usize,
+         // FIXME: these should be `expect` attributes or we choose another way of passing them.
+         #[cfg_attr(not(feature = "jpeg"), allow(unused_variables))] jpeg_tables: Option<&[u8]>,
+         #[cfg_attr(not(feature = "fax"), allow(unused_variables))] dimensions: (u32, u32),
+@@ -541,7 +543,9 @@
+             CompressionMethod::LZW => Box::new(super::stream::LZWReader::new(
+                 reader,
+                 usize::try_from(compressed_length)?,
+-            )),
++                lzw_source_bytes,
++                intermediate_limit,
++            )?),
+             #[cfg(feature = "zstd")]
+             CompressionMethod::ZSTD => Box::new(zstd::Decoder::new(reader)?),
+             CompressionMethod::PackBits => Box::new(PackBitsReader::new(reader, compressed_length)),
+@@ -921,10 +925,26 @@
+         let is_all_bits = samples == data_samples;
+         let is_output_chunk_rows = layout.row_stride == chunk_row_bytes;
+ 
++        // Legacy LZW preflight checks complete source chunks, including tile
++        // padding rows. Raster placement and predictor handling remain below.
++        let lzw_source_bytes = if compression_method == CompressionMethod::LZW {
++            let rows = if self.chunk_type == ChunkType::Tile {
++                chunk_dims.1
++            } else {
++                data_dims.1
++            };
++            chunk_row_bytes
++                .checked_mul(rows as usize)
++                .ok_or(TiffError::LimitsExceeded)?
++        } else {
++            0
++        };
+         let mut reader = Self::create_reader(
+             reader.inner(),
+             compression_method,
+             *compressed_bytes,
++            lzw_source_bytes,
++            limits.intermediate_buffer_size,
+             self.jpeg_tables.as_deref().map(|a| &**a),
+             chunk_dims,
+             self.samples,
+--- a/src/decoder/mod.rs
++++ b/src/decoder/mod.rs
+@@ -19,6 +19,8 @@
+ mod cycles;
+ pub mod ifd;
+ mod image;
++#[cfg(feature = "lzw")]
++mod legacy_lzw;
+ mod stream;
+ mod tag_reader;
+ 
+--- a/src/decoder/stream.rs
++++ b/src/decoder/stream.rs
+@@ -1,5 +1,5 @@
+ //! All IO functionality needed for TIFF decoding
+-#[cfg(feature = "webp")]
++#[cfg(any(feature = "webp", feature = "lzw"))]
+ use std::io::Cursor;
+ use std::io::{self, BufRead, BufReader, Read, Seek, Take};
+ 
+@@ -132,52 +132,91 @@
+ 
+ /// Reader that decompresses LZW streams
+ #[cfg(feature = "lzw")]
+-pub struct LZWReader<R: Read> {
+-    reader: BufReader<Take<R>>,
+-    decoder: weezl::decode::Decoder,
++pub enum LZWReader<R: Read> {
++    Modern {
++        reader: BufReader<std::io::Chain<Cursor<[u8; 2]>, Take<R>>>,
++        decoder: weezl::decode::Decoder,
++    },
++    Legacy(Cursor<Vec<u8>>),
+ }
+ 
+ #[cfg(feature = "lzw")]
+ impl<R: Read> LZWReader<R> {
+-    /// Wraps a reader
+-    pub fn new(reader: R, compressed_length: usize) -> LZWReader<R> {
++    /// Wrap a chunk; retain the upstream streaming path for modern TIFF LZW.
++    pub fn new(
++        reader: R,
++        compressed_length: usize,
++        source_bytes: usize,
++        limit: usize,
++    ) -> io::Result<Self> {
++        let buffer_length = (32 * 1024).min(compressed_length);
++        let mut source = reader.take(u64::try_from(compressed_length).unwrap());
++        // Read promises only a partial fill; read_exact avoids making dialect
++        // recognition depend on the underlying reader's buffer granularity.
++        let mut prefix = [0; 2];
++        source.read_exact(&mut prefix)?;
++        let mut reader = BufReader::with_capacity(buffer_length, Cursor::new(prefix).chain(source));
++        if super::legacy_lzw::recognized(&prefix) {
++            compressed_length
++                .checked_mul(8)
++                .ok_or_else(|| io::Error::other("legacy LZW bit count overflow"))?;
++            compressed_length
++                .checked_add(source_bytes)
++                .and_then(|n| n.checked_add(1))
++                .and_then(|n| n.checked_add(buffer_length))
++                .filter(|&n| n <= limit)
++                .ok_or_else(|| {
++                    io::Error::other(
++                        "legacy LZW encoded/decoded scratch exceeds intermediate limit",
++                    )
++                })?;
++            let mut encoded = Vec::new();
++            encoded
++                .try_reserve_exact(compressed_length)
++                .map_err(|e| io::Error::other(e.to_string()))?;
++            encoded.resize(compressed_length, 0);
++            reader.read_exact(&mut encoded)?;
++            return Ok(Self::Legacy(Cursor::new(super::legacy_lzw::decode(
++                &encoded,
++                source_bytes,
++            )?)));
++        }
+         let configuration =
+             weezl::decode::Configuration::with_tiff_size_switch(weezl::BitOrder::Msb, 8)
+                 .with_yield_on_full_buffer(true);
+-        Self {
+-            reader: BufReader::with_capacity(
+-                (32 * 1024).min(compressed_length),
+-                reader.take(u64::try_from(compressed_length).unwrap()),
+-            ),
++        Ok(Self::Modern {
++            reader,
+             decoder: configuration.build(),
+-        }
++        })
+     }
+ }
+ 
+ #[cfg(feature = "lzw")]
+ impl<R: Read> Read for LZWReader<R> {
+     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
++        let Self::Modern { reader, decoder } = self else {
++            let Self::Legacy(reader) = self else {
++                unreachable!()
++            };
++            return reader.read(buf);
++        };
+         loop {
+-            let result = self.decoder.decode_bytes(self.reader.fill_buf()?, buf);
+-            self.reader.consume(result.consumed_in);
+-
++            let result = decoder.decode_bytes(reader.fill_buf()?, buf);
++            reader.consume(result.consumed_in);
+             match result.status {
+                 Ok(weezl::LzwStatus::Ok) => {
+                     if result.consumed_out == 0 {
+                         continue;
+-                    } else {
+-                        return Ok(result.consumed_out);
+                     }
++                    return Ok(result.consumed_out);
+                 }
+                 Ok(weezl::LzwStatus::NoProgress) => {
+                     return Err(io::Error::new(
+                         io::ErrorKind::UnexpectedEof,
+                         "no lzw end code found",
+-                    ));
++                    ))
+                 }
+-                Ok(weezl::LzwStatus::Done) => {
+-                    return Ok(result.consumed_out);
+-                }
++                Ok(weezl::LzwStatus::Done) => return Ok(result.consumed_out),
+                 Err(err) => return Err(io::Error::new(io::ErrorKind::InvalidData, err)),
+             }
+         }
+--- /dev/null
++++ b/src/decoder/legacy_lzw.rs
+@@ -0,0 +1,110 @@
++//! Local bounded adapter for the pre-TIFF-6 LSB/late-change LZW dialect.
++//! Pixel prediction, sample conversion and strip/tile placement stay upstream.
++use std::io;
++
++fn invalid(message: &'static str) -> io::Error {
++    io::Error::new(io::ErrorKind::InvalidData, message)
++}
++
++/// Match the first nine-bit clear code in the original compressed bytes.
++/// This disjoint signature is also used by libtiff's LZWPreDecode; it is never
++/// selected by trying another decoder after an MSB/early-change decode failure.
++pub(super) fn recognized(bytes: &[u8]) -> bool {
++    bytes.len() >= 2 && bytes[0] == 0 && bytes[1] & 1 == 1
++}
++
++/// Validate terminal code boundaries without decoding a dictionary or pixels.
++/// Public weezl APIs report consumed bytes, including bit-reader lookahead, but
++/// not the exact bit where EOI ends. Track only code widths/clear resets here so
++/// trailing bytes or nonzero padding cannot disappear inside that lookahead.
++fn validate_end(encoded: &[u8]) -> io::Result<()> {
++    let bits = encoded
++        .len()
++        .checked_mul(8)
++        .ok_or_else(|| invalid("legacy LZW bit count overflow"))?;
++    let mut position = 0usize;
++    let mut width = 9usize;
++    let mut next = 258u16;
++    let mut previous = false;
++    loop {
++        let stop = position
++            .checked_add(width)
++            .filter(|&n| n <= bits)
++            .ok_or_else(|| invalid("legacy LZW lacks a complete end code"))?;
++        let mut code = 0u16;
++        for (shift, bit) in (position..stop).enumerate() {
++            code |= u16::from((encoded[bit / 8] >> (bit % 8)) & 1) << shift;
++        }
++        position = stop;
++        match code {
++            256 => {
++                width = 9;
++                next = 258;
++                previous = false;
++            }
++            257 => {
++                if bits - position >= 8
++                    || (position..bits).any(|bit| encoded[bit / 8] & (1 << (bit % 8)) != 0)
++                {
++                    return Err(invalid("legacy LZW contains data after end code"));
++                }
++                return Ok(());
++            }
++            _ => {
++                if code > next || code == next && !previous {
++                    return Err(invalid("invalid legacy LZW code boundary"));
++                }
++                if previous && next < 4096 {
++                    next += 1;
++                    if next == 1 << width && width < 12 {
++                        width += 1;
++                    }
++                }
++                previous = true;
++            }
++        }
++    }
++}
++
++/// Eagerly validate the complete legacy chunk, including padded tile rows,
++/// before upstream raster code consumes any decoded source bytes. The extra
++/// output byte detects expansion beyond the exact admitted source byte count.
++pub(super) fn decode(encoded: &[u8], expected: usize) -> io::Result<Vec<u8>> {
++    if !recognized(encoded) {
++        return Err(invalid("missing legacy LZW initial clear code"));
++    }
++    validate_end(encoded)?;
++    let capacity = expected
++        .checked_add(1)
++        .ok_or_else(|| invalid("legacy LZW output length overflow"))?;
++    let mut output = Vec::new();
++    output
++        .try_reserve_exact(capacity)
++        .map_err(|e| io::Error::other(e.to_string()))?;
++    output.resize(capacity, 0);
++    let mut decoder = weezl::decode::Decoder::new(weezl::BitOrder::Lsb, 8);
++    let (mut input, mut written) = (0usize, 0usize);
++    loop {
++        let result = decoder.decode_bytes(&encoded[input..], &mut output[written..]);
++        input += result.consumed_in;
++        written += result.consumed_out;
++        if written > expected {
++            return Err(invalid("legacy LZW expands beyond declared source rows"));
++        }
++        match result.status {
++            Ok(weezl::LzwStatus::Done) => {
++                if written != expected {
++                    return Err(invalid("legacy LZW decoded source byte count mismatch"));
++                }
++                output.truncate(expected);
++                return Ok(output);
++            }
++            Ok(weezl::LzwStatus::NoProgress) => {
++                return Err(invalid("legacy LZW stream did not reach end code"))
++            }
++            Ok(weezl::LzwStatus::Ok) if result.consumed_in != 0 || result.consumed_out != 0 => {}
++            Ok(_) => return Err(invalid("legacy LZW decoder made no progress")),
++            Err(error) => return Err(io::Error::new(io::ErrorKind::InvalidData, error)),
++        }
++    }
++}

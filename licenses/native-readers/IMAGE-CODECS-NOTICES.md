@@ -25,3 +25,9 @@ The optional TIFF consumer view follows Pillow 13.0.0's display conversion
 semantics (8-bit CMYK, luminance and associated-alpha handling). Its HPND
 license/copyright notice is retained as Pillow-13.0.0-LICENSE.txt. These
 explicit consumer operations never run as part of stored-count decoding.
+
+The optional TIFF backend is a narrowly patched MIT `tiff` 0.11.3 source copy
+under `vendor/tiff-0.11.3`, with its original LICENSE, baseline file hashes and
+complete local codec patch retained. Legacy LSB/late-change TIFF LZW reuses the
+existing MIT/Apache-2.0 `weezl` 0.1.12 decoder; both exact notices are retained as
+`weezl-0.1.12-LICENSE-MIT` and `weezl-0.1.12-LICENSE-APACHE`.
