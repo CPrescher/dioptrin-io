@@ -1,0 +1,1144 @@
+{
+  "schema": 1,
+  "baseline": "docs/fabio-parity/2026-11-05-mar-sparse.json",
+  "baseline_sha256": "cea6a3410b379dd8462eae624dcf645112b0def766dc0624c72f99a8f236d0ae",
+  "audited_events": 19,
+  "audited_unique_sources": 13,
+  "primary_code_evidence": [
+    {
+      "package": "fax-0.2.7",
+      "path": "src/decoder.rs",
+      "sha256": "cf02bd63284a375ac704b300ec8611d079cf86287ebf704b771a1b03dd7cb893",
+      "evidence": "Group3Decoder permissive EOL; strict framing is supplied by the bounded adapter"
+    },
+    {
+      "package": "fax-0.2.7",
+      "path": "src/maps.rs",
+      "sha256": "ec54d7a995572ec9bcb6bea5699286e15b424204a95a13fb5b283b3afc1da04c",
+      "evidence": "public MIT Huffman tables and codewords reused without duplication"
+    },
+    {
+      "package": "libtiff-sys-0.2.0",
+      "path": "libtiff/libtiff/tif_lzw.c",
+      "sha256": "d313ba3ff2e358e9a516f7c5e7ce9b2f86ef12f505e667b2c6526da1a5085099",
+      "evidence": "LZWPreDecode and LZWDecodeCompat identify legacy LSB/late-change dialect"
+    },
+    {
+      "package": "libtiff-sys-0.2.0",
+      "path": "libtiff/libtiff/tif_thunder.c",
+      "sha256": "0e1013bc534f49f8b1d99439b19fe87ac18bfcb9bcda390f43d4a909f0236ae6",
+      "evidence": "ThunderDecode reports incomplete produced row counts"
+    },
+    {
+      "package": "libtiff-sys-0.2.0",
+      "path": "libtiff/libtiff/tif_ojpeg.c",
+      "sha256": "e0dcb8bf12d3b403407155ac84402158c4efb0f19d2c6e10f16329b2bf311bc4",
+      "evidence": "native OJPEG implementation handles legacy tables/layout"
+    }
+  ],
+  "reference": {
+    "FabIO": "2026.6.0",
+    "Pillow": "13.0.0",
+    "tifffile": "2026.10.15",
+    "imagecodecs": "2026.10.10"
+  },
+  "summary": {
+    "implemented_events": 3,
+    "remaining_events": 16,
+    "strict_short_window_events": 9
+  },
+  "authority": [
+    {
+      "title": "TIFF6 (1992) source specification",
+      "url": "https://image-js.github.io/tiff/media/TIFF6.pdf",
+      "sections": [
+        "ASCII field type",
+        "StripByteCounts",
+        "TileOffsets/TileByteCounts",
+        "YCbCr subsampling"
+      ]
+    },
+    {
+      "title": "RFC2306 TIFF-F",
+      "url": "https://www.rfc-editor.org/rfc/rfc2306.html",
+      "sections": [
+        "3.8.3",
+        "3.8.4",
+        "3.8.5"
+      ]
+    },
+    {
+      "title": "LibTIFF Technical Note2",
+      "url": "https://libtiff.gitlab.io/libtiff/specification/technote2.html"
+    }
+  ],
+  "records": [
+    {
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_vtdrf8sk_clemens/tifimagewrite_test0000.tif",
+      "baseline_sha256": "0adac79b4e4dc62abf064d0e7d5a5fa3ca7b85024043be780b112f4ac1f3b747",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_mccdimage.TestNormalTiffOK.test_read_openimage"
+      ],
+      "baseline_error": "format error: image contains invalid tag",
+      "evidence": {
+        "audited_file": "/tmp/dioptrin-rejection-sources-20261105/ad267943c4be450634f765239b6b5218ab01880a5f335352593e7083dd9777b3-tifimagewrite_test0000.tif",
+        "audited_sha256": "ad267943c4be450634f765239b6b5218ab01880a5f335352593e7083dd9777b3",
+        "source_bytes": 1348,
+        "decoded_tiff_sha256": "ad267943c4be450634f765239b6b5218ab01880a5f335352593e7083dd9777b3",
+        "decoded_tiff_bytes": 1348,
+        "baseline_bytes_available": false,
+        "first_ifd_source_tags": {
+          "256": 24,
+          "257": 24,
+          "258": 16,
+          "259": 1,
+          "262": 1,
+          "273": [
+            196
+          ],
+          "278": 24,
+          "279": [
+            1152
+          ]
+        },
+        "ifd_count": 1,
+        "native_read": {
+          "accepted": true,
+          "signature": {
+            "raw": {
+              "bits": 16,
+              "dtype": "U16",
+              "hash": "ba55ef63568ea57e7485fe79e47e25c78f6b49af2617a7f91e4a0b3aee73c429",
+              "photo": 1,
+              "planar": 1,
+              "shape": [
+                24,
+                24
+              ]
+            },
+            "view": {
+              "dtype": "U16",
+              "hash": "ba55ef63568ea57e7485fe79e47e25c78f6b49af2617a7f91e4a0b3aee73c429",
+              "operations": [],
+              "shape": [
+                24,
+                24
+              ]
+            }
+          }
+        },
+        "fabio_reference": {
+          "backend": "TiffIO",
+          "signature": {
+            "shape": [
+              24,
+              24
+            ],
+            "dtype": "U16",
+            "hash": "ba55ef63568ea57e7485fe79e47e25c78f6b49af2617a7f91e4a0b3aee73c429"
+          },
+          "explicit_view_matches": true
+        },
+        "independent_source_signature": {
+          "shape": [
+            24,
+            24
+          ],
+          "dtype": "U16",
+          "hash": "ba55ef63568ea57e7485fe79e47e25c78f6b49af2617a7f91e4a0b3aee73c429"
+        },
+        "all_source_samples_match": true,
+        "original_inline_tag270": {
+          "ifd_entry_hex": "0e0102000400000020202020",
+          "type": 2,
+          "count": 4,
+          "literal_hex": "20202020",
+          "condition": "four spaces, no terminating NUL; stored as opaque original bytes, not repaired text"
+        },
+        "identity_qualification": "Baseline ephemeral bytes were unavailable. A captured rerun of the same pinned test has a different hash (datetime); baseline identity is never substituted.",
+        "pixel_window": {
+          "offset": 196,
+          "declared_bytes": 1152,
+          "required_bytes": 1152,
+          "source_end": 1348
+        },
+        "source_authority": [
+          "TIFF6 ASCII field-type definition (count includes NUL)",
+          "pinned FabIO TestNormalTiffOK.test_read_openimage recreation",
+          "independent exact source samples and explicit pinned display view"
+        ]
+      },
+      "input_condition": "malformed_descriptive_metadata",
+      "reader_action": "implemented",
+      "classification": "closed_opaque_metadata_admission_gap"
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/Feb09-bright-00.300s_WAXS.bz2",
+      "baseline_sha256": "8d3b8fa21d2acb13319f83c849aab2529b22ba0055dc6f24392243e08ca6cbf9",
+      "baseline_event_count": 3,
+      "baseline_tests": [
+        "fabio.test.codecs.test_tifimage.TestTif.test_frame",
+        "fabio.test.codecs.test_tifimage.TestTif.test_header",
+        "fabio.test.codecs.test_tifimage.TestTif.test_read"
+      ],
+      "baseline_error": "TIFF uncompressed chunk shorter than required source rows",
+      "evidence": {
+        "audited_file": "/tmp/dioptrin-io-fabio-corpus/Feb09-bright-00.300s_WAXS.bz2",
+        "audited_sha256": "8d3b8fa21d2acb13319f83c849aab2529b22ba0055dc6f24392243e08ca6cbf9",
+        "source_bytes": 1320645,
+        "decoded_tiff_sha256": "89ed2cf5f3f3dd31442bd4eaa2516b0ed860fe88b868406ba7110bbcf72a2733",
+        "decoded_tiff_bytes": 2171714,
+        "baseline_bytes_available": true,
+        "first_ifd_source_tags": {
+          "256": 1042,
+          "257": 1042,
+          "258": 16,
+          "259": 1,
+          "262": 1,
+          "273": [
+            186
+          ],
+          "277": 1,
+          "278": 1042,
+          "279": [
+            1085764
+          ]
+        },
+        "ifd_count": 1,
+        "native_read": {
+          "accepted": false,
+          "error": "Error: Error(\"TIFF uncompressed chunk shorter than required source rows\")"
+        },
+        "required_pixel_bytes": 2171528,
+        "declared_pixel_bytes": 1085764,
+        "bytecount_is_sample_count": true,
+        "policy": "Never read past declared bytecounts, even when complete bytes exist later in the source. Wrapper does not repair inner TIFF metadata."
+      },
+      "input_condition": "malformed_structural_metadata",
+      "reader_action": "retained_strict_rejection",
+      "classification": "declared_uncompressed_window_too_short"
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/Feb09-bright-00.300s_WAXS.gz",
+      "baseline_sha256": "c3b316575ebedda401b1b189dfac68343ee1d6eef1426a817994436297a84f40",
+      "baseline_event_count": 3,
+      "baseline_tests": [
+        "fabio.test.codecs.test_tifimage.TestTif.test_frame",
+        "fabio.test.codecs.test_tifimage.TestTif.test_header",
+        "fabio.test.codecs.test_tifimage.TestTif.test_read"
+      ],
+      "baseline_error": "TIFF uncompressed chunk shorter than required source rows",
+      "evidence": {
+        "audited_file": "/tmp/dioptrin-io-fabio-corpus/Feb09-bright-00.300s_WAXS.gz",
+        "audited_sha256": "c3b316575ebedda401b1b189dfac68343ee1d6eef1426a817994436297a84f40",
+        "source_bytes": 1653880,
+        "decoded_tiff_sha256": "89ed2cf5f3f3dd31442bd4eaa2516b0ed860fe88b868406ba7110bbcf72a2733",
+        "decoded_tiff_bytes": 2171714,
+        "baseline_bytes_available": true,
+        "first_ifd_source_tags": {
+          "256": 1042,
+          "257": 1042,
+          "258": 16,
+          "259": 1,
+          "262": 1,
+          "273": [
+            186
+          ],
+          "277": 1,
+          "278": 1042,
+          "279": [
+            1085764
+          ]
+        },
+        "ifd_count": 1,
+        "native_read": {
+          "accepted": false,
+          "error": "Error: Error(\"TIFF uncompressed chunk shorter than required source rows\")"
+        },
+        "required_pixel_bytes": 2171528,
+        "declared_pixel_bytes": 1085764,
+        "bytecount_is_sample_count": true,
+        "policy": "Never read past declared bytecounts, even when complete bytes exist later in the source. Wrapper does not repair inner TIFF metadata."
+      },
+      "input_condition": "malformed_structural_metadata",
+      "reader_action": "retained_strict_rejection",
+      "classification": "declared_uncompressed_window_too_short"
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/Feb09-bright-00.300s_WAXS",
+      "baseline_sha256": "89ed2cf5f3f3dd31442bd4eaa2516b0ed860fe88b868406ba7110bbcf72a2733",
+      "baseline_event_count": 3,
+      "baseline_tests": [
+        "fabio.test.codecs.test_tifimage.TestTif.test_frame",
+        "fabio.test.codecs.test_tifimage.TestTif.test_header",
+        "fabio.test.codecs.test_tifimage.TestTif.test_read"
+      ],
+      "baseline_error": "TIFF uncompressed chunk shorter than required source rows",
+      "evidence": {
+        "audited_file": "/tmp/dioptrin-io-fabio-corpus/Feb09-bright-00.300s_WAXS",
+        "audited_sha256": "89ed2cf5f3f3dd31442bd4eaa2516b0ed860fe88b868406ba7110bbcf72a2733",
+        "source_bytes": 2171714,
+        "decoded_tiff_sha256": "89ed2cf5f3f3dd31442bd4eaa2516b0ed860fe88b868406ba7110bbcf72a2733",
+        "decoded_tiff_bytes": 2171714,
+        "baseline_bytes_available": true,
+        "first_ifd_source_tags": {
+          "256": 1042,
+          "257": 1042,
+          "258": 16,
+          "259": 1,
+          "262": 1,
+          "273": [
+            186
+          ],
+          "277": 1,
+          "278": 1042,
+          "279": [
+            1085764
+          ]
+        },
+        "ifd_count": 1,
+        "native_read": {
+          "accepted": false,
+          "error": "Error: Error(\"TIFF uncompressed chunk shorter than required source rows\")"
+        },
+        "required_pixel_bytes": 2171528,
+        "declared_pixel_bytes": 1085764,
+        "bytecount_is_sample_count": true,
+        "policy": "Never read past declared bytecounts, even when complete bytes exist later in the source. Wrapper does not repair inner TIFF metadata."
+      },
+      "input_condition": "malformed_structural_metadata",
+      "reader_action": "retained_strict_rejection",
+      "classification": "declared_uncompressed_window_too_short"
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/a0009.tif",
+      "baseline_sha256": "95b318fb8c6f3ab9edd33aba8f3feb6302d266b237f81a690fa62cc06ed7bb51",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_tifimage.TestTifImage_A0009.test1"
+      ],
+      "baseline_error": "format error: file should contain either (StripByteCounts and StripOffsets) or (TileByteCounts and TileOffsets), other combination was found",
+      "evidence": {
+        "audited_file": "/tmp/dioptrin-io-fabio-corpus/a0009.tif",
+        "audited_sha256": "95b318fb8c6f3ab9edd33aba8f3feb6302d266b237f81a690fa62cc06ed7bb51",
+        "source_bytes": 2097326,
+        "decoded_tiff_sha256": "95b318fb8c6f3ab9edd33aba8f3feb6302d266b237f81a690fa62cc06ed7bb51",
+        "decoded_tiff_bytes": 2097326,
+        "baseline_bytes_available": true,
+        "first_ifd_source_tags": {
+          "256": 1024,
+          "257": 1024,
+          "258": 16,
+          "259": 1,
+          "262": 1,
+          "266": 1,
+          "273": [
+            174
+          ],
+          "277": 1
+        },
+        "ifd_count": 1,
+        "native_read": {
+          "accepted": false,
+          "error": "Error: Error(\"format error: file should contain either (StripByteCounts and StripOffsets) or (TileByteCounts and TileOffsets), other combination was found\")"
+        },
+        "required_tag_missing": 279,
+        "rowsperstrip_missing_default_allowed": true,
+        "raw_payload_extent": {
+          "offset": 174,
+          "required": 2097152,
+          "file_end": 2097326
+        },
+        "policy": "Complete apparent trailing pixels do not define a missing required sample window. No StripByteCounts inference."
+      },
+      "input_condition": "malformed_structural_metadata",
+      "reader_action": "retained_strict_rejection",
+      "classification": "missing_required_strip_bytecounts"
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/zackthecat.tif",
+      "baseline_sha256": "0d31f2acb25bfbde4d79975572369c3e4bea8e978fc1935075a545e3f8321b6e",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_tifimage.TestTif_LibTiffPic.test_all_images"
+      ],
+      "baseline_error": "unsupported TIFF detector compression 6",
+      "evidence": {
+        "audited_file": "/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/zackthecat.tif",
+        "audited_sha256": "0d31f2acb25bfbde4d79975572369c3e4bea8e978fc1935075a545e3f8321b6e",
+        "source_bytes": 8258,
+        "decoded_tiff_sha256": "0d31f2acb25bfbde4d79975572369c3e4bea8e978fc1935075a545e3f8321b6e",
+        "decoded_tiff_bytes": 8258,
+        "baseline_bytes_available": true,
+        "first_ifd_source_tags": {
+          "256": 234,
+          "257": 213,
+          "258": [
+            8,
+            8,
+            8
+          ],
+          "259": 6,
+          "262": 6,
+          "277": 3,
+          "284": 1,
+          "322": 240,
+          "323": 224,
+          "324": [
+            8
+          ],
+          "325": [
+            7076
+          ],
+          "519": [
+            7364,
+            7428,
+            7492
+          ],
+          "520": [
+            7568,
+            7596,
+            7624
+          ],
+          "521": [
+            7664,
+            7842,
+            8020
+          ],
+          "530": [
+            2,
+            2
+          ]
+        },
+        "ifd_count": 1,
+        "native_read": {
+          "accepted": false,
+          "error": "Error: Error(\"unsupported TIFF detector compression 6\")"
+        },
+        "primary_authority": "TIFF6 obsolete JPEG Compression6; LibTIFF Technical Note2 replaces it with Compression7. Source tables/offsets require OJPEG-aware native backend, not the current modern-JPEG TIFF path.",
+        "decoded_count_qualification": "Reference-suite acceptance establishes an available decoder, not independent raw-source completeness or exact lossy IDCT parity."
+      },
+      "input_condition": "legacy_variant",
+      "reader_action": "remaining_codec_gap",
+      "classification": "old_jpeg6_tables_and_layout"
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/ycbcr-cat.tif",
+      "baseline_sha256": "264d4955898a35ae70af0ec6eed0dbc49d7929f6c18c92a4ed6198f6db396f4b",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_tifimage.TestTif_LibTiffPic.test_all_images"
+      ],
+      "baseline_error": "TIFF YCbCr admitted only through native JPEG component decoding",
+      "evidence": {
+        "audited_file": "/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/ycbcr-cat.tif",
+        "audited_sha256": "264d4955898a35ae70af0ec6eed0dbc49d7929f6c18c92a4ed6198f6db396f4b",
+        "source_bytes": 72766,
+        "decoded_tiff_sha256": "264d4955898a35ae70af0ec6eed0dbc49d7929f6c18c92a4ed6198f6db396f4b",
+        "decoded_tiff_bytes": 72766,
+        "baseline_bytes_available": true,
+        "first_ifd_source_tags": {
+          "256": 250,
+          "257": 325,
+          "258": [
+            8,
+            8,
+            8
+          ],
+          "259": 5,
+          "262": 6,
+          "273": [
+            8,
+            1852,
+            3783,
+            5699,
+            7614,
+            9639,
+            11716,
+            13874,
+            16055,
+            18269,
+            20409,
+            22471,
+            24684,
+            26981,
+            29242,
+            31415,
+            33585,
+            35991,
+            38488,
+            40862,
+            43192,
+            45569,
+            48021,
+            50527,
+            53015,
+            55416,
+            57729,
+            60087,
+            62316,
+            64462,
+            66405,
+            68431,
+            70614
+          ],
+          "277": 3,
+          "278": 10,
+          "279": [
+            1844,
+            1931,
+            1916,
+            1915,
+            2025,
+            2077,
+            2158,
+            2181,
+            2214,
+            2140,
+            2062,
+            2213,
+            2297,
+            2261,
+            2173,
+            2170,
+            2406,
+            2497,
+            2374,
+            2330,
+            2377,
+            2452,
+            2506,
+            2488,
+            2401,
+            2313,
+            2358,
+            2229,
+            2146,
+            1943,
+            2026,
+            2183,
+            1583
+          ],
+          "284": 1,
+          "530": [
+            2,
+            2
+          ],
+          "531": [
+            1
+          ]
+        },
+        "ifd_count": 1,
+        "native_read": {
+          "accepted": false,
+          "error": "Error: Error(\"TIFF YCbCr admitted only through native JPEG component decoding\")"
+        },
+        "primary_authority": "TIFF6 YCbCr sampling-unit layout with 2x2 chroma subsampling; compressed strips encode sampling units rather than three full-resolution component rows.",
+        "policy": "Do not discard photometric/subsampling tags to force RGB-shaped raw counts; explicit component and display contracts required."
+      },
+      "input_condition": "well_formed_variant",
+      "reader_action": "remaining_layout_gap",
+      "classification": "lzw_subsampled_ycbcr_units"
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/fax2d.tif",
+      "baseline_sha256": "4e497620740a6c192ac9523817c9e51ba3596d5ab8b4ac1a15e8cc58e9a49b3f",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_tifimage.TestTif_LibTiffPic.test_all_images"
+      ],
+      "baseline_error": "TIFF FillOrder other than MSB-first is unsupported",
+      "evidence": {
+        "audited_file": "/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/fax2d.tif",
+        "audited_sha256": "4e497620740a6c192ac9523817c9e51ba3596d5ab8b4ac1a15e8cc58e9a49b3f",
+        "source_bytes": 32817,
+        "decoded_tiff_sha256": "4e497620740a6c192ac9523817c9e51ba3596d5ab8b4ac1a15e8cc58e9a49b3f",
+        "decoded_tiff_bytes": 32817,
+        "baseline_bytes_available": true,
+        "first_ifd_source_tags": {
+          "256": 1728,
+          "257": 1082,
+          "258": 1,
+          "259": 3,
+          "262": 0,
+          "266": 2,
+          "273": [
+            8
+          ],
+          "277": 1,
+          "278": 4294967295,
+          "279": [
+            32525
+          ],
+          "284": 1,
+          "292": 4
+        },
+        "ifd_count": 1,
+        "native_read": {
+          "accepted": true,
+          "signature": {
+            "raw": {
+              "bits": 1,
+              "dtype": "U8",
+              "hash": "34b2e0c6b3507cf0a8f43aad0d33c631866fd977239bd1a5834ad695cfe379c4",
+              "photo": 0,
+              "planar": 1,
+              "shape": [
+                1082,
+                1728
+              ]
+            },
+            "view": {
+              "dtype": "bool",
+              "hash": "366a55fa60d51b8748d802a55834eeb09b84c5fbff83d568f250ea0bf8c65bef",
+              "operations": [
+                "BilevelBool",
+                "WhiteIsZeroDisplay"
+              ],
+              "shape": [
+                1082,
+                1728
+              ]
+            }
+          }
+        },
+        "fabio_reference": {
+          "backend": "PIL",
+          "signature": {
+            "shape": [
+              1082,
+              1728
+            ],
+            "dtype": "bool",
+            "hash": "366a55fa60d51b8748d802a55834eeb09b84c5fbff83d568f250ea0bf8c65bef"
+          },
+          "explicit_view_matches": true
+        },
+        "independent_source_policy": "imagecodecs.ccittfax3_decode on exact source strip, explicit FillOrder reversal; no photometric display inversion",
+        "independent_source_signature": {
+          "shape": [
+            1082,
+            1728
+          ],
+          "dtype": "U8",
+          "hash": "34b2e0c6b3507cf0a8f43aad0d33c631866fd977239bd1a5834ad695cfe379c4"
+        },
+        "all_source_samples_match": true,
+        "layout": "Compression3, one-dimensional T4Options0/4, single bilevel plane, FillOrder2. fax2d name does not mean T4Options two-dimensional coding.",
+        "policy": "Bounded original strips, strict EOL at every row, exact terminating width, no missing-row padding; raw01 U8 and separate pinned bool display view."
+      },
+      "input_condition": "well_formed_variant",
+      "reader_action": "implemented",
+      "classification": "closed_native_codec_and_fillorder_gap"
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/text.tif",
+      "baseline_sha256": "0b9c03248c2e1d4acaf1437e9b16326a1e0da46342c56f38a4a1b62a51d448d7",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_tifimage.TestTif_LibTiffPic.test_all_images"
+      ],
+      "baseline_error": "unsupported TIFF detector compression 32809",
+      "evidence": {
+        "audited_file": "/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/text.tif",
+        "audited_sha256": "0b9c03248c2e1d4acaf1437e9b16326a1e0da46342c56f38a4a1b62a51d448d7",
+        "source_bytes": 154496,
+        "decoded_tiff_sha256": "0b9c03248c2e1d4acaf1437e9b16326a1e0da46342c56f38a4a1b62a51d448d7",
+        "decoded_tiff_bytes": 154496,
+        "baseline_bytes_available": true,
+        "first_ifd_source_tags": {
+          "256": 1512,
+          "257": 359,
+          "258": 4,
+          "259": 32809,
+          "262": 0,
+          "266": 1,
+          "273": [
+            258,
+            17704,
+            32865,
+            49809,
+            65671,
+            76584
+          ],
+          "277": 1,
+          "278": 64,
+          "279": [
+            17446,
+            15161,
+            16944,
+            15862,
+            10913,
+            9764
+          ],
+          "284": 1
+        },
+        "ifd_count": 2,
+        "native_read": {
+          "accepted": false,
+          "error": "Error: Error(\"unsupported TIFF detector compression 32809\")"
+        },
+        "independent_pillow_decode": {
+          "exit_code": 1,
+          "stdout": "",
+          "stderr": "ThunderDecode: Not enough data at scanline 320 (0 != 1512).\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n    from PIL import Image; import sys; im=Image.open(sys.argv[1]); im.load(); print(im.size)\n                                                                   ~~~~~~~^^\n  File \"/tmp/dioptrin-io-reference-313-20261105/lib/python3.13/site-packages/PIL/TiffImagePlugin.py\", line 1349, in load\n    return self._load_libtiff()\n           ~~~~~~~~~~~~~~~~~~^^\n  File \"/tmp/dioptrin-io-reference-313-20261105/lib/python3.13/site-packages/PIL/TiffImagePlugin.py\", line 1466, in _load_libtiff\n    raise OSError(msg)\nOSError: decoder error -2"
+        },
+        "primary_authority": "libtiff tif_thunder.c ThunderDecode compares produced row pixels against expected pixels and reports not-enough-data when unequal.",
+        "reference_fallback": {
+          "source": "src/fabio/utils/pilutils.py:get_numpy_array",
+          "pinned_commit": "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece",
+          "behavior": "numpy.asarray(image) exceptions are caught and followed by image.tobytes() on the same partially loaded image; a returned array therefore does not establish complete source decode",
+          "installed_source_sha256": "0ab92db43cbd896bbc9d51ce3fec76fe89af3492ee1b24369705dc9454ba5956"
+        },
+        "qualification": "Compression32809 is a codec gap. Pillow/libtiff fails with insufficient row data at scanline320; full unpadded source counts have not been established. Do not label well formed or use repaired display pixels as raw proof."
+      },
+      "input_condition": "unknown_compressed_integrity",
+      "reader_action": "remaining_codec_gap",
+      "classification": "thunderscan_with_incomplete_reference_decode"
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/smallliz.tif",
+      "baseline_sha256": "e8f722bc322b9a7621d1d858bec36ea78d31b85221f314a2b9872d3af91d600a",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_tifimage.TestTif_LibTiffPic.test_all_images"
+      ],
+      "baseline_error": "unsupported TIFF detector compression 6",
+      "evidence": {
+        "audited_file": "/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/smallliz.tif",
+        "audited_sha256": "e8f722bc322b9a7621d1d858bec36ea78d31b85221f314a2b9872d3af91d600a",
+        "source_bytes": 5052,
+        "decoded_tiff_sha256": "e8f722bc322b9a7621d1d858bec36ea78d31b85221f314a2b9872d3af91d600a",
+        "decoded_tiff_bytes": 5052,
+        "baseline_bytes_available": true,
+        "first_ifd_source_tags": {
+          "256": 160,
+          "257": 160,
+          "258": [
+            8,
+            8,
+            8
+          ],
+          "259": 6,
+          "262": 6,
+          "273": [
+            610
+          ],
+          "277": 3,
+          "278": 160,
+          "279": [
+            3447
+          ],
+          "284": 1,
+          "513": [
+            8
+          ],
+          "514": [
+            4608
+          ],
+          "519": [
+            34,
+            103,
+            103
+          ],
+          "520": [
+            172,
+            205,
+            205
+          ],
+          "521": [
+            238,
+            421,
+            421
+          ],
+          "530": [
+            2,
+            2
+          ],
+          "531": [
+            1
+          ]
+        },
+        "ifd_count": 1,
+        "native_read": {
+          "accepted": false,
+          "error": "Error: Error(\"unsupported TIFF detector compression 6\")"
+        },
+        "primary_authority": "TIFF6 obsolete JPEG Compression6; LibTIFF Technical Note2 replaces it with Compression7. Source tables/offsets require OJPEG-aware native backend, not the current modern-JPEG TIFF path.",
+        "decoded_count_qualification": "Reference-suite acceptance establishes an available decoder, not independent raw-source completeness or exact lossy IDCT parity."
+      },
+      "input_condition": "legacy_variant",
+      "reader_action": "remaining_codec_gap",
+      "classification": "old_jpeg6_tables_and_layout"
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/g3test.tif",
+      "baseline_sha256": "d5b2e1a17338133aa95cb8a16d82a171f5b50f7b9ae1a51ab06227dc3daa81d5",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_tifimage.TestTif_LibTiffPic.test_all_images"
+      ],
+      "baseline_error": "TIFF FillOrder other than MSB-first is unsupported",
+      "evidence": {
+        "audited_file": "/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/g3test.tif",
+        "audited_sha256": "d5b2e1a17338133aa95cb8a16d82a171f5b50f7b9ae1a51ab06227dc3daa81d5",
+        "source_bytes": 50401,
+        "decoded_tiff_sha256": "d5b2e1a17338133aa95cb8a16d82a171f5b50f7b9ae1a51ab06227dc3daa81d5",
+        "decoded_tiff_bytes": 50401,
+        "baseline_bytes_available": true,
+        "first_ifd_source_tags": {
+          "256": 1728,
+          "257": 1103,
+          "258": 1,
+          "259": 3,
+          "262": 0,
+          "266": 2,
+          "273": [
+            8
+          ],
+          "277": 1,
+          "278": 4294967295,
+          "279": [
+            50110
+          ],
+          "284": 1,
+          "292": 0
+        },
+        "ifd_count": 1,
+        "native_read": {
+          "accepted": true,
+          "signature": {
+            "raw": {
+              "bits": 1,
+              "dtype": "U8",
+              "hash": "0671e0babc1ebe740a6374943b0ce34725ea670ad9a7dfccb784d1f2823f50a5",
+              "photo": 0,
+              "planar": 1,
+              "shape": [
+                1103,
+                1728
+              ]
+            },
+            "view": {
+              "dtype": "bool",
+              "hash": "6bb8b9e90113bc541c7f4b0a089be8aba324e3a60268b3d9c35d5ef965baba98",
+              "operations": [
+                "BilevelBool",
+                "WhiteIsZeroDisplay"
+              ],
+              "shape": [
+                1103,
+                1728
+              ]
+            }
+          }
+        },
+        "fabio_reference": {
+          "backend": "PIL",
+          "signature": {
+            "shape": [
+              1103,
+              1728
+            ],
+            "dtype": "bool",
+            "hash": "6bb8b9e90113bc541c7f4b0a089be8aba324e3a60268b3d9c35d5ef965baba98"
+          },
+          "explicit_view_matches": true
+        },
+        "independent_source_policy": "imagecodecs.ccittfax3_decode on exact source strip, explicit FillOrder reversal; no photometric display inversion",
+        "independent_source_signature": {
+          "shape": [
+            1103,
+            1728
+          ],
+          "dtype": "U8",
+          "hash": "0671e0babc1ebe740a6374943b0ce34725ea670ad9a7dfccb784d1f2823f50a5"
+        },
+        "all_source_samples_match": true,
+        "layout": "Compression3, one-dimensional T4Options0/4, single bilevel plane, FillOrder2. fax2d name does not mean T4Options two-dimensional coding.",
+        "policy": "Bounded original strips, strict EOL at every row, exact terminating width, no missing-row padding; raw01 U8 and separate pinned bool display view."
+      },
+      "input_condition": "well_formed_variant",
+      "reader_action": "implemented",
+      "classification": "closed_native_codec_and_fillorder_gap"
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/quad-tile.tif",
+      "baseline_sha256": "ab5e5c87cd575472c6fc3e0d5824ebc818b88bf6e5e4aff3afe66f8725351a09",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_tifimage.TestTif_LibTiffPic.test_all_images"
+      ],
+      "baseline_error": "format error: inconsistent sizes encountered",
+      "evidence": {
+        "audited_file": "/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/quad-tile.tif",
+        "audited_sha256": "ab5e5c87cd575472c6fc3e0d5824ebc818b88bf6e5e4aff3afe66f8725351a09",
+        "source_bytes": 209220,
+        "decoded_tiff_sha256": "ab5e5c87cd575472c6fc3e0d5824ebc818b88bf6e5e4aff3afe66f8725351a09",
+        "decoded_tiff_bytes": 209220,
+        "baseline_bytes_available": true,
+        "first_ifd_source_tags": {
+          "256": 512,
+          "257": 384,
+          "258": [
+            8,
+            8,
+            8
+          ],
+          "259": 5,
+          "262": 2,
+          "273": [
+            8,
+            19252,
+            38898,
+            59606,
+            76577,
+            87844,
+            98473,
+            120431,
+            137961,
+            155530,
+            174465,
+            194632
+          ],
+          "277": 3,
+          "278": 128,
+          "279": [
+            19244,
+            19646,
+            20708,
+            16971,
+            11267,
+            10629,
+            21958,
+            17530,
+            17569,
+            18935,
+            20167,
+            14246
+          ],
+          "284": 1,
+          "322": 128,
+          "323": 128
+        },
+        "ifd_count": 1,
+        "native_read": {
+          "accepted": false,
+          "error": "Error: Error(\"format error: inconsistent sizes encountered\")"
+        },
+        "count_consistency": {
+          "declared_strip_entries": 12,
+          "strips_for_rowsperstrip": 3,
+          "tiles_for_declared_tile_dimensions": 12,
+          "tile_offsets_tag_present": false,
+          "tile_bytecounts_tag_present": false
+        },
+        "policy": "Do not silently reinterpret StripOffsets/StripByteCounts as TileOffsets/TileByteCounts. Reference compatibility may guess tiles; future admission requires explicit legacy policy."
+      },
+      "input_condition": "legacy_mixed_tag_dialect",
+      "reader_action": "retained_strict_rejection",
+      "classification": "tile_dimensions_with_strip_offset_tables"
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/quad-lzw.tif",
+      "baseline_sha256": "081118d951224d9909b105bb75f9667fd817e7b95122d141e91b43604dacd78b",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_tifimage.TestTif_LibTiffPic.test_all_images"
+      ],
+      "baseline_error": "invalid code in LZW stream",
+      "evidence": {
+        "audited_file": "/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/quad-lzw.tif",
+        "audited_sha256": "081118d951224d9909b105bb75f9667fd817e7b95122d141e91b43604dacd78b",
+        "source_bytes": 214342,
+        "decoded_tiff_sha256": "081118d951224d9909b105bb75f9667fd817e7b95122d141e91b43604dacd78b",
+        "decoded_tiff_bytes": 214342,
+        "baseline_bytes_available": true,
+        "first_ifd_source_tags": {
+          "256": 512,
+          "257": 384,
+          "258": [
+            8,
+            8,
+            8
+          ],
+          "259": 5,
+          "262": 2,
+          "273": [
+            8,
+            150,
+            292,
+            434,
+            576,
+            718,
+            860,
+            1002,
+            1144,
+            1286,
+            1793,
+            3823,
+            7580,
+            12225,
+            17737,
+            23978,
+            30534,
+            36863,
+            42975,
+            49180,
+            55361,
+            61470,
+            67022,
+            71646,
+            74255,
+            75241,
+            75411,
+            75553,
+            75695,
+            75837,
+            75979,
+            76316,
+            77899,
+            80466,
+            84068,
+            88471,
+            93623,
+            99105,
+            104483,
+            109663,
+            114969,
+            120472,
+            126083,
+            131289,
+            135545,
+            138810,
+            140808,
+            141840,
+            141982,
+            142124,
+            142266,
+            142408,
+            142615,
+            144074,
+            146327,
+            149721,
+            154066,
+            158927,
+            164022,
+            169217,
+            174409,
+            179657,
+            185166,
+            190684,
+            196236,
+            201560,
+            206064,
+            209497,
+            211612,
+            212419,
+            212561,
+            212703,
+            212845,
+            212987,
+            213129,
+            213271,
+            213413
+          ],
+          "277": 3,
+          "278": 5,
+          "279": [
+            142,
+            142,
+            142,
+            142,
+            142,
+            142,
+            142,
+            142,
+            142,
+            507,
+            2030,
+            3757,
+            4645,
+            5512,
+            6241,
+            6556,
+            6329,
+            6112,
+            6205,
+            6181,
+            6109,
+            5552,
+            4624,
+            2609,
+            986,
+            170,
+            142,
+            142,
+            142,
+            142,
+            337,
+            1583,
+            2567,
+            3602,
+            4403,
+            5152,
+            5482,
+            5378,
+            5180,
+            5306,
+            5503,
+            5611,
+            5206,
+            4256,
+            3265,
+            1998,
+            1032,
+            142,
+            142,
+            142,
+            142,
+            207,
+            1459,
+            2253,
+            3394,
+            4345,
+            4861,
+            5095,
+            5195,
+            5192,
+            5248,
+            5509,
+            5518,
+            5552,
+            5324,
+            4504,
+            3433,
+            2115,
+            807,
+            142,
+            142,
+            142,
+            142,
+            142,
+            142,
+            142,
+            128
+          ],
+          "284": 1
+        },
+        "ifd_count": 1,
+        "native_read": {
+          "accepted": false,
+          "error": "Error: Error(\"invalid code in LZW stream\")"
+        },
+        "first_strip_prefix_hex": "0001081c48b0a0c1",
+        "primary_authority": "libtiff tif_lzw.c LZWPreDecode recognizes first byte0 and secondbyte bit0=1 and selects LZWDecodeCompat: old LSB packing and late code-width switching. Current backend uses modern MSB/early-change TIFF LZW.",
+        "policy": "Legacy dialect, not automatically corrupt because modern LZW rejects it; no normative TIFF6 conformity claim."
+      },
+      "input_condition": "legacy_dialect",
+      "reader_action": "remaining_codec_gap",
+      "classification": "old_lsb_late_change_tiff_lzw"
+    }
+  ]
+}

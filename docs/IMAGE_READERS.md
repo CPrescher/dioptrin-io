@@ -11,7 +11,7 @@ Dependencies remain optional; there is no Python runtime bridge.
 
 The `tiff` feature reuses `tiff` 0.11.3 for TIFF/BigTIFF primary IFD pages,
 strips/tiles, uniform integer/floating samples, contiguous/planar color, packed
-1/2/4-bit MSB-first grayscale, Group4, PackBits, LZW and Deflate. Planar buffers
+1/2/4-bit grayscale, one-dimensional Group3 strips, Group4, PackBits, LZW and Deflate. Planar buffers
 are interleaved; rows and channel values are retained. WhiteIsZero samples
 bypass the backend display inversion, including floating and signed samples. Packed values are unpacked to their
 native integer values, without full-range scaling. `bits_per_sample`,
@@ -37,8 +37,19 @@ identifies these channels. Native JPEG RGB/grayscale fixture values differ by at
 count from the independent libjpeg-turbo reference because IDCT rounding differs.
 That test is explicitly a bounded lossy comparison, not exact FabIO parity.
 Subsampled TIFF YCbCr currently fails in the upstream backend and remains a gap.
-Old-style JPEG, CCITT RLE/Group3, mixed scalar types/bit widths, packed
-color and non-MSB packed FillOrder remain unsupported.
+Old-style JPEG, CCITT RLE, two-dimensional Group3, mixed scalar types/bit widths,
+packed color, and LSB FillOrder outside uncompressed packed grayscale/Group3
+remain unsupported. The Group3 adapter reuses the optional MIT `fax` 0.2.7
+Huffman tables, requiring exact terminating runs within each source byte window,
+strict EOL framing and declared fill-bit alignment. It accepts complete TIFF-F
+last rows without fabricating a trailing EOL/RTC, and rejects extra coded rows or
+partial RTCs. Raw bilevel samples are U8 values 0/1 with source precision 1,
+separate from explicit bool/WhiteIsZero display views. `fill_order` retains the
+source bit order. RowsPerStrip larger than ImageLength is clipped only for
+chunk enumeration; original typed tag values and declared bytecounts remain
+unchanged. The rejection audit in `rejection-audits/2026-11-05-tiff.json` covers
+19 baseline events over 13 source hashes, including nine strict short-window
+rejections. No declared sample window is widened.
 
 Palette TIFF now exposes original integer indices, source precision and exact
 ColorMap tag values. CFA photometric 32803 exposes its single unsigned 8/16 plane,
@@ -49,11 +60,12 @@ Primary classic/BigTIFF IFD chains, metadata sizes, cycles, overlaps and aliases
 are checked before decoding. Pixel windows or out-of-line metadata referring to
 adapted bytes are rejected, preventing the adapter from substituting source data.
 
-A narrowly recognized malformed ImageDescription270 (ASCII/count1 with a
-non-ASCII inline byte) is exposed through `Metadata::opaque_tags`, retaining its
-original type, count, entire IFD record, literal value byte and reason. Typed
-`tags` omits that entry. The adapter presents undefined bytes only internally;
-it never treats0xAF as offset 175 or invents text. Structural tags remain strict.
+A narrowly recognized malformed inline ASCII ImageDescription270 (classic
+count 1..4 or BigTIFF count 1..8, containing non-ASCII bytes or lacking a final
+NUL) is exposed through `Metadata::opaque_tags`, retaining its original type,
+count, entire IFD record, every literal value byte and reason. Typed `tags`
+omits that entry. The adapter presents undefined bytes only internally; it
+never treats 0xAF as offset 175 or invents text. Structural tags remain strict.
 
 Only primary IFDs are frames. SubIFD pointer tags remain visible, but SubIFD
 pixels are not enumerated or decoded. The mature backend has no public API for

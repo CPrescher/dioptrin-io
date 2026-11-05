@@ -375,7 +375,7 @@ fn jpeg2000_channel_definitions_cannot_reorder_stored_components() {
 
 #[cfg(feature = "tiff")]
 #[test]
-fn malformed_detector_headers_and_packed_fill_order_fail_explicitly() {
+fn malformed_detector_headers_and_invalid_fill_order_fail_explicitly() {
     use dioptrin_io::{detector_tiff, tiff};
     let path =
         std::env::temp_dir().join(format!("dioptrin-detector-bounds-{}", std::process::id()));
@@ -393,11 +393,11 @@ fn malformed_detector_headers_and_packed_fill_order_fail_explicitly() {
             .is_err()
         );
     }
-    // Replace the packed file's compression entry with FillOrder=2.
+    // Replace the packed file's compression entry with invalid FillOrder=3.
     let mut data = std::fs::read(fixture("packed2-black.tif")).unwrap();
     let offset = 10 + 3 * 12;
     data[offset..offset + 2].copy_from_slice(&266u16.to_le_bytes());
-    data[offset + 8..offset + 12].copy_from_slice(&2u32.to_le_bytes());
+    data[offset + 8..offset + 12].copy_from_slice(&3u32.to_le_bytes());
     std::fs::write(&path, data).unwrap();
     assert!(tiff::Reader::open(&path, tiff::Limits::default()).is_err());
     std::fs::remove_file(path).unwrap();

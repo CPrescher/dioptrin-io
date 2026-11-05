@@ -12,7 +12,7 @@ readme = "README.md"
 default = []
 sparse = ["hdf5", "native"]
 hdf5 = ["dep:hdf5-backend", "dep:hdf5-sys", "dep:hdf5-bitshuffle", "dep:libz-sys", "dep:lz4_flex", "dep:bytemuck"]
-tiff = ["dep:tiff-backend", "dep:tiff-jpeg-header"]
+tiff = ["dep:tiff-backend", "dep:tiff-jpeg-header", "dep:tiff-fax-backend"]
 jpeg = ["dep:jpeg-backend", "dep:turbojpeg-backend"]
 jpeg2000 = ["dep:jpeg2000-backend"]
 cbf = ["dep:md-5"]
@@ -39,6 +39,7 @@ libz-sys = { version = "1.1", optional = true, features = ["static"] }
 lz4_flex = { version = "=0.14.0", optional = true, default-features = false, features = ["std", "safe-decode", "checked-decode"] }
 bytemuck = { version = "1.24", optional = true }
 tiff-backend = { package = "tiff", version = "=0.11.3", optional = true, default-features = false, features = ["deflate", "lzw", "fax", "jpeg"] }
+tiff-fax-backend = { package = "fax", version = "=0.2.7", optional = true }
 tiff-jpeg-header = { package = "zune-jpeg", version = "=0.5.15", optional = true, default-features = false, features = ["std"] }
 jpeg-backend = { package = "jpeg-decoder", version = "=0.3.2", optional = true, default-features = false }
 turbojpeg-backend = { package = "turbojpeg", version = "=1.5.1", optional = true, default-features = false, features = ["cmake"] }

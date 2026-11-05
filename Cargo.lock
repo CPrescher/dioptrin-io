@@ -149,6 +149,7 @@ dependencies = [
  "bytemuck",
  "bzip2",
  "data-encoding",
+ "fax",
  "flate2",
  "hdf5-bitshuffle",
  "hdf5-metno",

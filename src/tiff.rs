@@ -7,6 +7,7 @@
 //! Palettes retain raw indices and ColorMap; CFA retains its scalar plane. Tags remain
 //! typed values, including private tags understood by the backend's value parser.
 use crate::{PixelBuffer, PixelType, source::Snapshot};
+mod group3;
 mod ifd_view;
 use ifd_view::{Admission, ChunkWindows, FileView, OriginalPhoto};
 pub mod view;
@@ -83,6 +84,8 @@ pub struct Metadata {
     pub channels: usize,
     pub photometric_interpretation: u16,
     pub planar_configuration: u16,
+    /// Logical bit order in each stored byte; source tag retained unchanged.
+    pub fill_order: u16,
     /// True for TIFF JPEG/WebP compression; decoded values retain that provenance.
     pub lossy: bool,
     pub little_endian: bool,
@@ -131,7 +134,6 @@ pub struct Reader {
     snapshot: Snapshot,
     pages: Vec<Metadata>,
     chunk_windows: Vec<ChunkWindows>,
-    #[cfg(feature = "jpeg")]
     intermediate_bytes: usize,
 }
 impl Reader {
@@ -217,7 +219,6 @@ impl Reader {
             snapshot,
             pages,
             chunk_windows,
-            #[cfg(feature = "jpeg")]
             intermediate_bytes: limits.intermediate_bytes,
         })
     }
@@ -241,6 +242,18 @@ impl Reader {
             .pages
             .get(index)
             .ok_or_else(|| Error("TIFF page index outside file".into()))?;
+        if page.compression == 3 {
+            group3::decode(
+                &self.snapshot,
+                &self.identity_handle,
+                page,
+                self.intermediate_bytes,
+                &mut buffer.pixels,
+            )?;
+            buffer.shape = Some(page.shape);
+            buffer.channels = page.channels;
+            return Ok(());
+        }
         self.decoder.seek_to_image(index)?;
         // Discard any metadata prefetch before switching to bounded sample
         // windows. The backend seeks to every chunk before reading it.
@@ -271,6 +284,14 @@ impl Reader {
             ));
         }
         if page.bits_per_sample < 8 {
+            if page.fill_order == 2 {
+                let PixelBuffer::U8(packed) = &mut buffer.pixels else {
+                    return Err(Error("LSB-first packed TIFF requires byte buffer".into()));
+                };
+                for byte in packed {
+                    *byte = byte.reverse_bits();
+                }
+            }
             let PixelBuffer::U8(packed) = &buffer.pixels else {
                 return Err(Error("packed TIFF output must be u8".into()));
             };
@@ -387,10 +408,8 @@ fn metadata(
     if photo == 3 && (channels != 1 || format != 1 || ![1, 2, 4, 8, 16].contains(&bits)) {
         return Err(Error("unsupported TIFF palette index layout".into()));
     }
-    if fill_order != 1 {
-        return Err(Error(
-            "TIFF FillOrder other than MSB-first is unsupported".into(),
-        ));
+    if ![1, 2].contains(&fill_order) {
+        return Err(Error("invalid TIFF FillOrder".into()));
     }
     if bits < 8 && (channels != 1 || format != 1 || ![1, 2, 4].contains(&bits)) {
         return Err(Error(
@@ -401,10 +420,38 @@ fn metadata(
     let compression = decoder
         .find_tag_unsigned::<u16>(Tag::Compression)?
         .unwrap_or(1);
-    if ![1, 4, 5, 7, 8, 32946, 32773].contains(&compression) {
+    if ![1, 3, 4, 5, 7, 8, 32946, 32773].contains(&compression) {
         return Err(Error(format!(
             "unsupported TIFF detector compression {compression}"
         )));
+    }
+    if fill_order == 2 && !(compression == 3 || compression == 1 && bits < 8 && channels == 1) {
+        return Err(Error(
+            "LSB-first TIFF is admitted only for Group3 and uncompressed packed grayscale".into(),
+        ));
+    }
+    if compression == 3 {
+        let options = decoder
+            .find_tag_unsigned::<u32>(Tag::Unknown(292))?
+            .unwrap_or(0);
+        if bits != 1
+            || format != 1
+            || channels != 1
+            || planar != 1
+            || ![0, 1].contains(&photo)
+            || options & !4 != 0
+            || decoder.get_chunk_type() != ChunkType::Strip
+        {
+            return Err(Error(
+                "Group3 TIFF admits only one-dimensional bilevel strips (optional EOL fill bits)"
+                    .into(),
+            ));
+        }
+        if w > u32::from(u16::MAX) {
+            return Err(Error(
+                "Group3 TIFF width exceeds native decoder limit".into(),
+            ));
+        }
     }
     if photo == 6 && compression != 7 {
         return Err(Error(
@@ -497,6 +544,7 @@ fn metadata(
         channels,
         photometric_interpretation: photo,
         planar_configuration: planar,
+        fill_order,
         lossy: matches!(compression, 6 | 7 | 50001),
         little_endian: decoder.byte_order() == tiff_backend::tags::ByteOrder::LittleEndian,
         orientation,
@@ -523,7 +571,23 @@ fn validate_chunk_lengths(
     offsets: &[u64],
     lengths: &[u64],
 ) -> Result<(), Error> {
-    let chunks = if decoder.get_chunk_type() == ChunkType::Tile {
+    let chunks = if page.compression == 3 {
+        // RowsPerStrip=UINT32_MAX is the standard one-strip/default dialect.
+        // Upstream strip_count() uses an overflowing height+rows-1 expression;
+        // this codec uses the clipped logical source row count instead.
+        let rows = page
+            .tags
+            .get(&278)
+            .map(|v| v.clone().into_u64())
+            .transpose()?
+            .unwrap_or(page.shape[0] as u64)
+            .min(page.shape[0] as u64);
+        if rows == 0 {
+            return Err(Error("zero Group3 RowsPerStrip".into()));
+        }
+        u32::try_from((page.shape[0] as u64).div_ceil(rows))
+            .map_err(|_| Error("Group3 strip count exceeds platform".into()))?
+    } else if decoder.get_chunk_type() == ChunkType::Tile {
         decoder.tile_count()?
     } else {
         decoder.strip_count()?

@@ -139,7 +139,10 @@ impl Admission {
                         return Err(Error("duplicate TIFF ImageDescription".into()));
                     }
                     description_seen = true;
-                    if ty == 2 && n == 1 && entry[value_pos as usize] >= 128 {
+                    if ty == 2 && n >= 1 && n <= offset_bytes && {
+                        let value = &entry[value_pos as usize..value_pos as usize + n as usize];
+                        !value.is_ascii() || !value.ends_with(&[0])
+                    } {
                         retained = retained
                             .checked_add(256)
                             .filter(|&n| n <= limits.metadata_bytes)
@@ -154,7 +157,7 @@ impl Admission {
                                 7u16.to_be_bytes()
                             },
                         );
-                        opaque.entry(next).or_default().insert(tag,OpaqueTag {field_type:ty,count:n,ifd_entry:entry[..stride as usize].to_vec(),value_bytes:vec![entry[value_pos as usize]],reason:"declared one-byte ASCII ImageDescription is non-ASCII; retained opaque without text/offset repair".into()});
+                        opaque.entry(next).or_default().insert(tag,OpaqueTag {field_type:ty,count:n,ifd_entry:entry[..stride as usize].to_vec(),value_bytes:entry[value_pos as usize..value_pos as usize+n as usize].to_vec(),reason:"declared inline ASCII ImageDescription is non-ASCII or lacks its required NUL; retained opaque without text/offset repair".into()});
                     }
                 }
                 if tag == 262 {

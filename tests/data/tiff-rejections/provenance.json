@@ -1,0 +1,120 @@
+{
+  "license": "CC0-1.0",
+  "generator": "scripts/generate_tiff_rejection_fixtures.py",
+  "versions": {
+    "Pillow": "13.0.0",
+    "imagecodecs": "2026.10.10",
+    "tifffile": "2026.10.15",
+    "numpy": "2.5.4"
+  },
+  "files": {
+    "group3-fill1-photo0.tif": {
+      "sha256": "f9793eea7dc72453ba10a0196752a980e22e8e8cf9ba1f13e97480b8e40817cb",
+      "raw_sha256": "d93efcd802851dcf04945094c924c4807ac09bc1b65c59f988f05386c1c6dbc3",
+      "pillow_sha256": "3f6393fa8a3c5aa4a7867450a3790bb41cd424446cea4a98803604301800e60e",
+      "shape": [
+        7,
+        19
+      ]
+    },
+    "group3-fill1-photo1.tif": {
+      "sha256": "d3d162191078c17d1af981606ee19e955ba353983ee9b81616e7e1b830ab5d0f",
+      "raw_sha256": "d93efcd802851dcf04945094c924c4807ac09bc1b65c59f988f05386c1c6dbc3",
+      "pillow_sha256": "d93efcd802851dcf04945094c924c4807ac09bc1b65c59f988f05386c1c6dbc3",
+      "shape": [
+        7,
+        19
+      ]
+    },
+    "group3-fill2-photo0.tif": {
+      "sha256": "fb75094895c62ac8a366e2eba16babfcaaae0a646467d3ae46f6327f821959b8",
+      "raw_sha256": "d93efcd802851dcf04945094c924c4807ac09bc1b65c59f988f05386c1c6dbc3",
+      "pillow_sha256": "3f6393fa8a3c5aa4a7867450a3790bb41cd424446cea4a98803604301800e60e",
+      "shape": [
+        7,
+        19
+      ]
+    },
+    "group3-fill2-photo1.tif": {
+      "sha256": "0e5f7849836bb05303ecef2340276fcbc6c5b5f2ac51806021b8a1b59cc3d022",
+      "raw_sha256": "d93efcd802851dcf04945094c924c4807ac09bc1b65c59f988f05386c1c6dbc3",
+      "pillow_sha256": "d93efcd802851dcf04945094c924c4807ac09bc1b65c59f988f05386c1c6dbc3",
+      "shape": [
+        7,
+        19
+      ]
+    },
+    "group3-aligned.tif": {
+      "sha256": "7a88277ab530b3529710a5658ed0ece006d546180b0190f68814210317c3b5f5",
+      "raw_sha256": "d93efcd802851dcf04945094c924c4807ac09bc1b65c59f988f05386c1c6dbc3",
+      "pillow_sha256": "d93efcd802851dcf04945094c924c4807ac09bc1b65c59f988f05386c1c6dbc3",
+      "shape": [
+        7,
+        19
+      ]
+    },
+    "group3-makeup.tif": {
+      "sha256": "41d3fa8d40ef9f102aa6039661aacf23b32abc981fcf8477d2011153e96341b3",
+      "raw_sha256": "416df9905b5d097c19dbf9268c63bc64f45c8abfdfc1949b2a5d1c4f62ba9bd6",
+      "pillow_sha256": "416df9905b5d097c19dbf9268c63bc64f45c8abfdfc1949b2a5d1c4f62ba9bd6",
+      "shape": [
+        2,
+        3000
+      ]
+    },
+    "packed1-fill2.tif": {
+      "sha256": "d7ecb18befd79f7562cf162bbae750172488f4799712dbedf04175bcba23e9da",
+      "raw_sha256": "91acf44faf7d0757f9bf9fe40f717759252eff9e00fa5481d3f286d0ce9a9af6",
+      "pillow_sha256": "91acf44faf7d0757f9bf9fe40f717759252eff9e00fa5481d3f286d0ce9a9af6",
+      "shape": [
+        3,
+        13
+      ]
+    },
+    "packed2-fill2.tif": {
+      "sha256": "f2abac11714ccb2c1ceac71e790f2dc14f73fb25c3b181d1b9a336d20a88e811",
+      "raw_sha256": "b99a754cd650ec9db1c9f79ac5061ccd94b1500d0ec18ec6d5d78a84c0c94d32",
+      "pillow_sha256": "736d81a41b90528130b976b3da5b416d1ccf042b7dda8d0c66bf57b10c2f3596",
+      "shape": [
+        3,
+        13
+      ]
+    },
+    "packed4-fill2.tif": {
+      "sha256": "9c0837752125799edf44fd4bc9b3d1b15156136b2e66d2f3f70e806875a84c51",
+      "raw_sha256": "f232162101337a0a4c76963126e5652fb7f81d287ef72c0813746df675d7c0e9",
+      "pillow_sha256": "06b431761dd64ac6a6f5d7eb5eefea0444b6a5d637bd07edc3a246ec52feb4a7",
+      "shape": [
+        3,
+        13
+      ]
+    },
+    "opaque-20202020.tif": {
+      "sha256": "74804c3c2e3ddbeb980dd85fe89a1b2e9a386d1cc713ff68c9d324457701f69f",
+      "raw_sha256": "4f476e58b2b9d9d42f5eb1dcd746703cb10c666416f0d3bc5ab468916908aef1",
+      "pillow_sha256": "4f476e58b2b9d9d42f5eb1dcd746703cb10c666416f0d3bc5ab468916908aef1",
+      "shape": [
+        1,
+        3
+      ]
+    },
+    "opaque-af.tif": {
+      "sha256": "95e0068e79fb84857c565a941ecd611e2f36aee748fd15514062bb43523d1164",
+      "raw_sha256": "4f476e58b2b9d9d42f5eb1dcd746703cb10c666416f0d3bc5ab468916908aef1",
+      "pillow_sha256": "4f476e58b2b9d9d42f5eb1dcd746703cb10c666416f0d3bc5ab468916908aef1",
+      "shape": [
+        1,
+        3
+      ]
+    },
+    "opaque-41ff4200.tif": {
+      "sha256": "0fe42e20f1b05ec25456939d15f31cba95b573512cfa8b536915e20730a809d9",
+      "raw_sha256": "4f476e58b2b9d9d42f5eb1dcd746703cb10c666416f0d3bc5ab468916908aef1",
+      "pillow_sha256": "4f476e58b2b9d9d42f5eb1dcd746703cb10c666416f0d3bc5ab468916908aef1",
+      "shape": [
+        1,
+        3
+      ]
+    }
+  }
+}
