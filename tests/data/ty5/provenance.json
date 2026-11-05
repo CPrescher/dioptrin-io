@@ -1,0 +1,152 @@
+{
+  "license": "CC0-1.0",
+  "generator": "scripts/generate_ty5_fixtures.py",
+  "source": "Independent explicit arrays, manually packed inline deltas and row offsets; no upstream detector pixels or reference encoder",
+  "files": {
+    "non-square.img": {
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "I32",
+      "values": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          -7,
+          -8,
+          200
+        ]
+      ],
+      "row_offsets": [
+        0,
+        3
+      ],
+      "exceptions": [
+        1,
+        0
+      ],
+      "file_sha256": "97eb69eb29c72e287201aaf10b1ce2a76ddf7858912583788c84573310d55bc4",
+      "samples_sha256": "8320f4fc7e8f9f56fb4148dab88a1501c9fe9eb4ab368950bb43b90e825784b9"
+    },
+    "inline-extrema.img": {
+      "shape": [
+        3,
+        3
+      ],
+      "dtype": "I32",
+      "values": [
+        [
+          -2147483648,
+          -2147483647,
+          -2147483521
+        ],
+        [
+          2147483647,
+          2147483646,
+          2147450878
+        ],
+        [
+          -300,
+          -173,
+          -47
+        ]
+      ],
+      "row_offsets": [
+        0,
+        7,
+        16
+      ],
+      "exceptions": [
+        3,
+        2
+      ],
+      "file_sha256": "75ba48f91866fb1241e474e274cc23be90fc7ee6d51f450bb9d386e2da513fbd",
+      "samples_sha256": "fcc171478c4f789a00c8b688a03611b74894e293d44f9a30e9726ef9beb776ee"
+    },
+    "single-column.img": {
+      "shape": [
+        3,
+        1
+      ],
+      "dtype": "I32",
+      "values": [
+        [
+          32768
+        ],
+        [
+          -32768
+        ],
+        [
+          127
+        ]
+      ],
+      "row_offsets": [
+        0,
+        5,
+        8
+      ],
+      "exceptions": [
+        2,
+        1
+      ],
+      "file_sha256": "0fde9a7f3eb21fc0a3638b8b3ec9a8e84ac4300dd674daca1f30d6604e790688",
+      "samples_sha256": "5b6386faf3ae1527dc795720126b29ffbc439f83c38c7e4d40df44d51cd76672"
+    },
+    "single-row.img": {
+      "shape": [
+        1,
+        5
+      ],
+      "dtype": "I32",
+      "values": [
+        [
+          0,
+          126,
+          -1,
+          126,
+          -1
+        ]
+      ],
+      "row_offsets": [
+        0
+      ],
+      "exceptions": [
+        1,
+        0
+      ],
+      "file_sha256": "1455464e3dd02d069ba17e692930eaa4a9ae26d6193f3cbd82d889d5e6d8aaf5",
+      "samples_sha256": "728df003f28fea37e52170cb399a0aaf26b3b5ed194537ada13a67acba0376a6"
+    },
+    "negative-only.img": {
+      "shape": [
+        2,
+        2
+      ],
+      "dtype": "I32",
+      "values": [
+        [
+          -1000,
+          -999
+        ],
+        [
+          -10,
+          -137
+        ]
+      ],
+      "row_offsets": [
+        0,
+        4
+      ],
+      "exceptions": [
+        1,
+        0
+      ],
+      "file_sha256": "85c3fa1fc439ae39c112bd447409f57e66a3d7413c1a428fc1955d09ca5ea001",
+      "samples_sha256": "935a8cb128157ac785524c9941379b31e9cd81337a08f4b33dab921f7eaa1843"
+    }
+  }
+}

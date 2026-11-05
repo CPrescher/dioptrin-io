@@ -1,5 +1,5 @@
-//! Oxford Sapphire/KM4CCD frames with raw int32 or checked TY1 differences.
-//! TY5 is deliberately rejected: the pinned reference labels it unreliable.
+//! Oxford Sapphire/KM4CCD frames with raw int32, TY1 or row-indexed TY5.
+mod ty5;
 pub use crate::binary::{Error, FrameBuffer, Limits};
 use crate::{
     PixelBuffer, PixelType,
@@ -12,6 +12,7 @@ use std::{collections::BTreeMap, path::Path};
 pub enum Compression {
     None,
     Ty1,
+    Ty5,
 }
 #[derive(Debug, Clone, PartialEq)]
 pub enum HeaderValue {
@@ -35,6 +36,9 @@ pub struct Metadata {
     pub compression: Compression,
     pub exception16: usize,
     pub exception32: usize,
+    /// Original TY5 little-endian byte offsets into the inline difference stream.
+    /// Empty for raw/TY1 storage.
+    pub row_offsets: Vec<u32>,
     pub header_version: String,
     pub header: Vec<u8>,
     pub sections: Vec<Section>,
@@ -54,7 +58,7 @@ impl Reader {
     /// Index one frozen Oxford image. Stored row order, negative values and
     /// reserved counts survive; no correction/normalization is applied.
     /// # Errors
-    /// Bounds, unsupported TY5/version, malformed exception counts or truncation.
+    /// Bounds, unsupported version/layout, malformed exception counts or truncation.
     pub fn open(path: impl AsRef<Path>, limits: Limits) -> Result<Self, Error> {
         limits.validate()?;
         let source = Source::open(path)?;
@@ -80,7 +84,12 @@ impl Reader {
         if !(3.0..5.0).contains(&version) {
             return Err(Error("unsupported Oxford binary header version".into()));
         }
-        let compression=match lines[1].get(12..15).map(trim_bytes) {Some(b"TY1")=>Compression::Ty1,Some(b"NO")=>Compression::None,Some(b"TY5")=>return Err(Error("Oxford TY5 is known unreliable in the pinned reference; independent authority required".into())),_=>return Err(Error("unsupported Oxford compression selector".into()))};
+        let compression = match lines[1].get(12..15).map(trim_bytes) {
+            Some(b"TY1") => Compression::Ty1,
+            Some(b"NO") => Compression::None,
+            Some(b"TY5") => Compression::Ty5,
+            _ => return Err(Error("unsupported Oxford compression selector".into())),
+        };
         let supplements = number_at(lines[4], 12, 19)?;
         if supplements != 0 {
             return Err(Error(
@@ -129,7 +138,7 @@ impl Reader {
                 "uncompressed Oxford frame declares exception arrays".into(),
             ));
         }
-        let bytes = if compression == Compression::Ty1 {
+        let bytes = if compression != Compression::None {
             sum(
                 sum(count, product(exception16, 2)?)?,
                 product(exception32, 4)?,
@@ -137,13 +146,24 @@ impl Reader {
         } else {
             product(count, 4)?
         };
+        let bytes = if compression == Compression::Ty5 {
+            sum(bytes, product(height, 4)?)?
+        } else {
+            bytes
+        };
         if bytes > limits.encoded_bytes {
             return Err(Error("Oxford encoded payload exceeds limit".into()));
         }
         let end = (header_size as u64)
             .checked_add(bytes as u64)
             .filter(|&n| n <= source.bytes())
-            .ok_or_else(|| Error("truncated Oxford image/exception arrays".into()))?;
+            .ok_or_else(|| {
+                Error(if compression == Compression::Ty5 {
+                    "truncated Oxford TY5 image/row offsets".into()
+                } else {
+                    "truncated Oxford image/exception arrays".into()
+                })
+            })?;
         let trailing = usize::try_from(source.bytes() - end)
             .map_err(|_| Error("Oxford trailer size overflow".into()))?;
         if trailing > limits.header_bytes {
@@ -264,16 +284,39 @@ impl Reader {
             "Flood field image".into(),
             HeaderValue::Bytes(section_bytes(&header, &sections[4], 99, 27)?.to_vec()),
         );
+        let row_offset_bytes = if compression == Compression::Ty5 {
+            product(height, 4)?
+        } else {
+            0
+        };
         if header
             .len()
             .saturating_mul(2)
             .saturating_add(fields.len().saturating_mul(160))
             .saturating_add(trailer.len())
+            .saturating_add(row_offset_bytes)
             > limits.metadata_bytes
         {
             return Err(Error("Oxford retained metadata exceeds limit".into()));
         }
-        let pixel_type = if compression == Compression::None {
+        let mut row_offsets = Vec::new();
+        let pixel_type = if compression == Compression::Ty5 {
+            let mut encoded = Vec::new();
+            source.read(header_size as u64, bytes, &mut encoded)?;
+            ty5::decode(
+                &encoded,
+                [height, width],
+                [exception16, exception32],
+                |_, _| Ok(()),
+            )?;
+            row_offsets = encoded[bytes - row_offset_bytes..]
+                .as_chunks::<4>()
+                .0
+                .iter()
+                .map(|&v| u32::from_le_bytes(v))
+                .collect();
+            PixelType::I32
+        } else if compression == Compression::None {
             PixelType::I32
         } else {
             let mut encoded = Vec::new();
@@ -305,6 +348,7 @@ impl Reader {
                 compression,
                 exception16,
                 exception32,
+                row_offsets,
                 header_version,
                 header,
                 sections,
@@ -338,6 +382,19 @@ impl Reader {
             .map_err(Error)?;
         if meta.compression == Compression::None {
             copy_samples(&buffer.encoded, &mut buffer.pixels, true)?;
+        } else if meta.compression == Compression::Ty5 {
+            let PixelBuffer::I32(output) = &mut buffer.pixels else {
+                return Err(Error("Oxford TY5 requires signed32 output".into()));
+            };
+            ty5::decode(
+                &buffer.encoded,
+                meta.shape,
+                [meta.exception16, meta.exception32],
+                |i, value| {
+                    output[i] = value;
+                    Ok(())
+                },
+            )?;
         } else {
             ty1(
                 &buffer.encoded,

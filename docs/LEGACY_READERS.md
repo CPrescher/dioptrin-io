@@ -46,7 +46,8 @@ ordinary source-word reads available.
 
 ## Oxford / OXD
 
-Version3 and4 binary headers, uncompressed little-endian i32 and TY1 are admitted.
+Version3 and4 binary headers, uncompressed little-endian i32, TY1 and row-indexed
+TY5 are admitted.
 The complete raw header (including unused v4 padding), named section bounds,
 original acquisition scalars and bounded trailer are retained. Supplementary
 layouts with nonzero NSUPPLEMENT fail explicitly. No motor-angle conversion,
@@ -61,9 +62,14 @@ single stored scalar dtype; metadata distinguishes the encoding and decoded type
 FabIO chooses its output width from maximum alone, so a negative-only range can
 wrap; our negative fixture retains those counts and records this difference.
 
-**TY5 remains unsupported.** The pinned reference labels that decoder unreliable.
-Its 100nm-film test file is retained as a visible rejection in reference evidence;
-matching selected statistics would not independently qualify that decoder.
+TY5 reuses a bounded adaptation of dxtbx's BSD3 native mode5 decoder. Inline
+signed differences reset on stored row boundaries, selected by the original
+little-endian u32 row table; output remains I32 without FabIO's float64 promotion.
+Exact row ranges, exception counts, signed accumulation and all source/resource
+bounds are checked. The actual 100nm-film source and five independent CC0
+fixtures match a separately compiled pinned dxtbx decoder; every upstream source
+count also equals FabIO. Source hashes, independent authority, reference dtype
+and nonsquare-row qualifications are in `rejection-audits/LAMBDA_TY5.md`.
 
 ## R-AXIS
 
@@ -117,7 +123,7 @@ b191_1_9_1_uncompressed.img, d80_60s.img (2048x2048 TY1),
 pilatus300k.rod_img and mgzn-20hpt.img (explicit expansion).
 
 This qualifies these encodings/files; it does not claim arbitrary format parity,
-TY5, external wrappers/neighbor series, unknown R-AXIS record layouts, arbitrary
+TY6, external wrappers/neighbor series, unknown R-AXIS record layouts, arbitrary
 supplementary Oxford layouts or performance. Wrapper/probe integration and the
 global upstream-test ledger are maintained separately.
 

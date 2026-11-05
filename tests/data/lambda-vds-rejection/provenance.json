@@ -1,0 +1,10 @@
+{
+  "license": "CC0-1.0",
+  "generator": "scripts/generate_lambda_vds_rejection_fixtures.py",
+  "source": "Independent explicit extrema; missing absolute target deliberately differs from local basename decoy",
+  "files": {
+    "missing-absolute.nxs": "e51f82e3b4b24279f9702d74f39b6f65391c20a2e16da2224a27637e6c46451c",
+    "present-relative.nxs": "dccb9f921d4f61d11a51ab0be5b2de453d07b6499778bcf93d29f2727469400f",
+    "module.h5": "2cf57ba39a8348659a6676ec0c09e42ae626101fcdb2196af46e0c2e557f341d"
+  }
+}
