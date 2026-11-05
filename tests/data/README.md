@@ -11,7 +11,7 @@ settings are recorded in `tiff/provenance.json` and `binary-provenance.json`.
 - `scripts/generate_tiff_fixtures.py`: NumPy arrays written and independently
   read back by tifffile. Covers ten scalar types, native values beyond f64 exact
   integer precision, endian BigTIFF, multiple frames, padded edge tiles,
-  PackBits/LZW/Deflate, Orientation/private tags and explicit WhiteIsZero rejection.
+  PackBits/LZW/Deflate, Orientation/private tags and original WhiteIsZero counts.
 - `scripts/generate_binary_fixtures.py`: FabIO 2026.6.0 CBF writer/reader with
   byte-offset escapes and signed/unsigned types. The signed32 fixture uses the
   terminal32 dialect; other fixtures exercise extended64. EDF headers are
@@ -43,3 +43,10 @@ Reference environment used NumPy 2.5.4, FabIO 2026.6.0, tifffile 2026.10.15 and
 imagecodecs 2026.10.10. Reproduction versions and the binary files' own hashes are
 in the manifests. Full real Eiger data is external; its provenance/count hashes
 are in `docs/benchmarks/2026-11-05-native-eiger/`.
+
+The MAR345, sparse HDF5 and TIFF view fixture manifests document small CC0
+source arrays, every source/sample hash and independent reference qualifications.
+See `mar345/provenance.json`, `sparse/provenance.json` and
+`tiff-view/provenance.json`. Sparse fixtures include nonempty events absent from
+the actual upstream sparse corpus. MAR345 fixtures retain known pinned-oracle
+integer/whitespace defects as explicit differences.

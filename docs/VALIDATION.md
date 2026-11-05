@@ -1,5 +1,36 @@
 # Validation, 2026-11-05
 
+## MAR345, sparse and explicit reference views
+
+The current local macOS continuation passes formatting, strict all-target /
+all-feature Clippy and all **124 Rust tests**, with container/fixed/Esperanto/
+MAR345 external manifests enabled. No-default check/tests and isolated strict
+all-target Clippy for all 20 optional feature selections pass (22 checks).
+
+The complete pinned FabIO suite runs 213 reference tests with no failures/errors
+and one upstream skip. Native results are 439 direct format comparisons / 1,563
+frames (including existing explicit R-AXIS/KCD policies), 22 additional
+display/encoding view matches, and one deterministic sparse
+reconstruction event / 100 frames. The sparse file contains zero events;
+independent nonempty/extreme-event fixtures supply separate source evidence.
+Two known Pillow planar16 view defects and 91 explicit input/layout rejections
+remain. There are no missing-decoder or test-adapter events in the full build.
+Seventeen reference input errors agree with native rejection; one deliberately
+disabled Python JPEG backend is an environment difference.
+
+The minimal-feature proof runs 42 reference tests, with 117 feature-disabled read
+events, three source matches and no missing adapters/decoders. Both reports have
+stable source/bridge/probe hashes. TIFF window regressions also document a reused
+Deflate footer-integrity limitation; bounds do not imply validation of every
+compressed footer. Full parity remains incomplete. See
+`fabio-parity/2026-11-05-mar-sparse.json`,
+`fabio-parity/2026-11-05-mar-sparse-native-checks.json` and the current
+`fabio-parity/README.md` for exact scope and remaining differences.
+
+This is local correctness validation. Expanded platform CI, publication and new
+performance claims are not established. The following sections retain historical
+validation results.
+
 ## Parallel native-reader continuation
 
 The integrated continuation passes all required local macOS checks:

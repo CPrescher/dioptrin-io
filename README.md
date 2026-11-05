@@ -17,16 +17,18 @@ Every format dependency is optional; default features are empty.
 | Feature | Implemented scope | Important remaining gaps |
 |---|---|---|
 | `hdf5` | Typed 2D/3D images/stacks with ten standard scalar types, both byte orders, Eiger/LImA/Lambda discovery and explicit external-file snapshots; original u32 compatibility reader; opt-in indexed raw u16/u32 chunks and bounded parallel consumers | VDS/master relocation, raw external storage, complex/custom/float16 samples, arbitrary metadata and live refresh; raw fast path retains its narrower contract |
-| `tiff` | Scalar/packed/unsigned WhiteIsZero/color/planar TIFF and BigTIFF; primary IFD pages, strips/tiles, lossless codecs, Group4 and modern JPEG; Pilatus/MAR acquisition headers | Palette/SubIFD traversal, some photometric/compression layouts; F16 is explicitly widened to F32; TIFF JPEG IDCT differences remain qualified |
+| `tiff` | Scalar/packed/WhiteIsZero/palette/CFA/color/planar TIFF and BigTIFF; primary IFD pages, strips/tiles, lossless codecs, Group4 and modern JPEG; Pilatus/MAR acquisition headers | SubIFD traversal and some photometric/compression layouts; F16 explicitly widens to F32; separate Pillow13/TiffIO display views and reference defects are qualified |
 | `jpeg`, `jpeg2000` | Mature libjpeg-turbo/OpenJPEG backends; lossless high-precision JPEG; original channels, precision, lossy provenance and headers | Unsupported precision/component layouts fail explicitly; see image contracts |
 | `cbf` | Eight integer types, explicit byte-offset dialects, Content-MD5 and raw CIF headers | Semantic CIF/Pilatus maps and multiple sections |
 | `edf` | Ten scalar types, stacks/general headers, internal/outer compression and bounded padding, explicit external-source snapshots | Volumes, float128, byte-offset; incomplete declared windows rejected |
 | `native` | NPY v1/2/3 scalars/complex arrays, C/Fortran storage; d*TREK/ADSC, Fit2D masks/spreadsheets, HiPiC, PNM and explicit raw input | Remaining dtype/dimension variants; no autodetection |
 | `containers` | SPE v2/v3/ROI/frames, typed MRC stacks and nested DM3 image/tag selection | Unsupported layouts/types; pinned reference quirks documented |
-| `bruker`, `oxford`, `raxis` | Bruker86/100 tables/baselines, Oxford raw/TY1, R-AXIS words and explicit expanded-intensity view | Bruker LINEAR calibration is retained; TY5 rejected; unknown record layouts fail |
+| `bruker`, `oxford`, `raxis` | Bruker86/100 tables/baselines, Oxford raw/TY1, R-AXIS words and explicit expanded-intensity view | Bruker LINEAR float encoding has an explicit decoded view; TY5 rejected; unknown record layouts fail |
 | `fixed` | GE intact/blank/EDF-prefixed headers and Pixi fixed frame records | Adjacent-file series traversal |
 | `fit2d`, `kcd`, `mpa` | FIT2D primary/mask/axis arrays, separate KCD readouts/explicit sum, MPA CDAT maps and DATA spectra | Binary MPA and unsupported record layouts/types |
 | `esperanto` | Original signed32 Long32/AGI bitfield counts, row indexes, headers and strict source bounds | Unsupported header variants fail; no writer-style reshaping on read |
+| `mar345` | MAR345/MAR555 PCK V1, original unsigned counts, high-count tables and headers, both byte orders | V2, spiral/old IMAGE, degenerate predictor shapes and implicit series |
+| `sparse` | Original HDF5 sparse events/components/attributes and explicit deterministic background reconstruction | Stochastic noise; native reference and Python fallback have separate semantics; reconstructed backgrounds are derived |
 | `xsd` | Explicit 2D XSData XML arrays, base64/base32/base16, ten scalar/complex types and optional MD5 | Other ranks/types/encodings and namespaces |
 | `wrappers` | Bounded gzip/bzip2 disk staging for implemented backends when their optional feature is compiled; source checks on every read | HDF5 wrappers, direct file-like streams and implicit neighboring-file series |
 
@@ -102,16 +104,31 @@ remain part of the source array's documented storage semantics.
 
 Each module provides `Reader`, `Limits`, `FrameBuffer`, metadata access and
 `read_frame_into`. TIFF/EDF take a frame index; CBF admits one binary image.
-Header orientation remains metadata. Unsigned TIFF WhiteIsZero samples are
-restored after the backend's display inversion; source photometric metadata is
-retained. Original color channels are exposed through `sample_shape()` alongside
-spatial `shape()`. Consumers explicitly choose display/grayscale conversions.
+Header orientation remains metadata. TIFF WhiteIsZero samples bypass the
+backend's display inversion; source photometric metadata is retained. Original color channels are exposed through `sample_shape()` alongside
+spatial `shape()`. Consumers explicitly choose display/grayscale conversions through `tiff::view`;
+raw samples remain available. Palette indices and original ColorMap are retained.
+See [the image contracts](docs/IMAGE_READERS.md) for bounded chunk windows,
+opaque legacy description metadata and qualified reference display defects.
 
 CBF dialects can be ambiguous at INT32_MIN. `cbf::Reader::open` uses the extended
 8/16/32/64-bit dialect. For FabIO/Pilatus terminal signed32 streams, explicitly
 use `open_with_mode(..., ByteOffsetMode::Legacy32)`. Failed decoding never tries
 another interpretation. See the [reader contracts](docs/READER_DESIGN.md) for
 resource limits, source mutation, dtype and unsupported-subformat details.
+
+## MAR345 and sparse HDF5
+
+`mar345::Reader` reuses a bounded adaptation of the existing MIT PCK V1 codec.
+It returns U32 source counts, including exact high-count replacements. See
+[MAR345 contracts and oracle differences](docs/MAR345_READER.md).
+
+`sparse::Reader` defaults to original typed sparse events and source components.
+Dense output requires explicit `Reconstruction::DeterministicBackground`; its
+metadata identifies the background as derived. The pinned native reference
+model matches all 100 actual frames, while that file contains zero stored
+events; independent fixtures cover nonempty and extreme-valued events. See
+[the sparse source/reconstruction contract](docs/SPARSE_READERS.md).
 
 ## Additional native formats and compressed files
 
@@ -124,6 +141,7 @@ reader.read_frame_into(0, &mut frame)?;
 ```
 
 `Format::Dtrek` also reads ADSC's legacy `TYPE=unsigned_short` header.
+Ranks 1 through 32 retain their source shape and expose C-order 2D planes.
 `Format::Fit2dMask` returns unpacked 0/1 u8 values without changing row order;
 `Format::Fit2dSpreadsheet` exposes the format's f32 numeric rows.
 `Format::HiPic` retains binary header offsets and original comments; source

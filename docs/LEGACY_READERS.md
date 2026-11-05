@@ -39,9 +39,10 @@ tables and its stored baseline into i32. Both declared table consumption and
 baseline addition are checked. Missing tables preserve their numeric sentinels.
 The original stored dtype, underflow width, table counts and baseline remain
 metadata. Underflow, overflow and baseline are the declared storage encoding;
-`LINEAR` is separate calibration metadata and is never applied implicitly.
-FabIO's Bruker86 floating writer/read test applies `LINEAR` and returns float32;
-that test has an intentional representation difference, demonstrated by a fixture.
+`LINEAR` retains separate float-encoding coefficients and is never applied
+implicitly. FabIO's Bruker86 floating writer/read test returns float32; the
+explicit inverse-encoding view below matches that representation while leaving
+ordinary source-word reads available.
 
 ## Oxford / OXD
 

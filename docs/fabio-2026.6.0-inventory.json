@@ -16,7 +16,7 @@
         "gzip (.gz)",
         "bzip2 (.bz2)"
       ],
-      "implementation": "optional wrappers feature: magic-detected gzip/bzip2, bounded temporary staging, original-source checks; native/EDF/CBF/TIFF, typed containers, fixed/legacy detectors and JPEG/JPEG2000 when compiled; HDF5 and direct file-like APIs pending",
+      "implementation": "optional wrappers feature: magic-detected gzip/bzip2, bounded temporary staging, original-source checks; native/EDF/CBF/TIFF, typed containers, fixed/legacy/MAR345 detectors and JPEG/JPEG2000 when compiled; HDF5 and direct file-like APIs pending",
       "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/fabioutils.py"
     },
     "file_series": "pending explicit series API; numbered neighboring files must not be silently substituted",
@@ -58,7 +58,7 @@
       "subformats_and_types": "d*TREK / ADSC; Rigaku 1.1; endian scalar data and text header",
       "compression": "uncompressed",
       "stack": "single image; external file series",
-      "implementation": "partial: seven scalar types, both byte orders, nested-brace headers, legacy ADSC TYPE alias, raw padded headers; 1D/volume and permissive missing-type defaults pending",
+      "implementation": "partial: seven scalar types, both byte orders, nested-brace headers, legacy ADSC TYPE alias, raw padded headers; rank1..32 source arrays mapped to stored C-order planes; permissive missing-type defaults pending",
       "validation": [
         "tests/data/native/provenance.json",
         "tests/native.rs",
@@ -79,13 +79,18 @@
       "subformats_and_types": "classic TIFF/BigTIFF; endian scalar/color; strip/tile/IFD; photometric/predictor variants",
       "compression": "reference TiffIO/Pillow capabilities vary; none/PackBits/LZW/Deflate/JPEG require distinct fixtures",
       "stack": "primary IFD pages",
-      "implementation": "partial: scalar/packed/WhiteIsZero/color/planar/IFD/strip/tile/BigTIFF counts, Group4/PackBits/LZW/Deflate/JPEG; source F16 explicitly widened to F32; palettes/SubIFD traversal/Group3/RLE/old JPEG/subsampled YCbCr/FillOrder gaps remain; TIFF JPEG IDCT differences qualified",
+      "implementation": "partial: scalar/packed/WhiteIsZero/color/planar/IFD/strip/tile/BigTIFF counts, Group4/PackBits/LZW/Deflate/JPEG; source F16 explicitly widened to F32; palette indices/ColorMap, CFA raw and opaque malformed description bytes retained; optional Pillow13/TiffIO display views qualified separately; SubIFD/Group3/RLE/old JPEG/subsampled YCbCr/FillOrder gaps and two Pillow planar16 defects remain",
       "validation": [
         "tests/data/tiff/*.tif",
         "tests/tiff.rs",
         "tests/image_codecs.rs",
         "tests/data/images/provenance.json",
-        "docs/IMAGE_READERS.md"
+        "docs/IMAGE_READERS.md",
+        "tests/tiff_view.rs",
+        "tests/tiff_alias_bounds.rs",
+        "tests/wrapped_views.rs",
+        "tests/data/tiff-view/provenance.json",
+        "docs/tiff-views-fabio-2026.6.0.json"
       ],
       "parity_verified": false
     },
@@ -125,10 +130,14 @@
       "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/mar345image.py",
       "source_sha256": "307c02f85e79fa07a2706c64b961854aa85e67f32921cf68de2edabfdc15ebd7",
       "subformats_and_types": "MAR345 imaging plate / MAR555; supported detector dimensions; overflow table",
-      "compression": "CCP4/PCK packed and uncompressed branches",
+      "compression": "PCK packed V1; V2 and raw variants require separate contracts",
       "stack": "single image; file series",
-      "implementation": "pending",
+      "implementation": "partial: bounded MIT PCK V1 adaptation, MAR345/MAR555 dimensions, both byte orders, original headers/high-count tables and U32 counts; both actual sources and endian rewrites exact; V2/spiral/old IMAGE and degenerate predictor shapes explicitly unsupported; pinned unsigned/mask/whitespace defects independently qualified",
       "validation": [
+        "tests/mar345.rs",
+        "tests/data/mar345/provenance.json",
+        "tests/data/mar345/upstream-provenance.json",
+        "docs/MAR345_READER.md",
         "docs/MAR345_XCALIBUR_AUDIT.md"
       ],
       "parity_verified": false
@@ -162,7 +171,7 @@
       "subformats_and_types": "Bruker format 86; 8/16/32-bit storage, overflow records, LINEAR header handling",
       "compression": "overflow tables / linear encoding",
       "stack": "single image; NFRAMES metadata can describe series",
-      "implementation": "partial: format86 1/2/4-byte counts and ASCII overflow table, raw/parsed headers; LINEAR calibration retained without implicit application; same actual file counts verified",
+      "implementation": "partial: format86 1/2/4-byte counts and ASCII overflow table, raw/parsed headers; LINEAR float encoding retained in raw words, with explicit inverse-encoding view; same actual source counts and selected reference view verified",
       "validation": [
         "tests/legacy.rs",
         "tests/data/legacy/provenance.json",
@@ -732,8 +741,13 @@
       "subformats_and_types": "pyFAI/LImA sparse Bragg HDF5: frame pointers/index/intensity/background/noise; reconstruction policy matters",
       "compression": "HDF5 filters plus sparse/background representation",
       "stack": "sparse frame sequence",
-      "implementation": "pending; no stochastic or invented dense counts by default",
-      "validation": [],
+      "implementation": "partial: original typed frame_ptr/index/intensity and all admitted source components/attributes, explicit linked snapshots; separate deterministic native NOISY=False background view exact over 100 actual frames; actual corpus has zero events, nonempty/extreme events covered independently; stochastic reconstruction and Python fallback remain unqualified",
+      "validation": [
+        "tests/sparse.rs",
+        "tests/data/sparse/provenance.json",
+        "docs/sparse/2026-11-05-reference.json",
+        "docs/SPARSE_READERS.md"
+      ],
       "parity_verified": false
     },
     {

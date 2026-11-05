@@ -1,0 +1,194 @@
+{
+  "date": "2026-11-05",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "scope": "local validation; expanded platform CI, publication and new throughput qualification are not established",
+  "required_checks": [
+    {
+      "command": "cargo fmt --check",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --all-targets --all-features -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo test --all-features",
+      "exit_code": 0,
+      "tests_passed": 124,
+      "external_manifest_environment": [
+        "CONTAINER_PARITY_MANIFEST",
+        "FIXED_PARITY_MANIFEST",
+        "ESPERANTO_PARITY_MANIFEST",
+        "MAR345_PARITY_MANIFEST"
+      ]
+    }
+  ],
+  "isolated_feature_checks": [
+    {
+      "command": "cargo check --locked --no-default-features",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo test --no-default-features",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --no-default-features --all-targets --features bruker -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --no-default-features --all-targets --features cbf -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --no-default-features --all-targets --features containers -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --no-default-features --all-targets --features edf -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --no-default-features --all-targets --features esperanto -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --no-default-features --all-targets --features fit2d -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --no-default-features --all-targets --features fixed -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --no-default-features --all-targets --features hdf5 -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --no-default-features --all-targets --features jpeg -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --no-default-features --all-targets --features jpeg2000 -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --no-default-features --all-targets --features kcd -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --no-default-features --all-targets --features mar345 -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --no-default-features --all-targets --features mpa -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --no-default-features --all-targets --features native -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --no-default-features --all-targets --features oxford -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --no-default-features --all-targets --features raxis -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --no-default-features --all-targets --features sparse -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --no-default-features --all-targets --features tiff -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --no-default-features --all-targets --features wrappers -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --no-default-features --all-targets --features xsd -- -D warnings",
+      "exit_code": 0
+    }
+  ],
+  "external_manifest_sha256": {
+    "dioptrin-containers-upstream.json": "ef20a19a14847c2d1a39f49053d4657eda6f16d813ace5b73f4475c9b1c7ec8f",
+    "dioptrin-fixed-upstream.json": "208b3e42e28126077f0f01ca7119f7a927eee5c68cbe4a05fbd44826a8a43a06",
+    "dioptrin-esperanto-upstream.json": "ae0619810b4147f7101f0375b79c567bce21357d2d0b5cc39aeee6c69fcdab2f",
+    "dioptrin-mar345-upstream.json": "5b107a4cd175c7c72630e6c63925baec91bba9d3938c48cb6017d152aba6d0b7"
+  },
+  "rust_sources_sha256": {
+    "src/binary.rs": "b2464ed8ac2a848116f44faa2280f25ac40c2f15b3d25720a2d3eb4cfd83e50d",
+    "src/bruker/common.rs": "58ebb4b8bc1e89dba4288caa1224cae78f02812bbce4d911ec3159983c7020bc",
+    "src/bruker/view.rs": "4fb7483ddf6e85120b4a08e959de7c2716ae02e5cebd98d50c2d798ce6d2e059",
+    "src/bruker.rs": "3b7d0ea45d1e418697b96015b38bce2f6dc2c02926b1bdb8cebb76386568d8e0",
+    "src/cbf.rs": "d9ecb272d04785e3588347ca9c328e33ac7776f66373dc36fa97b2e0fb84bc2c",
+    "src/detector_tiff/mar_schema.rs": "0d224ae8a52443423f144a61604176be37727deec320333fdb4c947581ffb819",
+    "src/detector_tiff.rs": "5fea22e7a0ed5d01f4bad2f015fcef167ecf4e44dcda15f853e5c0d22af8751a",
+    "src/dm3.rs": "99c2079f67b2a9cdd1b6fef5d1d5e37dde352bd56343ee0939be5bdd317d54ec",
+    "src/edf.rs": "6bfc714d48878554538275b02f8aac5ac53bbca31de018b5f2b9d3f8ca100101",
+    "src/esperanto.rs": "4fc503bbd23d89c01ef8f8a44dca464f578f6605a4b2e8e9d94921ac361ba4df",
+    "src/fit2d.rs": "a3dfab6f09927651c98f9561fc497788d9f4736a0795be9c6c37de52de3c2004",
+    "src/ge.rs": "73ef7bbb055d7e90f7fb8ffcef887bd5382b5a82c818f1972558a51d522e4326",
+    "src/hdf5/cache.rs": "2b2927c6cc7bcf4d8daae4add9a72c9fa2414b93dd51950cffb634beaf45c050",
+    "src/hdf5/raw.rs": "aa1c6fa0a31303cc769214393039fec9975bff9c1e1d54eca59808e98d3927fc",
+    "src/hdf5/sources.rs": "d4bb835a72fe113d7f36b7706dd67e36ae4a479960304a57543d8f5498ae2e44",
+    "src/hdf5/sparse/numeric.rs": "9e842fc99100d24a6913d506dd86e7f63b0213eee695cea2a82515712be78433",
+    "src/hdf5/sparse/reconstruction.rs": "801f9c866a9e5796e7de966cad42f50e5c128183cf895660d155265cd99df364",
+    "src/hdf5/sparse.rs": "4040cd94500621d5e96129a7b2833b46336cf1dc8c500ea7e02260f602960233",
+    "src/hdf5/typed.rs": "120fea0e3876fe1c30fff2e53355b39bd13d9584a467c210e66100ed3be62077",
+    "src/hdf5.rs": "4a4a3e3e1fa120a3aa24e53dd7d4b4d44f0bb4365b14f82499639393cf068227",
+    "src/jpeg.rs": "40b74c6f5a107de027bf11a381168832a36d159cc2a53054383e361cfc7765c8",
+    "src/jpeg2000.rs": "be8ad6f74a6c161532e73aaae16dff9d37533f6c1181f66eae35fc5ff99ba7e3",
+    "src/kcd.rs": "fb532aa6e23648399ea52e0872edf0f57e45aacfe951c1284c1f46d3e12330e8",
+    "src/lib.rs": "2385c07eeff1fbf37c53fcf6e02b502bd3b2fbc5a1b356b82683677bfb799413",
+    "src/mar345.rs": "c1e41aea3253051c76076b107e1eb663cc719bd23e60dd3a5f655337fb882d93",
+    "src/mpa.rs": "6c81d70a3ef9b7f6a95a2f52a7add8aa14c70c15bd21c9ecb252e98b3e4cda9a",
+    "src/mrc.rs": "eb01640b8d6436f363b3b45531050de3ff06f42b4ecb4e3a120bce8ea16bca28",
+    "src/native.rs": "4ddb4def343d224f37a9d94a88c77aca35f8cba9b67d54cd4e76ce33c84a2421",
+    "src/oxford.rs": "96b79560f80aade642fa835ffa4460808c47ee2662377fbd08210f7484052026",
+    "src/pixels.rs": "89f9b646e2970e79c77c625529f367f5fe96bd35c9ecf73cad67bbb59dde3c12",
+    "src/pixi.rs": "2522bc7b5cfc0a70f4624d87193fade8075857b08c7cf34fb05ce9f0ddf5b7ee",
+    "src/raster.rs": "f27377deff1a475984240c548cc77890d8d1f53181245ac8654333fdd7a29c1f",
+    "src/raxis.rs": "c0bee389a94056c437a18948996c1449351aefcae9ea9191dd228ce1d63e11db",
+    "src/source.rs": "956a62bf69093aa2f9544bc1476b1f03cd28548320353db96ae9987eb0853a02",
+    "src/spe.rs": "48849be1954fe507ed36d9eb7ae476b43b2810abe434dcf889165af7df71fb98",
+    "src/tiff/ifd_view.rs": "9aba189a7478481105e6240daf8d6a7cbe2d121be447f9d18462919ca942ff2d",
+    "src/tiff/view.rs": "9189868aa30fab75c421143d62d4d2beab6d2619ebace71ff666426db85e2ee6",
+    "src/tiff/view_jpeg.rs": "7afcd5063fef77f3f93dbd0fd95eff98f8dc27404ebcc42bdea6698d685b9f08",
+    "src/tiff.rs": "9fc539cd04b682be68e76e5a10bde55ed07e829fbed8b4adaa6c7f95a8433f19",
+    "src/transport.rs": "16aab3b4c31947bc599a66bebfa0909653ec2bc13005c4255d933417b5630c30",
+    "src/wrapped.rs": "f194e1935802ce93b2df249979bd768ea413ac945a2552ff3e869e00b388328e",
+    "src/xsd.rs": "bcfe7328bc0d9d809dc6abda92d790039069e3829332abcfb300b0379e0ac601"
+  },
+  "bridge_sources_sha256": {
+    "scripts/fabio_suite_parity.py": "f26a25e6ced85641c10ac58d98b8ad8d5c14a938745d9bcd91c5a34911ffb269",
+    "scripts/inventory_fabio.py": "a362480578759679c604d19fabcc78c032bca4580dcd691f7b4cad5967f46c42",
+    "examples/parity_probe.rs": "ecf12c2efcaa43d060d8071412f6213ab005b4a0803c5d9df8babcba0f6ca6b1",
+    "docs/fabio-2026.6.0-inventory.json": "77c4d14e69f4c230029996d49e68bd7bc5467d5a578a820afb3aa144e643ea9f"
+  },
+  "full_suite_report": "2026-11-05-mar-sparse.json",
+  "full_suite_report_sha256": "cea6a3410b379dd8462eae624dcf645112b0def766dc0624c72f99a8f236d0ae",
+  "full_parity_gate": false,
+  "full_suite_exit_code": 1,
+  "full_suite_exit_reason": "Unsupported input/layout variants, two documented Pillow view defects and unverified reading contracts remain explicit.",
+  "full_suite_results": {
+    "counts_match": 439,
+    "reference_view_match": 22,
+    "reference_no_pixels": 25,
+    "native_rejected": 91,
+    "reconstruction_match": 1,
+    "mismatch": 2
+  },
+  "reference_rejection_results": {
+    "rejection_match": 17,
+    "reference_environment_difference": 1
+  },
+  "feature_disabled_report": "2026-11-05-mar-sparse-feature-disabled.json",
+  "feature_disabled_report_sha256": "d61546370fe08b89c82e826f7c1a6d5ce8d5cbcfe52dd465f58b0e041009f0e7",
+  "feature_disabled_suite_exit_code": 1,
+  "feature_disabled_exit_reason": "Selected-module and minimal-feature proof; not a full-parity run."
+}

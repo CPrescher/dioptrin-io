@@ -94,8 +94,8 @@ resource-limit limitation. Arbitrary attributes/full detector headers are gaps.
 ## TIFF/BigTIFF
 
 The MIT `tiff` crate is reused for native scalar/packed/color/planar samples,
-primary IFD stacks and supported strip/tile codecs. Integer WhiteIsZero backend
-inversion is undone to restore source counts. Packed widths retain their source
+primary IFD stacks and supported strip/tile codecs. WhiteIsZero backend display
+inversion is bypassed to retain source counts. Packed widths retain their source
 precision, while unpacked buffers expose integer values. Float16 widens exactly
 to F32 with original bit width retained; this is explicit source/output type
 metadata rather than raw dtype parity. EXIF/TIFF orientation is never applied.
@@ -103,14 +103,18 @@ metadata rather than raw dtype parity. EXIF/TIFF orientation is never applied.
 `detector_tiff` reuses the same pixel reader and adds Pilatus semantic text maps
 and MAR's typed binary acquisition fields/raw reserved bytes. Detector-specific
 success is now checked independently of generic TIFF counts. Detailed admitted
-codecs/layouts, image fixtures, JPEG qualifications and remaining palette,
-SubIFD and photometric gaps are in `IMAGE_READERS.md`.
+codecs/layouts, palette/CFA source samples, explicit display views, image
+fixtures, JPEG qualifications and remaining SubIFD/photometric gaps are in `IMAGE_READERS.md`.
 
 The upstream decoder initially parses the first IFD under its own default
 per-tag bounds; caller limits apply immediately afterward. Admitted metadata,
 page count, decoded output and intermediate scratch have separate bounds.
 Unknown TIFF field *types* skipped by the backend are not represented in the tag
-map. No additional TIFF parser or parallel pixel fast path was introduced.
+map. A bounded read-only IFD adapter retains source photometric tags while exposing
+non-transforming tags to the existing codec. Every pixel codec reads inside its
+declared chunk windows; metadata overlays cannot supply pixel bytes. Missing
+Deflate footers after complete output can still be accepted by the reused
+backend; this qualification is recorded in `IMAGE_READERS.md`.
 
 ## CBF and EDF
 
@@ -164,7 +168,9 @@ before reads. No Python expressions or pickle are executed.
 
 d*TREK supports its seven scalar types, both byte orders and the ADSC legacy
 unsigned_short TYPE spelling. Nested braces in header values are retained.
-Only 2D images are admitted; 1D/volumes and missing-type repair remain gaps.
+Ranks 1 through 32 retain their complete source shape; leading axes select
+C-order 2D planes, and rank1 exposes a single `[1, length]` plane. Missing-type
+repair remains unsupported.
 Fit2D masks unpack little-endian LSB-first bits to 0/1 u8, skip row alignment
 bits and retain all 1024 header bytes. They do not apply masks to detector data.
 Fit2D spreadsheet rows require exact dimensions and parse decimal text through
@@ -209,7 +215,7 @@ arrays/readouts/spectra (`RECORD_READERS.md`). No source image is silently
 replaced by a thumbnail or neighboring source.
 
 R-AXIS expanded intensities and KCD summed readouts require explicit policies.
-Bruker LINEAR calibration is metadata, never an implicit correction. Esperanto
+Bruker LINEAR float encoding has a separate explicit decoded view. Esperanto
 Long32/AGI decoding returns original signed32 pixels (`ESPERANTO_DESIGN.md`).
 XSData XML uses a single structurally owned record and explicit encoding/dtype,
 rejecting ambiguous XML and checksums (`XSD_READER.md`). Native JPEG/JPEG2000
@@ -250,3 +256,13 @@ incorporated into the MIT production crate. Upstream test data stays outside Git
 Cargo lockfiles pin exact build dependency resolution. New reader/codec notices
 are under `licenses/native-readers`; original attribution remains unchanged.
 FabIO, h5py, NumPy, tifffile and imagecodecs are test/reference tools only.
+
+## MAR345 and sparse source/model boundaries
+
+`MAR345_READER.md` specifies the bounded MIT PCK V1 adaptation, unsigned source
+counts, high tables, retained headers and unsupported V2/raw variants.
+`sparse` reuses the existing typed HDF5 source graph and storage admission.
+It preserves event order/dtypes and source components by default. Dense model
+output requires explicit deterministic reconstruction and is labelled derived;
+stochastic noise is not synthesized. See `SPARSE_READERS.md` for source, bounds
+and reference-backend qualifications.

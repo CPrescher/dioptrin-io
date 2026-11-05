@@ -4,7 +4,9 @@ The optional `sparse` feature includes `hdf5` and `native`. It exports the same
 reader as `sparse` and `hdf5::sparse`, reusing the native HDF5 library, standard
 dtype decoder, immutable source graph, lossless filter/chunk/layout admission and
 fill policy. No Python, pyFAI, JSON parser or random-number generator is a runtime
-dependency. Global probe/transport integration is separate.
+dependency. The parity probe compares source components/events separately from
+the selected deterministic background view. Outer HDF5 transport wrappers remain
+unsupported.
 
 ## Stored source representation
 
