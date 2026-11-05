@@ -1393,6 +1393,130 @@
       ],
       "fabio_compared": true
     },
+    "dtrek-rank1-little.img": {
+      "format": "Dtrek",
+      "shape": [
+        1,
+        6
+      ],
+      "source_shape": [
+        6
+      ],
+      "dtype": "uint16",
+      "file_sha256": "c6fde7d0c108caaba78f53f0847f8edab495af6ad0e94e203992f7b3c64674f8",
+      "frame_sha256": [
+        "d6118ac90dce1b50a48da0f8eea682f12c034c60f44574ecbac5455dbc8b9e3f"
+      ],
+      "fabio_compared": true
+    },
+    "dtrek-rank1-big.img": {
+      "format": "Dtrek",
+      "shape": [
+        1,
+        6
+      ],
+      "source_shape": [
+        6
+      ],
+      "dtype": "uint16",
+      "file_sha256": "d6097cac34e94bb4475c166eb62b7c6f47dde3ebbbdaaacc9267e74eb8329da3",
+      "frame_sha256": [
+        "d6118ac90dce1b50a48da0f8eea682f12c034c60f44574ecbac5455dbc8b9e3f"
+      ],
+      "fabio_compared": true
+    },
+    "dtrek-rank3-little.img": {
+      "format": "Dtrek",
+      "shape": [
+        2,
+        3
+      ],
+      "source_shape": [
+        5,
+        2,
+        3
+      ],
+      "dtype": "uint16",
+      "file_sha256": "b7bb9982eb17433fafd6a852adc58118e135083ab1a075020bdcd0bba3696e03",
+      "frame_sha256": [
+        "d6118ac90dce1b50a48da0f8eea682f12c034c60f44574ecbac5455dbc8b9e3f",
+        "6ff11cc1181cefa1a08dc01eb06a15945edcf52264828006d69fa2c72246928d",
+        "144a9fde2d7495e287dc419b352d74089d1862aa429eb07665b2c85425399604",
+        "b0408c9afe2953cf46a5ab35d9b45924abb1fb8fe35f79daa09a840fde90bf62",
+        "0628d073e29657d3ef2717e5af58cc03db71ca32bb03e73f3c109bc91406f0e2"
+      ],
+      "fabio_compared": true
+    },
+    "dtrek-rank3-big.img": {
+      "format": "Dtrek",
+      "shape": [
+        2,
+        3
+      ],
+      "source_shape": [
+        5,
+        2,
+        3
+      ],
+      "dtype": "uint16",
+      "file_sha256": "32b3f45031694bcf90e83e67ba8f32deb9defbe19d47f6807324894b5c0a4cf7",
+      "frame_sha256": [
+        "d6118ac90dce1b50a48da0f8eea682f12c034c60f44574ecbac5455dbc8b9e3f",
+        "6ff11cc1181cefa1a08dc01eb06a15945edcf52264828006d69fa2c72246928d",
+        "144a9fde2d7495e287dc419b352d74089d1862aa429eb07665b2c85425399604",
+        "b0408c9afe2953cf46a5ab35d9b45924abb1fb8fe35f79daa09a840fde90bf62",
+        "0628d073e29657d3ef2717e5af58cc03db71ca32bb03e73f3c109bc91406f0e2"
+      ],
+      "fabio_compared": true
+    },
+    "dtrek-rank4-little.img": {
+      "format": "Dtrek",
+      "shape": [
+        2,
+        3
+      ],
+      "source_shape": [
+        2,
+        3,
+        2,
+        3
+      ],
+      "dtype": "uint16",
+      "file_sha256": "300b55c94c9d3daa83b48d16090b57b94c7b7f04b1699ca49f29bcaaea7a0fd0",
+      "frame_sha256": [
+        "d6118ac90dce1b50a48da0f8eea682f12c034c60f44574ecbac5455dbc8b9e3f",
+        "6ff11cc1181cefa1a08dc01eb06a15945edcf52264828006d69fa2c72246928d",
+        "144a9fde2d7495e287dc419b352d74089d1862aa429eb07665b2c85425399604",
+        "b0408c9afe2953cf46a5ab35d9b45924abb1fb8fe35f79daa09a840fde90bf62",
+        "0628d073e29657d3ef2717e5af58cc03db71ca32bb03e73f3c109bc91406f0e2",
+        "f444784a1786308727364402b6d44586e57d6b989d8db650e3c2f1a05079cd22"
+      ],
+      "fabio_compared": true
+    },
+    "dtrek-rank4-big.img": {
+      "format": "Dtrek",
+      "shape": [
+        2,
+        3
+      ],
+      "source_shape": [
+        2,
+        3,
+        2,
+        3
+      ],
+      "dtype": "uint16",
+      "file_sha256": "ad19002fb39fc85eefc1e57af690f5e9a720c62359cc21a6c64bb28bc3db062e",
+      "frame_sha256": [
+        "d6118ac90dce1b50a48da0f8eea682f12c034c60f44574ecbac5455dbc8b9e3f",
+        "6ff11cc1181cefa1a08dc01eb06a15945edcf52264828006d69fa2c72246928d",
+        "144a9fde2d7495e287dc419b352d74089d1862aa429eb07665b2c85425399604",
+        "b0408c9afe2953cf46a5ab35d9b45924abb1fb8fe35f79daa09a840fde90bf62",
+        "0628d073e29657d3ef2717e5af58cc03db71ca32bb03e73f3c109bc91406f0e2",
+        "f444784a1786308727364402b6d44586e57d6b989d8db650e3c2f1a05079cd22"
+      ],
+      "fabio_compared": true
+    },
     "npy-v1.npy": {
       "format": "Npy",
       "shape": [

@@ -19,7 +19,9 @@ manifest = {"license": "CC0-1.0", "numpy": np.__version__, "fabio": fabio.versio
 def record(path, format, a, reference=True):
     if reference:
         image = fabio.open(path)
-        ref = image.data if a.ndim <= 2 else np.stack([image.getframe(i).data for i in range(image.nframes)])
+        ref = image.data if format == "Dtrek" or a.ndim <= 2 else np.stack([image.getframe(i).data for i in range(image.nframes)])
+        if format == "Dtrek" and a.ndim != 2:
+            ref = ref.reshape((-1,) + a.shape[-2:]) if a.ndim > 2 else ref.reshape((1, -1))
         expected = a.reshape((-1,) + a.shape[-2:]) if a.ndim > 2 else a.reshape((1, -1)) if a.ndim < 2 else a
         canonical_ref = np.ascontiguousarray(ref.astype(ref.dtype.newbyteorder('<'), copy=False))
         canonical_expected = np.ascontiguousarray(expected.astype(expected.dtype.newbyteorder('<'), copy=False))
@@ -57,6 +59,15 @@ for dtype in ["uint8", "uint16", "uint32", "uint64", "int8", "int16", "int32", "
             path = root / f"dtrek-{dtype}-{endian}.img"
             DtrekImage(data=a, header={"BYTE_ORDER": endian + "_endian", "COMMENT": "{ Stored axes {nested} and counts }"}).write(path)
             record(path, "Dtrek", a)
+
+# d*TREK represents a logical array, not only a two-dimensional detector image.
+# Read it as stored C-order planes while preserving the complete source shape.
+for shape in [(6,), (5, 2, 3), (2, 3, 2, 3)]:
+    for endian in ["little", "big"]:
+        a = (np.arange(np.prod(shape), dtype='uint16') * 1103).reshape(shape)
+        path = root / ("dtrek-rank" + str(len(shape)) + "-" + endian + ".img")
+        DtrekImage(data=a, header={"BYTE_ORDER": endian + "_endian"}).write(path)
+        record(path,"Dtrek",a)
 
 for version in [1, 2, 3]:
     a = np.array([0, 2**53+1, 2**64-1], dtype='uint64')

@@ -301,3 +301,51 @@ fn tempfile_path() -> PathBuf {
         std::process::id()
     ))
 }
+
+#[test]
+fn dtrek_leading_axes_keep_source_shape_and_enforce_rank_frame_and_payload_bounds() {
+    let reader = Reader::open(
+        fixture("dtrek-rank4-big.img"),
+        Format::Dtrek,
+        Limits::default(),
+    )
+    .unwrap();
+    assert_eq!(reader.metadata().source_shape, vec![2, 3, 2, 3]);
+    assert_eq!(reader.metadata().shape, [2, 3]);
+    assert_eq!(reader.frames(), 6);
+    assert!(
+        Reader::open(
+            fixture("dtrek-rank4-big.img"),
+            Format::Dtrek,
+            Limits {
+                frames: 5,
+                ..Limits::default()
+            }
+        )
+        .is_err()
+    );
+    let dir = std::env::temp_dir().join(format!("dioptrin-dtrek-rank-{}.img", std::process::id()));
+    let source = std::fs::read(fixture("dtrek-rank4-big.img")).unwrap();
+    let split = source.windows(2).position(|w| w == b"}\n").unwrap();
+    for (from, to) in [
+        ("DIM= 4;", "DIM= 0;"),
+        ("DIM= 4;", "DIM= 33;"),
+        ("SIZE4= 2;", "SIZE4= 0;"),
+        ("SIZE4= 2;", "SIZE4= 3;"),
+    ] {
+        let header = String::from_utf8_lossy(&source[..split]).replace(from, to);
+        assert_ne!(header.as_bytes(), &source[..split]);
+        // Keep the declared header byte size fixed by changing only padding.
+        let end = source[..512].windows(2).position(|w| w == b"}\n").unwrap();
+        let mut bytes = header.into_bytes();
+        bytes.extend_from_slice(&source[end..end + 4]);
+        bytes.resize(512, b' ');
+        bytes.extend_from_slice(&source[512..]);
+        std::fs::write(&dir, bytes).unwrap();
+        assert!(
+            Reader::open(&dir, Format::Dtrek, Limits::default()).is_err(),
+            "{from} -> {to}"
+        );
+    }
+    std::fs::remove_file(dir).unwrap();
+}

@@ -462,7 +462,7 @@ fn dtrek(file: &mut File, limits: Limits) -> Result<(Metadata, Storage), Error> 
         .strip_prefix('{')
         .and_then(|s| s.rsplit_once('}').map(|p| p.0))
         .ok_or_else(|| Error("unclosed d*TREK header".into()))?;
-    let mut fields = BTreeMap::new();
+    let mut fields: BTreeMap<String, String> = BTreeMap::new();
     for entry in body.split(';').map(str::trim).filter(|s| !s.is_empty()) {
         let (k, v) = entry
             .split_once('=')
@@ -471,13 +471,29 @@ fn dtrek(file: &mut File, limits: Limits) -> Result<(Metadata, Storage), Error> 
             return Err(Error("duplicate d*TREK field".into()));
         }
     }
-    if fields.get("DIM").is_some_and(|v| v != "2") {
-        return Err(Error("d*TREK non-2D source unsupported".into()));
+    let rank = fields.get("DIM").map_or(Ok(2), |v| number(v.as_bytes()))?;
+    if !(1..=32).contains(&rank) {
+        return Err(Error("d*TREK rank must lie in 1..=32".into()));
     }
-    let shape = [
-        number(field(&fields, "SIZE2")?.as_bytes())?,
-        number(field(&fields, "SIZE1")?.as_bytes())?,
-    ];
+    let source_shape = (1..=rank)
+        .rev()
+        .map(|axis| {
+            let size = number(field(&fields, &format!("SIZE{axis}"))?.as_bytes())?;
+            if size == 0 {
+                return Err(Error("empty d*TREK dimension unsupported".into()));
+            }
+            Ok(size)
+        })
+        .collect::<Result<Vec<_>, Error>>()?;
+    let shape = if rank == 1 {
+        [1, source_shape[0]]
+    } else {
+        [source_shape[rank - 2], source_shape[rank - 1]]
+    };
+    let frames = source_shape[..rank.saturating_sub(2)]
+        .iter()
+        .try_fold(1usize, |n, &d| n.checked_mul(d))
+        .ok_or_else(|| Error("d*TREK leading dimensions overflow".into()))?;
     let ty = match fields.get("Data_type").map(String::as_str) {
         Some("signed char") => PixelType::I8,
         Some("unsigned char") => PixelType::U8,
@@ -494,7 +510,10 @@ fn dtrek(file: &mut File, limits: Limits) -> Result<(Metadata, Storage), Error> 
         Some("big_endian") => false,
         _ => return Err(Error("invalid d*TREK BYTE_ORDER".into())),
     };
-    Ok((meta(shape, ty, little, header, fields), Storage::Scalar))
+    let mut metadata = meta(shape, ty, little, header, fields);
+    metadata.frames = frames;
+    metadata.source_shape = source_shape;
+    Ok((metadata, Storage::Scalar))
 }
 fn mask(file: &mut File, limits: Limits) -> Result<(Metadata, Storage), Error> {
     let header = read_header(file, 1024, limits)?;
