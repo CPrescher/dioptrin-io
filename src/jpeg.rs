@@ -275,6 +275,23 @@ fn header(input: &mut impl Read, limit: usize) -> Result<(Vec<Segment>, u8, u8),
     Ok((segments, precision, sof))
 }
 
+/// Shared bounded DCT envelope inspection for TIFF's original JPEG containers.
+/// Native codecs still own entropy decoding and reject invalid coding parameters.
+#[cfg(feature = "tiff")]
+pub(crate) fn inspect_dct_bytes(data: &[u8], limit: usize) -> Result<(Vec<Segment>, usize), Error> {
+    let mut input = std::io::Cursor::new(data);
+    let (segments, precision, sof) = header(&mut input, limit)?;
+    if precision != 8 || !matches!(sof, 0xc0..=0xc2) {
+        return Err(Error(
+            "TIFF JPEG components require 8-bit DCT coding".into(),
+        ));
+    }
+    let entropy = usize::try_from(input.position())
+        .map_err(|_| Error("JPEG header position overflow".into()))?;
+    dct_end(&mut input, limit)?;
+    Ok((segments, entropy))
+}
+
 /// Inspect every lossless scan without decoding entropy data. The entropy marker
 /// escape/restart rules identify SOS boundaries; native codecs decode samples.
 fn lossless_scans(

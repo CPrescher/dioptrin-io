@@ -1,0 +1,1045 @@
+{
+  "schema": 1,
+  "contract": "Original Y/Cb/Cr grids and padding; separate decoded-JPEG lossy provenance; no implicit RGB/upsampling",
+  "reference_library": {
+    "path": "/opt/homebrew/Cellar/libtiff/4.7.2/lib/libtiff.6.dylib",
+    "sha256": "ed5a54e3e8a621ba58f51ce632debb3f8d0ef068faf5bee887672581698e4cc1",
+    "version": "LIBTIFF, Version 4.7.2\nCopyright (c) 1988-1996 Sam Leffler\nCopyright (c) 1991-1996 Silicon Graphics, Inc.",
+    "lzw_reference": {
+      "package": "imagecodecs",
+      "version": "2026.10.10",
+      "codec": "imcd 2026.10.10",
+      "path": "/private/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/imagecodecs/_imcd.abi3.so",
+      "sha256": "26d2f4e4dd4de711e8800ab4f90922aee045881a8689a0d2cc026f54a9bd076b",
+      "policy": "decode complete raw LZW payload, retaining full final-strip padding rather than libtiff logical-row clipping"
+    }
+  },
+  "reference_script_sha256": "a78c473238f43699febe67c5993136016bceb5986ed217c50823dc94415e441c",
+  "native_probe_sha256": "cbdc7cd9cf528100fc3276cbe2b52a4bab31625034342c0c74d77b58f1bb52b9",
+  "authority": {
+    "libtiff_version": "4.7.2",
+    "source": "libtiff/tif_ojpeg.c",
+    "source_sha256": "e0dcb8bf12d3b403407155ac84402158c4efb0f19d2c6e10f16329b2bf311bc4",
+    "functions": [
+      "OJPEGReadHeaderInfoSecTables*",
+      "OJPEGWriteStreamSof",
+      "OJPEGWriteStreamSos"
+    ]
+  },
+  "qualifications": [
+    "Source original windows/headers/offsets retained; smallliz baselineSOS Se0->63 follows LibTIFF original-JPEG container interpretation",
+    "Native warnings fail; small pre-EOI entropy slack may escape warning through mature libjpeg bit lookahead; no full semantic encoded-integrity claim",
+    "Only one complete 8-bit contiguous baselineYCbCr strip/tile; no fragmented or restart reconstruction",
+    "Explicit display comparisons belong to separate consumer-view policy"
+  ],
+  "files": [
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/zackthecat.tif",
+      "file_sha256": "0d31f2acb25bfbde4d79975572369c3e4bea8e978fc1935075a545e3f8321b6e",
+      "native": {
+        "chunks": [
+          {
+            "image_shape": [
+              213,
+              234
+            ],
+            "origin": [
+              0,
+              0
+            ],
+            "planes": [
+              {
+                "component": "Y",
+                "sample_sha256": "fc33ecfd3c999a9a22685b48683d45f4cd0909dfc513208c5901d096b7e59dbf",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "shape": [
+                  224,
+                  240
+                ],
+                "valid_shape": [
+                  213,
+                  234
+                ]
+              },
+              {
+                "component": "Cb",
+                "sample_sha256": "7338a75a3cfa9ce129b2383aaba4ed3d80b3b7392143eba54631bcc976d9ee82",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "shape": [
+                  112,
+                  120
+                ],
+                "valid_shape": [
+                  107,
+                  117
+                ]
+              },
+              {
+                "component": "Cr",
+                "sample_sha256": "fbea610b3308c04abae33a121175973932c2ac81b6eac120d2c578319b577197",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "shape": [
+                  112,
+                  120
+                ],
+                "valid_shape": [
+                  107,
+                  117
+                ]
+              }
+            ]
+          }
+        ],
+        "original_jpeg_header_bytes": 0,
+        "reconstruction": "TableDefinedSingleChunk",
+        "shape": [
+          213,
+          234
+        ],
+        "sos_normalized": false,
+        "storage": "Some(JpegDecodedComponents)",
+        "subsampling": [
+          2,
+          2
+        ]
+      },
+      "reference": {
+        "shape": [
+          213,
+          234
+        ],
+        "subsampling": [
+          2,
+          2
+        ],
+        "precision": 8,
+        "compression": 6,
+        "storage": "JpegDecodedComponents",
+        "chunks": [
+          {
+            "origin": [
+              0,
+              0
+            ],
+            "image_shape": [
+              213,
+              234
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                112,
+                120,
+                6
+              ],
+              "sample_sha256": "db82c661ea10a29afd6566b7fe78e74fbcbe26004900a703b412561b8300c154"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  213,
+                  234
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  224,
+                  240
+                ],
+                "sample_sha256": "fc33ecfd3c999a9a22685b48683d45f4cd0909dfc513208c5901d096b7e59dbf"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  107,
+                  117
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  112,
+                  120
+                ],
+                "sample_sha256": "7338a75a3cfa9ce129b2383aaba4ed3d80b3b7392143eba54631bcc976d9ee82"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  107,
+                  117
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  112,
+                  120
+                ],
+                "sample_sha256": "fbea610b3308c04abae33a121175973932c2ac81b6eac120d2c578319b577197"
+              }
+            ]
+          }
+        ]
+      },
+      "all_native_component_samples_match": true
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/smallliz.tif",
+      "file_sha256": "e8f722bc322b9a7621d1d858bec36ea78d31b85221f314a2b9872d3af91d600a",
+      "native": {
+        "chunks": [
+          {
+            "image_shape": [
+              160,
+              160
+            ],
+            "origin": [
+              0,
+              0
+            ],
+            "planes": [
+              {
+                "component": "Y",
+                "sample_sha256": "14e90098dd4a4cb9ffafff7aa41deab8c88523f47f3f6534d6e34cce8b8a3416",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "shape": [
+                  160,
+                  160
+                ],
+                "valid_shape": [
+                  160,
+                  160
+                ]
+              },
+              {
+                "component": "Cb",
+                "sample_sha256": "01c2b0e1b9c9043d5e67c88c9ecf49281577002fcf0e9559c73f97c5b4bacedf",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "shape": [
+                  80,
+                  80
+                ],
+                "valid_shape": [
+                  80,
+                  80
+                ]
+              },
+              {
+                "component": "Cr",
+                "sample_sha256": "117c8677dc3a281e2d2517df5c03966b0792fa128323e5f65fa4677b5b40355f",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "shape": [
+                  80,
+                  80
+                ],
+                "valid_shape": [
+                  80,
+                  80
+                ]
+              }
+            ]
+          }
+        ],
+        "original_jpeg_header_bytes": 605,
+        "reconstruction": "CompleteInterchange",
+        "shape": [
+          160,
+          160
+        ],
+        "sos_normalized": true,
+        "storage": "Some(JpegDecodedComponents)",
+        "subsampling": [
+          2,
+          2
+        ]
+      },
+      "reference": {
+        "shape": [
+          160,
+          160
+        ],
+        "subsampling": [
+          2,
+          2
+        ],
+        "precision": 8,
+        "compression": 6,
+        "storage": "JpegDecodedComponents",
+        "chunks": [
+          {
+            "origin": [
+              0,
+              0
+            ],
+            "image_shape": [
+              160,
+              160
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                80,
+                80,
+                6
+              ],
+              "sample_sha256": "ae473300a1a5dcd7e12fdd5108ac939e701ac78efa97eae0260c2abe46e160be"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  160,
+                  160
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  160,
+                  160
+                ],
+                "sample_sha256": "14e90098dd4a4cb9ffafff7aa41deab8c88523f47f3f6534d6e34cce8b8a3416"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  80,
+                  80
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  80,
+                  80
+                ],
+                "sample_sha256": "01c2b0e1b9c9043d5e67c88c9ecf49281577002fcf0e9559c73f97c5b4bacedf"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  80,
+                  80
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  80,
+                  80
+                ],
+                "sample_sha256": "117c8677dc3a281e2d2517df5c03966b0792fa128323e5f65fa4677b5b40355f"
+              }
+            ]
+          }
+        ]
+      },
+      "all_native_component_samples_match": true
+    },
+    {
+      "source": "tests/data/ojpeg/interchange-legacy-sos.tif",
+      "file_sha256": "5e7cf1f981bb756e09893e45c92f354ea40db46f9114753750586a7f7a3f86bd",
+      "native": {
+        "chunks": [
+          {
+            "image_shape": [
+              16,
+              16
+            ],
+            "origin": [
+              0,
+              0
+            ],
+            "planes": [
+              {
+                "component": "Y",
+                "sample_sha256": "ca52e31b3e3394cb46af4e658bd81de613b799a2fd002800db70bea3763e52b3",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "shape": [
+                  16,
+                  16
+                ],
+                "valid_shape": [
+                  16,
+                  16
+                ]
+              },
+              {
+                "component": "Cb",
+                "sample_sha256": "d7406989f878f030aeaea520691357304aa8e9182973098bfbd19047815b7ef5",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "shape": [
+                  8,
+                  8
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ]
+              },
+              {
+                "component": "Cr",
+                "sample_sha256": "1e567f90d515a98d50965a2176d4ea82c1259e50d76190506ef9857477b5d61a",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "shape": [
+                  8,
+                  8
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ]
+              }
+            ]
+          }
+        ],
+        "original_jpeg_header_bytes": 623,
+        "reconstruction": "CompleteInterchange",
+        "shape": [
+          16,
+          16
+        ],
+        "sos_normalized": true,
+        "storage": "Some(JpegDecodedComponents)",
+        "subsampling": [
+          2,
+          2
+        ]
+      },
+      "reference": {
+        "shape": [
+          16,
+          16
+        ],
+        "subsampling": [
+          2,
+          2
+        ],
+        "precision": 8,
+        "compression": 6,
+        "storage": "JpegDecodedComponents",
+        "chunks": [
+          {
+            "origin": [
+              0,
+              0
+            ],
+            "image_shape": [
+              16,
+              16
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                8,
+                6
+              ],
+              "sample_sha256": "5de9f86b908212c4d85564739d7ce2b00ccd99045e2ce767a15737c5b89edf3a"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  16
+                ],
+                "sample_sha256": "ca52e31b3e3394cb46af4e658bd81de613b799a2fd002800db70bea3763e52b3"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "d7406989f878f030aeaea520691357304aa8e9182973098bfbd19047815b7ef5"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "1e567f90d515a98d50965a2176d4ea82c1259e50d76190506ef9857477b5d61a"
+              }
+            ]
+          }
+        ]
+      },
+      "all_native_component_samples_match": true
+    },
+    {
+      "source": "tests/data/ojpeg/interchange-standard.tif",
+      "file_sha256": "4ae83f9e431b79f02f85c4a242822a55f47cf0c65d5392d7c60ccad05a50f21f",
+      "native": {
+        "chunks": [
+          {
+            "image_shape": [
+              16,
+              16
+            ],
+            "origin": [
+              0,
+              0
+            ],
+            "planes": [
+              {
+                "component": "Y",
+                "sample_sha256": "ca52e31b3e3394cb46af4e658bd81de613b799a2fd002800db70bea3763e52b3",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "shape": [
+                  16,
+                  16
+                ],
+                "valid_shape": [
+                  16,
+                  16
+                ]
+              },
+              {
+                "component": "Cb",
+                "sample_sha256": "d7406989f878f030aeaea520691357304aa8e9182973098bfbd19047815b7ef5",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "shape": [
+                  8,
+                  8
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ]
+              },
+              {
+                "component": "Cr",
+                "sample_sha256": "1e567f90d515a98d50965a2176d4ea82c1259e50d76190506ef9857477b5d61a",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "shape": [
+                  8,
+                  8
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ]
+              }
+            ]
+          }
+        ],
+        "original_jpeg_header_bytes": 623,
+        "reconstruction": "CompleteInterchange",
+        "shape": [
+          16,
+          16
+        ],
+        "sos_normalized": false,
+        "storage": "Some(JpegDecodedComponents)",
+        "subsampling": [
+          2,
+          2
+        ]
+      },
+      "reference": {
+        "shape": [
+          16,
+          16
+        ],
+        "subsampling": [
+          2,
+          2
+        ],
+        "precision": 8,
+        "compression": 6,
+        "storage": "JpegDecodedComponents",
+        "chunks": [
+          {
+            "origin": [
+              0,
+              0
+            ],
+            "image_shape": [
+              16,
+              16
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                8,
+                6
+              ],
+              "sample_sha256": "5de9f86b908212c4d85564739d7ce2b00ccd99045e2ce767a15737c5b89edf3a"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  16
+                ],
+                "sample_sha256": "ca52e31b3e3394cb46af4e658bd81de613b799a2fd002800db70bea3763e52b3"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "d7406989f878f030aeaea520691357304aa8e9182973098bfbd19047815b7ef5"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "1e567f90d515a98d50965a2176d4ea82c1259e50d76190506ef9857477b5d61a"
+              }
+            ]
+          }
+        ]
+      },
+      "all_native_component_samples_match": true
+    },
+    {
+      "source": "tests/data/ojpeg/table-422-tile.tif",
+      "file_sha256": "9a8cf4d01a61ec3df40f12a54e01cfc661431699d0d3f73d2b56ed3a90b4c39a",
+      "native": {
+        "chunks": [
+          {
+            "image_shape": [
+              13,
+              15
+            ],
+            "origin": [
+              0,
+              0
+            ],
+            "planes": [
+              {
+                "component": "Y",
+                "sample_sha256": "ca52e31b3e3394cb46af4e658bd81de613b799a2fd002800db70bea3763e52b3",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "shape": [
+                  16,
+                  16
+                ],
+                "valid_shape": [
+                  13,
+                  15
+                ]
+              },
+              {
+                "component": "Cb",
+                "sample_sha256": "a1b338c17dc35a426fe6f1d90d659c53a7d6df485433d6397d7337f07d500822",
+                "sampling": [
+                  1,
+                  2
+                ],
+                "shape": [
+                  16,
+                  8
+                ],
+                "valid_shape": [
+                  13,
+                  8
+                ]
+              },
+              {
+                "component": "Cr",
+                "sample_sha256": "081d6529aaf52eca60982ae76e327290dad70abbb588029ab358969c8932a9bf",
+                "sampling": [
+                  1,
+                  2
+                ],
+                "shape": [
+                  16,
+                  8
+                ],
+                "valid_shape": [
+                  13,
+                  8
+                ]
+              }
+            ]
+          }
+        ],
+        "original_jpeg_header_bytes": 0,
+        "reconstruction": "TableDefinedSingleChunk",
+        "shape": [
+          13,
+          15
+        ],
+        "sos_normalized": false,
+        "storage": "Some(JpegDecodedComponents)",
+        "subsampling": [
+          2,
+          1
+        ]
+      },
+      "reference": {
+        "shape": [
+          13,
+          15
+        ],
+        "subsampling": [
+          2,
+          1
+        ],
+        "precision": 8,
+        "compression": 6,
+        "storage": "JpegDecodedComponents",
+        "chunks": [
+          {
+            "origin": [
+              0,
+              0
+            ],
+            "image_shape": [
+              13,
+              15
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                16,
+                8,
+                4
+              ],
+              "sample_sha256": "f9626119a6c16d256bf0b6b3c2fcc328d3c862ebeb37e9d44f871a4cc23ca053"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  13,
+                  15
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  16
+                ],
+                "sample_sha256": "ca52e31b3e3394cb46af4e658bd81de613b799a2fd002800db70bea3763e52b3"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  1,
+                  2
+                ],
+                "valid_shape": [
+                  13,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  8
+                ],
+                "sample_sha256": "a1b338c17dc35a426fe6f1d90d659c53a7d6df485433d6397d7337f07d500822"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  1,
+                  2
+                ],
+                "valid_shape": [
+                  13,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  8
+                ],
+                "sample_sha256": "081d6529aaf52eca60982ae76e327290dad70abbb588029ab358969c8932a9bf"
+              }
+            ]
+          }
+        ]
+      },
+      "all_native_component_samples_match": true
+    },
+    {
+      "source": "tests/data/ojpeg/table-edge-tile.tif",
+      "file_sha256": "922c484c67e868ef694a795de5786401347df1557f0031be8ecfe054782dda13",
+      "native": {
+        "chunks": [
+          {
+            "image_shape": [
+              11,
+              13
+            ],
+            "origin": [
+              0,
+              0
+            ],
+            "planes": [
+              {
+                "component": "Y",
+                "sample_sha256": "ca52e31b3e3394cb46af4e658bd81de613b799a2fd002800db70bea3763e52b3",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "shape": [
+                  16,
+                  16
+                ],
+                "valid_shape": [
+                  11,
+                  13
+                ]
+              },
+              {
+                "component": "Cb",
+                "sample_sha256": "d7406989f878f030aeaea520691357304aa8e9182973098bfbd19047815b7ef5",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "shape": [
+                  8,
+                  8
+                ],
+                "valid_shape": [
+                  6,
+                  7
+                ]
+              },
+              {
+                "component": "Cr",
+                "sample_sha256": "1e567f90d515a98d50965a2176d4ea82c1259e50d76190506ef9857477b5d61a",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "shape": [
+                  8,
+                  8
+                ],
+                "valid_shape": [
+                  6,
+                  7
+                ]
+              }
+            ]
+          }
+        ],
+        "original_jpeg_header_bytes": 0,
+        "reconstruction": "TableDefinedSingleChunk",
+        "shape": [
+          11,
+          13
+        ],
+        "sos_normalized": false,
+        "storage": "Some(JpegDecodedComponents)",
+        "subsampling": [
+          2,
+          2
+        ]
+      },
+      "reference": {
+        "shape": [
+          11,
+          13
+        ],
+        "subsampling": [
+          2,
+          2
+        ],
+        "precision": 8,
+        "compression": 6,
+        "storage": "JpegDecodedComponents",
+        "chunks": [
+          {
+            "origin": [
+              0,
+              0
+            ],
+            "image_shape": [
+              11,
+              13
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                8,
+                6
+              ],
+              "sample_sha256": "5de9f86b908212c4d85564739d7ce2b00ccd99045e2ce767a15737c5b89edf3a"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  11,
+                  13
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  16
+                ],
+                "sample_sha256": "ca52e31b3e3394cb46af4e658bd81de613b799a2fd002800db70bea3763e52b3"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  6,
+                  7
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "d7406989f878f030aeaea520691357304aa8e9182973098bfbd19047815b7ef5"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  6,
+                  7
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "1e567f90d515a98d50965a2176d4ea82c1259e50d76190506ef9857477b5d61a"
+              }
+            ]
+          }
+        ]
+      },
+      "all_native_component_samples_match": true
+    }
+  ]
+}

@@ -1,0 +1,237 @@
+{
+  "license": "CC0-1.0",
+  "generator": "scripts/generate_ojpeg_fixtures.py",
+  "source": "Independent explicit Y/Cb/Cr grids compressed with systemTurboJPEG then manually wrapped in original TIFF6 layouts; nativeLibTIFF exact component oracle",
+  "reference_libraries": {
+    "jpeg": {
+      "path": "/opt/homebrew/Cellar/jpeg-turbo/3.2.0/lib/libturbojpeg.0.5.0.dylib",
+      "sha256": "ab2a42bf1bb3a812ad1d82c5fa6abedec02b7cd50dc984472f7bd974ef83d8e4"
+    },
+    "tiff": {
+      "path": "/opt/homebrew/Cellar/libtiff/4.7.2/lib/libtiff.6.dylib",
+      "sha256": "ed5a54e3e8a621ba58f51ce632debb3f8d0ef068faf5bee887672581698e4cc1"
+    }
+  },
+  "files": {
+    "interchange-standard.tif": {
+      "file_sha256": "4ae83f9e431b79f02f85c4a242822a55f47cf0c65d5392d7c60ccad05a50f21f",
+      "shape": [
+        16,
+        16
+      ],
+      "encoded_shape": [
+        16,
+        16
+      ],
+      "subsampling": [
+        2,
+        2
+      ],
+      "reconstruction": "CompleteInterchange",
+      "baseline_sos_normalized": false,
+      "planes": [
+        {
+          "component": "Y",
+          "shape": [
+            16,
+            16
+          ],
+          "valid_shape": [
+            16,
+            16
+          ],
+          "sha256": "ca52e31b3e3394cb46af4e658bd81de613b799a2fd002800db70bea3763e52b3"
+        },
+        {
+          "component": "Cb",
+          "shape": [
+            8,
+            8
+          ],
+          "valid_shape": [
+            8,
+            8
+          ],
+          "sha256": "d7406989f878f030aeaea520691357304aa8e9182973098bfbd19047815b7ef5"
+        },
+        {
+          "component": "Cr",
+          "shape": [
+            8,
+            8
+          ],
+          "valid_shape": [
+            8,
+            8
+          ],
+          "sha256": "1e567f90d515a98d50965a2176d4ea82c1259e50d76190506ef9857477b5d61a"
+        }
+      ]
+    },
+    "interchange-legacy-sos.tif": {
+      "file_sha256": "5e7cf1f981bb756e09893e45c92f354ea40db46f9114753750586a7f7a3f86bd",
+      "shape": [
+        16,
+        16
+      ],
+      "encoded_shape": [
+        16,
+        16
+      ],
+      "subsampling": [
+        2,
+        2
+      ],
+      "reconstruction": "CompleteInterchange",
+      "baseline_sos_normalized": true,
+      "planes": [
+        {
+          "component": "Y",
+          "shape": [
+            16,
+            16
+          ],
+          "valid_shape": [
+            16,
+            16
+          ],
+          "sha256": "ca52e31b3e3394cb46af4e658bd81de613b799a2fd002800db70bea3763e52b3"
+        },
+        {
+          "component": "Cb",
+          "shape": [
+            8,
+            8
+          ],
+          "valid_shape": [
+            8,
+            8
+          ],
+          "sha256": "d7406989f878f030aeaea520691357304aa8e9182973098bfbd19047815b7ef5"
+        },
+        {
+          "component": "Cr",
+          "shape": [
+            8,
+            8
+          ],
+          "valid_shape": [
+            8,
+            8
+          ],
+          "sha256": "1e567f90d515a98d50965a2176d4ea82c1259e50d76190506ef9857477b5d61a"
+        }
+      ]
+    },
+    "table-edge-tile.tif": {
+      "file_sha256": "922c484c67e868ef694a795de5786401347df1557f0031be8ecfe054782dda13",
+      "shape": [
+        11,
+        13
+      ],
+      "encoded_shape": [
+        16,
+        16
+      ],
+      "subsampling": [
+        2,
+        2
+      ],
+      "reconstruction": "TableDefinedSingleChunk",
+      "baseline_sos_normalized": false,
+      "planes": [
+        {
+          "component": "Y",
+          "shape": [
+            16,
+            16
+          ],
+          "valid_shape": [
+            11,
+            13
+          ],
+          "sha256": "ca52e31b3e3394cb46af4e658bd81de613b799a2fd002800db70bea3763e52b3"
+        },
+        {
+          "component": "Cb",
+          "shape": [
+            8,
+            8
+          ],
+          "valid_shape": [
+            6,
+            7
+          ],
+          "sha256": "d7406989f878f030aeaea520691357304aa8e9182973098bfbd19047815b7ef5"
+        },
+        {
+          "component": "Cr",
+          "shape": [
+            8,
+            8
+          ],
+          "valid_shape": [
+            6,
+            7
+          ],
+          "sha256": "1e567f90d515a98d50965a2176d4ea82c1259e50d76190506ef9857477b5d61a"
+        }
+      ]
+    },
+    "table-422-tile.tif": {
+      "file_sha256": "9a8cf4d01a61ec3df40f12a54e01cfc661431699d0d3f73d2b56ed3a90b4c39a",
+      "shape": [
+        13,
+        15
+      ],
+      "encoded_shape": [
+        16,
+        16
+      ],
+      "subsampling": [
+        2,
+        1
+      ],
+      "reconstruction": "TableDefinedSingleChunk",
+      "baseline_sos_normalized": false,
+      "planes": [
+        {
+          "component": "Y",
+          "shape": [
+            16,
+            16
+          ],
+          "valid_shape": [
+            13,
+            15
+          ],
+          "sha256": "ca52e31b3e3394cb46af4e658bd81de613b799a2fd002800db70bea3763e52b3"
+        },
+        {
+          "component": "Cb",
+          "shape": [
+            16,
+            8
+          ],
+          "valid_shape": [
+            13,
+            8
+          ],
+          "sha256": "a1b338c17dc35a426fe6f1d90d659c53a7d6df485433d6397d7337f07d500822"
+        },
+        {
+          "component": "Cr",
+          "shape": [
+            16,
+            8
+          ],
+          "valid_shape": [
+            13,
+            8
+          ],
+          "sha256": "081d6529aaf52eca60982ae76e327290dad70abbb588029ab358969c8932a9bf"
+        }
+      ]
+    }
+  }
+}

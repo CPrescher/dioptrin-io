@@ -9,6 +9,10 @@
 use crate::{PixelBuffer, PixelType, source::Snapshot};
 mod group3;
 mod ifd_view;
+#[cfg(feature = "jpeg")]
+mod jpeg_components;
+#[cfg(feature = "jpeg")]
+pub mod ojpeg;
 use ifd_view::{Admission, ChunkWindows, FileView, OriginalPhoto};
 pub mod view;
 #[cfg(feature = "jpeg")]
@@ -143,6 +147,8 @@ pub struct Reader {
     identity_handle: File,
     snapshot: Snapshot,
     pages: Vec<Metadata>,
+    #[cfg(feature = "jpeg")]
+    ojpeg_pages: Vec<Option<ojpeg::SourceMetadata>>,
     chunk_windows: Vec<ChunkWindows>,
     intermediate_bytes: usize,
     limits: Limits,
@@ -180,6 +186,8 @@ impl Reader {
         } = Admission::open(file, limits)?;
         let mut decoder = Decoder::new(BufReader::new(file))?.with_limits(native);
         let mut pages = Vec::new();
+        #[cfg(feature = "jpeg")]
+        let mut ojpeg_pages = Vec::new();
         let mut chunk_windows = Vec::new();
         let mut metadata_bytes = retained;
         loop {
@@ -223,6 +231,26 @@ impl Reader {
             if page.compression == 7 {
                 validate_jpeg_chunks(&mut decoder, &page, &snapshot, limits)?;
             }
+            #[cfg(feature = "jpeg")]
+            {
+                let info = if page.compression == 6 {
+                    let info = ojpeg::inspect(&snapshot, &identity_handle, &page, limits)?;
+                    metadata_bytes = metadata_bytes
+                        .checked_add(info.retained_bytes)
+                        .filter(|&n| n <= limits.metadata_bytes)
+                        .ok_or_else(|| {
+                            Error("TIFF old JPEG headers exceed metadata budget".into())
+                        })?;
+                    let offsets: Vec<_> = info.source_windows.iter().map(|w| w.offset).collect();
+                    let lengths: Vec<_> =
+                        info.source_windows.iter().map(|w| w.bytes as u64).collect();
+                    decoder.inner().get_ref().check_chunks(&offsets, &lengths)?;
+                    Some(info)
+                } else {
+                    None
+                };
+                ojpeg_pages.push(info);
+            }
             pages.push(page);
             if !decoder.more_images() {
                 break;
@@ -235,6 +263,8 @@ impl Reader {
             identity_handle,
             snapshot,
             pages,
+            #[cfg(feature = "jpeg")]
+            ojpeg_pages,
             chunk_windows,
             intermediate_bytes: limits.intermediate_bytes,
             limits,
@@ -247,6 +277,12 @@ impl Reader {
     #[must_use]
     pub fn metadata(&self, index: usize) -> Option<&Metadata> {
         self.pages.get(index)
+    }
+    /// Original OJPEG windows/header reconstruction provenance for a legacy page.
+    #[cfg(feature = "jpeg")]
+    #[must_use]
+    pub fn ojpeg_metadata(&self, index: usize) -> Option<&ojpeg::SourceMetadata> {
+        self.ojpeg_pages.get(index).and_then(Option::as_ref)
     }
     /// Read native Y/Cb/Cr component grids and exact TIFF sampling units.
     /// Color conversion and chroma expansion are separate explicit display views.
@@ -274,24 +310,43 @@ impl Reader {
                 "TIFF page does not expose a native YCbCr component layout".into(),
             ));
         };
-        if ![1, 5].contains(&page.compression) {
-            return Err(Error(
-                "native TIFF JPEG components require the jpeg feature and component decoder".into(),
-            ));
-        }
-        let chunks = ycbcr::decode(
-            &self.snapshot,
-            &self.identity_handle,
-            page,
-            self.limits.intermediate_bytes,
-        )?;
+        let (chunks, storage) = if [1, 5].contains(&page.compression) {
+            (
+                ycbcr::decode(
+                    &self.snapshot,
+                    &self.identity_handle,
+                    page,
+                    self.limits.intermediate_bytes,
+                )?,
+                ycbcr::Storage::TiffSamplingUnits,
+            )
+        } else {
+            #[cfg(feature = "jpeg")]
+            {
+                if page.compression != 6 {
+                    return Err(Error(
+                        "native modern TIFF JPEG components require component decoder".into(),
+                    ));
+                }
+                (
+                    ojpeg::decode(&self.snapshot, &self.identity_handle, page, self.limits)?,
+                    ycbcr::Storage::JpegDecodedComponents,
+                )
+            }
+            #[cfg(not(feature = "jpeg"))]
+            {
+                return Err(Error(
+                    "TIFF JPEG components require the jpeg feature".into(),
+                ));
+            }
+        };
         self.snapshot
             .check_handle(&self.identity_handle)
             .map_err(Error)?;
         buffer.set(
             page.shape,
             [usize::from(horizontal), usize::from(vertical)],
-            ycbcr::Storage::TiffSamplingUnits,
+            storage,
             chunks,
         );
         Ok(())
@@ -491,10 +546,15 @@ fn metadata(
     let compression = decoder
         .find_tag_unsigned::<u16>(Tag::Compression)?
         .unwrap_or(1);
-    if ![1, 3, 4, 5, 7, 8, 32946, 32773].contains(&compression) {
+    if ![1, 3, 4, 5, 6, 7, 8, 32946, 32773].contains(&compression) {
         return Err(Error(format!(
             "unsupported TIFF detector compression {compression}"
         )));
+    }
+    if compression == 6 && !cfg!(feature = "jpeg") {
+        return Err(Error(
+            "old JPEG TIFF requires the optional jpeg feature".into(),
+        ));
     }
     if fill_order == 2 && !(compression == 3 || compression == 1 && bits < 8 && channels == 1) {
         return Err(Error(
@@ -524,7 +584,7 @@ fn metadata(
             ));
         }
     }
-    if photo == 6 && ![1, 5, 7].contains(&compression) {
+    if photo == 6 && ![1, 5, 6, 7].contains(&compression) {
         return Err(Error("unsupported TIFF YCbCr compression".into()));
     }
     if compression == 4 && (channels != 1 || bits != 1) {
