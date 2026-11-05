@@ -91,6 +91,36 @@ fn detector_fields(header: &dioptrin_io::detector_tiff::Header) -> serde_json::V
     }
 }
 
+fn tiff_view_record(
+    index: usize,
+    frames: usize,
+    image: &tiff::view::Image,
+    sources: &[&std::path::Path],
+) -> serde_json::Value {
+    let shape = image.provenance.shape.clone();
+    match &image.pixels {
+        tiff::view::Pixels::Scalar(pixels) => {
+            frame_record(index, frames, shape, pixels, json!({}), sources)
+        }
+        tiff::view::Pixels::Bool(values) => {
+            let mut hash = Sha256::new();
+            for &value in values {
+                hash.update([u8::from(value)]);
+            }
+            json!({"frame":index,"frames":frames,"shape":shape,"dtype":"bool","sample_sha256":format!("{:x}",hash.finalize()),"fields":{},"sources":sources})
+        }
+    }
+}
+fn tiff_view_policy(image: &tiff::view::Image) -> serde_json::Value {
+    let p = &image.provenance;
+    json!({"name":format!("{:?}",p.policy),"kind":"consumer_display_view",
+        "operations":p.operations.iter().map(|operation|format!("{operation:?}")).collect::<Vec<_>>(),
+        "source_shape":p.source_shape,"source_type":format!("{:?}",p.source_type),"source_bits_per_sample":p.source_bits_per_sample,
+        "source_photometric":p.source_photometric,"source_planar_configuration":p.source_planar_configuration,
+        "source_orientation":p.source_orientation,"source_compression":p.source_compression,"source_lossy":p.source_lossy,
+        "output_type":format!("{:?}",p.output_type),"output_shape":p.shape})
+}
+
 fn run() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = std::env::args().collect();
     if args.get(1).is_some_and(|s| s == "--capabilities") {
@@ -108,10 +138,13 @@ fn run() -> Result<(), Box<dyn Error>> {
             "cbf",
             "cbf64",
             "tiff",
+            "tiff-pillow13",
+            "tiff-tiffio",
             "marccd",
             "pilatus",
         ];
         for (enabled, feature, names) in [
+            (cfg!(feature = "sparse"), "sparse", &["sparse"][..]),
             (cfg!(feature = "mar345"), "mar345", &["mar345"][..]),
             (cfg!(feature = "esperanto"), "esperanto", &["esperanto"][..]),
             (cfg!(feature = "fit2d"), "fit2d", &["fit2d"][..]),
@@ -153,7 +186,7 @@ fn run() -> Result<(), Box<dyn Error>> {
                 "speimage":"containers","mrcimage":"containers","dm3image":"containers",
                 "brukerimage":"bruker","bruker100image":"bruker","OXDimage":"oxford","raxisimage":"raxis","xsdimage":"xsd",
                 "GEimage":"fixed","pixiimage":"fixed","jpegimage":"jpeg","jpeg2kimage":"jpeg2000",
-                "fit2dimage":"fit2d","kcdimage":"kcd","mpaimage":"mpa","esperantoimage":"esperanto","mar345image":"mar345"
+                "fit2dimage":"fit2d","kcdimage":"kcd","mpaimage":"mpa","esperantoimage":"esperanto","mar345image":"mar345","sparseimage":"sparse"
             }})
         );
         return Ok(());
@@ -162,6 +195,70 @@ fn run() -> Result<(), Box<dyn Error>> {
         return Err("usage: parity_probe FORMAT PATH [WIDTH HEIGHT OFFSET DTYPE ENDIAN]".into());
     }
     let path = &args[2];
+    #[cfg(feature = "sparse")]
+    if args[1] == "sparse" {
+        use dioptrin_io::sparse::{
+            ArrayBuffer, ExternalLinks, FrameBuffer, Options, Reader, Reconstruction,
+            SparseFrameBuffer,
+        };
+        let reader = Reader::open(
+            path,
+            Options {
+                external_links: ExternalLinks::FollowSnapshot,
+                reconstruction: Reconstruction::DeterministicBackground,
+                ..Default::default()
+            },
+        )?;
+        let paths: Vec<_> = reader
+            .sources()
+            .iter()
+            .map(|source| source.path.as_path())
+            .collect();
+        let mut components = Vec::new();
+        let mut component = ArrayBuffer::default();
+        for source in &reader.metadata().components {
+            if source.pixel_type.is_some() {
+                reader.read_component_into(&source.name, &mut component)?;
+                let mut info = frame_record(
+                    0,
+                    1,
+                    source.shape.clone(),
+                    component.pixels().unwrap(),
+                    json!({}),
+                    &paths,
+                );
+                info["name"] = json!(source.name);
+                info["dataset"] = json!(source.dataset);
+                info["source_file"] = json!(source.source_file);
+                info["source_little_endian"] = json!(source.little_endian);
+                components.push(info);
+            }
+        }
+        let mut events = SparseFrameBuffer::default();
+        let mut dense = FrameBuffer::default();
+        for index in 0..reader.frames() {
+            reader.read_sparse_frame_into(index, &mut events)?;
+            reader.read_frame_into(index, &mut dense)?;
+            let count = events.index().unwrap().len();
+            let mut row = frame_record(
+                index,
+                reader.frames(),
+                reader.metadata().shape,
+                dense.pixels().unwrap(),
+                json!({}),
+                &paths,
+            );
+            row["reconstruction_policy"] = json!({"name":"FabIO2026.6.NativeDense.NOISYFalse","kind":"deterministic_sparse_background","dense_is_derived":reader.metadata().dense_is_derived,"stochastic_noise":false});
+            row["stored_sparse"] = json!({"events":count,"source_range":events.source_range(),
+                "index":frame_record(index,reader.frames(),vec![count],events.index().unwrap(),json!({}),&paths),
+                "intensity":frame_record(index,reader.frames(),vec![count],events.intensity().unwrap(),json!({}),&paths)});
+            if index == 0 {
+                row["source_components"] = json!(components);
+            }
+            println!("{row}");
+        }
+        return Ok(());
+    }
     #[cfg(feature = "hdf5")]
     if matches!(args[1].as_str(), "hdf5" | "eiger" | "lima" | "lambda") {
         use dioptrin_io::hdf5::typed::{ExternalLinks, FrameBuffer, Options, Reader, Selection};
@@ -348,7 +445,7 @@ fn run() -> Result<(), Box<dyn Error>> {
         },
         "cbf" => wrapped::Format::Cbf(cbf::ByteOffsetMode::Legacy32),
         "cbf64" => wrapped::Format::Cbf(cbf::ByteOffsetMode::Extended64),
-        "tiff" => wrapped::Format::Tiff,
+        "tiff" | "tiff-pillow13" | "tiff-tiffio" => wrapped::Format::Tiff,
         name => wrapped::Format::Native(match name {
             "npy" => native::Format::Npy,
             "dtrek" | "adsc" => native::Format::Dtrek,
@@ -404,7 +501,7 @@ fn run() -> Result<(), Box<dyn Error>> {
             wrapped::Metadata::Cbf(m) => json!(m.binary_fields),
             wrapped::Metadata::Tiff(_) => json!({}),
         };
-        report(
+        let mut row = frame_record(
             i,
             reader.frames(),
             buffer.sample_shape().unwrap(),
@@ -412,6 +509,25 @@ fn run() -> Result<(), Box<dyn Error>> {
             fields,
             &reader.source_paths(),
         );
+        if args[1] == "tiff-pillow13" || args[1] == "tiff-tiffio" {
+            let policy = if args[1] == "tiff-pillow13" {
+                tiff::view::Policy::Pillow13
+            } else {
+                tiff::view::Policy::FabioTiffIo
+            };
+            match reader.read_tiff_view(i, policy, limits.frame_bytes) {
+                Ok(image) => {
+                    row["reference_view"] =
+                        tiff_view_record(i, reader.frames(), &image, &reader.source_paths());
+                    row["view_policy"] = tiff_view_policy(&image);
+                }
+                Err(error) => row["view_error"] = json!(error.to_string()),
+            }
+            if let wrapped::Metadata::Tiff(metadata) = reader.metadata(i).unwrap() {
+                row["opaque_metadata"]=json!(metadata.opaque_tags.iter().map(|(id,tag)|json!({"id":id,"field_type":tag.field_type,"count":tag.count,"ifd_entry":tag.ifd_entry,"value_bytes":tag.value_bytes,"reason":tag.reason})).collect::<Vec<_>>());
+            }
+        }
+        println!("{row}");
     }
     Ok(())
 }

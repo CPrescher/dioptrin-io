@@ -396,6 +396,47 @@ impl Reader {
             Backend::Tiff(r) => r.metadata(index).map(Metadata::Tiff),
         }
     }
+    /// Read an explicitly selected TIFF consumer view. Stored-reader defaults
+    /// and metadata remain unchanged; transformations are carried by the image.
+    /// # Errors
+    /// Non-TIFF backend, unsupported view/feature, bounds or changed sources.
+    pub fn read_tiff_view(
+        &mut self,
+        index: usize,
+        policy: tiff::view::Policy,
+        max_output_bytes: usize,
+    ) -> Result<tiff::view::Image, Error> {
+        self.source.check()?;
+        let Backend::Tiff(reader) = &mut self.backend else {
+            return Err(Error(
+                "TIFF consumer view requires the generic TIFF backend".into(),
+            ));
+        };
+        let image = match policy {
+            #[cfg(feature = "jpeg")]
+            tiff::view::Policy::Pillow13 => {
+                tiff::view::read_pillow13(reader, index, max_output_bytes)
+            }
+            _ => {
+                let mut frame = tiff::FrameBuffer::default();
+                reader
+                    .read_frame_into(index, &mut frame)
+                    .map_err(|e| Error(e.to_string()))?;
+                tiff::view::convert(
+                    reader
+                        .metadata(index)
+                        .ok_or_else(|| Error("TIFF view frame outside source".into()))?,
+                    &frame,
+                    policy,
+                    max_output_bytes,
+                )
+            }
+        }
+        .map_err(|e| Error(e.to_string()))?;
+        self.source.check()?;
+        Ok(image)
+    }
+
     /// Read through the selected backend; original wrapper mutation invalidates
     /// even an already staged source. No decoded counts are cached here.
     /// # Errors

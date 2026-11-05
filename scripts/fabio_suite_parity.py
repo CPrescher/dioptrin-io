@@ -27,6 +27,7 @@ PIN = "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece"
 VERSION = "2026.6.0"
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 ADAPTERS = {
+    "sparseimage":"sparse",
     "mar345image":"mar345",
     "esperantoimage":"esperanto", "numpyimage": "npy", "dtrekimage": "dtrek", "fit2dmaskimage": "mask",
     "HiPiCimage": "hipic", "pnmimage": "pnm", "edfimage": "edf",
@@ -212,8 +213,25 @@ def main():
         if adapter is None or adapter not in capabilities["adapters"]:
             record.update(status="test_adapter_missing",reason="Rust reader exists; the comparison harness has no adapter for it")
             return
+        if codec == "tifimage":
+            record["reference_backend"] = getattr(image, "lib", None)
+            selected = {"PIL":"tiff-pillow13", "TiffIO":"tiff-tiffio"}.get(record["reference_backend"])
+            if selected is not None:
+                if selected not in capabilities["adapters"]:
+                    record.update(status="test_adapter_missing",reason="compiled TIFF reader lacks explicit reference-view adapter")
+                    return
+                adapter = selected
         record["adapter"] = adapter
         extra = []
+        if codec == "sparseimage":
+            record["reference_reconstruction_backend"] = "native" if sys.modules["fabio.sparseimage"].cython_densify is not None else "numpy"
+            if record["reference_reconstruction_backend"] != "native":
+                record.update(status="unsupported_reference_reconstruction",reason="selected native sparse model is not qualified against the distinct NumPy fallback")
+                return
+            if getattr(image,"noisy",0):
+                record.update(status="unsupported_reference_reconstruction",reason="stochastic reference data is not represented as stored detector counts")
+                return
+            record["reconstruction_policy"]="explicit deterministic native FabIO NOISY=False background view; original sparse arrays compared separately"
         if codec == "dtrekimage" and image.data.ndim != 2:
             record["frame_mapping_policy"] = "stored C-order leading axes mapped to 2D planes; complete original array shape retained"
         if codec == "brukerimage":
@@ -271,6 +289,54 @@ def main():
                 if manifest:
                     record["source_manifest"] = manifest
                     report["source_files"].update(manifest)
+                if codec == "sparseimage":
+                    import h5py
+                    component_checks=[]
+                    entry=image.h5[image.h5.attrs["default"]]
+                    nx_data=entry[entry.attrs.get("pyFAI_sparse_frames") or entry.attrs["default"]]
+                    expected_components=set()
+                    def collect_numeric(prefix):
+                        def visit(name,obj):
+                            if isinstance(obj,h5py.Dataset) and obj.dtype.kind in "iuf":
+                                expected_components.add(prefix+name)
+                        return visit
+                    nx_data.visititems(collect_numeric(""))
+                    for name in ("sparsify","peaks"):
+                        if name in entry:
+                            obj=entry[name]
+                            if isinstance(obj,h5py.Group):obj.visititems(collect_numeric("entry/"+name+"/"))
+                            elif obj.dtype.kind in "iuf":expected_components.add("entry/"+name)
+                    native_components={item["name"] for item in frames[0].get("source_components",[])}
+                    record["source_component_inventory_differences"]={
+                        "missing":sorted(expected_components-native_components),
+                        "extra":sorted(native_components-expected_components)}
+                    for descriptor in frames[0].get("source_components",[]):
+                        with h5py.File(descriptor["source_file"],"r") as component_file:
+                            array=component_file[descriptor["dataset"]][()]
+                            canonical=np.ascontiguousarray(array.astype(array.dtype.newbyteorder("<"),copy=False))
+                            expected={"dtype":array.dtype.name,"shape":list(array.shape),"sample_sha256":hashlib.sha256(canonical.tobytes()).hexdigest()}
+                            differences={key:{"native":descriptor[key],"reference":value} for key,value in expected.items() if descriptor[key]!=value}
+                            component_checks.append({"name":descriptor["name"],"differences":differences})
+                    record["source_component_checks"]=component_checks
+                    sparse_checks=[]
+                    for index,frame in enumerate(frames):
+                        start,stop=map(int,image.frame_ptr[index:index+2])
+                        stored=frame["stored_sparse"]
+                        for name,expected in [("source_range",[start,stop]),("events",stop-start)]:
+                            if stored[name]!=expected:
+                                sparse_checks.append({"frame":index,"field":name,"native":stored[name],"reference":expected})
+                        for name,array in [("index",image.index[start:stop]),("intensity",image.intensity[start:stop])]:
+                            canonical=np.ascontiguousarray(array.astype(array.dtype.newbyteorder("<"),copy=False))
+                            expected={"dtype":array.dtype.name,"shape":list(array.shape),"sample_sha256":hashlib.sha256(canonical.tobytes()).hexdigest()}
+                            native=frame["stored_sparse"][name]
+                            differences={key:{"native":native[key],"reference":value} for key,value in expected.items() if native[key]!=value}
+                            if differences:sparse_checks.append({"frame":index,"component":name,"differences":differences})
+                    record["stored_sparse_differences"]=sparse_checks
+                    record["stored_events"]=int(len(image.intensity))
+                    if (not component_checks or any(c["differences"] for c in component_checks) or sparse_checks
+                            or native_components!=expected_components):
+                        record.update(status="source_component_mismatch")
+                        return
                 # SPE declares its stack in the header but the pinned reader
                 # inherits nframes=1. MRC's inherited getframe fails on data=None.
                 expected_frames = int(image.header["num_frames"]) if codec == "speimage" else image.nframes
