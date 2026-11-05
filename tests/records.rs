@@ -357,3 +357,61 @@ fn mpa_truncation_precision_binary_duplicate_sections_bounds_and_mutation() {
     assert!(reader.read_frame_into(0, &mut buffer).is_err());
     assert!(buffer.pixels().is_none());
 }
+
+#[cfg(feature = "mpa")]
+#[test]
+fn mpa_decimal_integer_forms_and_finite_overflow_cannot_bypass_admission() {
+    use dioptrin_io::mpa::*;
+    let source = |token: &str| {
+        format!(
+            "mpafmt=asc\nfmt=asc\nsephead=0\n[ADC1]\nrange=1\n[ADC2]\nrange=1\n[CDAT0,1]\n{token}\n"
+        )
+    };
+    for token in [
+        "9007199254740993.0",
+        "9007199254740993e0",
+        "9.007199254740993e15",
+        "90071992547409930e-1",
+        "-9007199254740993.0",
+        "+9.007199254740993E+15",
+        "1e20",
+        "1e309",
+        "-1e999999999999999999999",
+        "1e-999",
+    ] {
+        let file = Temp::new(source(token).as_bytes());
+        assert!(
+            Reader::open(file.path(), Limits::default()).is_err(),
+            "{token}"
+        );
+    }
+    for (token, expected) in [
+        ("9007199254740992.0", 9007199254740992.0_f64),
+        ("9.007199254740992e15", 9007199254740992.0),
+        ("90071992547409920e-1", 9007199254740992.0),
+        ("-9007199254740992.000", -9007199254740992.0),
+        ("1.25e2", 125.0),
+        ("12.5e-1", 1.25),
+        ("0e999999999999999999999", 0.0),
+        ("-0.0", -0.0),
+    ] {
+        let file = Temp::new(source(token).as_bytes());
+        let reader = Reader::open(file.path(), Limits::default()).unwrap();
+        let mut buffer = FrameBuffer::default();
+        reader.read_frame_into(0, &mut buffer).unwrap();
+        let PixelBuffer::F64(values) = buffer.pixels().unwrap() else {
+            panic!("wrong type")
+        };
+        assert_eq!(values[0].to_bits(), expected.to_bits(), "{token}");
+    }
+    for token in ["NaN", "+inf", "-Infinity"] {
+        let file = Temp::new(source(token).as_bytes());
+        let reader = Reader::open(file.path(), Limits::default()).unwrap();
+        let mut buffer = FrameBuffer::default();
+        reader.read_frame_into(0, &mut buffer).unwrap();
+        let PixelBuffer::F64(values) = buffer.pixels().unwrap() else {
+            panic!("wrong type")
+        };
+        assert!(!values[0].is_finite(), "{token}");
+    }
+}

@@ -33,7 +33,8 @@ Version86 expands declared 16-byte ASCII intensity/position overflow entries to
 u32. Positions must be unique, inside the image and reference a stored sentinel.
 Without an overflow table, the original native unsigned type is retained.
 
-Version100 decodes padded signed underflow and unsigned16/signed32 overflow
+Version100 requires a 1/2/4-byte underflow width whenever an underflow table is
+declared; zero-width declared tables are rejected. It decodes padded signed underflow and unsigned16/signed32 overflow
 tables and its stored baseline into i32. Both declared table consumption and
 baseline addition are checked. Missing tables preserve their numeric sentinels.
 The original stored dtype, underflow width, table counts and baseline remain

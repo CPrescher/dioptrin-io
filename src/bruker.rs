@@ -126,7 +126,7 @@ impl Reader {
                 } else {
                     0
                 };
-                if under != 0 && ![1, 2, 4].contains(&under) {
+                if nover[0] > 0 && ![1, 2, 4].contains(&under) {
                     return Err(Error("unsupported Bruker underflow width".into()));
                 }
                 let base = if nover[0] == -1 {

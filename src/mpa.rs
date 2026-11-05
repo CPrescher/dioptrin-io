@@ -305,18 +305,72 @@ fn finish(
     Ok(())
 }
 fn numeric(text: &str) -> Result<f64, Error> {
-    let digits = text.strip_prefix(['+', '-']).unwrap_or(text);
-    if !digits.is_empty() && digits.bytes().all(|b| b.is_ascii_digit()) {
-        let integer = text
-            .parse::<i128>()
-            .map_err(|_| Error("MPA integer exceeds exact ASCII/f64 admission".into()))?;
-        if !(-(1i128 << 53)..=(1i128 << 53)).contains(&integer) {
+    let value = text
+        .parse::<f64>()
+        .map_err(|_| Error("invalid MPA ASCII numeric count".into()))?;
+    let unsigned = text.strip_prefix(['+', '-']).unwrap_or(text);
+    if !value.is_finite() {
+        if ["nan", "inf", "infinity"]
+            .iter()
+            .any(|token| unsigned.eq_ignore_ascii_case(token))
+        {
+            return Ok(value);
+        }
+        return Err(Error("finite MPA ASCII count exceeds f64 range".into()));
+    }
+    let (mantissa, exponent) = unsigned.split_once(['e', 'E']).unwrap_or((unsigned, "0"));
+    let mut digits = mantissa
+        .bytes()
+        .filter(u8::is_ascii_digit)
+        .skip_while(|&digit| digit == b'0');
+    let significant = digits.clone().count();
+    if significant == 0 {
+        return Ok(value);
+    }
+    if value == 0.0 {
+        return Err(Error("nonzero MPA ASCII count underflows f64".into()));
+    }
+    // A bounded/saturated exponent is enough for decimal integrality and range
+    // comparison. No floating conversion or large integer allocation is needed.
+    let exponent = exponent.parse::<i64>().unwrap_or_else(|_| {
+        if exponent.starts_with('-') {
+            i64::MIN
+        } else {
+            i64::MAX
+        }
+    });
+    let fractional = mantissa
+        .split_once('.')
+        .map_or(0, |(_, fraction)| fraction.len());
+    let scale = i128::from(exponent) - fractional as i128;
+    let trailing = mantissa
+        .bytes()
+        .rev()
+        .filter(u8::is_ascii_digit)
+        .take_while(|&digit| digit == b'0')
+        .count();
+    let integer = scale >= 0 || trailing as i128 >= -scale;
+    if integer {
+        let length = significant as i128 + scale;
+        let outside = if length != 16 {
+            length > 16
+        } else {
+            // Integer magnitude has 16 digits: compare with exactly 2^53.
+            let mut ordering = std::cmp::Ordering::Equal;
+            for &limit in b"9007199254740992" {
+                let digit = digits.next().unwrap_or(b'0');
+                if ordering == std::cmp::Ordering::Equal {
+                    ordering = digit.cmp(&limit);
+                }
+            }
+            ordering == std::cmp::Ordering::Greater
+        };
+        if outside {
             return Err(Error(
                 "MPA integer exceeds exact f64 range; explicit wider integer reader required"
                     .into(),
             ));
         }
     }
-    text.parse::<f64>()
-        .map_err(|_| Error("invalid MPA ASCII numeric count".into()))
+    Ok(value)
 }

@@ -400,3 +400,36 @@ fn raxis_invalid_ratio_bounds_shape_and_source_mutation() {
     assert!(reader.read_frame_into(&mut buffer).is_err());
     assert!(buffer.pixels().is_none());
 }
+
+#[cfg(feature = "bruker")]
+#[test]
+fn bruker_declared_underflows_require_nonzero_supported_storage_width() {
+    use dioptrin_io::bruker::*;
+    // This malformed source previously succeeded: no stored zero consumes the
+    // declared underflow, and width0 silently gives the table zero bytes.
+    let source = std::fs::read(fixture("bruker100-baseline.sfrm")).unwrap();
+    for width in [0, 3] {
+        let mut data = source.clone();
+        for (key, value) in [
+            ("NPIXELB", format!("1 {width}")),
+            ("NOVERFL", "1 0 0".into()),
+        ] {
+            let offset = data
+                .as_chunks::<80>()
+                .0
+                .iter()
+                .position(|record| record.starts_with(key.as_bytes()))
+                .unwrap()
+                * 80;
+            let record = format!("{key:<7}:{value}");
+            data[offset..offset + 80].fill(b' ');
+            data[offset..offset + record.len()].copy_from_slice(record.as_bytes());
+        }
+        data[2560..2566].fill(1);
+        let file = Temp::new(&data);
+        assert!(
+            Reader::open(file.path(), Limits::default()).is_err(),
+            "width {width}"
+        );
+    }
+}

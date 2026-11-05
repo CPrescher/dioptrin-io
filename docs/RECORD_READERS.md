@@ -74,10 +74,12 @@ metadata strings. `frames()` is the number of CDAT maps, and
 original DATA spectrum, shaped `[1, count]`; no spectra or maps are summed.
 
 The source encoding is explicitly `AsciiF64`, with no source scalar dtype or
-byte order. Numeric f64 parsing matches the reference representation. Plain
-integer tokens outside inclusive `[-2^53, 2^53]` are rejected to avoid silently
-rounding source counts; wider integer interpretation is a visible gap. Decimal
-and exponent tokens use ordinary IEEE f64 parsing. Scientific correction and
+byte order. Integer-valued tokens outside inclusive `[-2^53, 2^53]` are
+rejected before returning counts, including decimal/exponent forms such as
+`9007199254740993.0` and `9007199254740993e0`. Wider integer interpretation is a
+visible gap. Finite decimal overflow to infinity and nonzero underflow to zero
+are rejected; explicitly written NaN/Inf tokens retain their IEEE meaning.
+Other decimal/exponent values use ordinary IEEE f64 parsing. Scientific correction and
 normalization remain outside this reader.
 
 Declared section counts must match every numeric line, and CDAT size must equal
