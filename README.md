@@ -17,11 +17,18 @@ Every format dependency is optional; default features are empty.
 | Feature | Implemented scope | Important remaining gaps |
 |---|---|---|
 | `hdf5` | Typed 2D/3D images/stacks with ten standard scalar types, both byte orders, Eiger/LImA/Lambda discovery and explicit external-file snapshots; original u32 compatibility reader; opt-in indexed raw u16/u32 chunks and bounded parallel consumers | VDS/master relocation, raw external storage, complex/custom/float16 samples, arbitrary metadata and live refresh; raw fast path retains its narrower contract |
-| `tiff` | TIFF/BigTIFF; all ten u8–u64/i8–i64/f32/f64 scalar types; both byte orders; primary IFD stacks; strips/tiles; none/PackBits/LZW/Deflate; typed tags | WhiteIsZero, packed/color/lossy samples, float16, subIFDs and detector-specific semantic headers |
-| `cbf` | Single 2D integer byte-offset images, eight scalar types, explicit extended64/legacy32 dialects, Content-MD5 verification, original CIF/Pilatus text | Semantic CIF/Pilatus header parsing, other conversions, multiple binary sections, outer wrappers |
-| `edf` | Inline 2D frames and concatenated stacks; ten scalar types; both byte orders; internal none/gzip/zlib/bzip2 and legacy spellings; optional uncompressed Size and binary padding; original headers | General/external headers/payloads, volumes, float128, byte-offset EDF |
-| `native` | NPY v1/v2/v3 C/Fortran scalar arrays and stacks; d*TREK/ADSC; Fit2D packed masks/spreadsheets; HiPiC; PNM P1/P2/P5; explicitly configured binary input | See the inventory for every dtype, dimension and reference-behavior gap; no content autodetection |
-| `wrappers` | gzip/bzip2 files around all `native` formats, EDF, CBF and TIFF; bounded disk staging, source identity checks; includes those reader features | HDF5 wrappers, direct file-like streams, neighboring-file series |
+| `tiff` | Scalar/packed/unsigned WhiteIsZero/color/planar TIFF and BigTIFF; primary IFD pages, strips/tiles, lossless codecs, Group4 and modern JPEG; Pilatus/MAR acquisition headers | Palette/SubIFD traversal, some photometric/compression layouts; F16 is explicitly widened to F32; TIFF JPEG IDCT differences remain qualified |
+| `jpeg`, `jpeg2000` | Mature libjpeg-turbo/OpenJPEG backends; lossless high-precision JPEG; original channels, precision, lossy provenance and headers | Unsupported precision/component layouts fail explicitly; see image contracts |
+| `cbf` | Eight integer types, explicit byte-offset dialects, Content-MD5 and raw CIF headers | Semantic CIF/Pilatus maps and multiple sections |
+| `edf` | Ten scalar types, stacks/general headers, internal/outer compression and bounded padding, explicit external-source snapshots | Volumes, float128, byte-offset; incomplete declared windows rejected |
+| `native` | NPY v1/2/3 scalars/complex arrays, C/Fortran storage; d*TREK/ADSC, Fit2D masks/spreadsheets, HiPiC, PNM and explicit raw input | Remaining dtype/dimension variants; no autodetection |
+| `containers` | SPE v2/v3/ROI/frames, typed MRC stacks and nested DM3 image/tag selection | Unsupported layouts/types; pinned reference quirks documented |
+| `bruker`, `oxford`, `raxis` | Bruker86/100 tables/baselines, Oxford raw/TY1, R-AXIS words and explicit expanded-intensity view | Bruker LINEAR calibration is retained; TY5 rejected; unknown record layouts fail |
+| `fixed` | GE intact/blank/EDF-prefixed headers and Pixi fixed frame records | Adjacent-file series traversal |
+| `fit2d`, `kcd`, `mpa` | FIT2D primary/mask/axis arrays, separate KCD readouts/explicit sum, MPA CDAT maps and DATA spectra | Binary MPA and unsupported record layouts/types |
+| `esperanto` | Original signed32 Long32/AGI bitfield counts, row indexes, headers and strict source bounds | Unsupported header variants fail; no writer-style reshaping on read |
+| `xsd` | Explicit 2D XSData XML arrays, base64/base32/base16, ten scalar/complex types and optional MD5 | Other ranks/types/encodings and namespaces |
+| `wrappers` | Bounded gzip/bzip2 disk staging for implemented backends when their optional feature is compiled; source checks on every read | HDF5 wrappers, direct file-like streams and implicit neighboring-file series |
 
 **Full FabIO reading parity is not established.** The complete version-pinned
 [coverage inventory](docs/FORMAT_COVERAGE.md) tracks all 36 FabIO 2026.6.0
@@ -95,8 +102,10 @@ remain part of the source array's documented storage semantics.
 
 Each module provides `Reader`, `Limits`, `FrameBuffer`, metadata access and
 `read_frame_into`. TIFF/EDF take a frame index; CBF admits one binary image.
-Header orientation remains metadata. TIFF WhiteIsZero is rejected because the
-underlying decoder otherwise performs a count inversion.
+Header orientation remains metadata. Unsigned TIFF WhiteIsZero samples are
+restored after the backend's display inversion; source photometric metadata is
+retained. Original color channels are exposed through `sample_shape()` alongside
+spatial `shape()`. Consumers explicitly choose display/grayscale conversions.
 
 CBF dialects can be ambiguous at INT32_MIN. `cbf::Reader::open` uses the extended
 8/16/32/64-bit dialect. For FabIO/Pilatus terminal signed32 streams, explicitly
@@ -120,8 +129,8 @@ reader.read_frame_into(0, &mut frame)?;
 `Format::HiPic` retains binary header offsets and original comments; source
 values above 4095 are retained as u16. NPY Fortran storage is converted into
 logical row-major frames with the same axes, and leading dimensions determine
-C-order frame numbering. Structured, complex and other unsupported NPY dtypes
-are rejected; object arrays never execute pickle.
+C-order frame numbering. Complex64/complex128 retain both components and their original IEEE bits.
+Structured and other unsupported NPY dtypes are rejected; object arrays never execute pickle.
 
 `Reader::open_raw` requires `RawLayout` with shape, scalar type, byte order and
 an explicit absolute or end-relative offset. No guessed raw-input defaults are
@@ -160,11 +169,14 @@ skips and missing metadata coverage remain explicit and keep the parity gate red
 
 The initial HDF5 backend is adapted from `phasesmith-hdf5` 0.8.0. Its original
 MIT notice, independent fixtures and native-codec licenses remain unchanged;
-`SOURCE_PROVENANCE.json` records the extraction source revision. New optional
-readers reuse permissive Rust libraries, as described in the reader design.
+`SOURCE_PROVENANCE.json` records the extraction source revision. New optional readers reuse permissive native libraries and retain their notices.
+SPE/MRC/DM3, fixed/legacy records, XML and image codecs have separate scoped
+contracts under `docs/`; the complete inventory links their validation evidence.
 HDF5, zlib, LZF and Bitshuffle/LZ4 build from pinned native Cargo dependencies.
 The HDF5 feature requires a C compiler, CMake >=3.26 and Git in addition to Rust.
 TIFF, CBF and EDF use Rust libraries without an installed HDF5/Python requirement.
+JPEG/JPEG2000 build their vendored C codecs; those optional features also require
+a native compiler and CMake. No installed Python is required.
 
 Dioptrin and PhaseSmith remain independent consumers. A small opt-in typed
 Dioptrin adapter is tested separately for the benchmark; no PhaseSmith migration

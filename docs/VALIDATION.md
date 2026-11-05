@@ -1,5 +1,33 @@
 # Validation, 2026-11-05
 
+## Parallel native-reader continuation
+
+The integrated continuation passes all required local macOS checks:
+
+- `cargo fmt --check`.
+- `cargo clippy --all-targets --all-features -- -D warnings`.
+- `cargo test --all-features`: 93 tests, with container/fixed/Esperanto external
+  parity manifests enabled (`CONTAINER_PARITY_MANIFEST`, `FIXED_PARITY_MANIFEST`,
+  `ESPERANTO_PARITY_MANIFEST`).
+- No-default check/tests plus isolated all-target strict Clippy for all 18
+  optional feature selections: 20 separate feature checks.
+
+The full pinned FabIO run executes 213 reference tests, no failures/errors,
+one unconditional upstream skip. Native results match 413 events / 1,533 frames,
+with zero missing test adapters. Thirteen source/display differences, 98 native
+rejections and 31 missing-decoder events remain explicit; the full gate is red.
+OpenJPEG 2.5.4 exercises all optional Glymur variants. Sources, comparison bridge
+and copied probe remained unchanged during both full and feature-disabled runs.
+See `fabio-parity/2026-11-05-parallel-readers.json`, the separate 64-event
+feature-disabled proof and their summary in `fabio-parity/README.md`.
+
+Cross-review fixes and independent fixtures cover container record ownership,
+source substitution, signedness, table/count admission, exact ASCII input,
+embedded codec layouts and source identity. This is local validation; expanded
+platform CI, release/publication and new throughput claims are not established.
+
+## Previous typed-HDF5 continuation
+
 The typed HDF5 continuation passes formatting, strict all-target/all-feature
 Clippy and all 36 Rust tests, plus separate no-default and HDF5-only checks.
 Four new tests cover independent typed samples, source graphs, admission and

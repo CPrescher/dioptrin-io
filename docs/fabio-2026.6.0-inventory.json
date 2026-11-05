@@ -16,7 +16,7 @@
         "gzip (.gz)",
         "bzip2 (.bz2)"
       ],
-      "implementation": "optional wrappers feature: magic-detected gzip/bzip2, bounded temporary staging, original-source checks; native/EDF/CBF/TIFF; HDF5 and direct file-like APIs pending",
+      "implementation": "optional wrappers feature: magic-detected gzip/bzip2, bounded temporary staging, original-source checks; native/EDF/CBF/TIFF, typed containers, fixed/legacy detectors and JPEG/JPEG2000 when compiled; HDF5 and direct file-like APIs pending",
       "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/fabioutils.py"
     },
     "file_series": "pending explicit series API; numbered neighboring files must not be silently substituted",
@@ -38,10 +38,12 @@
       "subformats_and_types": "EDF 0/1/2/3; concatenated frames; general headers; inline/external binary; 2D/volume; integer/float aliases including optional float128",
       "compression": "none; internal gzip/zlib/bzip2; optional byte-offset; outer gzip/bzip2",
       "stack": "concatenated frames",
-      "implementation": "partial: inline 2D, ten scalar types, both byte orders, none/gzip/zlib/bzip2 aliases, optional uncompressed Size and binary padding; general/external/volume/float128/offset pending; outer wrappers via wrapped::Reader",
+      "implementation": "partial: 2D ten scalar types, both byte orders, general inheritance/raw repeats and exact closing boundaries; bounded inline/outer gzip/zlib/bzip2 with explicit padding; external snapshots/relocation/counterparts require options; volume/float128/offset pending; truncated declared windows rejected",
       "validation": [
         "tests/data/edf/*.edf",
-        "tests/binary.rs"
+        "tests/binary.rs",
+        "tests/edf_sources.rs",
+        "src/transport.rs"
       ],
       "parity_verified": false
     },
@@ -77,10 +79,13 @@
       "subformats_and_types": "classic TIFF/BigTIFF; endian scalar/color; strip/tile/IFD; photometric/predictor variants",
       "compression": "reference TiffIO/Pillow capabilities vary; none/PackBits/LZW/Deflate/JPEG require distinct fixtures",
       "stack": "primary IFD pages",
-      "implementation": "partial: ten grayscale BlackIsZero scalar types, both byte orders, IFD stacks, strips/edge tiles, none/PackBits/LZW/Deflate; WhiteIsZero/packed/color/lossy codecs/subIFDs pending",
+      "implementation": "partial: scalar/packed/WhiteIsZero/color/planar/IFD/strip/tile/BigTIFF counts, Group4/PackBits/LZW/Deflate/JPEG; source F16 explicitly widened to F32; palettes/SubIFD traversal/Group3/RLE/old JPEG/subsampled YCbCr/FillOrder gaps remain; TIFF JPEG IDCT differences qualified",
       "validation": [
         "tests/data/tiff/*.tif",
-        "tests/tiff.rs"
+        "tests/tiff.rs",
+        "tests/image_codecs.rs",
+        "tests/data/images/provenance.json",
+        "docs/IMAGE_READERS.md"
       ],
       "parity_verified": false
     },
@@ -95,10 +100,12 @@
       "subformats_and_types": "MAR CCD/Mosaic TIFF pixels plus binary acquisition header",
       "compression": "TIFF codecs",
       "stack": "inherits TIFF pages",
-      "implementation": "partial: same upstream MAR CCD TIFF pixel counts and raw typed tags validated through TIFF reader; binary acquisition-header interpretation pending (no full detector-format parity claim)",
+      "implementation": "partial: native TIFF counts plus 125 typed acquisition fields/raw reserved bytes/endian header; both actual files match all numeric/byte fields; generic TIFF gaps remain",
       "validation": [
-        "docs/fabio-parity/2026-11-05-hdf5.json",
-        "examples/parity_probe.rs"
+        "tests/image_codecs.rs",
+        "tests/data/images/provenance.json",
+        "docs/image-readers-fabio-2026.6.0.json",
+        "docs/IMAGE_READERS.md"
       ],
       "parity_verified": false
     },
@@ -121,7 +128,9 @@
       "compression": "CCP4/PCK packed and uncompressed branches",
       "stack": "single image; file series",
       "implementation": "pending",
-      "validation": [],
+      "validation": [
+        "docs/MAR345_XCALIBUR_AUDIT.md"
+      ],
       "parity_verified": false
     },
     {
@@ -153,8 +162,13 @@
       "subformats_and_types": "Bruker format 86; 8/16/32-bit storage, overflow records, LINEAR header handling",
       "compression": "overflow tables / linear encoding",
       "stack": "single image; NFRAMES metadata can describe series",
-      "implementation": "pending",
-      "validation": [],
+      "implementation": "partial: format86 1/2/4-byte counts and ASCII overflow table, raw/parsed headers; LINEAR calibration retained without implicit application; same actual file counts verified",
+      "validation": [
+        "tests/legacy.rs",
+        "tests/data/legacy/provenance.json",
+        "docs/legacy-readers/2026-11-05-reference.json",
+        "docs/LEGACY_READERS.md"
+      ],
       "parity_verified": false
     },
     {
@@ -168,8 +182,13 @@
       "subformats_and_types": "Bruker format 100; base counts, underflow/16/32-bit overflow arrays",
       "compression": "underflow/overflow tables",
       "stack": "single image",
-      "implementation": "pending",
-      "validation": [],
+      "implementation": "partial: format100 underflow/16/32-bit overflow tables and baseline expansion with strict record/count bounds; raw headers/types retained; same actual file counts verified",
+      "validation": [
+        "tests/legacy.rs",
+        "tests/data/legacy/provenance.json",
+        "docs/legacy-readers/2026-11-05-reference.json",
+        "docs/LEGACY_READERS.md"
+      ],
       "parity_verified": false
     },
     {
@@ -185,8 +204,11 @@
       "subformats_and_types": "PBM/PGM/PPM/PAM registry: P1/P2/P5 read branches; P3/P4/P6/P7 explicitly not implemented by pinned reference",
       "compression": "ASCII / raw big-endian P5",
       "stack": "single image",
-      "implementation": "pending; unsupported reference branches are not counted as working parity targets",
-      "validation": [],
+      "implementation": "implemented bounded P1/P2/P5 with original rows, MAXVAL/type and big-endian samples retained; pinned P1/P2 row-loss bug remains a reference difference; unsupported reference P3/P4/P6/P7 not invented",
+      "validation": [
+        "tests/native.rs",
+        "tests/data/native/provenance.json"
+      ],
       "parity_verified": false
     },
     {
@@ -198,8 +220,13 @@
       "subformats_and_types": "GE Angio; standard, EDF-prefixed and blank/ADEPT headers; fixed default dimensions",
       "compression": "uncompressed",
       "stack": "multiple fixed-size frames",
-      "implementation": "pending",
-      "validation": [],
+      "implementation": "partial: intact/zero-8192/EDF-in-GE headers, u8/u16/u32 and exact frame records; all actual suite GE files/frames verified; malformed record defaults and neighboring series not guessed",
+      "validation": [
+        "tests/fixed.rs",
+        "tests/data/fixed/provenance.json",
+        "tests/data/fixed/upstream-provenance.json",
+        "docs/FIXED_DESIGN.md"
+      ],
       "parity_verified": false
     },
     {
@@ -213,8 +240,13 @@
       "subformats_and_types": "Oxford Sapphire/KM4CCD; uncompressed/TY1; TY5 reference explicitly marked known broken",
       "compression": "none; TY1 differential plus exception arrays; experimental TY5",
       "stack": "single image",
-      "implementation": "pending; TY5 needs an independent authority, not sole reliance on the broken reference",
-      "validation": [],
+      "implementation": "partial: Oxford raw and TY1, exception tables and signed counts, raw/typed acquisition sections; negative reference wrap not reproduced; TY5 explicitly unsupported pending independent authority",
+      "validation": [
+        "tests/legacy.rs",
+        "tests/data/legacy/provenance.json",
+        "docs/legacy-readers/2026-11-05-reference.json",
+        "docs/LEGACY_READERS.md"
+      ],
       "parity_verified": false
     },
     {
@@ -228,8 +260,13 @@
       "subformats_and_types": "DigitalMicrograph DM3 tagged binary structures; nested tags / type codes",
       "compression": "uncompressed tagged data",
       "stack": "one selected image exposed",
-      "implementation": "pending",
-      "validation": [],
+      "implementation": "partial: bounded nested tags, seven scalar types/both byte orders, explicit image selection and stacks; thumbnail/main default documented; unsupported type codes/DM4 pending",
+      "validation": [
+        "tests/containers.rs",
+        "tests/data/containers/provenance.json",
+        "tests/data/containers/upstream-provenance.json",
+        "docs/CONTAINERS_DESIGN.md"
+      ],
       "parity_verified": false
     },
     {
@@ -264,10 +301,12 @@
       "subformats_and_types": "Pilatus TIFF + image-description detector header",
       "compression": "TIFF codecs",
       "stack": "inherits TIFF pages",
-      "implementation": "partial: same upstream Pilatus TIFF pixel counts and raw typed tags validated through TIFF reader; image-description detector-header interpretation pending (no full detector-format parity claim)",
+      "implementation": "partial: native TIFF counts plus ImageDescription semantic assignments/duplicates/raw unparsed lines; both actual detector headers match; generic TIFF gaps remain",
       "validation": [
-        "docs/fabio-parity/2026-11-05-hdf5.json",
-        "examples/parity_probe.rs"
+        "tests/image_codecs.rs",
+        "tests/data/images/provenance.json",
+        "docs/image-readers-fabio-2026.6.0.json",
+        "docs/IMAGE_READERS.md"
       ],
       "parity_verified": false
     },
@@ -302,8 +341,13 @@
       "subformats_and_types": "Nonius KappaCCD; header byte type and multiple readouts",
       "compression": "uncompressed multiple readouts combined by reference",
       "stack": "single resulting image",
-      "implementation": "pending; preserve per-readout data and document any explicit combination",
-      "validation": [],
+      "implementation": "partial: original separate u16 readouts and source prefix/type metadata; explicit checked SumReadouts i32 view for reference comparison; exact actual readouts/sum; unknown record prefixes rejected",
+      "validation": [
+        "tests/records.rs",
+        "tests/data/records/provenance.json",
+        "docs/legacy-readers/2026-11-05-record-reference.json",
+        "docs/RECORD_READERS.md"
+      ],
       "parity_verified": false
     },
     {
@@ -336,8 +380,12 @@
       "subformats_and_types": "XSDataImage XML; base64 binary array; dimension/type descriptors",
       "compression": "base64; storage interpretation in XML",
       "stack": "single image",
-      "implementation": "pending",
-      "validation": [],
+      "implementation": "partial: one explicit 2D XSDataImage/outputMatrix XML record, ten scalar and complex types, base64/base32/base16 and optional MD5; raw metadata retained, DTD/ambiguity/size errors rejected; other ranks/types/encodings pending",
+      "validation": [
+        "tests/xsd.rs",
+        "tests/data/xsd/provenance.json",
+        "docs/XSD_READER.md"
+      ],
       "parity_verified": false
     },
     {
@@ -369,8 +417,13 @@
       "subformats_and_types": "Pixirad fixed-frame record header and uint16 data",
       "compression": "uncompressed",
       "stack": "multiple fixed-size frames",
-      "implementation": "pending",
-      "validation": [],
+      "implementation": "partial: fixed 476x512 u16 records, every 24-byte header and full source length validated; all generated suite file frames verified; neighboring-file traversal remains explicit gap",
+      "validation": [
+        "tests/fixed.rs",
+        "tests/data/fixed/provenance.json",
+        "tests/data/fixed/upstream-provenance.json",
+        "docs/FIXED_DESIGN.md"
+      ],
       "parity_verified": false
     },
     {
@@ -384,8 +437,13 @@
       "subformats_and_types": "Rigaku R-AXIS binary/text header, endian data and high-bit dynamic-range flag",
       "compression": "high-bit intensity-range encoding",
       "stack": "single image",
-      "implementation": "pending; document source u16 flag versus decoded intensity semantics",
-      "validation": [],
+      "implementation": "partial: explicit endian policy, native stored u16 words/flags and optional PhotomultiplierExpanded view; single declared header record and complete source window required; same file expanded counts verified",
+      "validation": [
+        "tests/legacy.rs",
+        "tests/data/legacy/provenance.json",
+        "docs/legacy-readers/2026-11-05-reference.json",
+        "docs/LEGACY_READERS.md"
+      ],
       "parity_verified": false
     },
     {
@@ -399,7 +457,7 @@
       "subformats_and_types": "NPY array; 2D image / higher-dimensional reshaped frame sequence",
       "compression": "NPY binary; do not assume NPZ support",
       "stack": "array-leading frame dimension",
-      "implementation": "partial: NPY versions 1/2/3, ten scalar types, both byte orders, C/Fortran arrays, scalar/1D/2D/stack/leading axes; bool/complex/structured/string/float16/float128/empty arrays pending; never executes pickle",
+      "implementation": "partial: NPY v1/2/3, ten scalar plus complex64/complex128 types, both byte orders, C/Fortran order, scalar/1D/2D/leading-axis stacks; bool/structured/string/float16/float128/empty pending; no pickle",
       "validation": [
         "tests/data/native/provenance.json",
         "tests/native.rs",
@@ -465,8 +523,13 @@
       "subformats_and_types": "Fit2D binary $FFF_START records and endian numeric arrays",
       "compression": "uncompressed records",
       "stack": "single image",
-      "implementation": "pending",
-      "validation": [],
+      "implementation": "partial: named bounded FIT2D scalar arrays, packed masks and axes, endian hex metadata and primary image selection; actual primary/auxiliary arrays exact; unknown ranks/encodings rejected",
+      "validation": [
+        "tests/records.rs",
+        "tests/data/records/provenance.json",
+        "docs/legacy-readers/2026-11-05-record-reference.json",
+        "docs/RECORD_READERS.md"
+      ],
       "parity_verified": false
     },
     {
@@ -480,8 +543,13 @@
       "subformats_and_types": "Princeton SPE versions 2/3; binary header and v3 XML metadata/ROI",
       "compression": "uncompressed typed pixels",
       "stack": "frame selection (no generic getframe override)",
-      "implementation": "pending",
-      "validation": [],
+      "implementation": "partial: SPE v2/v3 four scalar types, XML metadata, explicit ROI selection/frame padding, stored axes and all declared frames; per-frame acquisition byte layout retained; other XML layouts/types pending",
+      "validation": [
+        "tests/containers.rs",
+        "tests/data/containers/provenance.json",
+        "tests/data/containers/upstream-provenance.json",
+        "docs/CONTAINERS_DESIGN.md"
+      ],
       "parity_verified": false
     },
     {
@@ -496,8 +564,13 @@
       "subformats_and_types": "JPEG/JFIF/Exif via Pillow; lossy source samples must retain decoded values and provenance",
       "compression": "JPEG",
       "stack": "single image",
-      "implementation": "pending",
-      "validation": [],
+      "implementation": "partial: mature libjpeg-turbo 8-bit JPEG and lossless 12/16-bit decoder, grayscale/color metadata and explicit precision/lossy provenance; actual corpus exact; unsupported precision and source transforms explicit",
+      "validation": [
+        "tests/image_codecs.rs",
+        "tests/data/images/provenance.json",
+        "docs/image-readers-fabio-2026.6.0.json",
+        "docs/IMAGE_READERS.md"
+      ],
       "parity_verified": false
     },
     {
@@ -515,8 +588,13 @@
       "subformats_and_types": "JPEG2000 codestream/JP2/JPX via optional Glymur/Pillow",
       "compression": "JPEG2000 lossless/lossy require separate fixtures",
       "stack": "single image",
-      "implementation": "pending",
-      "validation": [],
+      "implementation": "partial: mature OpenJPEG JP2/J2K backend, scalar/color signed/unsigned components, precision/origin/wavelet/raw metadata retained; actual corpus exact; mixed component precision/layouts explicitly rejected",
+      "validation": [
+        "tests/image_codecs.rs",
+        "tests/data/images/provenance.json",
+        "docs/image-readers-fabio-2026.6.0.json",
+        "docs/IMAGE_READERS.md"
+      ],
       "parity_verified": false
     },
     {
@@ -530,8 +608,13 @@
       "subformats_and_types": "MPA multiwire; text configuration + spectrum/data blocks",
       "compression": "ASCII or binary branches per source",
       "stack": "single image",
-      "implementation": "pending",
-      "validation": [],
+      "implementation": "partial: original DATA spectra and CDAT maps with ASCII/f64 source encoding explicit; all sections retained and selected independently; binary/external headers and non-exact large integers rejected",
+      "validation": [
+        "tests/records.rs",
+        "tests/data/records/provenance.json",
+        "docs/legacy-readers/2026-11-05-record-reference.json",
+        "docs/RECORD_READERS.md"
+      ],
       "parity_verified": false
     },
     {
@@ -547,8 +630,13 @@
       "subformats_and_types": "MRC/CCP4/MAP/FEI; endian header, supported mode codes and extended header",
       "compression": "uncompressed typed arrays",
       "stack": "NZ image stack",
-      "implementation": "pending",
-      "validation": [],
+      "implementation": "partial: strict endian machine-stamp policy, modes 0/1/2/3/4/6, complete stacks/extended headers; complex-i16 stored components plus explicit f32 view; pinned mode3/getframe bugs documented; other modes pending",
+      "validation": [
+        "tests/containers.rs",
+        "tests/data/containers/provenance.json",
+        "tests/data/containers/upstream-provenance.json",
+        "docs/CONTAINERS_DESIGN.md"
+      ],
       "parity_verified": false
     },
     {
@@ -563,8 +651,13 @@
       "subformats_and_types": "CrysAlisPro Esperanto; ASCII header, int32 image, raw or compressed format selector",
       "compression": "4-byte integers / AGI bitfield",
       "stack": "single image",
-      "implementation": "pending",
-      "validation": [],
+      "implementation": "partial: native signed32 Long32 and AGI bitfield, exact row indexes/size/escapes/wrapping, original headers and bounded zero alignment padding; same actual and upstream-writer files exact; no implicit array padding on read",
+      "validation": [
+        "tests/esperanto.rs",
+        "tests/data/esperanto/provenance.json",
+        "tests/data/esperanto/upstream-provenance.json",
+        "docs/ESPERANTO_DESIGN.md"
+      ],
       "parity_verified": false
     },
     {
@@ -652,8 +745,10 @@
       "subformats_and_types": "Xcalibur CCD/masked-pixel binary structs and masks",
       "compression": "binary records",
       "stack": "single mask/image exposed",
-      "implementation": "pending",
-      "validation": [],
+      "implementation": "reference .read fabricates a fixed 50x60 zero array instead of source samples; native does not reproduce it. CCD characteristics/mask-structure API remains pending separately from detector count reading",
+      "validation": [
+        "docs/MAR345_XCALIBUR_AUDIT.md"
+      ],
       "parity_verified": false
     }
   ]

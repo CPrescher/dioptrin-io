@@ -93,21 +93,24 @@ resource-limit limitation. Arbitrary attributes/full detector headers are gaps.
 
 ## TIFF/BigTIFF
 
-The MIT `tiff` crate is reused instead of maintaining another TIFF parser. The
-adapter admits ten native scalar types, single-channel BlackIsZero, strip/tile
-storage, primary IFD stacks and lossless none/PackBits/LZW/Deflate compression.
-Header tags (including supported private tag values), compression, source byte
-order and Orientation are retained. The decoder performs lossless predictor
-reversal and endian conversion, never display orientation changes.
+The MIT `tiff` crate is reused for native scalar/packed/color/planar samples,
+primary IFD stacks and supported strip/tile codecs. Integer WhiteIsZero backend
+inversion is undone to restore source counts. Packed widths retain their source
+precision, while unpacked buffers expose integer values. Float16 widens exactly
+to F32 with original bit width retained; this is explicit source/output type
+metadata rather than raw dtype parity. EXIF/TIFF orientation is never applied.
 
-WhiteIsZero is rejected because the backend otherwise inverts counts. Packed
-sample widths, RGB/palette, JPEG/WebP, float16 and unsupported compressions are
-also rejected. MAR/Pilatus-specific semantic header parsing is not established
-by a generic TIFF success. SubIFDs are not traversed. The upstream decoder
-initially parses the first IFD under its own default per-tag bounds; caller
-limits apply immediately afterward. Total admitted metadata, primary page count,
-decoded bytes and intermediate decoder scratch have separate bounds. Unknown
-TIFF field *types* skipped by the backend are not represented in the tag map.
+`detector_tiff` reuses the same pixel reader and adds Pilatus semantic text maps
+and MAR's typed binary acquisition fields/raw reserved bytes. Detector-specific
+success is now checked independently of generic TIFF counts. Detailed admitted
+codecs/layouts, image fixtures, JPEG qualifications and remaining palette,
+SubIFD and photometric gaps are in `IMAGE_READERS.md`.
+
+The upstream decoder initially parses the first IFD under its own default
+per-tag bounds; caller limits apply immediately afterward. Admitted metadata,
+page count, decoded output and intermediate scratch have separate bounds.
+Unknown TIFF field *types* skipped by the backend are not represented in the tag
+map. No additional TIFF parser or parallel pixel fast path was introduced.
 
 ## CBF and EDF
 
@@ -131,8 +134,14 @@ field is optional for uncompressed dimensioned frames. Declared binary padding
 is retained in stored-byte metadata and skipped after the exact image samples.
 Original padded header bytes and parsed fields are retained. Legacy non-ASCII
 text uses a reversible Latin-1 mapping; no bytes are silently dropped.
-External binary sources, global/general headers, volumes, float128 and optional
-byte-offset EDF remain explicit gaps. Outer wrappers have a separate API below.
+General headers and local overrides retain their original records. External
+payloads require explicit snapshot options, optionally selecting basename
+relocation or unique compressed counterparts. The source graph and expanded
+staging bytes are bounded; every original/staged source and read handle is
+checked around reads. Exact closing-newline boundaries and admitted bounded
+storage padding are retained explicitly. Unexplained codec tails, incomplete
+streams and declared windows beyond EOF fail. Volumes, float128 and optional
+byte-offset EDF remain gaps. Outer wrappers also have the separate API below.
 Neither reader pads truncated pixels with zeros or substitutes neighboring files.
 
 ## NPY, raw input and smaller detector formats
@@ -144,12 +153,12 @@ available. Raw input requires explicit dimensions, scalar type, byte order and
 absolute or EOF-relative location, with checked range arithmetic. FabIO negative
 offset `-n` maps to `FromEnd { trailing_bytes: n - 1 }`.
 
-NPY v1/v2/v3 accepts the ten native scalar types and nonempty scalar/1D/2D/higher
+NPY v1/v2/v3 accepts ten native scalar types plus complex64/complex128 and nonempty scalar/1D/2D/higher
 dimensional arrays (at most 32 axes). C-order leading axes are flattened into
 frame numbers. Fortran storage is read in logical axis order into row-major
 frames without a whole-array allocation; it currently performs one positional
 seek/read per sample and has no performance claim. The original descriptor,
-shape and storage-order flag survive. Object, structured, string, bool, complex,
+shape and storage-order flag survive. Object, structured, string, bool,
 float16 and float128 types fail explicitly. Shape/byte arithmetic is checked
 before reads. No Python expressions or pickle are executed.
 
@@ -177,7 +186,8 @@ all original rows and records this reference bug as a behavior difference.
 ## Outer file wrappers
 
 The optional `wrappers` feature includes the above readers and exposes
-`wrapped::Reader` for magic-detected gzip/bzip2 around native/EDF/CBF/TIFF files.
+`wrapped::Reader` for magic-detected gzip/bzip2 around implemented native,
+container, legacy and image backends when their optional features are compiled.
 It streams decompressed bytes into a private tempfile, admitting concatenated
 members and checking compression checksums. Transport limits independently bound
 the encoded file and total uncompressed staging bytes. This is bounded disk
@@ -188,6 +198,23 @@ already staged data. Backend handles are dropped before the temporary file for
 Windows compatibility. Corrupt/truncated/trailing wrapper garbage fails closed.
 Direct file-like streams and HDF5 wrappers remain pending. CBF dialect selection
 remains explicit, including through this wrapper API.
+
+## Container, record and image-specific contracts
+
+The optional SPE/MRC/DM3 readers retain original types, image/ROI selections and
+stored frame order (`CONTAINERS_DESIGN.md`). GE/Pixi fixed records retain every
+source header (`FIXED_DESIGN.md`). Bruker/Oxford/R-AXIS preserve count encodings
+and acquisition metadata (`LEGACY_READERS.md`). FIT2D/KCD/MPA retain auxiliary
+arrays/readouts/spectra (`RECORD_READERS.md`). No source image is silently
+replaced by a thumbnail or neighboring source.
+
+R-AXIS expanded intensities and KCD summed readouts require explicit policies.
+Bruker LINEAR calibration is metadata, never an implicit correction. Esperanto
+Long32/AGI decoding returns original signed32 pixels (`ESPERANTO_DESIGN.md`).
+XSData XML uses a single structurally owned record and explicit encoding/dtype,
+rejecting ambiguous XML and checksums (`XSD_READER.md`). Native JPEG/JPEG2000
+reuse mature codecs with precision, channel and lossy provenance retained
+(`IMAGE_READERS.md`). No benchmark claim follows from count-parity evidence.
 
 ## Library evaluation and licensing
 
@@ -209,7 +236,7 @@ remains explicit, including through this wrapper API.
   independent test fixtures instead.
 - `npyz` 0.9.1 (MIT) was evaluated for reuse. Its header interpretation computes
   unchecked shape/stride products before caller admission (`read.rs`), so it
-  was not incorporated. The bounded scalar-only NPY grammar is independently
+  was not incorporated. The bounded numerical NPY grammar is independently
   implemented; broader dtypes remain visible gaps. Registry searches did not
   locate reusable permissive d*TREK/HiPiC/Fit2D detector readers. These small
   parsers use the pinned format reference and independent licensed fixtures.

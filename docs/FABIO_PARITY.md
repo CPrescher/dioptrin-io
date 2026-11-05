@@ -41,7 +41,7 @@ python3.13 -m venv /tmp/dioptrin-io-fabio-suite-env
 /tmp/dioptrin-io-fabio-suite-env/bin/python -m pip install -r docs/fabio-parity/reference-requirements.txt
 git clone https://github.com/silx-kit/fabio.git /tmp/dioptrin-io-fabio-2026.6.0
 git -C /tmp/dioptrin-io-fabio-2026.6.0 checkout 9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece
-cargo build --locked --example parity_probe --features wrappers,hdf5
+cargo build --locked --example parity_probe --all-features
 /tmp/dioptrin-io-fabio-suite-env/bin/python scripts/fabio_suite_parity.py \
   --fabio-source /tmp/dioptrin-io-fabio-2026.6.0 \
   --data /tmp/dioptrin-io-fabio-corpus \
@@ -59,7 +59,10 @@ test environment explicitly registers its installed hdf5plugin codecs
 (`--reference-filters bundled`, the default), preventing unrelated host HDF5
 plugins from causing ABI conflicts. This policy is recorded and does not affect
 the production native reader. OpenJPEG must be discoverable separately for the
-optional Glymur test variants; the Pillow JPEG2000 tests run independently.
+optional Glymur test variants; the Pillow JPEG2000 tests run independently. On
+this macOS host, `DYLD_LIBRARY_PATH=/opt/homebrew/lib` makes the installed
+OpenJPEG 2.5.4 available to the test-only Python process. The report records its
+loaded version. No user configuration file is changed.
 
 ## Current evidence and remaining work
 
@@ -74,20 +77,30 @@ Schema 2 separates the concepts previously grouped under `unsupported_reader`:
 | `counts_match` | Every exposed frame's shape/dtype/sample hash matches; semantic header gaps can still remain. |
 
 The executable publishes its compiled features, known readers and adapter
-capabilities. A separate HDF5-disabled run verifies this distinction. Generic
-TIFF now exercises MARCCD/Pilatus pixel arrays from the same upstream files;
-records retain the scope limitation because detector-specific headers remain
-pending. The typed HDF5 continuation tests explicit datasets and Eiger/LImA/Lambda
-discovery with source manifests. Lambda VDS masters still require mapping/source
-relocation contracts. Current results are in `fabio-parity/2026-11-05-hdf5.json`;
-the original report retains its historical schema and status names.
+capabilities. Full-feature runs use all native entry points, including explicit
+container/legacy/image readers and detector TIFF acquisition headers. A separate
+feature-disabled run distinguishes unavailable compilation features from missing
+readers. Every original registry entry remains in the ledger.
 
-The checked report under `fabio-parity/` is a failing acceptance baseline, not a
-parity claim. Every original registry entry remains in the coverage ledger.
-The harness adapts NPY, raw binary, d*TREK/ADSC, Fit2D masks/spreadsheets,
-HiPiC, PNM, CBF, EDF, generic/detector TIFF pixels and typed HDF5 discovery.
-VDS/master source relocation, remaining codecs and complete semantic headers
-still require implementations and explicit comparisons.
+Current evidence is recorded in `fabio-parity/2026-11-05-parallel-readers.json`;
+the earlier baseline and typed-HDF5 reports are retained. The current report is
+a failing full-parity gate, with exact native successes, unsupported layouts,
+reference differences and remaining readers kept separate.
+
+The comparison selects external EDF/HDF5 snapshots, R-AXIS expanded intensities
+and KCD summed readouts explicitly, recording those policies. Default native
+readers preserve original words/readouts. SPE and MRC frame comparisons use fresh
+reference `.read(path, frame=i)` objects because pinned inherited frame APIs are
+incomplete. Every declared SPE frame is checked. TIFF color channels and unsigned
+WhiteIsZero counts remain in source form even when FabIO's display path converts
+them to grayscale or inverts samples. These differences stay mismatches; the
+harness does not change source counts to turn the gate green.
+
+Pilatus semantic maps are compared directly. For MAR, the bridge explicitly
+invokes the pinned binary acquisition-header parser and normalizes only byte
+array representation, comparing every field. Complete semantic schemas for the
+other formats remain a separate gap. Successful EDF/HDF5 reads expose and hash
+all tracked source files in their manifests, including intermediate HDF5 links.
 
 The same-file corpus revealed real cases now supported: nested braces inside
 d*TREK values, repeated HiPiC comment keys, EDF binary padding, absent optional

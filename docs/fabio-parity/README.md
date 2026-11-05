@@ -1,76 +1,81 @@
-# Upstream suite baseline, 2026-11-05: typed HDF5 continuation
+# Upstream suite continuation, 2026-11-05: parallel native readers
 
-**Full reading parity is incomplete.** All 35 codec modules remain in the acceptance target.
+**Full reading parity remains incomplete.** The complete 36-entry / 35-codec inventory is retained.
 
-The current full run executes 213 reference tests: no failures/errors and five explicit skips. Native count/dtype/shape comparisons match **202 read events / 1,049 frames**, up from 154 events / 422 frames. Repeated reads are counted as events, not distinct files.
+The full pinned suite executes 213 reference tests with no failures/errors and one upstream skip (the explicitly slow MAR345 memory-leak test). OpenJPEG 2.5.4 is now available to the test-only Glymur backend, so its four formerly skipped variants execute. Native comparisons match **413 read events / 1,533 frames**, up from 202 events / 1,049 frames in the typed-HDF5 baseline. Repeated reads are events, not distinct files; successful events cover 212 distinct input-file hashes.
 
 | Native outcome | Events |
 |---|---:|
-| counts_match | 202 |
-| decoder_missing | 171 |
+| counts_match | 413 |
+| mismatch | 13 |
+| decoder_missing | 31 |
 | test_adapter_missing | 0 |
 | feature_disabled | 0 |
-| native_rejected | 180 |
+| native_rejected | 98 |
 | reference_no_pixels | 25 |
 
-The previous term "bridge missing" described test plumbing and was too broad. The new report distinguishes:
+The [full report](2026-11-05-parallel-readers.json) retains all source, executable, comparison-bridge and reference hashes. Production sources, bridge/inventory and the copied executable remained unchanged during the run; every reference codec source matches the pinned checkout. No comparison errors, timeouts or frame-count mismatches occurred. Compared EDF/d*TREK/Pilatus/MAR header fields have no differences. Other semantic-header schemas remain unqualified.
 
-- `decoder_missing`: no format-specific Rust read entry point is implemented. A generic container reader may still read some pixels.
-- `test_adapter_missing`: a compiled reader exists but the comparison adapter is missing. There are none in this run.
-- `feature_disabled`: an existing optional reader was left out of the test executable. There are none in this full-feature run.
-- `native_rejected`: a reader was called and explicitly rejected this variant/source. This includes unsupported layouts and intentional malformed-input differences, not just absent decoders.
+The 13 mismatching events remain visible: one Bruker LINEAR calibration; nine TIFF color/CMYK-to-grayscale display conversions; two TIFF packed 2/4-bit-to-byte display expansions; and one bool-versus-unpacked-u8 mask representation. Native source words, channels and packed values are preserved. Independent TIFF JPEG fixtures also retain the documented IDCT qualification; no comparison changes source counts to hide it.
 
-The full results and source hashes are in [the current JSON](2026-11-05-hdf5.json). The [original baseline](2026-11-05.json) is retained with its historical schema. A separate [HDF5-disabled run](2026-11-05-feature-disabled.json) correctly classifies six events as feature-disabled.
+The 31 absent-decoder events are MAR345 (30) and sparse reconstruction (1). Xcalibur remains unexercised as a count reader: its pinned `.read` returns a placeholder zero image rather than decoding source counts. The separate CCD-characteristics/mask API remains a target. MAR345 has a documented viable MIT V1 adaptation path; no LGPL/GPL runtime was introduced. See [the audit](../MAR345_XCALIBUR_AUDIT.md).
+
+The 98 native rejections include intentionally incomplete EDF files/windows, unsupported TIFF encodings/photometric layouts, Oxford TY5, Lambda VDS and a d*TREK volume. They are not all missing decoders. Invalid input never authorizes invented counts or silent source substitution.
+
+All implemented readers have adapters in the full build. A separate [minimal-feature run](2026-11-05-parallel-feature-disabled.json) executes 24 reference tests and classifies 64 events as `feature_disabled`, with three native matches. It has no missing adapters or decoders for those omitted optional features.
 
 ## What became readable
 
-- Typed explicit HDF5: all six generic upstream events match, including 2D and f32 stacks.
-- Eiger: all seven upstream events match, including typed writer-generated stacks and dataset discovery.
-- LImA: all six upstream events match through default-entry/measurement discovery.
-- Lambda: ten events match. The two VDS-master events remain rejected pending explicit mapping/source-relocation contracts.
-- MARCCD/Pilatus: all 19 pixel read events match through the existing TIFF decoder. Detector-specific acquisition/image-description headers remain pending; this is not complete format parity.
+- Native SPE v2/v3, MRC and DM3; every declared SPE frame, selected ROIs, original complex components, thumbnails/main-image selection and source metadata.
+- GE and Pixi fixed records; Bruker86/100, Oxford raw/TY1 and R-AXIS; explicit R-AXIS expansion and KCD summation preserve default raw views.
+- FIT2D primary/mask/axis arrays, KCD separate readouts, MPA maps/spectra, Esperanto Long32/AGI and typed XSData XML.
+- Mature JPEG/JPEG2000 backends, extended TIFF layouts, Pilatus semantic maps and all 125 MAR acquisition fields.
+- EDF general records/external snapshots and bounded compressed padding; NPY complex64/128 with both byte and C/Fortran storage orders.
 
-Independent CC0 h5py fixtures additionally verify all ten scalar types in both byte orders, partial chunks, NaN payloads, declared fill, source graphs, cycles, missing links, limits and mutation. HDF5 test sources include linked intermediate files, not only endpoint datasets.
+Cross-review regressions cover XML layout redirection, unsupported DM3 main-image fallback, MRC IMOD signedness, ignored GE compression, malformed Bruker tables, MPA precision/overflow, JPEG envelope/scan provenance, JP2 channel reordering and contradictory embedded TIFF JPEG layouts. Valid JPEG strips, full/edge tiles and shared tables retain their original counts.
 
-The complete source/executable remained unchanged during this run, and every reference codec source matched the pinned upstream hash. No count/dtype/shape mismatch occurred among successful native reads. One EDF parsed-header difference (terminal NUL padding) remains. Four Glymur variants lack a discoverable OpenJPEG library; upstream explicitly skips one slow MAR345 memory-leak test.
+## Validation
+
+[Recorded local checks](2026-11-05-native-checks.json): 93 Rust tests pass, including opt-in actual-file container/fixed/Esperanto comparisons; formatting and strict all-target/all-feature Clippy pass; no-default check/tests and strict isolated Clippy for each of 18 optional feature selections pass (20 separate feature checks). All detector fixtures combined remain below 1 MB; external detector corpora stay outside Git. Expanded platform CI and new performance claims are not established.
 
 ## Per-codec read events
 
-| Codec | Counts match | Native rejected | Format reader missing | No pixels |
-|---|---:|---:|---:|---:|
-| GEimage | 0 | 0 | 6 | 0 |
-| HiPiCimage | 6 | 0 | 0 | 0 |
-| OXDimage | 0 | 0 | 12 | 0 |
-| binaryimage | 2 | 0 | 0 | 0 |
-| bruker100image | 0 | 0 | 9 | 0 |
-| brukerimage | 0 | 0 | 16 | 0 |
-| cbfimage | 17 | 0 | 0 | 0 |
-| dm3image | 0 | 0 | 6 | 0 |
-| dtrekimage | 16 | 1 | 0 | 1 |
-| edfimage | 68 | 133 | 0 | 0 |
-| eigerimage | 7 | 0 | 0 | 0 |
-| esperantoimage | 0 | 0 | 9 | 0 |
-| fit2dimage | 0 | 0 | 4 | 0 |
-| fit2dmaskimage | 8 | 0 | 0 | 0 |
-| fit2dspreadsheetimage | 3 | 0 | 0 | 0 |
-| hdf5image | 6 | 0 | 0 | 0 |
-| jpeg2kimage | 0 | 0 | 6 | 0 |
-| jpegimage | 0 | 0 | 3 | 0 |
-| kcdimage | 0 | 0 | 4 | 0 |
-| lambdaimage | 10 | 2 | 0 | 0 |
-| limaimage | 6 | 0 | 0 | 0 |
-| mar345image | 0 | 0 | 30 | 0 |
-| marccdimage | 6 | 0 | 0 | 0 |
-| mpaimage | 0 | 0 | 1 | 0 |
-| mrcimage | 0 | 0 | 8 | 0 |
-| numpyimage | 12 | 0 | 0 | 0 |
-| pilatusimage | 13 | 0 | 0 | 0 |
-| pixiimage | 0 | 0 | 6 | 0 |
-| pnmimage | 2 | 0 | 0 | 0 |
-| raxisimage | 0 | 0 | 3 | 0 |
-| sparseimage | 0 | 0 | 1 | 0 |
-| speimage | 0 | 0 | 42 | 0 |
-| tifimage | 20 | 44 | 0 | 24 |
-| xsdimage | 0 | 0 | 5 | 0 |
+| Codec | Counts match | Mismatch | Rejected | Decoder missing | No pixels |
+|---|---:|---:|---:|---:|---:|
+| GEimage | 6 | 0 | 0 | 0 | 0 |
+| HiPiCimage | 6 | 0 | 0 | 0 | 0 |
+| OXDimage | 10 | 0 | 2 | 0 | 0 |
+| binaryimage | 2 | 0 | 0 | 0 | 0 |
+| bruker100image | 9 | 0 | 0 | 0 | 0 |
+| brukerimage | 15 | 1 | 0 | 0 | 0 |
+| cbfimage | 17 | 0 | 0 | 0 | 0 |
+| dm3image | 6 | 0 | 0 | 0 | 0 |
+| dtrekimage | 16 | 0 | 1 | 0 | 1 |
+| edfimage | 133 | 0 | 68 | 0 | 0 |
+| eigerimage | 7 | 0 | 0 | 0 | 0 |
+| esperantoimage | 9 | 0 | 0 | 0 | 0 |
+| fit2dimage | 4 | 0 | 0 | 0 | 0 |
+| fit2dmaskimage | 8 | 0 | 0 | 0 | 0 |
+| fit2dspreadsheetimage | 3 | 0 | 0 | 0 | 0 |
+| hdf5image | 6 | 0 | 0 | 0 | 0 |
+| jpeg2kimage | 8 | 0 | 0 | 0 | 0 |
+| jpegimage | 3 | 0 | 0 | 0 | 0 |
+| kcdimage | 4 | 0 | 0 | 0 | 0 |
+| lambdaimage | 10 | 0 | 2 | 0 | 0 |
+| limaimage | 6 | 0 | 0 | 0 | 0 |
+| mar345image | 0 | 0 | 0 | 30 | 0 |
+| marccdimage | 6 | 0 | 0 | 0 | 0 |
+| mpaimage | 1 | 0 | 0 | 0 | 0 |
+| mrcimage | 8 | 0 | 0 | 0 | 0 |
+| numpyimage | 12 | 0 | 0 | 0 | 0 |
+| pilatusimage | 13 | 0 | 0 | 0 | 0 |
+| pixiimage | 6 | 0 | 0 | 0 | 0 |
+| pnmimage | 2 | 0 | 0 | 0 | 0 |
+| raxisimage | 3 | 0 | 0 | 0 | 0 |
+| sparseimage | 0 | 0 | 0 | 1 | 0 |
+| speimage | 42 | 0 | 0 | 0 | 0 |
+| tifimage | 27 | 12 | 25 | 0 | 24 |
+| xcaliburimage | 0 | 0 | 0 | 0 | 0 |
+| xsdimage | 5 | 0 | 0 | 0 | 0 |
 
-ADSC aliases d*TREK. Complete detector headers, VDS/source relocation, remaining codecs/dtypes/layouts, direct streams, content autodetection, rejected-input comparisons and explicit neighboring-file series remain targets. See [reproduction and contracts](../FABIO_PARITY.md) and the complete [format ledger](../FORMAT_COVERAGE.md).
+ADSC aliases d*TREK. The [original baseline](2026-11-05.json), [typed-HDF5 continuation](2026-11-05-hdf5.json) and [older HDF5-disabled proof](2026-11-05-feature-disabled.json) remain historical evidence. Complete source/metadata/discovery/stream/series contracts and all unsupported variants remain in [the full ledger](../FORMAT_COVERAGE.md) and [reproduction guide](../FABIO_PARITY.md).
