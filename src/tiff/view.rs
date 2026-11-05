@@ -4,7 +4,7 @@
 //! Unpack.c; copyright/license notice: licenses/native-readers/Pillow-13.0.0-LICENSE.txt.
 #[cfg(feature = "jpeg")]
 pub use super::view_jpeg::read_pillow13;
-use super::{Error, FrameBuffer, Metadata};
+use super::{Error, FrameBuffer, Metadata, SampleLayout};
 use crate::{PixelBuffer, PixelType};
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Policy {
@@ -36,11 +36,15 @@ pub enum Operation {
     CmykToRgb8,
     RgbLuminanceF32,
     JpegRgbDecode,
+    YcbcrNearestChromaExpansion,
+    YcbcrLibTiff472Rgb8,
 }
 #[derive(Clone, Debug)]
 pub struct Provenance {
     pub policy: Policy,
+    /// Logical source raster; native component geometry is identified separately.
     pub source_shape: Vec<usize>,
+    pub source_layout: SampleLayout,
     pub source_type: PixelType,
     pub source_bits_per_sample: u8,
     pub source_photometric: u16,
@@ -327,6 +331,7 @@ pub fn convert(
         provenance: Provenance {
             policy,
             source_shape: metadata.sample_shape(),
+            source_layout: metadata.sample_layout,
             source_type: metadata.pixel_type,
             source_bits_per_sample: metadata.bits_per_sample,
             source_photometric: metadata.photometric_interpretation,

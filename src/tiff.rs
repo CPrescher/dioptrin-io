@@ -13,6 +13,7 @@ use ifd_view::{Admission, ChunkWindows, FileView, OriginalPhoto};
 pub mod view;
 #[cfg(feature = "jpeg")]
 mod view_jpeg;
+pub mod ycbcr;
 use std::{
     collections::BTreeMap,
     fmt,
@@ -73,6 +74,13 @@ pub struct OpaqueTag {
     pub reason: String,
 }
 
+/// Native source layout. Component grids cannot be represented by one HWC buffer.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SampleLayout {
+    Uniform,
+    YCbCrComponents { horizontal: u16, vertical: u16 },
+}
+
 /// Original page metadata. Height and width refer to stored rows/columns.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Metadata {
@@ -80,8 +88,10 @@ pub struct Metadata {
     pub pixel_type: PixelType,
     /// Original TIFF scalar bit width (may be 1/2/4 for unpacked u8 output).
     pub bits_per_sample: u8,
-    /// Number of original scalar channels; buffers interleave channels last.
+    /// Number of declared source components. Uniform buffers interleave channels;
+    /// component layouts expose independently shaped grids through read_ycbcr_into.
     pub channels: usize,
+    pub sample_layout: SampleLayout,
     pub photometric_interpretation: u16,
     pub planar_configuration: u16,
     /// Logical bit order in each stored byte; source tag retained unchanged.
@@ -135,6 +145,7 @@ pub struct Reader {
     pages: Vec<Metadata>,
     chunk_windows: Vec<ChunkWindows>,
     intermediate_bytes: usize,
+    limits: Limits,
 }
 impl Reader {
     /// Validate/index all primary IFD pages without reading detector samples.
@@ -194,7 +205,13 @@ impl Reader {
             };
             let offsets = decoder.get_tag(offset_tag)?.into_u64_vec()?;
             let lengths = decoder.get_tag(count_tag)?.into_u64_vec()?;
-            validate_chunk_lengths(&mut decoder, &page, &offsets, &lengths)?;
+            if matches!(page.sample_layout, SampleLayout::YCbCrComponents { .. })
+                && [1, 5].contains(&page.compression)
+            {
+                ycbcr::validate(&page, limits)?;
+            } else {
+                validate_chunk_lengths(&mut decoder, &page, &offsets, &lengths)?;
+            }
             metadata_bytes = offsets
                 .len()
                 .checked_mul(16)
@@ -220,6 +237,7 @@ impl Reader {
             pages,
             chunk_windows,
             intermediate_bytes: limits.intermediate_bytes,
+            limits,
         })
     }
     #[must_use]
@@ -229,6 +247,54 @@ impl Reader {
     #[must_use]
     pub fn metadata(&self, index: usize) -> Option<&Metadata> {
         self.pages.get(index)
+    }
+    /// Read native Y/Cb/Cr component grids and exact TIFF sampling units.
+    /// Color conversion and chroma expansion are separate explicit display views.
+    /// # Errors
+    /// Unsupported layout, resource bounds, malformed codec or changed source.
+    pub fn read_ycbcr_into(
+        &mut self,
+        index: usize,
+        buffer: &mut ycbcr::Buffer,
+    ) -> Result<(), Error> {
+        buffer.invalidate();
+        self.snapshot
+            .check_handle(&self.identity_handle)
+            .map_err(Error)?;
+        let page = self
+            .pages
+            .get(index)
+            .ok_or_else(|| Error("TIFF component page index outside file".into()))?;
+        let SampleLayout::YCbCrComponents {
+            horizontal,
+            vertical,
+        } = page.sample_layout
+        else {
+            return Err(Error(
+                "TIFF page does not expose a native YCbCr component layout".into(),
+            ));
+        };
+        if ![1, 5].contains(&page.compression) {
+            return Err(Error(
+                "native TIFF JPEG components require the jpeg feature and component decoder".into(),
+            ));
+        }
+        let chunks = ycbcr::decode(
+            &self.snapshot,
+            &self.identity_handle,
+            page,
+            self.limits.intermediate_bytes,
+        )?;
+        self.snapshot
+            .check_handle(&self.identity_handle)
+            .map_err(Error)?;
+        buffer.set(
+            page.shape,
+            [usize::from(horizontal), usize::from(vertical)],
+            ycbcr::Storage::TiffSamplingUnits,
+            chunks,
+        );
+        Ok(())
     }
     /// Decode one stored page, retaining the allocation across same-type reads.
     /// # Errors
@@ -242,6 +308,11 @@ impl Reader {
             .pages
             .get(index)
             .ok_or_else(|| Error("TIFF page index outside file".into()))?;
+        if page.sample_layout != SampleLayout::Uniform {
+            return Err(Error(
+                "TIFF native component grids require read_ycbcr_into; no implicit expansion".into(),
+            ));
+        }
         if page.compression == 3 {
             group3::decode(
                 &self.snapshot,
@@ -453,10 +524,8 @@ fn metadata(
             ));
         }
     }
-    if photo == 6 && compression != 7 {
-        return Err(Error(
-            "TIFF YCbCr admitted only through native JPEG component decoding".into(),
-        ));
+    if photo == 6 && ![1, 5, 7].contains(&compression) {
+        return Err(Error("unsupported TIFF YCbCr compression".into()));
     }
     if compression == 4 && (channels != 1 || bits != 1) {
         return Err(Error(
@@ -537,7 +606,28 @@ fn metadata(
     if !(1..=8).contains(&orientation) {
         return Err(Error("invalid TIFF Orientation tag".into()));
     }
+    let sample_layout = if photo == 6 {
+        let factors = tags
+            .get(&530)
+            .map(|v| v.clone().into_u16_vec())
+            .transpose()?
+            .unwrap_or_else(|| vec![2, 2]);
+        let [horizontal, vertical] = factors.as_slice() else {
+            return Err(Error("YCbCr sampling tag must have two factors".into()));
+        };
+        if ![1, 2, 4].contains(horizontal) || ![1, 2, 4].contains(vertical) || vertical > horizontal
+        {
+            return Err(Error("unsupported TIFF YCbCr sampling factors".into()));
+        }
+        SampleLayout::YCbCrComponents {
+            horizontal: *horizontal,
+            vertical: *vertical,
+        }
+    } else {
+        SampleLayout::Uniform
+    };
     Ok(Metadata {
+        sample_layout,
         shape: [h as usize, w as usize],
         pixel_type,
         bits_per_sample: bits,
@@ -813,6 +903,13 @@ fn interleave(pixels: &mut PixelBuffer, plane: usize, channels: usize) -> Result
     Ok(())
 }
 impl Metadata {
+    /// Native array shape only when all channels share one uniform grid.
+    #[must_use]
+    pub fn uniform_sample_shape(&self) -> Option<Vec<usize>> {
+        (self.sample_layout == SampleLayout::Uniform).then(|| self.sample_shape())
+    }
+    /// Logical raster/channel shape. For component layouts this is NOT a native
+    /// array shape or an allocation size; use read_ycbcr_into and its plane grids.
     #[must_use]
     pub fn sample_shape(&self) -> Vec<usize> {
         if self.channels == 1 {

@@ -166,6 +166,7 @@ dependencies = [
  "tempfile",
  "tiff",
  "turbojpeg",
+ "weezl",
  "zune-jpeg",
 ]
 

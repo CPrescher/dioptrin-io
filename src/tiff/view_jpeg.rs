@@ -191,7 +191,12 @@ pub fn read_pillow13(
         channels,
     };
     let mut image = view::convert(&rendered, &frame, Policy::Pillow13, max_output_bytes)?;
-    image.provenance.source_shape = page.sample_shape();
+    image.provenance.source_shape = if page.sample_layout == super::SampleLayout::Uniform {
+        page.sample_shape()
+    } else {
+        page.shape.to_vec()
+    };
+    image.provenance.source_layout = page.sample_layout;
     image.provenance.source_type = page.pixel_type;
     image.provenance.source_photometric = page.photometric_interpretation;
     image.provenance.source_planar_configuration = page.planar_configuration;

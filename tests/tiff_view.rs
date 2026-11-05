@@ -2,7 +2,7 @@
 use dioptrin_io::{
     PixelBuffer,
     tiff::{
-        FrameBuffer, Limits, Reader, TagValue,
+        FrameBuffer, Limits, Reader, SampleLayout, TagValue,
         view::{self, Operation, Pixels, Policy},
     },
 };
@@ -39,6 +39,14 @@ fn independent_raw_samples_palette_indices_and_float_whiteiszero_remain_exact() 
         let mut reader = Reader::open(fixture(name), Limits::default())
             .unwrap_or_else(|e| panic!("{name}: {e}"));
         let mut frame = FrameBuffer::default();
+        if reader.metadata(0).unwrap().sample_layout != SampleLayout::Uniform {
+            // Historical .raw JPEG fixtures contain expanded full-raster YCbCr.
+            // Native sampled grids now have their own component API/oracles.
+            assert!(reader.metadata(0).unwrap().uniform_sample_shape().is_none());
+            assert!(reader.read_frame_into(0, &mut frame).is_err());
+            assert!(frame.pixels().is_none());
+            continue;
+        }
         reader
             .read_frame_into(0, &mut frame)
             .unwrap_or_else(|e| panic!("{name}: {e}"));
@@ -84,6 +92,14 @@ fn independently_decoded_pillow_views_match_without_modifying_source_counts() {
     for (name, case) in manifest["files"].as_object().unwrap() {
         let mut reader = Reader::open(fixture(name), Limits::default()).unwrap();
         let mut frame = FrameBuffer::default();
+        if reader.metadata(0).unwrap().sample_layout != SampleLayout::Uniform {
+            // Historical .raw JPEG fixtures contain expanded full-raster YCbCr.
+            // Native sampled grids now have their own component API/oracles.
+            assert!(reader.metadata(0).unwrap().uniform_sample_shape().is_none());
+            assert!(reader.read_frame_into(0, &mut frame).is_err());
+            assert!(frame.pixels().is_none());
+            continue;
+        }
         reader.read_frame_into(0, &mut frame).unwrap();
         let meta = reader.metadata(0).unwrap();
         let before = bytes(frame.pixels().unwrap());
