@@ -30,6 +30,8 @@ ADAPTERS = {
     "HiPiCimage": "hipic", "pnmimage": "pnm", "edfimage": "edf",
     "cbfimage": "cbf", "tifimage": "tiff", "binaryimage": "raw",
     "fit2dspreadsheetimage": "spreadsheet",
+    "hdf5image":"hdf5", "eigerimage":"eiger", "limaimage":"lima", "lambdaimage":"lambda",
+    "marccdimage":"tiff", "pilatusimage":"tiff",
 }
 
 
@@ -66,6 +68,7 @@ def main():
     probe_directory = tempfile.TemporaryDirectory(prefix="dioptrin-fabio-probe-")
     probe_path = pathlib.Path(probe_directory.name) / ("probe.exe" if os.name == "nt" else "probe")
     shutil.copy2(args.probe, probe_path)
+    capabilities=json.loads(subprocess.check_output([str(probe_path),"--capabilities"],text=True))
     args.data.mkdir(parents=True, exist_ok=True)
     # Set before importing the reference test resources.
     os.environ["FABIO_DATA"] = str(args.data.resolve())
@@ -91,7 +94,7 @@ def main():
         if {p.stem for p in paths} != requested:
             parser.error("unknown codec test module")
     ledger = json.loads((ROOT / "docs/fabio-2026.6.0-inventory.json").read_text())
-    report = {"schema": 1, "reference": ledger["reference"],
+    report = {"schema": 2, "reference": ledger["reference"],
               "selection": {"all_codec_modules": not bool(args.modules), "modules": []},
               "contract": "read-count/dtype/shape comparison at successful upstream .read calls; not Python API or full header parity",
               "gaps": ["semantic headers not completely compared", "native content autodetection not exercised", "file-like streams materialized by test harness", "read paths bypassing .read not intercepted", "reference rejection cases recorded but not yet compared to native rejection"],
@@ -104,6 +107,7 @@ def main():
         except importlib.metadata.PackageNotFoundError:
             report["environment"]["packages"][name] = None
     report["probe_sha256"] = sha_file(probe_path)
+    report["runtime_capabilities"] = capabilities
     report["reference_filters"] = args.reference_filters
     report["rust_sources_sha256"] = {str(p.relative_to(ROOT)): sha_file(p) for p in sorted((ROOT/"src").rglob("*.rs"))}
     active = False
@@ -129,10 +133,19 @@ def main():
             record["file_sha256"] = file_hash
             report["source_files"].setdefault(file_hash, {"name": "file-like stream", "bytes": len(captured)})
         adapter = ADAPTERS.get(codec)
-        if adapter is None:
-            record.update(status="unsupported_reader")
+        feature=capabilities["known_readers"].get(codec)
+        if feature is None:
+            record.update(status="decoder_missing",reason="No format-specific Rust reader is implemented")
+            return
+        if feature not in capabilities["features"]:
+            record.update(status="feature_disabled",feature=feature,reason="Rust reader exists but this test binary omits its optional feature")
+            return
+        if adapter is None or adapter not in capabilities["adapters"]:
+            record.update(status="test_adapter_missing",reason="Rust reader exists; the comparison harness has no adapter for it")
             return
         record["adapter"] = adapter
+        if codec in {"marccdimage","pilatusimage"}:
+            record["reader_scope"]="generic TIFF pixels and raw tags; detector-specific semantic header parser still pending"
         extra = []
         if codec == "cbfimage" and image.data.dtype != np.dtype("int32"):
             # Explicit source-type policy, never a retry after decoding failure.
@@ -150,8 +163,8 @@ def main():
                 path = pathlib.Path(temporary) / "stream.bin"
                 path.write_bytes(captured)
                 record["stream_materialized"] = True
-            elif isinstance(source, (str, os.PathLike)) and pathlib.Path(source).is_file():
-                path = pathlib.Path(source)
+            elif physical is not None and physical.is_file():
+                path = physical
             else:
                 record.update(status="unsupported_source")
                 return
@@ -159,7 +172,8 @@ def main():
             record["file_sha256"] = file_hash
             report["source_files"].setdefault(file_hash, {"name": path.name, "bytes": path.stat().st_size})
             try:
-                native = subprocess.run([str(probe_path), adapter, str(path), *extra], capture_output=True, text=True, timeout=args.probe_timeout)
+                argument=str(source) if codec=="hdf5image" else str(path)
+                native = subprocess.run([str(probe_path), adapter, argument, *extra], capture_output=True, text=True, timeout=args.probe_timeout)
             except subprocess.TimeoutExpired:
                 record.update(status="native_timeout")
                 return

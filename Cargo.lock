@@ -139,6 +139,7 @@ dependencies = [
  "flate2",
  "hdf5-bitshuffle",
  "hdf5-metno",
+ "hdf5-metno-sys",
  "libz-sys",
  "lz4_flex",
  "md-5",

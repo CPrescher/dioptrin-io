@@ -32,6 +32,13 @@ fixture headers now use deterministic mtime zero.
 
 The larger upstream FabIO corpus is external, with exact file/download hashes
 in the suite reports under `docs/fabio-parity/`; it is not redistributed here.
+
+`scripts/generate_hdf5_native_fixtures.py` creates CC0 h5py files under
+`hdf5-native/`: ten scalar types, both byte orders, ranks 2/3, edge chunks,
+lossless filters, NaN payloads, defined fill, fill-disabled allocated/unwritten
+storage, an external/soft-link source graph, LImA/Lambda metadata and negative
+layout/type/link fixtures. Its manifest records original frame and file hashes.
+Rust tests mutate frozen datasets and intermediate links to verify invalidation.
 Reference environment used NumPy 2.5.4, FabIO 2026.6.0, tifffile 2026.10.15 and
 imagecodecs 2026.10.10. Reproduction versions and the binary files' own hashes are
 in the manifests. Full real Eiger data is external; its provenance/count hashes

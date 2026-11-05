@@ -7,6 +7,8 @@
 
 pub mod cache;
 pub mod raw;
+mod sources;
+pub mod typed;
 
 use hdf5_backend::{Dataset, File};
 use std::fmt::{Display, Formatter};
@@ -104,10 +106,7 @@ impl Reader {
         if limits.frames == 0 || limits.frame_pixels == 0 || limits.chunk_bytes == 0 {
             return Err(Error("HDF5 read limits must be positive".into()));
         }
-        hdf5_backend::sync::sync(|| {
-            std::panic::catch_unwind(hdf5_bitshuffle::register_bitshuffle_plugin)
-        })
-        .map_err(|_| Error("could not register bundled Bitshuffle/LZ4 decoder".into()))?;
+        register_filters()?;
         let file = File::open(path)?;
         let dataset = file.dataset(dataset)?;
         if dataset.layout() == hdf5_backend::plist::dataset_create::Layout::Virtual {
@@ -238,6 +237,13 @@ impl Reader {
         }
         Ok(value)
     }
+}
+
+fn register_filters() -> Result<(), Error> {
+    hdf5_backend::sync::sync(|| {
+        std::panic::catch_unwind(hdf5_bitshuffle::register_bitshuffle_plugin)
+    })
+    .map_err(|_| Error("could not register bundled Bitshuffle/LZ4 decoder".into()))
 }
 
 /// Runtime native-library version, useful for external-data provenance.

@@ -41,7 +41,7 @@ python3.13 -m venv /tmp/dioptrin-io-fabio-suite-env
 /tmp/dioptrin-io-fabio-suite-env/bin/python -m pip install -r docs/fabio-parity/reference-requirements.txt
 git clone https://github.com/silx-kit/fabio.git /tmp/dioptrin-io-fabio-2026.6.0
 git -C /tmp/dioptrin-io-fabio-2026.6.0 checkout 9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece
-cargo build --locked --example parity_probe --features wrappers
+cargo build --locked --example parity_probe --features wrappers,hdf5
 /tmp/dioptrin-io-fabio-suite-env/bin/python scripts/fabio_suite_parity.py \
   --fabio-source /tmp/dioptrin-io-fabio-2026.6.0 \
   --data /tmp/dioptrin-io-fabio-corpus \
@@ -63,12 +63,31 @@ optional Glymur test variants; the Pillow JPEG2000 tests run independently.
 
 ## Current evidence and remaining work
 
+Schema 2 separates the concepts previously grouped under `unsupported_reader`:
+
+| Status | Meaning |
+|---|---|
+| `decoder_missing` | No format-specific Rust read entry point is implemented; a generic container reader may still decode some pixels. |
+| `test_adapter_missing` | A compiled Rust reader exists, but test plumbing to call it is missing. |
+| `feature_disabled` | The optional reader exists but its Cargo feature is absent from this test binary. |
+| `native_rejected` | The reader was called and explicitly rejected this variant, storage, source or malformed input. |
+| `counts_match` | Every exposed frame's shape/dtype/sample hash matches; semantic header gaps can still remain. |
+
+The executable publishes its compiled features, known readers and adapter
+capabilities. A separate HDF5-disabled run verifies this distinction. Generic
+TIFF now exercises MARCCD/Pilatus pixel arrays from the same upstream files;
+records retain the scope limitation because detector-specific headers remain
+pending. The typed HDF5 continuation tests explicit datasets and Eiger/LImA/Lambda
+discovery with source manifests. Lambda VDS masters still require mapping/source
+relocation contracts. Current results are in `fabio-parity/2026-11-05-hdf5.json`;
+the original report retains its historical schema and status names.
+
 The checked report under `fabio-parity/` is a failing acceptance baseline, not a
 parity claim. Every original registry entry remains in the coverage ledger.
-The harness currently adapts NPY, raw binary, d*TREK/ADSC, Fit2D masks and
-spreadsheets, HiPiC, PNM, CBF, EDF and generic TIFF. HDF5 detector discovery,
-remaining codecs and semantic detector headers still require implementations
-and explicit comparisons.
+The harness adapts NPY, raw binary, d*TREK/ADSC, Fit2D masks/spreadsheets,
+HiPiC, PNM, CBF, EDF, generic/detector TIFF pixels and typed HDF5 discovery.
+VDS/master source relocation, remaining codecs and complete semantic headers
+still require implementations and explicit comparisons.
 
 The same-file corpus revealed real cases now supported: nested braces inside
 d*TREK values, repeated HiPiC comment keys, EDF binary padding, absent optional

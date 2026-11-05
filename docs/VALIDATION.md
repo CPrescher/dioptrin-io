@@ -1,6 +1,18 @@
 # Validation, 2026-11-05
 
-The next native-reader expansion passes:
+The typed HDF5 continuation passes formatting, strict all-target/all-feature
+Clippy and all 36 Rust tests, plus separate no-default and HDF5-only checks.
+Four new tests cover independent typed samples, source graphs, admission and
+mutation. Full FabIO results: 202 matching read events / 1,049 frames;
+213 reference tests, no failures/errors, five explicit skips. See
+`fabio-parity/2026-11-05-hdf5.json` for exact source hashes and remaining gaps.
+An HDF5-disabled test executable independently reports six generic HDF5 events
+as `feature_disabled`, distinguishing build configuration from missing readers.
+The changes remain local/unpushed; no new platform-CI or throughput claim is made.
+
+## Native reader and wrapper expansion
+
+The preceding native-reader expansion passed:
 
 - `cargo fmt --check`
 - `cargo clippy --all-targets --all-features -- -D warnings`

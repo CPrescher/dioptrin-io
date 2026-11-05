@@ -29,10 +29,76 @@ fn report(
 
 fn run() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = std::env::args().collect();
+    if args.get(1).is_some_and(|s| s == "--capabilities") {
+        let mut features = vec!["native", "edf", "cbf", "tiff", "wrappers"];
+        let mut adapters = vec![
+            "npy",
+            "dtrek",
+            "adsc",
+            "mask",
+            "hipic",
+            "pnm",
+            "spreadsheet",
+            "raw",
+            "edf",
+            "cbf",
+            "cbf64",
+            "tiff",
+        ];
+        if cfg!(feature = "hdf5") {
+            features.push("hdf5");
+            adapters.extend(["hdf5", "eiger", "lima", "lambda"]);
+        }
+        println!(
+            "{}",
+            json!({"features":features,"adapters":adapters,"known_readers":{
+                "numpyimage":"native","dtrekimage":"native","adscimage":"native","fit2dmaskimage":"native",
+                "HiPiCimage":"native","pnmimage":"native","binaryimage":"native","fit2dspreadsheetimage":"native",
+                "edfimage":"edf","cbfimage":"cbf","tifimage":"tiff","marccdimage":"tiff","pilatusimage":"tiff","hdf5image":"hdf5",
+                "eigerimage":"hdf5","limaimage":"hdf5","lambdaimage":"hdf5"
+            }})
+        );
+        return Ok(());
+    }
     if args.len() < 3 {
         return Err("usage: parity_probe FORMAT PATH [WIDTH HEIGHT OFFSET DTYPE ENDIAN]".into());
     }
     let path = &args[2];
+    #[cfg(feature = "hdf5")]
+    if matches!(args[1].as_str(), "hdf5" | "eiger" | "lima" | "lambda") {
+        use dioptrin_io::hdf5::typed::{ExternalLinks, FrameBuffer, Options, Reader, Selection};
+        let (file, selection) = match args[1].as_str() {
+            "hdf5" => {
+                let (f, d) = path
+                    .split_once("::")
+                    .ok_or("HDF5 input requires file::dataset")?;
+                (f, Selection::Dataset(d))
+            }
+            "eiger" => (path.as_str(), Selection::Eiger),
+            "lima" => (path.as_str(), Selection::Lima),
+            _ => (path.as_str(), Selection::Lambda),
+        };
+        let reader = Reader::open_snapshot(
+            file,
+            selection,
+            Options {
+                external_links: ExternalLinks::FollowSnapshot,
+                ..Options::default()
+            },
+        )?;
+        let mut buffer = FrameBuffer::default();
+        for i in 0..reader.frames() {
+            reader.read_frame_into(i, &mut buffer)?;
+            report(
+                i,
+                reader.frames(),
+                buffer.shape().unwrap(),
+                buffer.pixels().unwrap(),
+                json!(reader.fields()),
+            );
+        }
+        return Ok(());
+    }
     let limits = native::Limits::default();
     if args[1] == "raw" {
         if args.len() != 8 {

@@ -10,7 +10,7 @@ readme = "README.md"
 
 [features]
 default = []
-hdf5 = ["dep:hdf5-backend", "dep:hdf5-bitshuffle", "dep:libz-sys", "dep:lz4_flex", "dep:bytemuck"]
+hdf5 = ["dep:hdf5-backend", "dep:hdf5-sys", "dep:hdf5-bitshuffle", "dep:libz-sys", "dep:lz4_flex", "dep:bytemuck"]
 tiff = ["dep:tiff-backend"]
 cbf = ["dep:md-5"]
 edf = ["dep:bytemuck", "dep:flate2", "dep:bzip2"]
@@ -19,6 +19,7 @@ wrappers = ["native", "tiff", "cbf", "edf", "dep:tempfile"]
 
 [dependencies]
 hdf5-backend = { package = "hdf5-metno", version = "=0.15.1", optional = true, features = ["static", "zlib", "lzf"] }
+hdf5-sys = { package = "hdf5-metno-sys", version = "=0.12.5", optional = true }
 hdf5-bitshuffle = { version = "=1.0.0", optional = true }
 libz-sys = { version = "1.1", optional = true, features = ["static"] }
 lz4_flex = { version = "=0.14.0", optional = true, default-features = false, features = ["std", "safe-decode", "checked-decode"] }

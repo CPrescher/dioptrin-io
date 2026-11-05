@@ -16,7 +16,7 @@ Every format dependency is optional; default features are empty.
 
 | Feature | Implemented scope | Important remaining gaps |
 |---|---|---|
-| `hdf5` | Explicit 3D u16/u32 datasets; bundled HDF5/gzip/LZF/Bitshuffle-LZ4; u32 compatibility output; opt-in indexed raw full-frame chunks with reusable native u16/u32 buffers and bounded parallel consumers | Master discovery/linked sequences, VDS, live refresh, signed/float/2D datasets; raw path rejects unsupported layouts/pipelines explicitly |
+| `hdf5` | Typed 2D/3D images/stacks with ten standard scalar types, both byte orders, Eiger/LImA/Lambda discovery and explicit external-file snapshots; original u32 compatibility reader; opt-in indexed raw u16/u32 chunks and bounded parallel consumers | VDS/master relocation, raw external storage, complex/custom/float16 samples, arbitrary metadata and live refresh; raw fast path retains its narrower contract |
 | `tiff` | TIFF/BigTIFF; all ten u8–u64/i8–i64/f32/f64 scalar types; both byte orders; primary IFD stacks; strips/tiles; none/PackBits/LZW/Deflate; typed tags | WhiteIsZero, packed/color/lossy samples, float16, subIFDs and detector-specific semantic headers |
 | `cbf` | Single 2D integer byte-offset images, eight scalar types, explicit extended64/legacy32 dialects, Content-MD5 verification, original CIF/Pilatus text | Semantic CIF/Pilatus header parsing, other conversions, multiple binary sections, outer wrappers |
 | `edf` | Inline 2D frames and concatenated stacks; ten scalar types; both byte orders; internal none/gzip/zlib/bzip2 and legacy spellings; optional uncompressed Size and binary padding; original headers | General/external headers/payloads, volumes, float128, byte-offset EDF |
@@ -66,6 +66,30 @@ The general `hdf5::Reader` remains available for its documented layouts and
 filters under the upstream HDF5 mutex. Its `read_frame` API still returns exact
 u32 counts. The source-bound optional decoded-count cache retains its explicit
 budget and original compatibility API.
+
+## Typed HDF5 and detector discovery
+
+```rust
+use dioptrin_io::hdf5::typed::{Reader, Selection, Options, FrameBuffer};
+let reader = Reader::open_snapshot("scan.h5", Selection::Dataset("/entry/data"), Options::default())?;
+let mut frame = FrameBuffer::default();
+reader.read_frame_into(0, &mut frame)?;
+# Ok::<(), Box<dyn std::error::Error>>(())
+```
+
+`Selection::Eiger`, `Selection::Lima` and `Selection::Lambda` use their native
+discovery conventions. The output preserves u8–u64, i8–i64 and f32/f64, with no
+full-frame float conversion. Metadata retains source shape/type/endian, filters,
+layout and declared fill values. Per-part shape/type metadata remains explicit
+when an Eiger sequence contains differing datasets.
+
+External links require `Options { external_links: ExternalLinks::FollowSnapshot,
+..Options::default() }`. The reader tracks every master, intermediate link file
+and data file, checks all of them around every frame read, and exposes the source
+manifest and original link values. Missing sources fail the complete scan. File
+search, neighboring-file substitution and live refresh are not performed.
+Datasets with undefined unwritten regions are rejected; defined HDF5 fill values
+remain part of the source array's documented storage semantics.
 
 ## TIFF, CBF and EDF
 

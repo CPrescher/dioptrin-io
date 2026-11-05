@@ -25,8 +25,9 @@ addresses and exact output lengths are checked. Unsupported filters, partial or
 multiframe chunks, missing/unallocated chunks, virtual datasets, external
 storage/links and nonzero userblocks are rejected. Use the general reader
 explicitly when its contracts fit; there is no retry that silently changes
-source or decoding interpretation. Other HDF5 integer/float types and broader
-layout coverage remain work items in the format inventory.
+source or decoding interpretation. The separate typed snapshot reader below
+covers broader scalar types/layouts without expanding raw fast-path admission
+or its performance claim.
 
 A raw reader freezes dimensions and addresses. The caller asserts acquisition
 has stopped, even when the HDF5 dataset is resizable. Path/open-handle identity,
@@ -46,6 +47,49 @@ unbounded decoded queue. `memory_bytes` bounds conservative decoder payload,
 including native unshuffle temporary space; index storage, allocator/library
 bookkeeping, thread stacks and caller-retained results are additional memory.
 It is not an RSS limit.
+
+## Typed HDF5 snapshots and detector discovery
+
+`hdf5::typed::Reader` reuses the bundled HDF5 library/codecs for 2D images and
+3D stacks. It admits standard u8/u16/u32/u64, i8/i16/i32/i64 and IEEE f32/f64
+in either byte order. Exact native type equality rejects custom precision and
+padding, enums, compounds, complex and float16. Independent h5py fixtures verify
+integer extrema, endian conversion, NaN payloads, infinities and signed zero.
+Checked upstream dataspace selections feed native H5Dread into exactly sized,
+reusable typed buffers under the HDF5 mutex. No full-frame float promotion,
+parallel fast path or new performance claim is introduced.
+
+Explicit selection accepts a dataset or its conventional parent group/data.
+Eiger discovery handles entry/data, grouped data_N and legacy entry/data_N in
+lexical order. LImA follows default-entry/measurement/data and retains detector
+names. Lambda checks description and local-name/data paths. Each indexed part
+retains source shape, frame range, native dtype/endian, filters, layout and
+scalar fill. Differing part shapes/types are not homogenized.
+
+External links default to rejection. Explicit `FollowSnapshot` resolves bounded
+soft/external links, retains original link values, and snapshots every master,
+intermediate file and data file. Relative filenames resolve exactly against the
+referencing file. Native external-file search and basename fallback are not
+used. Missing links fail the complete scan. Cycles/traversals, group members,
+datasets, source files and retained metadata have separate admission limits.
+Every tracked file is checked around every frame read, even when another file
+owns that frame. Frozen resizable datasets are allowed; shape/source changes
+invalidate reused output. There is no live refresh or decoded-count cache.
+
+Defined HDF5 fill, including default zero, is part of the logical source array.
+Unwritten regions with undefined fill or FillTime::Never are rejected so old
+buffer contents cannot become counts. Fully allocated fill-disabled sources
+remain readable. VDS and raw external storage still require separate mapping,
+availability and relocation contracts. The upstream Lambda VDS master contains
+acquisition-system absolute paths; silently relocating them or filling missing
+modules is not admitted.
+
+Frame/chunk payload and retained metadata/text limits are not RSS limits; native
+HDF5 codec/cache/internal allocations are additional memory. Fixed discovery
+strings are checked before output allocation. Variable-length string allocation
+is managed by the upstream reader, with length checked before retaining/copying
+the result. This post-read admission for vlen attributes is an explicit remaining
+resource-limit limitation. Arbitrary attributes/full detector headers are gaps.
 
 ## TIFF/BigTIFF
 

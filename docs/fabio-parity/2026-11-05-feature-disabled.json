@@ -1,0 +1,426 @@
+{
+  "schema": 2,
+  "reference": {
+    "package": "FabIO",
+    "version": "2026.6.0",
+    "tag": "v2026.06",
+    "commit": "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece",
+    "registry_entries": 36,
+    "unique_registered_codecs": 35,
+    "registry_source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/fabioformats.py",
+    "registry_sha256": "f983ecb1ffbebe3de851f5ed7d51b2e1eaa439d4a1c991c9afdb52c917619889"
+  },
+  "selection": {
+    "all_codec_modules": false,
+    "modules": [
+      {
+        "name": "test_hdf5image",
+        "source_sha256": "1941a257ddd99ba7ea6f271b1ab8c4d2f68fcc3639c0db1fe1b0c7a693118d74",
+        "tests": [
+          "fabio.test.codecs.test_hdf5image.TestHdf5.test_iterate",
+          "fabio.test.codecs.test_hdf5image.TestHdf5.test_next_frames",
+          "fabio.test.codecs.test_hdf5image.TestHdf5.test_open",
+          "fabio.test.codecs.test_hdf5image.TestHdf5.test_read"
+        ]
+      }
+    ]
+  },
+  "contract": "read-count/dtype/shape comparison at successful upstream .read calls; not Python API or full header parity",
+  "gaps": [
+    "semantic headers not completely compared",
+    "native content autodetection not exercised",
+    "file-like streams materialized by test harness",
+    "read paths bypassing .read not intercepted",
+    "reference rejection cases recorded but not yet compared to native rejection"
+  ],
+  "out_of_scope": [
+    "Python mutation/writing APIs and numerical statistics"
+  ],
+  "reads": [
+    {
+      "test": "fabio.test.codecs.test_hdf5image.TestHdf5.test_iterate",
+      "codec": "hdf5image",
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_zxvhzewn_clemens/eiger3d.h5::entry/data",
+      "reference": {
+        "dtype": "float32",
+        "shape": [
+          99,
+          101
+        ],
+        "frames": 50
+      },
+      "file_sha256": "9c386f427a95e5a1b549ffcff0d2256907fecd4171363cc8286394c81ac3af44",
+      "status": "feature_disabled",
+      "feature": "hdf5",
+      "reason": "Rust reader exists but this test binary omits its optional feature"
+    },
+    {
+      "test": "fabio.test.codecs.test_hdf5image.TestHdf5.test_next_frames",
+      "codec": "hdf5image",
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_zxvhzewn_clemens/eiger3d.h5::entry/data",
+      "reference": {
+        "dtype": "float32",
+        "shape": [
+          99,
+          101
+        ],
+        "frames": 50
+      },
+      "file_sha256": "9c386f427a95e5a1b549ffcff0d2256907fecd4171363cc8286394c81ac3af44",
+      "status": "feature_disabled",
+      "feature": "hdf5",
+      "reason": "Rust reader exists but this test binary omits its optional feature"
+    },
+    {
+      "test": "fabio.test.codecs.test_hdf5image.TestHdf5.test_open",
+      "codec": "hdf5image",
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_zxvhzewn_clemens/eiger2d.h5::entry/data",
+      "reference": {
+        "dtype": "float32",
+        "shape": [
+          99,
+          101
+        ],
+        "frames": 1
+      },
+      "file_sha256": "cb2bd8513194f3c2c9a1e51a16233f1cbda88e3b1349a0de5ac2c271d19b6cfe",
+      "status": "feature_disabled",
+      "feature": "hdf5",
+      "reason": "Rust reader exists but this test binary omits its optional feature"
+    },
+    {
+      "test": "fabio.test.codecs.test_hdf5image.TestHdf5.test_open",
+      "codec": "hdf5image",
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_zxvhzewn_clemens/eiger3d.h5::entry/data",
+      "reference": {
+        "dtype": "float32",
+        "shape": [
+          99,
+          101
+        ],
+        "frames": 50
+      },
+      "file_sha256": "9c386f427a95e5a1b549ffcff0d2256907fecd4171363cc8286394c81ac3af44",
+      "status": "feature_disabled",
+      "feature": "hdf5",
+      "reason": "Rust reader exists but this test binary omits its optional feature"
+    },
+    {
+      "test": "fabio.test.codecs.test_hdf5image.TestHdf5.test_read",
+      "codec": "hdf5image",
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_zxvhzewn_clemens/eiger2d.h5::entry/data",
+      "reference": {
+        "dtype": "float32",
+        "shape": [
+          99,
+          101
+        ],
+        "frames": 1
+      },
+      "file_sha256": "cb2bd8513194f3c2c9a1e51a16233f1cbda88e3b1349a0de5ac2c271d19b6cfe",
+      "status": "feature_disabled",
+      "feature": "hdf5",
+      "reason": "Rust reader exists but this test binary omits its optional feature"
+    },
+    {
+      "test": "fabio.test.codecs.test_hdf5image.TestHdf5.test_read",
+      "codec": "hdf5image",
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_zxvhzewn_clemens/eiger3d.h5::entry/data",
+      "reference": {
+        "dtype": "float32",
+        "shape": [
+          99,
+          101
+        ],
+        "frames": 50
+      },
+      "file_sha256": "9c386f427a95e5a1b549ffcff0d2256907fecd4171363cc8286394c81ac3af44",
+      "status": "feature_disabled",
+      "feature": "hdf5",
+      "reason": "Rust reader exists but this test binary omits its optional feature"
+    }
+  ],
+  "reference_rejections": [],
+  "source_files": {
+    "9c386f427a95e5a1b549ffcff0d2256907fecd4171363cc8286394c81ac3af44": {
+      "name": "eiger3d.h5",
+      "bytes": 2432
+    },
+    "cb2bd8513194f3c2c9a1e51a16233f1cbda88e3b1349a0de5ac2c271d19b6cfe": {
+      "name": "eiger2d.h5",
+      "bytes": 2432
+    }
+  },
+  "reference_import_errors": [],
+  "reference_tests": {
+    "run": 4,
+    "failures": [],
+    "errors": [],
+    "skipped": []
+  },
+  "environment": {
+    "python": "3.13.5 (main, Jun 12 2025, 12:22:43) [Clang 20.1.4 ]",
+    "packages": {
+      "fabio": "2026.6.0",
+      "numpy": "2.5.4",
+      "h5py": "3.15.1",
+      "hdf5plugin": "6.0.0",
+      "Pillow": "13.0.0",
+      "glymur": "0.14.8"
+    }
+  },
+  "probe_sha256": "37a7bc79e66e7a0896da9aa94ad86e20cb69c31dcdaadb8089181c2e0664a2c8",
+  "runtime_capabilities": {
+    "adapters": [
+      "npy",
+      "dtrek",
+      "adsc",
+      "mask",
+      "hipic",
+      "pnm",
+      "spreadsheet",
+      "raw",
+      "edf",
+      "cbf",
+      "cbf64",
+      "tiff"
+    ],
+    "features": [
+      "native",
+      "edf",
+      "cbf",
+      "tiff",
+      "wrappers"
+    ],
+    "known_readers": {
+      "HiPiCimage": "native",
+      "adscimage": "native",
+      "binaryimage": "native",
+      "cbfimage": "cbf",
+      "dtrekimage": "native",
+      "edfimage": "edf",
+      "eigerimage": "hdf5",
+      "fit2dmaskimage": "native",
+      "fit2dspreadsheetimage": "native",
+      "hdf5image": "hdf5",
+      "lambdaimage": "hdf5",
+      "limaimage": "hdf5",
+      "marccdimage": "tiff",
+      "numpyimage": "native",
+      "pilatusimage": "tiff",
+      "pnmimage": "native",
+      "tifimage": "tiff"
+    }
+  },
+  "reference_filters": "bundled",
+  "rust_sources_sha256": {
+    "src/binary.rs": "cf61d4961651d413a2be8e6e51604c372d42f94d3f2cda24a2a234da489b6c06",
+    "src/cbf.rs": "d9ecb272d04785e3588347ca9c328e33ac7776f66373dc36fa97b2e0fb84bc2c",
+    "src/edf.rs": "51864575bf6ef80be6ab881824c64fa948519312225fee9df106225bb7118fb0",
+    "src/hdf5/cache.rs": "2b2927c6cc7bcf4d8daae4add9a72c9fa2414b93dd51950cffb634beaf45c050",
+    "src/hdf5/raw.rs": "aa1c6fa0a31303cc769214393039fec9975bff9c1e1d54eca59808e98d3927fc",
+    "src/hdf5/sources.rs": "d4bb835a72fe113d7f36b7706dd67e36ae4a479960304a57543d8f5498ae2e44",
+    "src/hdf5/typed.rs": "300d944ecd7411c2c7aac0ad0d12aa52ca1dffa5ec18c332ef7efd9c28dc6c04",
+    "src/hdf5.rs": "d768ecc098dffe4d8033fa6ab34e4e4744fa0cc041ed1e3d32be0d93921707c9",
+    "src/lib.rs": "582cb38de05a43704c9118b8a4451f5edf57332a3ebb7435dc7e3cafa5662cb8",
+    "src/native.rs": "a24c09a84c0350eb72e44d7ab34c610b8ad9e6c7cf99d999f1dc337ad534d831",
+    "src/pixels.rs": "748a4170f55dde42628d00d3f42559d6a98d56dd3f050c82e5f217fa6fe5e464",
+    "src/source.rs": "956a62bf69093aa2f9544bc1476b1f03cd28548320353db96ae9987eb0853a02",
+    "src/tiff.rs": "961708fa419e2db502a6092213aa64d2916df24123151b62a11e15991a053267",
+    "src/wrapped.rs": "453c3cf7169947e1f5ddb9c41c3b29d094b0ff918fb72d26b9402dfb7049c1f2"
+  },
+  "reference_codec_sources": {
+    "edfimage": {
+      "sha256": "48c646050b3f43d63e15862e6ab8ae73e683b2fafe3e7dd06aa4e905dff7cf34",
+      "matches_pinned_source": true
+    },
+    "dtrekimage": {
+      "sha256": "e97b9bbb41c32d07f6eec661b9cd7dd6a9733f483bf4b8cd2351dd4c5aed899f",
+      "matches_pinned_source": true
+    },
+    "tifimage": {
+      "sha256": "7a9ec6f5dd9e0cd80b211ad4d2a430aa2ee6312677e90bcd1ecb5ebca4df6082",
+      "matches_pinned_source": true
+    },
+    "marccdimage": {
+      "sha256": "a0c3c3a9278fd12d1312437002b04b21fd8f0fec2f2f2946e1243caa0fefd0ff",
+      "matches_pinned_source": true
+    },
+    "mar345image": {
+      "sha256": "307c02f85e79fa07a2706c64b961854aa85e67f32921cf68de2edabfdc15ebd7",
+      "matches_pinned_source": true
+    },
+    "fit2dmaskimage": {
+      "sha256": "a20d1dcb217806eaf0a4944c8322f3f0a92a4c8ecdf4004fcef8e8c5710d41d4",
+      "matches_pinned_source": true
+    },
+    "brukerimage": {
+      "sha256": "561533d729aa6a42207aef1f572897cb14fe0de5e27e5147eec5d9f49b97f74e",
+      "matches_pinned_source": true
+    },
+    "bruker100image": {
+      "sha256": "a4848009ea17fc4c08a1ea9b2b834813cb9ad965674769c11b29659b535c7680",
+      "matches_pinned_source": true
+    },
+    "pnmimage": {
+      "sha256": "bbc827b5853338841413b7b39525fa30b8aa96bac3e768c1fc1ca3607f0b80f0",
+      "matches_pinned_source": true
+    },
+    "GEimage": {
+      "sha256": "cadaf3e4de69901e819901248f02cb3c48259ce1dc4c8d440b9e5fc9c53df943",
+      "matches_pinned_source": true
+    },
+    "OXDimage": {
+      "sha256": "0e33333333adcf400d190e7186d1e6a567f94ccfd04aa6da0de5e29222ce10aa",
+      "matches_pinned_source": true
+    },
+    "dm3image": {
+      "sha256": "0f353268f46abf47735cc3e9157023b7297e4c8ce9d7f9401dc056e935aedf42",
+      "matches_pinned_source": true
+    },
+    "HiPiCimage": {
+      "sha256": "b7d818e95d7a29b7a01cab00c8f1721dd1d8b66dc225c98df458c7cddcac6e61",
+      "matches_pinned_source": true
+    },
+    "pilatusimage": {
+      "sha256": "080c78fd0a418ca83210b2bf756672a217076fb208882d4b3c2b64c980ec2e5d",
+      "matches_pinned_source": true
+    },
+    "fit2dspreadsheetimage": {
+      "sha256": "940c590186b18046c5ff530cfaea0a113d8918262da7e427c8358f9b3773ceaa",
+      "matches_pinned_source": true
+    },
+    "kcdimage": {
+      "sha256": "b105661cfa4a646df8b0f12952f8f41eb8b43f891718f7d606edbf499d20d373",
+      "matches_pinned_source": true
+    },
+    "cbfimage": {
+      "sha256": "0161b83dce84114421767969ccfef6ae8d51bf90739ab84cc5cf390da1e844d3",
+      "matches_pinned_source": true
+    },
+    "xsdimage": {
+      "sha256": "08f989744f3560210c3a568dd886731a700717c9689e2de38a4e306eb6104893",
+      "matches_pinned_source": true
+    },
+    "binaryimage": {
+      "sha256": "71a18c144dccd3ef8a5b69b304110802050b8f80160a8cee1c481889632b2d28",
+      "matches_pinned_source": true
+    },
+    "pixiimage": {
+      "sha256": "87066c155502ed24f8ad091e54ec8b7eb8e2e93fa5c99edfd90cecbaedd0df0f",
+      "matches_pinned_source": true
+    },
+    "raxisimage": {
+      "sha256": "7759d2273a1885b4470a984d46a05c954442d0a57879afb8d01f6c7e838317c8",
+      "matches_pinned_source": true
+    },
+    "numpyimage": {
+      "sha256": "fea03f10ef6b0857bd9d9fbec5f81bdbb392cd6b66650be1ca31b34e567cc0f8",
+      "matches_pinned_source": true
+    },
+    "eigerimage": {
+      "sha256": "1e5fd47a1bc5344a714f71cb687de5bb168ccacbc9746cf680d1a3c0b7d903cf",
+      "matches_pinned_source": true
+    },
+    "hdf5image": {
+      "sha256": "ea40ca15d8737d305e2f1c768b303a29e2333c0bff20a2199639a3e8cf105a7c",
+      "matches_pinned_source": true
+    },
+    "fit2dimage": {
+      "sha256": "71b5abd9d24a29c0d57c1628fd25db092a053a650c9d0e56cc260c3c76a537a5",
+      "matches_pinned_source": true
+    },
+    "speimage": {
+      "sha256": "062ccda1e37885170fc1b8a715508dae09f2f755e805119f34ae472dea82526b",
+      "matches_pinned_source": true
+    },
+    "jpegimage": {
+      "sha256": "740b6ca95d1005b1a142550e50b59bd1d0fb72b90ea0fcedebba28280e1adba2",
+      "matches_pinned_source": true
+    },
+    "jpeg2kimage": {
+      "sha256": "afe077151f61ac4117fa675a279ada29895e4c6d9a234ff43c46fcae2c6b219a",
+      "matches_pinned_source": true
+    },
+    "mpaimage": {
+      "sha256": "55d9c6a726960fbd1ac090b8754b8143a22ba002b4fccf56e06bf076b36243ee",
+      "matches_pinned_source": true
+    },
+    "mrcimage": {
+      "sha256": "9c2c5c7a0eb954930ba6d8e81d7983ac1f9b583fa95ed1b6f2e241439a0ce88f",
+      "matches_pinned_source": true
+    },
+    "esperantoimage": {
+      "sha256": "1417a9cd2b0efaf00e798b39f8d57fb5a75be1b74cc57bde266fa42596d2d33e",
+      "matches_pinned_source": true
+    },
+    "limaimage": {
+      "sha256": "c6b4e25e8fca1b55ef45e722df60a46b2a4d27b06b646b3296959849a15ede8e",
+      "matches_pinned_source": true
+    },
+    "lambdaimage": {
+      "sha256": "cb8dd699dc5baa825c04ce5735392a85b7de4bd5536c565fcb2ca376a32d0cd0",
+      "matches_pinned_source": true
+    },
+    "adscimage": {
+      "sha256": "f51b08ab8d75afdd5e107d2fdb1d2e06ce50f282be5e6d40e6b05826be311ac4",
+      "matches_pinned_source": true
+    },
+    "sparseimage": {
+      "sha256": "c5d6ca99bfe4f76bdc21b8020183e3b1fbd401b6d2b99eeb500fd62df81651fa",
+      "matches_pinned_source": true
+    },
+    "xcaliburimage": {
+      "sha256": "f8bf057585d3ae26bde5139ea0bb5ae4b594e8b3d729e35fff0e4eec87dfd611",
+      "matches_pinned_source": true
+    }
+  },
+  "aliases": {
+    "adscimage": "dtrekimage"
+  },
+  "summary": {
+    "feature_disabled": 6
+  },
+  "unexercised_codecs": [
+    "GEimage",
+    "HiPiCimage",
+    "OXDimage",
+    "binaryimage",
+    "bruker100image",
+    "brukerimage",
+    "cbfimage",
+    "dm3image",
+    "dtrekimage",
+    "edfimage",
+    "eigerimage",
+    "esperantoimage",
+    "fit2dimage",
+    "fit2dmaskimage",
+    "fit2dspreadsheetimage",
+    "hdf5image",
+    "jpeg2kimage",
+    "jpegimage",
+    "kcdimage",
+    "lambdaimage",
+    "limaimage",
+    "mar345image",
+    "marccdimage",
+    "mpaimage",
+    "mrcimage",
+    "numpyimage",
+    "pilatusimage",
+    "pixiimage",
+    "pnmimage",
+    "raxisimage",
+    "sparseimage",
+    "speimage",
+    "tifimage",
+    "xcaliburimage",
+    "xsdimage"
+  ],
+  "full_reading_parity": false,
+  "download_base": "https://www.silx.org/pub/fabio/testimages",
+  "download_hashes": {},
+  "probe_unchanged_during_run": true,
+  "sources_unchanged_during_run": true
+}

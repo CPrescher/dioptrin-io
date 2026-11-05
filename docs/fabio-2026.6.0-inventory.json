@@ -23,7 +23,7 @@
     "autodetection": "pending; current backends are explicitly selected by caller",
     "orientation": "return stored rows/columns and metadata; consumer transformations are explicit",
     "source_mutation": "immutable snapshots check normal filesystem changes; no adversarial metadata-preserving writes or live refresh",
-    "header_coverage": "raw EDF/CBF/native headers, parsed native fields and typed TIFF tags; HDF5 finite scalar API only; complete semantic detector header maps pending"
+    "header_coverage": "raw EDF/CBF/native headers, parsed native fields and typed TIFF tags; typed HDF5 shape/dtype/endian/filter/fill/source metadata and selected discovery fields; arbitrary attributes and complete semantic detector header maps pending"
   },
   "formats": [
     {
@@ -95,8 +95,11 @@
       "subformats_and_types": "MAR CCD/Mosaic TIFF pixels plus binary acquisition header",
       "compression": "TIFF codecs",
       "stack": "inherits TIFF pages",
-      "implementation": "pending detector-specific header parser; generic TIFF pixels only, not validated with MAR files",
-      "validation": [],
+      "implementation": "partial: same upstream MAR CCD TIFF pixel counts and raw typed tags validated through TIFF reader; binary acquisition-header interpretation pending (no full detector-format parity claim)",
+      "validation": [
+        "docs/fabio-parity/2026-11-05-hdf5.json",
+        "examples/parity_probe.rs"
+      ],
       "parity_verified": false
     },
     {
@@ -261,8 +264,11 @@
       "subformats_and_types": "Pilatus TIFF + image-description detector header",
       "compression": "TIFF codecs",
       "stack": "inherits TIFF pages",
-      "implementation": "pending detector-specific header parser; generic TIFF headers retained but no Pilatus fixture",
-      "validation": [],
+      "implementation": "partial: same upstream Pilatus TIFF pixel counts and raw typed tags validated through TIFF reader; image-description detector-header interpretation pending (no full detector-format parity claim)",
+      "validation": [
+        "docs/fabio-parity/2026-11-05-hdf5.json",
+        "examples/parity_probe.rs"
+      ],
       "parity_verified": false
     },
     {
@@ -414,12 +420,15 @@
       "subformats_and_types": "Eiger/Dectris HDF5; direct dataset, grouped data_NNNNNN, master/external links; detector metadata",
       "compression": "dataset HDF5 filter pipeline (Bitshuffle/LZ4, gzip etc.)",
       "stack": "dataset(s) mapped to frame sequence",
-      "implementation": "partial: explicitly named self-contained 3D u16/u32 dataset; full-file Eiger counts validated. Master discovery/link sequences/metadata/live acquisition pending",
+      "implementation": "partial: typed Eiger discovery handles entry/data, grouped data_N and legacy entry/data_N sequences; explicit FollowSnapshot policy tracks every external/intermediate file, fails on missing sources, preserves per-part types/shapes; VDS and complete detector metadata/live acquisition pending; original raw u16/u32 benchmark retained",
       "validation": [
         "tests/data/counts-bitshuffle-lz4.h5",
         "tests/reader.rs",
         "tests/raw.rs",
-        "docs/benchmarks/2026-11-05-native-eiger/count-reference.json"
+        "docs/benchmarks/2026-11-05-native-eiger/count-reference.json",
+        "tests/hdf5_typed.rs",
+        "tests/data/hdf5-native/provenance.json",
+        "docs/fabio-parity/2026-11-05-hdf5.json"
       ],
       "parity_verified": false
     },
@@ -434,11 +443,14 @@
       "subformats_and_types": "explicit file::dataset HDF5 image or stack, nested frame selection",
       "compression": "native HDF5 filters",
       "stack": "2D/3D datasets",
-      "implementation": "partial: explicit 3D u16/u32 dataset; 2D/signed/float/generic headers pending. VDS rejected; raw snapshot also rejects indirect/missing/partial chunks",
+      "implementation": "partial: typed snapshots read explicit 2D/3D images/stacks with ten standard integer/IEEE types, both byte orders, group/data selection, native lossless filters, declared fill and source manifests; complex/float16/custom precision, VDS/raw external storage, arbitrary attributes and live refresh pending",
       "validation": [
         "tests/reader.rs",
         "tests/raw.rs",
-        "tests/cache.rs"
+        "tests/cache.rs",
+        "tests/hdf5_typed.rs",
+        "tests/data/hdf5-native/provenance.json",
+        "docs/fabio-parity/2026-11-05-hdf5.json"
       ],
       "parity_verified": false
     },
@@ -567,8 +579,12 @@
       "subformats_and_types": "LImA HDF5 creator/default path discovery and acquisition metadata",
       "compression": "HDF5 filters",
       "stack": "3D detector dataset",
-      "implementation": "pending discovery/metadata fixtures; explicit compatible dataset can use general HDF5 API",
-      "validation": [],
+      "implementation": "partial: native default-entry/measurement/data discovery, detector-name fields, typed 2D/3D dataset reading and explicit external-source snapshots; full acquisition metadata and live acquisition pending",
+      "validation": [
+        "tests/hdf5_typed.rs",
+        "tests/data/hdf5-native/provenance.json",
+        "docs/fabio-parity/2026-11-05-hdf5.json"
+      ],
       "parity_verified": false
     },
     {
@@ -584,8 +600,12 @@
       "subformats_and_types": "Lambda HDF5/NeXus detector-description/path convention",
       "compression": "HDF5 filters",
       "stack": "3D detector dataset",
-      "implementation": "pending discovery/metadata fixtures; explicit compatible dataset can use general HDF5 API",
-      "validation": [],
+      "implementation": "partial: native detector-description/local-name/path discovery and typed samples; same upstream module files read successfully; VDS master mappings/source relocation and complete NeXus metadata remain pending",
+      "validation": [
+        "tests/hdf5_typed.rs",
+        "tests/data/hdf5-native/provenance.json",
+        "docs/fabio-parity/2026-11-05-hdf5.json"
+      ],
       "parity_verified": false
     },
     {
