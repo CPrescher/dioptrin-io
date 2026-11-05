@@ -97,7 +97,10 @@ fn tiff_preserves_color_planes_packed_values_float16_and_group4() {
         }
     }
     for name in ["palette.tif", "white-float.tif"] {
-        assert!(Reader::open(fixture(name), Limits::default()).is_err());
+        let mut reader = Reader::open(fixture(name), Limits::default()).unwrap();
+        let mut buffer = FrameBuffer::default();
+        reader.read_frame_into(0, &mut buffer).unwrap();
+        check(name, buffer.pixels().unwrap());
     }
     // Only primary IFDs are frames. SubIFD pointers stay explicit source metadata.
     let reader = Reader::open(fixture("subifd.tif"), Limits::default()).unwrap();

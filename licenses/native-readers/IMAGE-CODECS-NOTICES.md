@@ -18,3 +18,8 @@ The `tiff` feature adds MIT `fax` 0.2.7 and `zune-jpeg` 0.5.15 / `zune-core`
 existing MIT notice. None of these optional runtime codecs requires GPL/LGPL.
 These notices must accompany redistributed binaries as required by their
 respective licenses. Codec build tools are not runtime file readers.
+
+The optional TIFF consumer view follows Pillow 13.0.0's display conversion
+semantics (8-bit CMYK, luminance and associated-alpha handling). Its HPND
+license/copyright notice is retained as Pillow-13.0.0-LICENSE.txt. These
+explicit consumer operations never run as part of stored-count decoding.

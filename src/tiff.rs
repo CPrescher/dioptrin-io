@@ -1,12 +1,17 @@
 //! Count-preserving TIFF/BigTIFF detector pages using the MIT `tiff` crate.
 //!
 //! Stored row order, scalar sample bits and Orientation are retained. Supported
-//! integer WhiteIsZero inversions are exactly undone, packed gray samples are
+//! WhiteIsZero samples bypass the backend display inversion, packed gray samples are
 //! unpacked without intensity scaling, and color planes are interleaved.
 //! Float16 source values widen exactly to f32, with the source bit width retained.
-//! Palette and unsupported photometrics fail explicitly. Tags remain
+//! Palettes retain raw indices and ColorMap; CFA retains its scalar plane. Tags remain
 //! typed values, including private tags understood by the backend's value parser.
 use crate::{PixelBuffer, PixelType, source::Snapshot};
+mod ifd_view;
+use ifd_view::{Admission, FileView, OriginalPhoto};
+pub mod view;
+#[cfg(feature = "jpeg")]
+mod view_jpeg;
 use std::{
     collections::BTreeMap,
     fmt,
@@ -55,6 +60,17 @@ impl Default for Limits {
     }
 }
 
+/// Original nonstructural metadata that cannot be decoded as declared. No
+/// offset/text repair is attempted; source descriptor and bytes remain visible.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct OpaqueTag {
+    pub field_type: u16,
+    pub count: u64,
+    pub ifd_entry: Vec<u8>,
+    pub value_bytes: Vec<u8>,
+    pub reason: String,
+}
+
 /// Original page metadata. Height and width refer to stored rows/columns.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Metadata {
@@ -74,6 +90,7 @@ pub struct Metadata {
     pub compression: u16,
     /// Typed IFD tags, keyed by original numeric tag ID.
     pub tags: BTreeMap<u16, TagValue>,
+    pub opaque_tags: BTreeMap<u16, OpaqueTag>,
 }
 
 /// Worker-owned reusable native pixels, inaccessible after a failed read.
@@ -108,10 +125,12 @@ impl FrameBuffer {
 /// Immutable TIFF page index and one decoding handle. Use one per worker.
 /// Sources must remain unchanged; ordinary metadata changes fail closed.
 pub struct Reader {
-    decoder: Decoder<BufReader<File>>,
+    decoder: Decoder<BufReader<FileView>>,
     identity_handle: File,
     snapshot: Snapshot,
     pages: Vec<Metadata>,
+    #[cfg(feature = "jpeg")]
+    intermediate_bytes: usize,
 }
 impl Reader {
     /// Validate/index all primary IFD pages without reading detector samples.
@@ -138,14 +157,39 @@ impl Reader {
         native.intermediate_buffer_size = limits.intermediate_bytes;
         // Decoder::new initially uses the upstream defaults while parsing the
         // first IFD (1 MiB per tag); our tighter limits apply immediately after.
+        let Admission {
+            file,
+            photos,
+            mut opaque,
+            retained,
+        } = Admission::open(file, limits)?;
         let mut decoder = Decoder::new(BufReader::new(file))?.with_limits(native);
         let mut pages = Vec::new();
-        let mut metadata_bytes = 0_usize;
+        let mut metadata_bytes = retained;
         loop {
             if pages.len() >= limits.frames {
                 return Err(Error("TIFF exceeds frame limit".into()));
             }
-            let page = metadata(&mut decoder, limits, &mut metadata_bytes)?;
+            let ifd = decoder
+                .ifd_pointer()
+                .ok_or_else(|| Error("missing TIFF primary IFD pointer".into()))?
+                .0;
+            let original = photos.get(&ifd);
+            let page = metadata(
+                &mut decoder,
+                limits,
+                &mut metadata_bytes,
+                original,
+                opaque.remove(&ifd).unwrap_or_default(),
+            )?;
+            let (offset_tag, count_tag) = if decoder.get_chunk_type() == ChunkType::Tile {
+                (Tag::TileOffsets, Tag::TileByteCounts)
+            } else {
+                (Tag::StripOffsets, Tag::StripByteCounts)
+            };
+            let offsets = decoder.get_tag(offset_tag)?.into_u64_vec()?;
+            let lengths = decoder.get_tag(count_tag)?.into_u64_vec()?;
+            decoder.inner().get_ref().check_chunks(&offsets, &lengths)?;
             if page.compression == 7 {
                 validate_jpeg_chunks(&mut decoder, &page, &snapshot, limits)?;
             }
@@ -161,6 +205,8 @@ impl Reader {
             identity_handle,
             snapshot,
             pages,
+            #[cfg(feature = "jpeg")]
+            intermediate_bytes: limits.intermediate_bytes,
         })
     }
     #[must_use]
@@ -201,9 +247,6 @@ impl Reader {
             return Err(Error(
                 "TIFF backend returned only a subset of color planes".into(),
             ));
-        }
-        if page.photometric_interpretation == 0 {
-            undo_white(&mut buffer.pixels)?;
         }
         if page.bits_per_sample < 8 {
             let PixelBuffer::U8(packed) = &buffer.pixels else {
@@ -255,9 +298,11 @@ impl Reader {
 }
 
 fn metadata(
-    decoder: &mut Decoder<BufReader<File>>,
+    decoder: &mut Decoder<BufReader<FileView>>,
     limits: Limits,
     total: &mut usize,
+    original: Option<&OriginalPhoto>,
+    opaque_tags: BTreeMap<u16, OpaqueTag>,
 ) -> Result<Metadata, Error> {
     let (w, h) = decoder.dimensions()?;
     let color = decoder.colortype()?;
@@ -288,9 +333,15 @@ fn metadata(
     let samples = decoder
         .find_tag_unsigned::<u16>(Tag::SamplesPerPixel)?
         .unwrap_or(1);
-    let photo = decoder
+    let backend_photo = decoder
         .find_tag_unsigned::<u16>(Tag::PhotometricInterpretation)?
         .unwrap_or(1);
+    if backend_photo == 0 {
+        return Err(Error(
+            "unsupported TIFF WhiteIsZero tag representation".into(),
+        ));
+    }
+    let photo = original.map_or(backend_photo, |p| p.value);
     let planar = decoder
         .find_tag_unsigned::<u16>(Tag::PlanarConfiguration)?
         .unwrap_or(1);
@@ -300,14 +351,19 @@ fn metadata(
     if usize::from(samples) != channels
         || channels == 0
         || ![1, 2].contains(&planar)
-        || ![0, 1, 2, 5, 6].contains(&photo)
+        || ![0, 1, 2, 3, 5, 6, 32803].contains(&photo)
     {
         return Err(Error(
             "unsupported TIFF scalar/channel/photometric layout".into(),
         ));
     }
-    if photo == 0 && (channels != 1 || format != 1) {
-        return Err(Error("WhiteIsZero requires unsigned integer source samples; floating inversion is not lossless".into()));
+    if photo == 32803 && (channels != 1 || format != 1 || ![8, 16].contains(&bits)) {
+        return Err(Error(
+            "CFA TIFF requires a single native unsigned8/16 sample plane".into(),
+        ));
+    }
+    if photo == 3 && (channels != 1 || format != 1 || ![1, 2, 4, 8, 16].contains(&bits)) {
+        return Err(Error("unsupported TIFF palette index layout".into()));
     }
     if fill_order != 1 {
         return Err(Error(
@@ -384,10 +440,28 @@ fn metadata(
             return Err(Error("TIFF exceeds total metadata budget".into()));
         }
     }
-    let tags: BTreeMap<_, _> = ifd
+    let mut tags: BTreeMap<_, _> = ifd
         .tag_iter()
         .map(|r| r.map(|(tag, value)| (tag.to_u16(), value)))
         .collect::<Result<_, _>>()?;
+    if let Some(original) = original {
+        tags.insert(262, original.typed.clone());
+    }
+    for tag in opaque_tags.keys() {
+        tags.remove(tag);
+    }
+    if photo == 3 {
+        let colors = decoder.get_tag(Tag::ColorMap)?.into_u16_vec()?;
+        if colors.len()
+            != 3usize
+                .checked_shl(u32::from(bits))
+                .ok_or_else(|| Error("TIFF palette size overflow".into()))?
+        {
+            return Err(Error(
+                "TIFF ColorMap length disagrees with index precision".into(),
+            ));
+        }
+    }
     let orientation = decoder
         .find_tag_unsigned::<u16>(Tag::Orientation)?
         .unwrap_or(1);
@@ -406,6 +480,7 @@ fn metadata(
         orientation,
         compression,
         tags,
+        opaque_tags,
     })
 }
 // TIFF's JPEG backend reads only the bytes required by its IFD layout. Its
@@ -413,7 +488,7 @@ fn metadata(
 // silently discard two thirds of the component samples. Admit every encoded
 // chunk against that layout before native pixel decoding.
 fn validate_jpeg_chunks(
-    decoder: &mut Decoder<BufReader<File>>,
+    decoder: &mut Decoder<BufReader<FileView>>,
     page: &Metadata,
     snapshot: &Snapshot,
     limits: Limits,
@@ -590,20 +665,6 @@ fn from_native(pixels: DecodingResult) -> Result<PixelBuffer, Error> {
     })
 }
 
-fn undo_white(pixels: &mut PixelBuffer) -> Result<(), Error> {
-    match pixels {
-        PixelBuffer::U8(v) => v.iter_mut().for_each(|x| *x = !*x),
-        PixelBuffer::U16(v) => v.iter_mut().for_each(|x| *x = !*x),
-        PixelBuffer::U32(v) => v.iter_mut().for_each(|x| *x = !*x),
-        PixelBuffer::U64(v) => v.iter_mut().for_each(|x| *x = !*x),
-        _ => {
-            return Err(Error(
-                "TIFF WhiteIsZero inversion is not losslessly reversible for this type".into(),
-            ));
-        }
-    }
-    Ok(())
-}
 fn interleave(pixels: &mut PixelBuffer, plane: usize, channels: usize) -> Result<(), Error> {
     macro_rules! rearrange {($($v:ident);*)=>{match pixels {$(PixelBuffer::$v(v)=>{
         if v.len()!=plane*channels {return Err(Error("TIFF planar sample count mismatch".into()));}

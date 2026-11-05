@@ -12,8 +12,8 @@ Dependencies remain optional; there is no Python runtime bridge.
 The `tiff` feature reuses `tiff` 0.11.3 for TIFF/BigTIFF primary IFD pages,
 strips/tiles, uniform integer/floating samples, contiguous/planar color, packed
 1/2/4-bit MSB-first grayscale, Group4, PackBits, LZW and Deflate. Planar buffers
-are interleaved; rows and channel values are retained. Integer WhiteIsZero
-backend inversions are exactly undone. Packed values are unpacked to their
+are interleaved; rows and channel values are retained. WhiteIsZero samples
+bypass the backend display inversion, including floating and signed samples. Packed values are unpacked to their
 native integer values, without full-range scaling. `bits_per_sample`,
 `photometric_interpretation`, `planar_configuration`, typed tags, source endian,
 orientation and compression remain explicit.
@@ -37,9 +37,23 @@ identifies these channels. Native JPEG RGB/grayscale fixture values differ by at
 count from the independent libjpeg-turbo reference because IDCT rounding differs.
 That test is explicitly a bounded lossy comparison, not exact FabIO parity.
 Subsampled TIFF YCbCr currently fails in the upstream backend and remains a gap.
-Old-style JPEG, CCITT RLE/Group3, palettes, mixed scalar types/bit widths, packed
-color and non-MSB packed FillOrder remain unsupported. Floating/signed
-WhiteIsZero is rejected because reversing the backend transform is not exact.
+Old-style JPEG, CCITT RLE/Group3, mixed scalar types/bit widths, packed
+color and non-MSB packed FillOrder remain unsupported.
+
+Palette TIFF now exposes original integer indices, source precision and exact
+ColorMap tag values. CFA photometric 32803 exposes its single unsigned 8/16 plane,
+retaining CFA tags without demosaicing. A bounded read-only IFD adapter presents
+only the photometric interpretation as gray to the mature backend; sample bytes
+are decoded by the same codecs and original source tags are restored in metadata.
+Primary classic/BigTIFF IFD chains, metadata sizes, cycles, overlaps and aliases
+are checked before decoding. Pixel windows or out-of-line metadata referring to
+adapted bytes are rejected, preventing the adapter from substituting source data.
+
+A narrowly recognized malformed ImageDescription270 (ASCII/count1 with a
+non-ASCII inline byte) is exposed through `Metadata::opaque_tags`, retaining its
+original type, count, entire IFD record, literal value byte and reason. Typed
+`tags` omits that entry. The adapter presents undefined bytes only internally;
+it never treats0xAF as offset 175 or invents text. Structural tags remain strict.
 
 Only primary IFDs are frames. SubIFD pointer tags remain visible, but SubIFD
 pixels are not enumerated or decoded. The mature backend has no public API for
@@ -54,6 +68,55 @@ all 125 published fields as typed native integers, arrays or bytes, including
 reserved bytes. Header endianness is honored independently from TIFF sample
 endianness; goniostat values and correction flags remain unapplied. Source/header
 snapshots and joint TIFF/semantic metadata admission are checked.
+
+## Explicit TIFF consumer views
+
+`tiff::view::convert(metadata, frame, Policy, max_output_bytes)` consumes an
+already-read source frame without modifying it. The separate `Image` exposes
+`Pixels::Scalar(PixelBuffer)` or view-only `Pixels::Bool(Vec<bool>)`, with a
+`Provenance` record for source shape/type/bits/photometric/planar/orientation/
+compression/lossy status, output shape/type, policy and ordered operations.
+These are transformed/display results, never relabeled native detector counts.
+Orientation, geometry, calibration and masks are not applied.
+
+- `Policy::Pillow13` reproduces the pinned Pillow fallback's validated unsigned
+  8/16-bit and float32 scalar representations, packed 2/4 full-range gray,
+  bilevel logical bool, palette RGB8 and RGB/RGBA/CMYK float32 luminance. Source
+  16-bit contiguous color first loses its low byte; CMYK uses an explicit RGB8
+  conversion, and associated-alpha 8-bit uses explicit unpremultiplication before
+  ignoring alpha. Pillow's dtype-dependent WhiteIsZero behavior is retained:
+  byte/packed values invert for display, whereas I;16/F values stay unchanged.
+  Unsupported scalar representations and associated-alpha 16-bit fail explicitly.
+- `Policy::FabioTiffIo` retains source scalar/color arrays and reproduces
+  TiffIO's palette behavior: maps containing values above 255 downscale to 8 bits,
+  but output retains the index container dtype, including uint16.
+- `Policy::PaletteRgb16` performs literal ColorMap lookup with 16-bit channels.
+
+With the optional `jpeg` feature, `tiff::view::read_pillow13(&mut reader, index,
+max_output_bytes)` reads a consumer view. Contiguous JPEG gray/RGB/YCbCr pages
+render original bounded JPEG chunks through the existing libjpeg-turbo backend
+before luminance conversion. This preserves Pillow's JPEG colorspace and IDCT
+rounding, including edge tiles, while the raw reader continues exposing native
+photometric samples through zune. Provenance records `JpegRgbDecode`. There is
+no retry after a decoding failure. Encoded and rendered chunk scratch each obey
+the reader intermediate limit; view output has its separate explicit limit.
+
+Pillow13 has a proven planar 16-bit color layout defect: it alternates high and low
+bytes rather than reducing each 16-bit sample correctly. The Pillow policy rejects
+these cases; independent source counts match tifffile and contig/planar native
+samples agree. No compatibility mode reproduces that defect. Mode1 NumPy bool
+arrays can physically store true as 0xFF; view comparisons canonicalize logical
+bool values to 0/1 while preserving raw source signatures separately.
+
+The scoped `scripts/compare_tiff_views.py` / `examples/tiff_view_probe.rs` report
+in `docs/tiff-views-fabio-2026.6.0.json` records raw/source and explicit view
+comparisons separately. Of 55 unique files selected from the previous TIFF
+report, 43 explicit views match, 2 are proven reference layout defects, 9 retain
+explicit unsupported/corrupt-layout errors, and 1 generated temporary source is
+unavailable. The 10 nondefect display differences are closed. Palette, CFA and
+opaque-description cases additionally gain source-preserving decoding. TIFF
+JPEG raw IDCT differences against an independent decoder remain qualified;
+its explicit libjpeg view matches exactly. No performance claim is made.
 
 ## JPEG
 

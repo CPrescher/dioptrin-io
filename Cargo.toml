@@ -75,3 +75,7 @@ required-features = ["tiff", "jpeg", "jpeg2000"]
 [[example]]
 name = "record_probe"
 required-features = ["fit2d", "kcd", "mpa"]
+
+[[example]]
+name = "tiff_view_probe"
+required-features = ["tiff", "jpeg"]

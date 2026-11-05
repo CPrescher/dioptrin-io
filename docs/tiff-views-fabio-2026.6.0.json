@@ -1,0 +1,2472 @@
+{
+  "reference": {
+    "fabio": "2026.6.0",
+    "Pillow": "13.0.0",
+    "tifffile": "2026.10.15",
+    "imagecodecs": "2026.10.10",
+    "source_commit": "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece",
+    "date": "2026-11-05",
+    "selection_source": "docs/fabio-parity/2026-11-05-parallel-readers.json"
+  },
+  "contract": "raw source and explicit transformed views are separate; bool view hashes canonicalize logical0/1 only",
+  "results": [
+    {
+      "name": "fit2d.tif",
+      "source_sha256": "1c5d10c6020f7a5e7d5f6e0742275d2bccdf662cf24e88efcf3ab5d9fc1bb94b",
+      "previous_status": "native_rejected",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 16,
+            "dtype": "U16",
+            "hash": "cfaec3213d6b1d7cc0346873ae348141a16a72e54fcaa83e8660cf559b41ad33",
+            "photo": 0,
+            "planar": 1,
+            "shape": [
+              28,
+              25
+            ]
+          },
+          "reference": {
+            "shape": [
+              28,
+              25
+            ],
+            "dtype": "U16",
+            "hash": "cfaec3213d6b1d7cc0346873ae348141a16a72e54fcaa83e8660cf559b41ad33"
+          },
+          "independent_source": {
+            "shape": [
+              28,
+              25
+            ],
+            "dtype": "U16",
+            "hash": "cfaec3213d6b1d7cc0346873ae348141a16a72e54fcaa83e8660cf559b41ad33"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U16",
+            "hash": "cfaec3213d6b1d7cc0346873ae348141a16a72e54fcaa83e8660cf559b41ad33",
+            "operations": [],
+            "shape": [
+              28,
+              25
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "tifimagewrite_test0000.tif",
+      "source_sha256": "ad67f23b6805f97dc8c4f3b6851c3deda0e16645aa68f3c820860f024f945e66",
+      "previous_status": "native_rejected",
+      "status": "source_unavailable"
+    },
+    {
+      "name": "frame_00017.tif",
+      "source_sha256": "4096315a6275e79eb58bebeee64b4bf88acf0ef453f79da461d9e0cd85609cc7",
+      "previous_status": "native_rejected",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 16,
+            "dtype": "U16",
+            "hash": "bbacd6e8f14018d37548b5e95465c4de4cf33dc5616c5995561f63856008cadf",
+            "photo": 32803,
+            "planar": 1,
+            "shape": [
+              2880,
+              2880
+            ]
+          },
+          "reference": {
+            "shape": [
+              2880,
+              2880
+            ],
+            "dtype": "U16",
+            "hash": "bbacd6e8f14018d37548b5e95465c4de4cf33dc5616c5995561f63856008cadf"
+          },
+          "independent_source": {
+            "shape": [
+              2880,
+              2880
+            ],
+            "dtype": "U16",
+            "hash": "bbacd6e8f14018d37548b5e95465c4de4cf33dc5616c5995561f63856008cadf"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U16",
+            "hash": "bbacd6e8f14018d37548b5e95465c4de4cf33dc5616c5995561f63856008cadf",
+            "operations": [],
+            "shape": [
+              2880,
+              2880
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "Feb09-bright-00.300s_WAXS.bz2",
+      "source_sha256": "8d3b8fa21d2acb13319f83c849aab2529b22ba0055dc6f24392243e08ca6cbf9",
+      "previous_status": "counts_match",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 16,
+            "dtype": "U16",
+            "hash": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f",
+            "photo": 1,
+            "planar": 1,
+            "shape": [
+              1042,
+              1042
+            ]
+          },
+          "reference": {
+            "shape": [
+              1042,
+              1042
+            ],
+            "dtype": "U16",
+            "hash": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f"
+          },
+          "independent_source": {
+            "shape": [
+              1042,
+              1042
+            ],
+            "dtype": "U16",
+            "hash": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U16",
+            "hash": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f",
+            "operations": [],
+            "shape": [
+              1042,
+              1042
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "Feb09-bright-00.300s_WAXS.gz",
+      "source_sha256": "c3b316575ebedda401b1b189dfac68343ee1d6eef1426a817994436297a84f40",
+      "previous_status": "counts_match",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 16,
+            "dtype": "U16",
+            "hash": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f",
+            "photo": 1,
+            "planar": 1,
+            "shape": [
+              1042,
+              1042
+            ]
+          },
+          "reference": {
+            "shape": [
+              1042,
+              1042
+            ],
+            "dtype": "U16",
+            "hash": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f"
+          },
+          "independent_source": {
+            "shape": [
+              1042,
+              1042
+            ],
+            "dtype": "U16",
+            "hash": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U16",
+            "hash": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f",
+            "operations": [],
+            "shape": [
+              1042,
+              1042
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "Feb09-bright-00.300s_WAXS",
+      "source_sha256": "89ed2cf5f3f3dd31442bd4eaa2516b0ed860fe88b868406ba7110bbcf72a2733",
+      "previous_status": "counts_match",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 16,
+            "dtype": "U16",
+            "hash": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f",
+            "photo": 1,
+            "planar": 1,
+            "shape": [
+              1042,
+              1042
+            ]
+          },
+          "reference": {
+            "shape": [
+              1042,
+              1042
+            ],
+            "dtype": "U16",
+            "hash": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f"
+          },
+          "independent_source": {
+            "shape": [
+              1042,
+              1042
+            ],
+            "dtype": "U16",
+            "hash": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U16",
+            "hash": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f",
+            "operations": [],
+            "shape": [
+              1042,
+              1042
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "oPPA_5grains_0001.tif.gz",
+      "source_sha256": "f8dde2e739995d4376ed81e120718d86374008fd93a5a99b8e9ddc97db6e24aa",
+      "previous_status": "counts_match",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 16,
+            "dtype": "U16",
+            "hash": "03e74f1cccf750ca405e64872dd00a77cf51a817108c15646c9afb265ee61821",
+            "photo": 1,
+            "planar": 1,
+            "shape": [
+              2048,
+              2048
+            ]
+          },
+          "reference": {
+            "shape": [
+              2048,
+              2048
+            ],
+            "dtype": "U16",
+            "hash": "03e74f1cccf750ca405e64872dd00a77cf51a817108c15646c9afb265ee61821"
+          },
+          "independent_source": {
+            "shape": [
+              2048,
+              2048
+            ],
+            "dtype": "U16",
+            "hash": "03e74f1cccf750ca405e64872dd00a77cf51a817108c15646c9afb265ee61821"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U16",
+            "hash": "03e74f1cccf750ca405e64872dd00a77cf51a817108c15646c9afb265ee61821",
+            "operations": [],
+            "shape": [
+              2048,
+              2048
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "oPPA_5grains_0001.tif",
+      "source_sha256": "168ebdd7fe5d436c546ca07e63af928181700eb09b2540e1c5da9a6d6fbf9830",
+      "previous_status": "counts_match",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 16,
+            "dtype": "U16",
+            "hash": "03e74f1cccf750ca405e64872dd00a77cf51a817108c15646c9afb265ee61821",
+            "photo": 1,
+            "planar": 1,
+            "shape": [
+              2048,
+              2048
+            ]
+          },
+          "reference": {
+            "shape": [
+              2048,
+              2048
+            ],
+            "dtype": "U16",
+            "hash": "03e74f1cccf750ca405e64872dd00a77cf51a817108c15646c9afb265ee61821"
+          },
+          "independent_source": {
+            "shape": [
+              2048,
+              2048
+            ],
+            "dtype": "U16",
+            "hash": "03e74f1cccf750ca405e64872dd00a77cf51a817108c15646c9afb265ee61821"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U16",
+            "hash": "03e74f1cccf750ca405e64872dd00a77cf51a817108c15646c9afb265ee61821",
+            "operations": [],
+            "shape": [
+              2048,
+              2048
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "testmap1_0002.tif",
+      "source_sha256": "e0cbb15903dc2f8ada0f11ba91d837d8d55442e817fcb588119ecb30623edf52",
+      "previous_status": "counts_match",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 16,
+            "dtype": "U16",
+            "hash": "b80e0883336ba27c9ff0bf47225978192d6aa7078dd62cb1806520699d2f5ff3",
+            "photo": 1,
+            "planar": 1,
+            "shape": [
+              100,
+              120
+            ]
+          },
+          "reference": {
+            "shape": [
+              100,
+              120
+            ],
+            "dtype": "U16",
+            "hash": "b80e0883336ba27c9ff0bf47225978192d6aa7078dd62cb1806520699d2f5ff3"
+          },
+          "independent_source": {
+            "shape": [
+              100,
+              120
+            ],
+            "dtype": "U16",
+            "hash": "b80e0883336ba27c9ff0bf47225978192d6aa7078dd62cb1806520699d2f5ff3"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U16",
+            "hash": "b80e0883336ba27c9ff0bf47225978192d6aa7078dd62cb1806520699d2f5ff3",
+            "operations": [],
+            "shape": [
+              100,
+              120
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "testmap1_0002.tif.gz",
+      "source_sha256": "5f5b9ac791a6f27d0b4f504ae8c7946e0ad2d8f1e7a171b8e0101c9b3f6ae501",
+      "previous_status": "counts_match",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 16,
+            "dtype": "U16",
+            "hash": "b80e0883336ba27c9ff0bf47225978192d6aa7078dd62cb1806520699d2f5ff3",
+            "photo": 1,
+            "planar": 1,
+            "shape": [
+              100,
+              120
+            ]
+          },
+          "reference": {
+            "shape": [
+              100,
+              120
+            ],
+            "dtype": "U16",
+            "hash": "b80e0883336ba27c9ff0bf47225978192d6aa7078dd62cb1806520699d2f5ff3"
+          },
+          "independent_source": {
+            "shape": [
+              100,
+              120
+            ],
+            "dtype": "U16",
+            "hash": "b80e0883336ba27c9ff0bf47225978192d6aa7078dd62cb1806520699d2f5ff3"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U16",
+            "hash": "b80e0883336ba27c9ff0bf47225978192d6aa7078dd62cb1806520699d2f5ff3",
+            "operations": [],
+            "shape": [
+              100,
+              120
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "testmap1_0002.tif.bz2",
+      "source_sha256": "4cf4ffceb1cc52756f61bc965f1ecc5a1bfa4023cfc81bd728b04c90f45365df",
+      "previous_status": "counts_match",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 16,
+            "dtype": "U16",
+            "hash": "b80e0883336ba27c9ff0bf47225978192d6aa7078dd62cb1806520699d2f5ff3",
+            "photo": 1,
+            "planar": 1,
+            "shape": [
+              100,
+              120
+            ]
+          },
+          "reference": {
+            "shape": [
+              100,
+              120
+            ],
+            "dtype": "U16",
+            "hash": "b80e0883336ba27c9ff0bf47225978192d6aa7078dd62cb1806520699d2f5ff3"
+          },
+          "independent_source": {
+            "shape": [
+              100,
+              120
+            ],
+            "dtype": "U16",
+            "hash": "b80e0883336ba27c9ff0bf47225978192d6aa7078dd62cb1806520699d2f5ff3"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U16",
+            "hash": "b80e0883336ba27c9ff0bf47225978192d6aa7078dd62cb1806520699d2f5ff3",
+            "operations": [],
+            "shape": [
+              100,
+              120
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "a0009.tif",
+      "source_sha256": "95b318fb8c6f3ab9edd33aba8f3feb6302d266b237f81a690fa62cc06ed7bb51",
+      "previous_status": "native_rejected",
+      "reference_backend": "TiffIO",
+      "status": "native_rejected",
+      "error": "Error: Error(\"format error: file should contain either (StripByteCounts and StripOffsets) or (TileByteCounts and TileOffsets), other combination was found\")"
+    },
+    {
+      "name": "fit2d.tif.bz2",
+      "source_sha256": "88e519f9a320fc4435238b71693aa3609cda7168cdb7bc3e69f94b1c3037c538",
+      "previous_status": "native_rejected",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 16,
+            "dtype": "U16",
+            "hash": "cfaec3213d6b1d7cc0346873ae348141a16a72e54fcaa83e8660cf559b41ad33",
+            "photo": 0,
+            "planar": 1,
+            "shape": [
+              28,
+              25
+            ]
+          },
+          "reference": {
+            "shape": [
+              28,
+              25
+            ],
+            "dtype": "U16",
+            "hash": "cfaec3213d6b1d7cc0346873ae348141a16a72e54fcaa83e8660cf559b41ad33"
+          },
+          "independent_source": {
+            "shape": [
+              28,
+              25
+            ],
+            "dtype": "U16",
+            "hash": "cfaec3213d6b1d7cc0346873ae348141a16a72e54fcaa83e8660cf559b41ad33"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U16",
+            "hash": "cfaec3213d6b1d7cc0346873ae348141a16a72e54fcaa83e8660cf559b41ad33",
+            "operations": [],
+            "shape": [
+              28,
+              25
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "oPPA_5grains_0001.tif.bz2",
+      "source_sha256": "47aebffaf4807f48221dbe612bc79d604f5f727eb4f7352cbf38726e23d31e8e",
+      "previous_status": "counts_match",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 16,
+            "dtype": "U16",
+            "hash": "03e74f1cccf750ca405e64872dd00a77cf51a817108c15646c9afb265ee61821",
+            "photo": 1,
+            "planar": 1,
+            "shape": [
+              2048,
+              2048
+            ]
+          },
+          "reference": {
+            "shape": [
+              2048,
+              2048
+            ],
+            "dtype": "U16",
+            "hash": "03e74f1cccf750ca405e64872dd00a77cf51a817108c15646c9afb265ee61821"
+          },
+          "independent_source": {
+            "shape": [
+              2048,
+              2048
+            ],
+            "dtype": "U16",
+            "hash": "03e74f1cccf750ca405e64872dd00a77cf51a817108c15646c9afb265ee61821"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U16",
+            "hash": "03e74f1cccf750ca405e64872dd00a77cf51a817108c15646c9afb265ee61821",
+            "operations": [],
+            "shape": [
+              2048,
+              2048
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "pilatus2M.tif.bz2",
+      "source_sha256": "e68da2c7b85fa374af279757edf35711fca6c0e067f4408bf93d4f3d19ac5198",
+      "previous_status": "native_rejected",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 32,
+            "dtype": "F32",
+            "hash": "20727f5896488433a65d95ba0fbe96fc5653173fa5950d3894c7db24b1d881cc",
+            "photo": 0,
+            "planar": 1,
+            "shape": [
+              1679,
+              1475
+            ]
+          },
+          "reference": {
+            "shape": [
+              1679,
+              1475
+            ],
+            "dtype": "F32",
+            "hash": "20727f5896488433a65d95ba0fbe96fc5653173fa5950d3894c7db24b1d881cc"
+          },
+          "independent_source": {
+            "shape": [
+              1679,
+              1475
+            ],
+            "dtype": "F32",
+            "hash": "20727f5896488433a65d95ba0fbe96fc5653173fa5950d3894c7db24b1d881cc"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "F32",
+            "hash": "20727f5896488433a65d95ba0fbe96fc5653173fa5950d3894c7db24b1d881cc",
+            "operations": [],
+            "shape": [
+              1679,
+              1475
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "indexed_color.tif",
+      "source_sha256": "ec92935d79f92715aebba5667d4f65279aa407aaa8df8ef83dbb1808eb36f41f",
+      "previous_status": "native_rejected",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 8,
+            "dtype": "U8",
+            "hash": "da514c218b59e638bb2b7a21c659fc75b588ea9098da4fea470e0c0369e92382",
+            "photo": 3,
+            "planar": 1,
+            "shape": [
+              16,
+              16
+            ]
+          },
+          "reference": {
+            "shape": [
+              16,
+              16,
+              3
+            ],
+            "dtype": "U8",
+            "hash": "90fd560a889c85d1c86c218ec767e798d51cf88b6007323bd0020baf8210fb56"
+          },
+          "independent_source": {
+            "shape": [
+              16,
+              16
+            ],
+            "dtype": "U8",
+            "hash": "da514c218b59e638bb2b7a21c659fc75b588ea9098da4fea470e0c0369e92382"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U8",
+            "hash": "90fd560a889c85d1c86c218ec767e798d51cf88b6007323bd0020baf8210fb56",
+            "operations": [
+              "PaletteLookup",
+              "PaletteDownscale8"
+            ],
+            "shape": [
+              16,
+              16,
+              3
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "indexed_color.tif.gz",
+      "source_sha256": "3f7acaacd089ce52dec108fc727b4a677af4269b3bd86aa73b393cf17270d6ec",
+      "previous_status": "native_rejected",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 8,
+            "dtype": "U8",
+            "hash": "da514c218b59e638bb2b7a21c659fc75b588ea9098da4fea470e0c0369e92382",
+            "photo": 3,
+            "planar": 1,
+            "shape": [
+              16,
+              16
+            ]
+          },
+          "reference": {
+            "shape": [
+              16,
+              16,
+              3
+            ],
+            "dtype": "U8",
+            "hash": "90fd560a889c85d1c86c218ec767e798d51cf88b6007323bd0020baf8210fb56"
+          },
+          "independent_source": {
+            "shape": [
+              16,
+              16
+            ],
+            "dtype": "U8",
+            "hash": "da514c218b59e638bb2b7a21c659fc75b588ea9098da4fea470e0c0369e92382"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U8",
+            "hash": "90fd560a889c85d1c86c218ec767e798d51cf88b6007323bd0020baf8210fb56",
+            "operations": [
+              "PaletteLookup",
+              "PaletteDownscale8"
+            ],
+            "shape": [
+              16,
+              16,
+              3
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "indexed_color.tif.bz2",
+      "source_sha256": "f24e73fd2f31089e0fb6fdfab6fd5612f1fdc2a284a35d2745272628ba9330de",
+      "previous_status": "native_rejected",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 8,
+            "dtype": "U8",
+            "hash": "da514c218b59e638bb2b7a21c659fc75b588ea9098da4fea470e0c0369e92382",
+            "photo": 3,
+            "planar": 1,
+            "shape": [
+              16,
+              16
+            ]
+          },
+          "reference": {
+            "shape": [
+              16,
+              16,
+              3
+            ],
+            "dtype": "U8",
+            "hash": "90fd560a889c85d1c86c218ec767e798d51cf88b6007323bd0020baf8210fb56"
+          },
+          "independent_source": {
+            "shape": [
+              16,
+              16
+            ],
+            "dtype": "U8",
+            "hash": "da514c218b59e638bb2b7a21c659fc75b588ea9098da4fea470e0c0369e92382"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U8",
+            "hash": "90fd560a889c85d1c86c218ec767e798d51cf88b6007323bd0020baf8210fb56",
+            "operations": [
+              "PaletteLookup",
+              "PaletteDownscale8"
+            ],
+            "shape": [
+              16,
+              16,
+              3
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/depth/flower-rgb-contig-08.tif",
+      "source_sha256": "dd1333eb93d8e7ea614b755ca1c8909c67b4b44fc03a8cab6be5491bf4d15841",
+      "previous_status": "counts_match",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 8,
+            "dtype": "U8",
+            "hash": "fa3d5e5f75a89180afbf3e51b5b1248ae787cb4d464f9326c65b2a0fb6b28d4b",
+            "photo": 2,
+            "planar": 1,
+            "shape": [
+              43,
+              73,
+              3
+            ]
+          },
+          "reference": {
+            "shape": [
+              43,
+              73,
+              3
+            ],
+            "dtype": "U8",
+            "hash": "fa3d5e5f75a89180afbf3e51b5b1248ae787cb4d464f9326c65b2a0fb6b28d4b"
+          },
+          "independent_source": {
+            "shape": [
+              43,
+              73,
+              3
+            ],
+            "dtype": "U8",
+            "hash": "fa3d5e5f75a89180afbf3e51b5b1248ae787cb4d464f9326c65b2a0fb6b28d4b"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U8",
+            "hash": "fa3d5e5f75a89180afbf3e51b5b1248ae787cb4d464f9326c65b2a0fb6b28d4b",
+            "operations": [],
+            "shape": [
+              43,
+              73,
+              3
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/depth/flower-minisblack-32.tif",
+      "source_sha256": "6677c372a449fe0324b148385cf0ebaaf33ab4563484ae89831dfeacd80d7c93",
+      "previous_status": "counts_match",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 32,
+            "dtype": "U32",
+            "hash": "fd4693f7ad2d5e3dc65513cb41648a922e69d7fb3f735fe4605177a2fd3e088c",
+            "photo": 1,
+            "planar": 1,
+            "shape": [
+              43,
+              73
+            ]
+          },
+          "reference": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "U32",
+            "hash": "fd4693f7ad2d5e3dc65513cb41648a922e69d7fb3f735fe4605177a2fd3e088c"
+          },
+          "independent_source": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "U32",
+            "hash": "fd4693f7ad2d5e3dc65513cb41648a922e69d7fb3f735fe4605177a2fd3e088c"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U32",
+            "hash": "fd4693f7ad2d5e3dc65513cb41648a922e69d7fb3f735fe4605177a2fd3e088c",
+            "operations": [],
+            "shape": [
+              43,
+              73
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/cramps.tif",
+      "source_sha256": "d9fb9600d745cb33a82a5448ef6cf9d6933c9462b90d3887475039ae2485af40",
+      "previous_status": "counts_match",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 8,
+            "dtype": "U8",
+            "hash": "d05c2f873181618da657ab41ffab88d3e5b763e2af2b70cb1f70975bf38533b3",
+            "photo": 0,
+            "planar": 1,
+            "shape": [
+              607,
+              800
+            ]
+          },
+          "reference": {
+            "shape": [
+              607,
+              800
+            ],
+            "dtype": "U8",
+            "hash": "d05c2f873181618da657ab41ffab88d3e5b763e2af2b70cb1f70975bf38533b3"
+          },
+          "independent_source": {
+            "shape": [
+              607,
+              800
+            ],
+            "dtype": "U8",
+            "hash": "d05c2f873181618da657ab41ffab88d3e5b763e2af2b70cb1f70975bf38533b3"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U8",
+            "hash": "d05c2f873181618da657ab41ffab88d3e5b763e2af2b70cb1f70975bf38533b3",
+            "operations": [],
+            "shape": [
+              607,
+              800
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/zackthecat.tif",
+      "source_sha256": "0d31f2acb25bfbde4d79975572369c3e4bea8e978fc1935075a545e3f8321b6e",
+      "previous_status": "native_rejected",
+      "reference_backend": "PIL",
+      "status": "native_rejected",
+      "error": "Error: Error(\"unsupported TIFF detector compression 6\")"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/depth/flower-minisblack-02.tif",
+      "source_sha256": "3122afede012fa00b8cb379b2f9125a34a38188c3346ec5e18d3b4bddcbb451b",
+      "previous_status": "mismatch",
+      "reference_backend": "PIL",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 2,
+            "dtype": "U8",
+            "hash": "446eace94d232d0dec1434bf25ebd94e1f78cee5ff414ca68178629396af57ca",
+            "photo": 1,
+            "planar": 1,
+            "shape": [
+              43,
+              73
+            ]
+          },
+          "reference": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "U8",
+            "hash": "3546fab3e7c183dcc5f2df311c3703b6e1b50070b3da558be113722fcc849fcf"
+          },
+          "independent_source": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "U8",
+            "hash": "446eace94d232d0dec1434bf25ebd94e1f78cee5ff414ca68178629396af57ca"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U8",
+            "hash": "3546fab3e7c183dcc5f2df311c3703b6e1b50070b3da558be113722fcc849fcf",
+            "operations": [
+              "FullRangePackedGray"
+            ],
+            "shape": [
+              43,
+              73
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/depth/flower-rgb-planar-08.tif",
+      "source_sha256": "9fec3afeaee2a1fa931e2321f266d0c546ef3437aba343d3065bf4ea8bf1d0fa",
+      "previous_status": "mismatch",
+      "reference_backend": "PIL",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 8,
+            "dtype": "U8",
+            "hash": "fa3d5e5f75a89180afbf3e51b5b1248ae787cb4d464f9326c65b2a0fb6b28d4b",
+            "photo": 2,
+            "planar": 2,
+            "shape": [
+              43,
+              73,
+              3
+            ]
+          },
+          "reference": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "F32",
+            "hash": "a4b5d0130891e71ee1f6c3c8d095a10ad1088c6a149d7d489988bf831e8f864f"
+          },
+          "independent_source": {
+            "shape": [
+              43,
+              73,
+              3
+            ],
+            "dtype": "U8",
+            "hash": "fa3d5e5f75a89180afbf3e51b5b1248ae787cb4d464f9326c65b2a0fb6b28d4b"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "F32",
+            "hash": "a4b5d0130891e71ee1f6c3c8d095a10ad1088c6a149d7d489988bf831e8f864f",
+            "operations": [
+              "RgbLuminanceF32"
+            ],
+            "shape": [
+              43,
+              73
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/depth/flower-palette-16.tif",
+      "source_sha256": "fc107b301c04288133f990dc7c87a01cf9bed2a1c7097ea6c162c879b581011d",
+      "previous_status": "native_rejected",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 16,
+            "dtype": "U16",
+            "hash": "400faa9a1ab25d99fb67b54efbde418af6bd7dea3446c41ac0b8b2eea75236ff",
+            "photo": 3,
+            "planar": 1,
+            "shape": [
+              43,
+              73
+            ]
+          },
+          "reference": {
+            "shape": [
+              43,
+              73,
+              3
+            ],
+            "dtype": "U16",
+            "hash": "67a69c6eccd6103263fc16f27ecea4edbcb136121618253b342fdc37a55f220a"
+          },
+          "independent_source": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "U16",
+            "hash": "400faa9a1ab25d99fb67b54efbde418af6bd7dea3446c41ac0b8b2eea75236ff"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U16",
+            "hash": "67a69c6eccd6103263fc16f27ecea4edbcb136121618253b342fdc37a55f220a",
+            "operations": [
+              "PaletteLookup",
+              "PaletteDownscale8"
+            ],
+            "shape": [
+              43,
+              73,
+              3
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/depth/flower-minisblack-04.tif",
+      "source_sha256": "18991fca75a89b3d15c7f93dee0454e3943920b595ba16145ebc1fd8bd45b1f5",
+      "previous_status": "mismatch",
+      "reference_backend": "PIL",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 4,
+            "dtype": "U8",
+            "hash": "721abe93c2875dc66f153438cf41c9ce3bd6bbfb6c0ad1995cd7d5e25ac781be",
+            "photo": 1,
+            "planar": 1,
+            "shape": [
+              43,
+              73
+            ]
+          },
+          "reference": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "U8",
+            "hash": "cbd9e1bf1908d5deb0708a06af8c581ac16a7986598e4d92baf67aa7e7098dd3"
+          },
+          "independent_source": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "U8",
+            "hash": "721abe93c2875dc66f153438cf41c9ce3bd6bbfb6c0ad1995cd7d5e25ac781be"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U8",
+            "hash": "cbd9e1bf1908d5deb0708a06af8c581ac16a7986598e4d92baf67aa7e7098dd3",
+            "operations": [
+              "FullRangePackedGray"
+            ],
+            "shape": [
+              43,
+              73
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/depth/flower-rgb-contig-16.tif",
+      "source_sha256": "ab3d6b619a198ff2e5fdd8f9752bf43c5b03a782625b1f0e3f2cfe0f20c4b24a",
+      "previous_status": "counts_match",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 16,
+            "dtype": "U16",
+            "hash": "a57539ac081c9e54376c0bc3519e72c6c786c11d0f113b0377d69f95d79394ea",
+            "photo": 2,
+            "planar": 1,
+            "shape": [
+              43,
+              73,
+              3
+            ]
+          },
+          "reference": {
+            "shape": [
+              43,
+              73,
+              3
+            ],
+            "dtype": "U16",
+            "hash": "a57539ac081c9e54376c0bc3519e72c6c786c11d0f113b0377d69f95d79394ea"
+          },
+          "independent_source": {
+            "shape": [
+              43,
+              73,
+              3
+            ],
+            "dtype": "U16",
+            "hash": "a57539ac081c9e54376c0bc3519e72c6c786c11d0f113b0377d69f95d79394ea"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U16",
+            "hash": "a57539ac081c9e54376c0bc3519e72c6c786c11d0f113b0377d69f95d79394ea",
+            "operations": [],
+            "shape": [
+              43,
+              73,
+              3
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/jim___cg.tif",
+      "source_sha256": "60c35acf9427754276c5cd201cec609a4401f8f6bc44202e91f3307c3d16f738",
+      "previous_status": "counts_match",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 8,
+            "dtype": "U8",
+            "hash": "f66a65894fddc1779c6c362078cefbabc39ddc2e48a6f544ef630b651726b34e",
+            "photo": 1,
+            "planar": 1,
+            "shape": [
+              339,
+              277
+            ]
+          },
+          "reference": {
+            "shape": [
+              339,
+              277
+            ],
+            "dtype": "U8",
+            "hash": "f66a65894fddc1779c6c362078cefbabc39ddc2e48a6f544ef630b651726b34e"
+          },
+          "independent_source": {
+            "shape": [
+              339,
+              277
+            ],
+            "dtype": "U8",
+            "hash": "f66a65894fddc1779c6c362078cefbabc39ddc2e48a6f544ef630b651726b34e"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U8",
+            "hash": "f66a65894fddc1779c6c362078cefbabc39ddc2e48a6f544ef630b651726b34e",
+            "operations": [],
+            "shape": [
+              339,
+              277
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/ycbcr-cat.tif",
+      "source_sha256": "264d4955898a35ae70af0ec6eed0dbc49d7929f6c18c92a4ed6198f6db396f4b",
+      "previous_status": "native_rejected",
+      "reference_backend": "PIL",
+      "status": "native_rejected",
+      "error": "Error: Error(\"TIFF YCbCr admitted only through native JPEG component decoding\")"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/fax2d.tif",
+      "source_sha256": "4e497620740a6c192ac9523817c9e51ba3596d5ab8b4ac1a15e8cc58e9a49b3f",
+      "previous_status": "native_rejected",
+      "reference_backend": "PIL",
+      "status": "native_rejected",
+      "error": "Error: Error(\"TIFF FillOrder other than MSB-first is unsupported\")"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/depth/flower-rgb-planar-16.tif",
+      "source_sha256": "0a143fb6c5792fa7755e06feb757c745ad68944336985dc5be8a0c37247fe36d",
+      "previous_status": "mismatch",
+      "reference_backend": "PIL",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 16,
+            "dtype": "U16",
+            "hash": "a57539ac081c9e54376c0bc3519e72c6c786c11d0f113b0377d69f95d79394ea",
+            "photo": 2,
+            "planar": 2,
+            "shape": [
+              43,
+              73,
+              3
+            ]
+          },
+          "reference": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "F32",
+            "hash": "e033dac71fe54418c2fd4080e60d290abbebafb2e3cbe2edb29e41e528279a16"
+          },
+          "independent_source": {
+            "shape": [
+              43,
+              73,
+              3
+            ],
+            "dtype": "U16",
+            "hash": "a57539ac081c9e54376c0bc3519e72c6c786c11d0f113b0377d69f95d79394ea"
+          },
+          "source_counts_match": true,
+          "view_error": "reference layout defect: Pillow13 planar16 color reads alternate source bytes; stored samples retained"
+        }
+      ],
+      "status": "reference_layout_defect"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/depth/flower-minisblack-08.tif",
+      "source_sha256": "1268d843a2338409ec3a9f5a5a62e23d38c3a898035619994a02f21eff7590bf",
+      "previous_status": "counts_match",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 8,
+            "dtype": "U8",
+            "hash": "03a081093df23684f0d19d2f6818e86c3e68f180f46c6043f67f5fb3e7995a21",
+            "photo": 1,
+            "planar": 1,
+            "shape": [
+              43,
+              73
+            ]
+          },
+          "reference": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "U8",
+            "hash": "03a081093df23684f0d19d2f6818e86c3e68f180f46c6043f67f5fb3e7995a21"
+          },
+          "independent_source": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "U8",
+            "hash": "03a081093df23684f0d19d2f6818e86c3e68f180f46c6043f67f5fb3e7995a21"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U8",
+            "hash": "03a081093df23684f0d19d2f6818e86c3e68f180f46c6043f67f5fb3e7995a21",
+            "operations": [],
+            "shape": [
+              43,
+              73
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/strike.tif",
+      "source_sha256": "51053dfe72963c9d9e3b1918c271503dc2f77af80535ce36589bc1a1819c96a0",
+      "previous_status": "mismatch",
+      "reference_backend": "PIL",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 8,
+            "dtype": "U8",
+            "hash": "3f0e93ecd44c0eecfe963166d822f177240f1b8e19208684d1ff856219788cbd",
+            "photo": 2,
+            "planar": 1,
+            "shape": [
+              200,
+              256,
+              4
+            ]
+          },
+          "reference": {
+            "shape": [
+              200,
+              256
+            ],
+            "dtype": "F32",
+            "hash": "2a3be9efe4aa09ea64929fba1049ba1c0fc25012b24f6f27107019f7ecd783eb"
+          },
+          "independent_source": {
+            "shape": [
+              200,
+              256,
+              4
+            ],
+            "dtype": "U8",
+            "hash": "3f0e93ecd44c0eecfe963166d822f177240f1b8e19208684d1ff856219788cbd"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "F32",
+            "hash": "2a3be9efe4aa09ea64929fba1049ba1c0fc25012b24f6f27107019f7ecd783eb",
+            "operations": [
+              "UnpremultiplyAlpha8",
+              "IgnoreAlpha",
+              "RgbLuminanceF32"
+            ],
+            "shape": [
+              200,
+              256
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/depth/flower-separated-contig-08.tif",
+      "source_sha256": "3f4deaa5293773feb5cdf41f5f625e5fa1399c9881af8d033897c30e46811419",
+      "previous_status": "mismatch",
+      "reference_backend": "PIL",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 8,
+            "dtype": "U8",
+            "hash": "ebab9b02671a18f0da17fc4751441957fb3dcb3fffc8c2206a08166324d38309",
+            "photo": 5,
+            "planar": 1,
+            "shape": [
+              43,
+              73,
+              4
+            ]
+          },
+          "reference": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "F32",
+            "hash": "fbfb1832e238845ccb7fcc2e7e47deb2788fd4e9d63dbab3acd0cdff824f79e2"
+          },
+          "independent_source": {
+            "shape": [
+              43,
+              73,
+              4
+            ],
+            "dtype": "U8",
+            "hash": "ebab9b02671a18f0da17fc4751441957fb3dcb3fffc8c2206a08166324d38309"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "F32",
+            "hash": "fbfb1832e238845ccb7fcc2e7e47deb2788fd4e9d63dbab3acd0cdff824f79e2",
+            "operations": [
+              "CmykToRgb8",
+              "RgbLuminanceF32"
+            ],
+            "shape": [
+              43,
+              73
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/jim___gg.tif",
+      "source_sha256": "aab4c8590e9f879d9857df58707c780a7091214f75c1620d1ccf671d11c2febc",
+      "previous_status": "counts_match",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 8,
+            "dtype": "U8",
+            "hash": "aa32e5e468c908a840f55697d3517b6ae6ee573e94278d5d0f3c86c29e447cc5",
+            "photo": 0,
+            "planar": 1,
+            "shape": [
+              339,
+              277
+            ]
+          },
+          "reference": {
+            "shape": [
+              339,
+              277
+            ],
+            "dtype": "U8",
+            "hash": "aa32e5e468c908a840f55697d3517b6ae6ee573e94278d5d0f3c86c29e447cc5"
+          },
+          "independent_source": {
+            "shape": [
+              339,
+              277
+            ],
+            "dtype": "U8",
+            "hash": "aa32e5e468c908a840f55697d3517b6ae6ee573e94278d5d0f3c86c29e447cc5"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U8",
+            "hash": "aa32e5e468c908a840f55697d3517b6ae6ee573e94278d5d0f3c86c29e447cc5",
+            "operations": [],
+            "shape": [
+              339,
+              277
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/text.tif",
+      "source_sha256": "0b9c03248c2e1d4acaf1437e9b16326a1e0da46342c56f38a4a1b62a51d448d7",
+      "previous_status": "native_rejected",
+      "reference_backend": "PIL",
+      "status": "native_rejected",
+      "error": "Error: Error(\"unsupported TIFF detector compression 32809\")"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/smallliz.tif",
+      "source_sha256": "e8f722bc322b9a7621d1d858bec36ea78d31b85221f314a2b9872d3af91d600a",
+      "previous_status": "native_rejected",
+      "reference_backend": "PIL",
+      "status": "native_rejected",
+      "error": "Error: Error(\"unsupported TIFF detector compression 6\")"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/g3test.tif",
+      "source_sha256": "d5b2e1a17338133aa95cb8a16d82a171f5b50f7b9ae1a51ab06227dc3daa81d5",
+      "previous_status": "native_rejected",
+      "reference_backend": "PIL",
+      "status": "native_rejected",
+      "error": "Error: Error(\"TIFF FillOrder other than MSB-first is unsupported\")"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/jim___dg.tif",
+      "source_sha256": "c66cf8b3d3592b1a424669c3164b93476bc5cfef8ebaf03a938c7e672564d614",
+      "previous_status": "counts_match",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 8,
+            "dtype": "U8",
+            "hash": "aa32e5e468c908a840f55697d3517b6ae6ee573e94278d5d0f3c86c29e447cc5",
+            "photo": 0,
+            "planar": 1,
+            "shape": [
+              339,
+              277
+            ]
+          },
+          "reference": {
+            "shape": [
+              339,
+              277
+            ],
+            "dtype": "U8",
+            "hash": "aa32e5e468c908a840f55697d3517b6ae6ee573e94278d5d0f3c86c29e447cc5"
+          },
+          "independent_source": {
+            "shape": [
+              339,
+              277
+            ],
+            "dtype": "U8",
+            "hash": "aa32e5e468c908a840f55697d3517b6ae6ee573e94278d5d0f3c86c29e447cc5"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U8",
+            "hash": "aa32e5e468c908a840f55697d3517b6ae6ee573e94278d5d0f3c86c29e447cc5",
+            "operations": [],
+            "shape": [
+              339,
+              277
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/oxford.tif",
+      "source_sha256": "951b0ad3ea200bac4aac94c288b2f76051b7d1ee4c4fa468909ad3110fe97a8d",
+      "previous_status": "mismatch",
+      "reference_backend": "PIL",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 8,
+            "dtype": "U8",
+            "hash": "f7d31f99daa9659926db73b3a693231666c840926d1717b9969efef31d52a186",
+            "photo": 2,
+            "planar": 2,
+            "shape": [
+              81,
+              601,
+              3
+            ]
+          },
+          "reference": {
+            "shape": [
+              81,
+              601
+            ],
+            "dtype": "F32",
+            "hash": "579aabe91ecd649bef982f4f0c5746d1326aaf16239530743dc5823c8311d61c"
+          },
+          "independent_source": {
+            "shape": [
+              81,
+              601,
+              3
+            ],
+            "dtype": "U8",
+            "hash": "f7d31f99daa9659926db73b3a693231666c840926d1717b9969efef31d52a186"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "F32",
+            "hash": "579aabe91ecd649bef982f4f0c5746d1326aaf16239530743dc5823c8311d61c",
+            "operations": [
+              "RgbLuminanceF32"
+            ],
+            "shape": [
+              81,
+              601
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/depth/flower-separated-planar-08.tif",
+      "source_sha256": "6f6e99290839dc804a49fbadd224b842a66581ddff63461413c3d80c319d8468",
+      "previous_status": "mismatch",
+      "reference_backend": "PIL",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 8,
+            "dtype": "U8",
+            "hash": "ebab9b02671a18f0da17fc4751441957fb3dcb3fffc8c2206a08166324d38309",
+            "photo": 5,
+            "planar": 2,
+            "shape": [
+              43,
+              73,
+              4
+            ]
+          },
+          "reference": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "F32",
+            "hash": "fbfb1832e238845ccb7fcc2e7e47deb2788fd4e9d63dbab3acd0cdff824f79e2"
+          },
+          "independent_source": {
+            "shape": [
+              43,
+              73,
+              4
+            ],
+            "dtype": "U8",
+            "hash": "ebab9b02671a18f0da17fc4751441957fb3dcb3fffc8c2206a08166324d38309"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "F32",
+            "hash": "fbfb1832e238845ccb7fcc2e7e47deb2788fd4e9d63dbab3acd0cdff824f79e2",
+            "operations": [
+              "CmykToRgb8",
+              "RgbLuminanceF32"
+            ],
+            "shape": [
+              43,
+              73
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/quad-tile.tif",
+      "source_sha256": "ab5e5c87cd575472c6fc3e0d5824ebc818b88bf6e5e4aff3afe66f8725351a09",
+      "previous_status": "native_rejected",
+      "reference_backend": "PIL",
+      "status": "native_rejected",
+      "error": "Error: Error(\"format error: inconsistent sizes encountered\")"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/quad-lzw.tif",
+      "source_sha256": "081118d951224d9909b105bb75f9667fd817e7b95122d141e91b43604dacd78b",
+      "previous_status": "native_rejected",
+      "reference_backend": "PIL",
+      "status": "native_rejected",
+      "error": "Error: Error(\"invalid code in LZW stream\")"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/depth/flower-minisblack-16.tif",
+      "source_sha256": "79531a10710dee89b86e2467818b7c03a24ff28ebd98c7bdcc292559671e1887",
+      "previous_status": "counts_match",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 16,
+            "dtype": "U16",
+            "hash": "4e1c176815b887656a22cfbd6829282ca3698555cdd505bf24e8f4b636cd3974",
+            "photo": 1,
+            "planar": 1,
+            "shape": [
+              43,
+              73
+            ]
+          },
+          "reference": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "U16",
+            "hash": "4e1c176815b887656a22cfbd6829282ca3698555cdd505bf24e8f4b636cd3974"
+          },
+          "independent_source": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "U16",
+            "hash": "4e1c176815b887656a22cfbd6829282ca3698555cdd505bf24e8f4b636cd3974"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U16",
+            "hash": "4e1c176815b887656a22cfbd6829282ca3698555cdd505bf24e8f4b636cd3974",
+            "operations": [],
+            "shape": [
+              43,
+              73
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/depth/flower-separated-contig-16.tif",
+      "source_sha256": "6dc012a88f3ba41d6326c5211543e21f21e6f5d1faaea4c59018da93317d9462",
+      "previous_status": "mismatch",
+      "reference_backend": "PIL",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 16,
+            "dtype": "U16",
+            "hash": "14a66200eb70119a0e963f1cc3fb133c0a973dc7293f66d7450f38ea034b9cf7",
+            "photo": 5,
+            "planar": 1,
+            "shape": [
+              43,
+              73,
+              4
+            ]
+          },
+          "reference": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "F32",
+            "hash": "3e274abb36715c511d73647e4ee1bed7078a399e8ac410cfafd741ab379b4a0e"
+          },
+          "independent_source": {
+            "shape": [
+              43,
+              73,
+              4
+            ],
+            "dtype": "U16",
+            "hash": "14a66200eb70119a0e963f1cc3fb133c0a973dc7293f66d7450f38ea034b9cf7"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "F32",
+            "hash": "3e274abb36715c511d73647e4ee1bed7078a399e8ac410cfafd741ab379b4a0e",
+            "operations": [
+              "ReduceColor16To8",
+              "CmykToRgb8",
+              "RgbLuminanceF32"
+            ],
+            "shape": [
+              43,
+              73
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/jim___ah.tif",
+      "source_sha256": "f86a709bb0c14bac7a754099e2e1b669b23fe992ce87102e60c4092ae3d6610d",
+      "previous_status": "mismatch",
+      "reference_backend": "PIL",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 1,
+            "dtype": "U8",
+            "hash": "1b3ff44231c68b51d00574fa2b248e358e3b4580b9518f3337e2e7ce8400c662",
+            "photo": 0,
+            "planar": 1,
+            "shape": [
+              813,
+              664
+            ]
+          },
+          "reference": {
+            "shape": [
+              813,
+              664
+            ],
+            "dtype": "bool",
+            "hash": "92d9a36b052fc0cfe0db55ac5af0d71cfda6d9c4939a5a6135da95a1e9996619"
+          },
+          "independent_source": {
+            "shape": [
+              813,
+              664
+            ],
+            "dtype": "U8",
+            "hash": "1b3ff44231c68b51d00574fa2b248e358e3b4580b9518f3337e2e7ce8400c662"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "bool",
+            "hash": "92d9a36b052fc0cfe0db55ac5af0d71cfda6d9c4939a5a6135da95a1e9996619",
+            "operations": [
+              "BilevelBool",
+              "WhiteIsZeroDisplay"
+            ],
+            "shape": [
+              813,
+              664
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/depth/flower-rgb-contig-32.tif",
+      "source_sha256": "d7b9da8ec44da84fc89aed1ad221a5eb130a1f233a1ff8a4a15b41898a0e364f",
+      "previous_status": "counts_match",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 32,
+            "dtype": "U32",
+            "hash": "721e76bfd67a8273b0f7ca5712db2424854b2334746a23cde5496b6abadbfece",
+            "photo": 2,
+            "planar": 1,
+            "shape": [
+              43,
+              73,
+              3
+            ]
+          },
+          "reference": {
+            "shape": [
+              43,
+              73,
+              3
+            ],
+            "dtype": "U32",
+            "hash": "721e76bfd67a8273b0f7ca5712db2424854b2334746a23cde5496b6abadbfece"
+          },
+          "independent_source": {
+            "shape": [
+              43,
+              73,
+              3
+            ],
+            "dtype": "U32",
+            "hash": "721e76bfd67a8273b0f7ca5712db2424854b2334746a23cde5496b6abadbfece"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U32",
+            "hash": "721e76bfd67a8273b0f7ca5712db2424854b2334746a23cde5496b6abadbfece",
+            "operations": [],
+            "shape": [
+              43,
+              73,
+              3
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/pc260001.tif",
+      "source_sha256": "5f54cae906e90f7b3e6b58ff181dc30c911e74eed3548b35ff5c3c2dcc6249ba",
+      "previous_status": "counts_match",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 8,
+            "dtype": "U8",
+            "hash": "355249a888476cdddd1efffc2bdf391157f3b34f26d36b6c95e584da500b8757",
+            "photo": 2,
+            "planar": 1,
+            "shape": [
+              480,
+              640,
+              3
+            ]
+          },
+          "reference": {
+            "shape": [
+              480,
+              640,
+              3
+            ],
+            "dtype": "U8",
+            "hash": "355249a888476cdddd1efffc2bdf391157f3b34f26d36b6c95e584da500b8757"
+          },
+          "independent_source": {
+            "shape": [
+              480,
+              640,
+              3
+            ],
+            "dtype": "U8",
+            "hash": "355249a888476cdddd1efffc2bdf391157f3b34f26d36b6c95e584da500b8757"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U8",
+            "hash": "355249a888476cdddd1efffc2bdf391157f3b34f26d36b6c95e584da500b8757",
+            "operations": [],
+            "shape": [
+              480,
+              640,
+              3
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/depth/flower-palette-02.tif",
+      "source_sha256": "75e74d8816942ff6e9dfda411f9171f0f1dd1a5a88cb1410238b55a2b2aeeb71",
+      "previous_status": "native_rejected",
+      "reference_backend": "PIL",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 2,
+            "dtype": "U8",
+            "hash": "007cf191ff77bb8e7e06816f3d4c9c0a2ebdfb8412c24f118c1eabf45f4ca586",
+            "photo": 3,
+            "planar": 1,
+            "shape": [
+              43,
+              73
+            ]
+          },
+          "reference": {
+            "shape": [
+              43,
+              73,
+              3
+            ],
+            "dtype": "U8",
+            "hash": "6f3548dbaaf57c853f6ae67da2514556444dc3c6b2710697cfc7ca078a9bec02"
+          },
+          "independent_source": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "U8",
+            "hash": "007cf191ff77bb8e7e06816f3d4c9c0a2ebdfb8412c24f118c1eabf45f4ca586"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U8",
+            "hash": "6f3548dbaaf57c853f6ae67da2514556444dc3c6b2710697cfc7ca078a9bec02",
+            "operations": [
+              "PaletteLookup",
+              "PaletteDownscale8"
+            ],
+            "shape": [
+              43,
+              73,
+              3
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/jello.tif",
+      "source_sha256": "4ded66cd13d87a36b7d33e663e3bfed7c2a150419579fd6491d09cd437f18edc",
+      "previous_status": "native_rejected",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 8,
+            "dtype": "U8",
+            "hash": "a935d1b47784ad4338de9e0597640c80209e38d3d83dae9e28b7aa4310fd8015",
+            "photo": 3,
+            "planar": 1,
+            "shape": [
+              192,
+              256
+            ]
+          },
+          "reference": {
+            "shape": [
+              192,
+              256,
+              3
+            ],
+            "dtype": "U8",
+            "hash": "05424243fd56c56038f765d1bfb9fe5046711aed829c80ab220b261ebd99d8cd"
+          },
+          "independent_source": {
+            "shape": [
+              192,
+              256
+            ],
+            "dtype": "U8",
+            "hash": "a935d1b47784ad4338de9e0597640c80209e38d3d83dae9e28b7aa4310fd8015"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U8",
+            "hash": "05424243fd56c56038f765d1bfb9fe5046711aed829c80ab220b261ebd99d8cd",
+            "operations": [
+              "PaletteLookup",
+              "PaletteDownscale8"
+            ],
+            "shape": [
+              192,
+              256,
+              3
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/depth/flower-palette-04.tif",
+      "source_sha256": "700ec8103b4197c415ba90d983a7d5f471f155fd5b1c952d86ee9becba898a1a",
+      "previous_status": "native_rejected",
+      "reference_backend": "PIL",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 4,
+            "dtype": "U8",
+            "hash": "931e1767f6b4c77618c916bb191edaf43b7d59c1e4d044a17b90be11190eeb41",
+            "photo": 3,
+            "planar": 1,
+            "shape": [
+              43,
+              73
+            ]
+          },
+          "reference": {
+            "shape": [
+              43,
+              73,
+              3
+            ],
+            "dtype": "U8",
+            "hash": "796725e7ca5a9aadcf6690529777a8c11d93d57835a9b7310105fedca60390c9"
+          },
+          "independent_source": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "U8",
+            "hash": "931e1767f6b4c77618c916bb191edaf43b7d59c1e4d044a17b90be11190eeb41"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U8",
+            "hash": "796725e7ca5a9aadcf6690529777a8c11d93d57835a9b7310105fedca60390c9",
+            "operations": [
+              "PaletteLookup",
+              "PaletteDownscale8"
+            ],
+            "shape": [
+              43,
+              73,
+              3
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/ladoga.tif",
+      "source_sha256": "16b185b70346d6b88d3a92010bc27018a1a2377ce3c99c9968a1c0c4eba8ec98",
+      "previous_status": "counts_match",
+      "reference_backend": "PIL",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 16,
+            "dtype": "U16",
+            "hash": "2d6e53d69d4d07796f89b46daee2f3e8d2b94706e8e84b7e512c6d716a1c8f15",
+            "photo": 1,
+            "planar": 1,
+            "shape": [
+              118,
+              158
+            ]
+          },
+          "reference": {
+            "shape": [
+              118,
+              158
+            ],
+            "dtype": "U16",
+            "hash": "2d6e53d69d4d07796f89b46daee2f3e8d2b94706e8e84b7e512c6d716a1c8f15"
+          },
+          "independent_source": {
+            "shape": [
+              118,
+              158
+            ],
+            "dtype": "U16",
+            "hash": "2d6e53d69d4d07796f89b46daee2f3e8d2b94706e8e84b7e512c6d716a1c8f15"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U16",
+            "hash": "2d6e53d69d4d07796f89b46daee2f3e8d2b94706e8e84b7e512c6d716a1c8f15",
+            "operations": [],
+            "shape": [
+              118,
+              158
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/depth/flower-separated-planar-16.tif",
+      "source_sha256": "07bd74b686dfa4293d0047ec80bcd4c08159d669ff70dd33914edb0d050da850",
+      "previous_status": "mismatch",
+      "reference_backend": "PIL",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 16,
+            "dtype": "U16",
+            "hash": "14a66200eb70119a0e963f1cc3fb133c0a973dc7293f66d7450f38ea034b9cf7",
+            "photo": 5,
+            "planar": 2,
+            "shape": [
+              43,
+              73,
+              4
+            ]
+          },
+          "reference": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "F32",
+            "hash": "cbfa7502fc5fc98639d29f8424dce8d9d0edae1e2efa318c6c158ec9bbec205b"
+          },
+          "independent_source": {
+            "shape": [
+              43,
+              73,
+              4
+            ],
+            "dtype": "U16",
+            "hash": "14a66200eb70119a0e963f1cc3fb133c0a973dc7293f66d7450f38ea034b9cf7"
+          },
+          "source_counts_match": true,
+          "view_error": "reference layout defect: Pillow13 planar16 color reads alternate source bytes; stored samples retained"
+        }
+      ],
+      "status": "reference_layout_defect"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/quad-jpeg.tif",
+      "source_sha256": "61f858392d372b9af0200901ab147d1103bc3e2c811df9ea7ea8dfe2d1d47b06",
+      "previous_status": "mismatch",
+      "reference_backend": "PIL",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 8,
+            "dtype": "U8",
+            "hash": "0ae2e2a99c3b98e3d7213ef6154ddb2898d3938e519324361c69089b179b366f",
+            "photo": 6,
+            "planar": 1,
+            "shape": [
+              384,
+              512,
+              3
+            ]
+          },
+          "reference": {
+            "shape": [
+              384,
+              512
+            ],
+            "dtype": "F32",
+            "hash": "0af39d1113ec7573b2036fd417865146a61ade85746967bff9be8fd13ee5180d"
+          },
+          "source_oracle_policy": "native JPEG YCbCr components, no RGB display conversion",
+          "independent_source": {
+            "shape": [
+              384,
+              512,
+              3
+            ],
+            "dtype": "U8",
+            "hash": "9f0df05829317af812594b059e403eb3aa721ee511c622961a24afe9cb89ea88"
+          },
+          "source_counts_match": false,
+          "view": {
+            "dtype": "F32",
+            "hash": "0af39d1113ec7573b2036fd417865146a61ade85746967bff9be8fd13ee5180d",
+            "operations": [
+              "JpegRgbDecode",
+              "RgbLuminanceF32"
+            ],
+            "shape": [
+              384,
+              512
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    },
+    {
+      "name": "libtiffpic.tar.gz__content/depth/flower-palette-08.tif",
+      "source_sha256": "1a05a3e39e3f58e48e3667e8cca3613476752e2defe0af80c07faf2bb00d7812",
+      "previous_status": "native_rejected",
+      "reference_backend": "TiffIO",
+      "frames": 1,
+      "comparison": [
+        {
+          "frame": 0,
+          "raw": {
+            "bits": 8,
+            "dtype": "U8",
+            "hash": "36b3f4d42fbc1dffbda6f916bce7c05748fa6a119efcb909c76537d43115cb70",
+            "photo": 3,
+            "planar": 1,
+            "shape": [
+              43,
+              73
+            ]
+          },
+          "reference": {
+            "shape": [
+              43,
+              73,
+              3
+            ],
+            "dtype": "U8",
+            "hash": "07f5a597a768f292ca6d1fe07627eb40bdc4ee52865fb48fa603dee4575373f5"
+          },
+          "independent_source": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "U8",
+            "hash": "36b3f4d42fbc1dffbda6f916bce7c05748fa6a119efcb909c76537d43115cb70"
+          },
+          "source_counts_match": true,
+          "view": {
+            "dtype": "U8",
+            "hash": "07f5a597a768f292ca6d1fe07627eb40bdc4ee52865fb48fa603dee4575373f5",
+            "operations": [
+              "PaletteLookup",
+              "PaletteDownscale8"
+            ],
+            "shape": [
+              43,
+              73,
+              3
+            ]
+          },
+          "view_matches": true
+        }
+      ],
+      "status": "explicit_view_matches"
+    }
+  ]
+}
