@@ -93,6 +93,7 @@ impl Reader {
             let scan = &segments.last().expect("validated SOS").payload;
             lossless_scans(&mut source, frame, scan, precision)?
         } else {
+            dct_end(&mut source, limits.metadata_bytes)?;
             Vec::new()
         };
         let mut decoder = Decoder::new(BufReader::new(File::open(&snapshot.path)?));
@@ -160,7 +161,7 @@ impl Reader {
             let mut file = File::open(&self.snapshot.path)?;
             self.snapshot.check_handle(&file).map_err(Error)?;
             file.by_ref()
-                .take(self.limits.encoded_bytes as u64 + 1)
+                .take((self.limits.encoded_bytes as u64).saturating_add(1))
                 .read_to_end(&mut encoded)?;
             if encoded.len() as u64 != self.metadata.encoded_bytes {
                 return Err(Error("JPEG encoded size changed".into()));
@@ -378,4 +379,73 @@ fn byte(input: &mut impl Read) -> Result<u8, Error> {
     let mut value = [0];
     input.read_exact(&mut value)?;
     Ok(value[0])
+}
+
+// Validate the first EOI rather than only the last two file bytes. Entropy byte
+// stuffing/restarts are skipped; length-bearing table/scan records stay bounded.
+fn dct_end(input: &mut impl Read, limit: usize) -> Result<(), Error> {
+    let mut entropy = true;
+    let mut headers = 0usize;
+    let mut scans = 1usize;
+    loop {
+        let marker = if entropy {
+            loop {
+                if byte(input)? != 0xff {
+                    continue;
+                }
+                let mut next = byte(input)?;
+                while next == 0xff {
+                    next = byte(input)?;
+                }
+                if next == 0 || (0xd0..=0xd7).contains(&next) {
+                    continue;
+                }
+                break next;
+            }
+        } else {
+            if byte(input)? != 0xff {
+                return Err(Error("invalid JPEG inter-scan boundary".into()));
+            }
+            let mut next = byte(input)?;
+            while next == 0xff {
+                next = byte(input)?;
+            }
+            next
+        };
+        if marker == 0xd9 {
+            let mut extra = [0];
+            if input.read(&mut extra)? != 0 {
+                return Err(Error("bytes after JPEG EOI unsupported".into()));
+            }
+            return Ok(());
+        }
+        if !matches!(
+            marker,
+            0xda | 0xc4 | 0xcc | 0xdb | 0xdd | 0xfe | 0xe0..=0xef
+        ) {
+            return Err(Error("unsupported marker between JPEG scans".into()));
+        }
+        let len = usize::from(u16::from_be_bytes([byte(input)?, byte(input)?]));
+        if len < 2 {
+            return Err(Error("invalid JPEG inter-scan segment length".into()));
+        }
+        headers = headers
+            .checked_add(len + 2)
+            .filter(|&n| n <= limit)
+            .ok_or_else(|| Error("JPEG inter-scan metadata exceeds limit".into()))?;
+        let mut remaining = len - 2;
+        let mut scratch = [0u8; 4096];
+        while remaining != 0 {
+            let n = remaining.min(scratch.len());
+            input.read_exact(&mut scratch[..n])?;
+            remaining -= n;
+        }
+        entropy = marker == 0xda;
+        if entropy {
+            scans += 1;
+            if scans > 1000 {
+                return Err(Error("JPEG exceeds scan limit".into()));
+            }
+        }
+    }
 }

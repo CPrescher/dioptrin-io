@@ -24,9 +24,16 @@ expansion preserves signed zero, subnormals and NaN payload/signaling bits
 without floating arithmetic. Consumers performing arithmetic may quiet NaNs.
 Decoded byte limits apply to the wider output too.
 
-Modern TIFF JPEG is admitted with `lossy=true`. Its zune backend retains JPEG's
-input colorspace rather than forcing RGB; TIFF photometric metadata identifies
-these channels. Native JPEG RGB/grayscale fixture values differ by at most one
+Modern TIFF JPEG is admitted with `lossy=true`. Every strip/tile JPEG header is
+checked against its TIFF dimensions, component count, photometric interpretation
+and 8-bit precision before native pixel decoding. This reuses the same mature
+zune-jpeg parser as the TIFF backend, including shared JPEGTables reconstruction;
+source ranges and combined encoded/table bytes obey intermediate limits. Strips
+use their actual last-strip dimensions; tiles retain their full encoded tile
+shape, including edge padding. Contradictory or ambiguous layouts fail rather
+than letting the backend discard extra components/rows. Its zune backend retains
+JPEG's input colorspace rather than forcing RGB; TIFF photometric metadata
+identifies these channels. Native JPEG RGB/grayscale fixture values differ by at most one
 count from the independent libjpeg-turbo reference because IDCT rounding differs.
 That test is explicitly a bounded lossy comparison, not exact FabIO parity.
 Subsampled TIFF YCbCr currently fails in the upstream backend and remains a gap.
@@ -79,8 +86,10 @@ Admission parses bounded JP2 boxes and the main codestream SIZ/COD header before
 any pixel decoder allocation. Image/tile geometry, component count, output size
 and native component payload bounds are checked. Full-resolution equally sampled
 components and single-image JP2/raw J2K are supported. JPX brands, multiple
-codestreams, palettes/component mapping, subsampling and precision above 31 bits
-are rejected. Original non-codestream top-level boxes and main codestream header
+codestreams, palettes/component mapping, channel-definition (`cdef`) boxes,
+subsampling and precision above 31 bits are rejected. OpenJPEG applies `cdef`
+associations by reordering decoded components, so these boxes fail at admission
+to preserve original codestream channel order. Original non-codestream top-level boxes and main codestream header
 are retained. Tile headers remain encoded source data, not semantic metadata.
 
 A default irreversible wavelet records `lossy=Some(true)`. A default reversible

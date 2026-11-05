@@ -326,6 +326,50 @@ fn jpeg2000_admission_rejects_hostile_boxes_precision_subsampling_and_shape() {
     }
     std::fs::remove_file(path).unwrap();
 }
+#[cfg(feature = "jpeg2000")]
+#[test]
+fn jpeg2000_channel_definitions_cannot_reorder_stored_components() {
+    use dioptrin_io::jpeg2000::{FrameBuffer, Limits, Reader};
+    let source = fixture("rgb.jp2");
+    let reader = Reader::open(&source, Limits::default()).unwrap();
+    let mut output = FrameBuffer::default();
+    reader.read_frame_into(&mut output).unwrap();
+    assert_eq!(reader.metadata().channels, 3);
+    assert_eq!(output.sample_shape(), Some(vec![3, 4, 3]));
+    let original = std::fs::read(&source).unwrap();
+    let mut header = 0;
+    while &original[header + 4..header + 8] != b"jp2h" {
+        header += u32::from_be_bytes(original[header..header + 4].try_into().unwrap()) as usize;
+    }
+    let header_length = u32::from_be_bytes(original[header..header + 4].try_into().unwrap());
+    let path = std::env::temp_dir().join(format!("dioptrin-jp2-cdef-{}", std::process::id()));
+    for associations in [[3u16, 2, 1], [1, 2, 3]] {
+        // A legal same-precision channel definition can swap R/B in OpenJPEG
+        // without changing SIZ dimensions, precision or signedness. Reject the
+        // mapping before decoding; identity cdef is also explicitly unsupported.
+        let mut definition = Vec::new();
+        definition.extend(28u32.to_be_bytes());
+        definition.extend(b"cdef");
+        definition.extend(3u16.to_be_bytes());
+        for (channel, association) in associations.iter().enumerate() {
+            definition.extend((channel as u16).to_be_bytes());
+            definition.extend(0u16.to_be_bytes());
+            definition.extend(association.to_be_bytes());
+        }
+        let mut bytes = original.clone();
+        let end = header + header_length as usize;
+        bytes.splice(end..end, definition);
+        bytes[header..header + 4].copy_from_slice(&(header_length + 28).to_be_bytes());
+        std::fs::write(&path, bytes).unwrap();
+        let error = match Reader::open(&path, Limits::default()) {
+            Ok(_) => panic!("cdef must not silently reorder source channels"),
+            Err(error) => error,
+        };
+        assert!(error.to_string().contains("cdef"));
+    }
+    std::fs::remove_file(path).unwrap();
+}
+
 #[cfg(feature = "tiff")]
 #[test]
 fn malformed_detector_headers_and_packed_fill_order_fail_explicitly() {
@@ -412,5 +456,163 @@ fn jpeg_point_transforms_in_every_lossless_scan_retain_lossy_provenance() {
     truncated.drain(scans[1] + 5..scans[1] + 7);
     std::fs::write(&path, truncated).unwrap();
     assert!(Reader::open(&path, Limits::default()).is_err());
+    std::fs::remove_file(path).unwrap();
+}
+
+#[cfg(feature = "tiff")]
+#[test]
+fn tiff_jpeg_rejects_contradictory_chunk_components_dimensions_and_precision() {
+    use dioptrin_io::tiff::{Limits, Reader};
+    let source = std::fs::read(fixture("jpeg-rgb.tif")).unwrap();
+    let path =
+        std::env::temp_dir().join(format!("dioptrin-tiff-jpeg-layout-{}", std::process::id()));
+    let ifd = u32::from_le_bytes(source[4..8].try_into().unwrap()) as usize;
+    let count = u16::from_le_bytes(source[ifd..ifd + 2].try_into().unwrap()) as usize;
+    for mutation in 0..4 {
+        let mut bytes = source.clone();
+        for i in 0..count {
+            let offset = ifd + 2 + i * 12;
+            let tag = u16::from_le_bytes(bytes[offset..offset + 2].try_into().unwrap());
+            if mutation == 0 && [258, 262, 277].contains(&tag) {
+                // JPEG remains RGB while all TIFF layout tags now claim gray.
+                bytes[offset + 4..offset + 8].copy_from_slice(&1u32.to_le_bytes());
+                bytes[offset + 8..offset + 12]
+                    .copy_from_slice(&(if tag == 258 { 8u32 } else { 1 }).to_le_bytes());
+            }
+            if (mutation == 1 && tag == 256) || (mutation == 2 && tag == 257) {
+                bytes[offset + 8..offset + 12].copy_from_slice(&1u32.to_le_bytes());
+            }
+        }
+        if mutation == 3 {
+            let sof = bytes.windows(2).position(|b| b == [0xff, 0xc0]).unwrap();
+            bytes[sof + 4] = 12;
+        }
+        std::fs::write(&path, bytes).unwrap();
+        assert!(
+            Reader::open(&path, Limits::default()).is_err(),
+            "mutation {mutation}"
+        );
+    }
+    std::fs::remove_file(path).unwrap();
+}
+
+#[cfg(feature = "tiff")]
+#[test]
+fn tiff_jpeg_validates_all_strips_tiles_and_shared_tables_without_losing_samples() {
+    use dioptrin_io::{
+        PixelBuffer,
+        tiff::{FrameBuffer, Limits, Reader},
+    };
+    // Independent CC0 16x16 constant-128 JPEG, Pillow quality100. It decodes
+    // exactly to128. Tiny runtime TIFF containers avoid adding detector files.
+    const JPEG: &str = "ffd8ffe000104a46494600010100000100010000ffdb00430001010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101ffc0000b080010001001011100ffc4001f0000010501010101010100000000000000000102030405060708090a0bffc400b5100002010303020403050504040000017d01020300041105122131410613516107227114328191a1082342b1c11552d1f02433627282090a161718191a25262728292a3435363738393a434445464748494a535455565758595a636465666768696a737475767778797a838485868788898a92939495969798999aa2a3a4a5a6a7a8a9aab2b3b4b5b6b7b8b9bac2c3c4c5c6c7c8c9cad2d3d4d5d6d7d8d9dae1e2e3e4e5e6e7e8e9eaf1f2f3f4f5f6f7f8f9faffda0008010100003f0028a28affd9";
+    let jpeg: Vec<u8> = JPEG
+        .as_bytes()
+        .as_chunks::<2>()
+        .0
+        .iter()
+        .map(|b| u8::from_str_radix(std::str::from_utf8(b).unwrap(), 16).unwrap())
+        .collect();
+    let path =
+        std::env::temp_dir().join(format!("dioptrin-tiff-jpeg-valid-{}", std::process::id()));
+    for tiled in [false, true] {
+        for shared in [false, true] {
+            let mut tables = vec![0xff, 0xd8];
+            let mut strip = vec![0xff, 0xd8];
+            let mut cursor = 2;
+            while jpeg[cursor + 1] != 0xda {
+                let marker = jpeg[cursor + 1];
+                let length =
+                    u16::from_be_bytes(jpeg[cursor + 2..cursor + 4].try_into().unwrap()) as usize;
+                let end = cursor + 2 + length;
+                if shared && [0xdb, 0xc4].contains(&marker) {
+                    tables.extend(&jpeg[cursor..end]);
+                } else {
+                    strip.extend(&jpeg[cursor..end]);
+                }
+                cursor = end;
+            }
+            strip.extend(&jpeg[cursor..]);
+            tables.extend([0xff, 0xd9]);
+            let chunks = if tiled { 4u32 } else { 2 };
+            let width = if tiled { 29u32 } else { 16 };
+            let height = if tiled { 31u32 } else { 32 };
+            let mut fields = vec![
+                (256u16, 4u16, 1u32, width),
+                (257, 4, 1, height),
+                (258, 3, 1, 8),
+                (259, 3, 1, 7),
+                (262, 3, 1, 1),
+                (277, 3, 1, 1),
+            ];
+            if tiled {
+                fields.extend([(322, 4, 1, 16), (323, 4, 1, 16)]);
+            } else {
+                fields.push((278, 4, 1, 16));
+            }
+            fields.push((if tiled { 324 } else { 273 }, 4, chunks, 0));
+            fields.push((if tiled { 325 } else { 279 }, 4, chunks, 0));
+            if shared {
+                fields.push((347, 7, tables.len() as u32, 0));
+            }
+            fields.sort_by_key(|f| f.0);
+            let arrays = 8 + 2 + fields.len() * 12 + 4;
+            let table_start = arrays + chunks as usize * 8;
+            let payload = table_start + if shared { tables.len() } else { 0 };
+            let mut bytes = b"II\x2a\0\x08\0\0\0".to_vec();
+            bytes.extend((fields.len() as u16).to_le_bytes());
+            for (tag, kind, count, mut value) in fields {
+                if tag == 273 || tag == 324 {
+                    value = arrays as u32;
+                }
+                if tag == 279 || tag == 325 {
+                    value = arrays as u32 + chunks * 4;
+                }
+                if tag == 347 {
+                    value = table_start as u32;
+                }
+                bytes.extend(tag.to_le_bytes());
+                bytes.extend(kind.to_le_bytes());
+                bytes.extend(count.to_le_bytes());
+                bytes.extend(value.to_le_bytes());
+            }
+            bytes.extend(0u32.to_le_bytes());
+            for i in 0..chunks {
+                bytes.extend((payload as u32 + i * strip.len() as u32).to_le_bytes());
+            }
+            for _ in 0..chunks {
+                bytes.extend((strip.len() as u32).to_le_bytes());
+            }
+            if shared {
+                bytes.extend(&tables);
+            }
+            for _ in 0..chunks {
+                bytes.extend(&strip);
+            }
+            std::fs::write(&path, &bytes).unwrap();
+            let mut reader = Reader::open(&path, Limits::default())
+                .unwrap_or_else(|e| panic!("tiled{tiled} shared{shared}: {e}"));
+            let mut output = FrameBuffer::default();
+            reader.read_frame_into(0, &mut output).unwrap();
+            assert_eq!(output.shape(), Some([height as usize, width as usize]));
+            assert_eq!(
+                output.pixels(),
+                Some(&PixelBuffer::U8(vec![
+                    128;
+                    width as usize * height as usize
+                ]))
+            );
+            // Corrupt only the last record: admission must validate all chunks.
+            let last = payload + (chunks as usize - 1) * strip.len();
+            let sof = bytes[last..]
+                .windows(2)
+                .position(|b| b == [0xff, 0xc0])
+                .unwrap()
+                + last;
+            bytes[sof + 7..sof + 9].copy_from_slice(&1u16.to_be_bytes());
+            std::fs::write(&path, &bytes).unwrap();
+            assert!(Reader::open(&path, Limits::default()).is_err());
+        }
+    }
     std::fs::remove_file(path).unwrap();
 }

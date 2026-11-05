@@ -7,11 +7,17 @@
 //! Palette and unsupported photometrics fail explicitly. Tags remain
 //! typed values, including private tags understood by the backend's value parser.
 use crate::{PixelBuffer, PixelType, source::Snapshot};
-use std::{collections::BTreeMap, fmt, fs::File, io::BufReader, path::Path};
+use std::{
+    collections::BTreeMap,
+    fmt,
+    fs::File,
+    io::{BufReader, Read, Seek, SeekFrom},
+    path::Path,
+};
 pub use tiff_backend::decoder::ifd::Value as TagValue;
 use tiff_backend::{
     ColorType,
-    decoder::{Decoder, DecodingResult},
+    decoder::{ChunkType, Decoder, DecodingResult},
     tags::Tag,
 };
 
@@ -139,7 +145,11 @@ impl Reader {
             if pages.len() >= limits.frames {
                 return Err(Error("TIFF exceeds frame limit".into()));
             }
-            pages.push(metadata(&mut decoder, limits, &mut metadata_bytes)?);
+            let page = metadata(&mut decoder, limits, &mut metadata_bytes)?;
+            if page.compression == 7 {
+                validate_jpeg_chunks(&mut decoder, &page, &snapshot, limits)?;
+            }
+            pages.push(page);
             if !decoder.more_images() {
                 break;
             }
@@ -398,6 +408,135 @@ fn metadata(
         tags,
     })
 }
+// TIFF's JPEG backend reads only the bytes required by its IFD layout. Its
+// native decoder can otherwise accept an RGB JPEG strip labeled as gray and
+// silently discard two thirds of the component samples. Admit every encoded
+// chunk against that layout before native pixel decoding.
+fn validate_jpeg_chunks(
+    decoder: &mut Decoder<BufReader<File>>,
+    page: &Metadata,
+    snapshot: &Snapshot,
+    limits: Limits,
+) -> Result<(), Error> {
+    use tiff_jpeg_header::{
+        JpegDecoder,
+        zune_core::{bytestream::ZCursor, colorspace::ColorSpace, options::DecoderOptions},
+    };
+    let tiled = decoder.get_chunk_type() == ChunkType::Tile;
+    let (offset_tag, count_tag, chunks) = if tiled {
+        (Tag::TileOffsets, Tag::TileByteCounts, decoder.tile_count()?)
+    } else {
+        (
+            Tag::StripOffsets,
+            Tag::StripByteCounts,
+            decoder.strip_count()?,
+        )
+    };
+    let offsets = decoder
+        .find_tag_unsigned_vec::<u64>(offset_tag)?
+        .ok_or_else(|| Error("TIFF JPEG lacks chunk offsets".into()))?;
+    let lengths = decoder
+        .find_tag_unsigned_vec::<u64>(count_tag)?
+        .ok_or_else(|| Error("TIFF JPEG lacks chunk byte counts".into()))?;
+    if chunks == 0 || offsets.len() != chunks as usize || lengths.len() != offsets.len() {
+        return Err(Error("invalid TIFF JPEG chunk table".into()));
+    }
+    let tables = decoder
+        .find_tag(Tag::JPEGTables)?
+        .map(|value| value.into_u8_vec())
+        .transpose()?;
+    if tables.as_ref().is_some_and(|bytes| {
+        bytes.len() < 4 || !bytes.starts_with(&[0xff, 0xd8]) || !bytes.ends_with(&[0xff, 0xd9])
+    }) {
+        return Err(Error("invalid TIFF JPEG shared-table envelope".into()));
+    }
+    let planar = page.planar_configuration == 2;
+    let channels = if planar { 1 } else { page.channels };
+    let color = if planar {
+        ColorSpace::Luma
+    } else {
+        match (page.photometric_interpretation, channels) {
+            (0 | 1, 1) => ColorSpace::Luma,
+            (2, 3) => ColorSpace::RGB,
+            (5, 4) => ColorSpace::CMYK,
+            (6, 3) => ColorSpace::YCbCr,
+            _ => {
+                return Err(Error(
+                    "unsupported ambiguous TIFF JPEG channel/photometric layout".into(),
+                ));
+            }
+        }
+    };
+    let mut source = File::open(&snapshot.path).map_err(|e| Error(e.to_string()))?;
+    snapshot.check_handle(&source).map_err(Error)?;
+    let source_bytes = source.metadata().map_err(|e| Error(e.to_string()))?.len();
+    let mut encoded = Vec::new();
+    for (index, (&offset, &length)) in offsets.iter().zip(&lengths).enumerate() {
+        let length = usize::try_from(length)
+            .ok()
+            .filter(|&n| {
+                n >= 2
+                    && offset
+                        .checked_add(n as u64)
+                        .is_some_and(|end| end <= source_bytes)
+            })
+            .ok_or_else(|| Error("TIFF JPEG chunk exceeds source bounds".into()))?;
+        let prefix = tables.as_ref().map_or(0, |bytes| bytes.len() - 2);
+        let combined = length
+            .checked_add(prefix)
+            .filter(|&n| n <= limits.intermediate_bytes)
+            .ok_or_else(|| Error("TIFF JPEG header/payload exceeds intermediate limit".into()))?;
+        encoded.clear();
+        encoded
+            .try_reserve_exact(combined)
+            .map_err(|e| Error(e.to_string()))?;
+        encoded.resize(combined, 0);
+        source
+            .seek(SeekFrom::Start(offset))
+            .map_err(|e| Error(e.to_string()))?;
+        source
+            .read_exact(&mut encoded[prefix..])
+            .map_err(|e| Error(e.to_string()))?;
+        if encoded[prefix..prefix + 2] != [0xff, 0xd8] {
+            return Err(Error("TIFF JPEG chunk lacks SOI".into()));
+        }
+        // Match the backend's shared-table reconstruction exactly: one SOI,
+        // shared tables without EOI, then the chunk without its original SOI.
+        if let Some(tables) = &tables {
+            encoded[..prefix].copy_from_slice(&tables[..prefix]);
+            encoded.copy_within(prefix + 2.., prefix);
+            encoded.truncate(combined - 2);
+        }
+        let dimensions = if tiled {
+            decoder.chunk_dimensions()
+        } else {
+            decoder.chunk_data_dimensions(index as u32)
+        };
+        let options = DecoderOptions::default()
+            .set_max_width(dimensions.0 as usize)
+            .set_max_height(dimensions.1 as usize)
+            .set_strict_mode(true);
+        let mut jpeg = JpegDecoder::new_with_options(ZCursor::new(encoded.as_slice()), options);
+        // The mature parser rejects non-8-bit SOF precision itself.
+        jpeg.decode_headers()
+            .map_err(|e| Error(format!("invalid TIFF JPEG header: {e}")))?;
+        let info = jpeg
+            .info()
+            .ok_or_else(|| Error("TIFF JPEG lacks frame header".into()))?;
+        if (u32::from(info.width), u32::from(info.height)) != dimensions
+            || usize::from(info.components) != channels
+            || jpeg.input_colorspace() != Some(color)
+        {
+            return Err(Error(
+                "TIFF JPEG chunk layout disagrees with IFD dimensions/components/photometric"
+                    .into(),
+            ));
+        }
+    }
+    snapshot.check_handle(&source).map_err(Error)?;
+    Ok(())
+}
+
 fn into_native(pixels: PixelBuffer) -> DecodingResult {
     match pixels {
         PixelBuffer::U8(v) => DecodingResult::U8(v),

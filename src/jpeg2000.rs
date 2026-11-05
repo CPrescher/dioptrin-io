@@ -211,6 +211,11 @@ fn admit(bytes: &[u8], limits: Limits) -> Result<Metadata, Error> {
                     let mut child = start;
                     while child < end {
                         let (kind, _, next) = take_box(&bytes[..end], child)?;
+                        if &kind == b"cdef" {
+                            return Err(Error(
+                                "JP2 channel definitions (cdef) unsupported: preserve original component order".into(),
+                            ));
+                        }
                         if [&b"pclr"[..], &b"cmap"[..]].contains(&kind.as_slice()) {
                             return Err(Error("JP2 palette/component mapping unsupported".into()));
                         }
