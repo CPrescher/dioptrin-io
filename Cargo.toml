@@ -22,6 +22,7 @@ containers = ["native", "dep:roxmltree", "dep:mrc-backend"]
 bruker = ["native"]
 oxford = ["native"]
 raxis = ["native"]
+fixed = ["native"]
 wrappers = ["native", "tiff", "cbf", "edf", "dep:tempfile"]
 
 [dependencies]

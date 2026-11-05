@@ -1,0 +1,61 @@
+{
+  "license": "CC0-1.0",
+  "fabio_version": "2026.6.0",
+  "ge": {
+    "ge-uint8.ge": {
+      "shape": [
+        2,
+        2,
+        3
+      ],
+      "dtype": "uint8",
+      "sha256": "a867f402e9359ac98c571e11a80ac199f7d9a8c3e0124060a45d67f9aed5ab98",
+      "frame_sha256": [
+        "23d65ea0eba723b11cc9382350d0ab3756eedeef67957f1a341d629c58cbde77",
+        "7434d1a7081e75c8d0a3d7aec67a0bdcd69275f291fb661e5fd1c09e39163aeb"
+      ]
+    },
+    "ge-uint16.ge": {
+      "shape": [
+        2,
+        2,
+        3
+      ],
+      "dtype": "uint16",
+      "sha256": "f18fde8403700f4512cb169c8a3497492ccb7d5405c122a7ada9d7772c2535fe",
+      "frame_sha256": [
+        "c963a5b1928c8454a20e3e9c06b22ab56511f7a16598ff2e773b53782e78f245",
+        "9cd29738acefbba9529a125575ad9b50617d1bb2e43d23d479ad6083c16602e4"
+      ]
+    },
+    "ge-uint32.ge": {
+      "shape": [
+        2,
+        2,
+        3
+      ],
+      "dtype": "uint32",
+      "sha256": "80409209dda3e044f373ce94f54ecf448892b82ae16713060e48cc4f2ca145dc",
+      "frame_sha256": [
+        "77e5f1d0c8c964d624c4ae6692e225e08f4e2deaca375bd78854b83ea4ed0f3d",
+        "0462181efc992e496b441f684581400180d2907b83afbfd2325724edadbc65e5"
+      ]
+    }
+  },
+  "pixi": {
+    "1": {
+      "sha256": "dda1a81123d07c3e57b785a0f15118595995658eca05ea79efdd41b95fbc2972",
+      "frame_sha256": [
+        "9e7bc15fcc6b26dad9177a9c6368b693b4d380a4b8131998d3b4beccad4bff54"
+      ]
+    },
+    "3": {
+      "sha256": "97931095132b1b8c2b30db7393ba0011fd640c8f3b83c31295ed6716b824ba8d",
+      "frame_sha256": [
+        "9e7bc15fcc6b26dad9177a9c6368b693b4d380a4b8131998d3b4beccad4bff54",
+        "67865f019907bb7b6905a2c822e31fcc12fd1bed455dcda177a40fcdc0582d1c",
+        "fcfb5cd228219f6dc2635faae073319264c2caef2df6a8d945fd2c3c5f330b8e"
+      ]
+    }
+  }
+}

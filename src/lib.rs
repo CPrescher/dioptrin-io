@@ -61,3 +61,8 @@ pub mod jpeg2000;
 mod raster;
 #[cfg(feature = "tiff")]
 pub mod tiff;
+
+#[cfg(feature = "fixed")]
+pub mod ge;
+#[cfg(feature = "fixed")]
+pub mod pixi;

@@ -1,0 +1,134 @@
+{
+  "fabio_version": "2026.6.0",
+  "fabio_commit": "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece",
+  "files": {
+    "/private/tmp/dioptrin-io-fabio-corpus/GE_aSI_detector_image_1529": {
+      "format": "ge",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        2048,
+        2048
+      ],
+      "sha256": "35405756685b83d773f09a0ecd070d2e31c030089f5ef6e140ac6dabc22b59e7",
+      "frame_sha256": [
+        "f89cc1fca98244bf2603d48e563e5e9ff4140690cb246749093943dae3e5b3b1"
+      ]
+    },
+    "/private/tmp/dioptrin-io-fabio-corpus/GE_image_1frame_intact_header.ge": {
+      "format": "ge",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        2048,
+        2048
+      ],
+      "sha256": "fdd24db34bc46579dba3223419e930231cf92fb722097170f56e11e2901a515a",
+      "frame_sha256": [
+        "ddea9f14d5c70d0c2c85c1dcbc3750a03292669fa9550d3a39e3df6541b5a95b"
+      ]
+    },
+    "/private/tmp/dioptrin-io-fabio-corpus/GE_image_1frame_blanked_header.ge": {
+      "format": "ge",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        2048,
+        2048
+      ],
+      "sha256": "2abf85e7437f24bccf11a9e44256eb56567b3b64319aec5b7df8f8edddda847c",
+      "frame_sha256": [
+        "6c94755b99bccea30d448efd08d97994096d3294a6d3bfa6ab075c07d5795eeb"
+      ]
+    },
+    "/private/tmp/dioptrin-io-fabio-corpus/dark_before_000428.edf.ge5": {
+      "format": "ge",
+      "dtype": "uint16",
+      "shape": [
+        10,
+        2048,
+        2048
+      ],
+      "sha256": "e84d995c0e4fb9842c2f10f4a8a961cd6d835468e411c9733b8ee272f75dc632",
+      "frame_sha256": [
+        "2e8bb206e89129a458880364d8cc97ba20966baf8ba11143510981025e23d407",
+        "305ddcf6af2aea0ed45b2759fd6ce82f9cee0e4e2c4b47b3c1afd25d44745026",
+        "424e3bd5d03c0463621873d171ccbed03afb82be1c37d79ab818ce14a96a0a37",
+        "18f93afca73f2d77fd7f5beb52f96c7cf6baafeaeaba844c067d64ebb45e48fc",
+        "431f953d9494a364dd5f503aa45b3ee6b39455d9a78348b1957f7d28bc77c190",
+        "b7f4461352299ea74a437cd72eb6144ccc92d84c0c7d392d646dd8b05f64fe22",
+        "33249e80ee7ac1efe302b29978105df30d3682868f5da6c9c42679ed39e2cf6b",
+        "0d73ac9733c6b6ca08de17ab8dc473fbfaf61f12da9517d8c7ea2ef59e9142d0",
+        "1cfa4f9ead8d836e4297fe7a0f454da29ff258d20039e92a8eed39332ac71b87",
+        "2396b6142a7cdbf7c0c25b0781ca5a49ea9814f4d48e856f25841d1f57026f01"
+      ]
+    },
+    "/private/tmp/dioptrin-fixed-pixi-capture/pixi_1frame.dat": {
+      "format": "pixi",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        512,
+        476
+      ],
+      "sha256": "90fecccc5af2cb5e755533de63326928f270dca8d23d1698c058acfd97d27bac",
+      "frame_sha256": [
+        "e58c4bba16f79934025848179572ceaf290f4bb8f17bb9d8738c7e20e2af00c4"
+      ]
+    },
+    "/private/tmp/dioptrin-fixed-pixi-capture/pixi_3frame.dat": {
+      "format": "pixi",
+      "dtype": "uint16",
+      "shape": [
+        3,
+        512,
+        476
+      ],
+      "sha256": "6dc94d4234e8129467400aa0cfd274bed43478ea6d86cb89cda76e250b0ece5e",
+      "frame_sha256": [
+        "e58c4bba16f79934025848179572ceaf290f4bb8f17bb9d8738c7e20e2af00c4",
+        "4d9a02da6f9f16b6aee07ac6c2d6579cc7d073dadb0fdd16617961efb34dcc4a",
+        "92c62a148bb27e2f47dde3e9550b0183c79f4f6edf65a5f11bd32dad9d22bfc5"
+      ]
+    },
+    "/private/tmp/dioptrin-fixed-pixi-capture/pixi_series.dat$0000": {
+      "format": "pixi",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        512,
+        476
+      ],
+      "sha256": "90fecccc5af2cb5e755533de63326928f270dca8d23d1698c058acfd97d27bac",
+      "frame_sha256": [
+        "e58c4bba16f79934025848179572ceaf290f4bb8f17bb9d8738c7e20e2af00c4"
+      ]
+    },
+    "/private/tmp/dioptrin-fixed-pixi-capture/pixi_series.dat$0001": {
+      "format": "pixi",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        512,
+        476
+      ],
+      "sha256": "ab5f8854b83e95fdada943b613a879523c5793e242d21d6b1e1e636657621e32",
+      "frame_sha256": [
+        "4d9a02da6f9f16b6aee07ac6c2d6579cc7d073dadb0fdd16617961efb34dcc4a"
+      ]
+    },
+    "/private/tmp/dioptrin-fixed-pixi-capture/pixi_series.dat$0002": {
+      "format": "pixi",
+      "dtype": "uint16",
+      "shape": [
+        1,
+        512,
+        476
+      ],
+      "sha256": "7f949204239f7434c061854569a0609d07f3e952ce3a2de6250c36b9e3d274e8",
+      "frame_sha256": [
+        "92c62a148bb27e2f47dde3e9550b0183c79f4f6edf65a5f11bd32dad9d22bfc5"
+      ]
+    }
+  }
+}
