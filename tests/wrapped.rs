@@ -49,6 +49,23 @@ fn same_files_through_both_wrappers_keep_counts_headers_and_stacks() {
         ("edf/compressed-stack.edf", Format::Edf),
         ("cbf/int32.cbf", Format::Cbf(cbf::ByteOffsetMode::Legacy32)),
         ("tiff/le-bigtiff.tif", Format::Tiff),
+        #[cfg(feature = "containers")]
+        ("containers/spe-v3-int32.spe", Format::Spe),
+        #[cfg(feature = "containers")]
+        ("containers/mrc-mode3-be.mrc", Format::Mrc),
+        #[cfg(feature = "containers")]
+        ("containers/dm3-uint16-be.dm3", Format::Dm3),
+        #[cfg(feature = "bruker")]
+        ("legacy/bruker100-baseline.sfrm", Format::Bruker),
+        #[cfg(feature = "oxford")]
+        ("legacy/oxford-ty1-i32.img", Format::Oxford),
+        #[cfg(feature = "raxis")]
+        (
+            "legacy/raxis-big.img",
+            Format::Raxis(dioptrin_io::raxis::Interpretation::Stored),
+        ),
+        #[cfg(feature = "xsd")]
+        ("xsd/uint64-base32.xml", Format::Xsd),
     ];
     let path = tempfile::NamedTempFile::new().unwrap();
     for (name, format) in cases {

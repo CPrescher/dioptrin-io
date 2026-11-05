@@ -8,6 +8,20 @@ use std::path::Path;
 
 #[derive(Debug, Clone, Copy)]
 pub enum Format {
+    #[cfg(feature = "containers")]
+    Spe,
+    #[cfg(feature = "containers")]
+    Mrc,
+    #[cfg(feature = "containers")]
+    Dm3,
+    #[cfg(feature = "bruker")]
+    Bruker,
+    #[cfg(feature = "oxford")]
+    Oxford,
+    #[cfg(feature = "raxis")]
+    Raxis(crate::raxis::Interpretation),
+    #[cfg(feature = "xsd")]
+    Xsd,
     Native(native::Format),
     Edf,
     /// Explicit external EDF source convention, including optional relocation.
@@ -20,6 +34,20 @@ pub enum Format {
 }
 
 enum Backend {
+    #[cfg(feature = "containers")]
+    Spe(crate::spe::Reader),
+    #[cfg(feature = "containers")]
+    Mrc(Box<crate::mrc::Reader>),
+    #[cfg(feature = "containers")]
+    Dm3(crate::dm3::Reader),
+    #[cfg(feature = "bruker")]
+    Bruker(crate::bruker::Reader),
+    #[cfg(feature = "oxford")]
+    Oxford(crate::oxford::Reader),
+    #[cfg(feature = "raxis")]
+    Raxis(crate::raxis::Reader),
+    #[cfg(feature = "xsd")]
+    Xsd(crate::xsd::Reader),
     Native(native::Reader),
     Edf(edf::Reader),
     Cbf(cbf::Reader),
@@ -63,6 +91,20 @@ impl FrameBuffer {
 }
 
 pub enum Metadata<'a> {
+    #[cfg(feature = "containers")]
+    Spe(&'a crate::spe::Metadata),
+    #[cfg(feature = "containers")]
+    Mrc(&'a crate::mrc::Metadata),
+    #[cfg(feature = "containers")]
+    Dm3(&'a crate::dm3::Metadata),
+    #[cfg(feature = "bruker")]
+    Bruker(&'a crate::bruker::Metadata),
+    #[cfg(feature = "oxford")]
+    Oxford(&'a crate::oxford::Metadata),
+    #[cfg(feature = "raxis")]
+    Raxis(&'a crate::raxis::Metadata),
+    #[cfg(feature = "xsd")]
+    Xsd(&'a crate::xsd::Metadata),
     Native(&'a native::Metadata),
     Edf(&'a edf::Metadata),
     Cbf(&'a cbf::Metadata),
@@ -88,6 +130,29 @@ impl Reader {
         let source = PreparedSource::open(path, transport)?;
         let input = source.path();
         let backend = match format {
+            #[cfg(feature = "containers")]
+            Format::Spe => Backend::Spe(crate::spe::Reader::open(input, image)?),
+            #[cfg(feature = "containers")]
+            Format::Mrc => Backend::Mrc(Box::new(crate::mrc::Reader::open(input, image)?)),
+            #[cfg(feature = "containers")]
+            Format::Dm3 => Backend::Dm3(crate::dm3::Reader::open(input, image)?),
+            #[cfg(feature = "bruker")]
+            Format::Bruker => Backend::Bruker(crate::bruker::Reader::open(input, image)?),
+            #[cfg(feature = "oxford")]
+            Format::Oxford => Backend::Oxford(crate::oxford::Reader::open(input, image)?),
+            #[cfg(feature = "raxis")]
+            Format::Raxis(interpretation) => {
+                Backend::Raxis(crate::raxis::Reader::open_with_options(
+                    input,
+                    image,
+                    crate::raxis::Options {
+                        interpretation,
+                        ..Default::default()
+                    },
+                )?)
+            }
+            #[cfg(feature = "xsd")]
+            Format::Xsd => Backend::Xsd(crate::xsd::Reader::open(input, image)?),
             Format::Native(format) => Backend::Native(native::Reader::open(input, format, image)?),
             Format::Edf | Format::EdfExternal { .. } => {
                 let (external_payloads, external_basenames) = match format {
@@ -115,12 +180,40 @@ impl Reader {
         Ok(Self { backend, source })
     }
     #[must_use]
+    pub fn source_paths(&self) -> Vec<&Path> {
+        let mut paths = vec![self.source.original_path()];
+        if let Backend::Edf(reader) = &self.backend {
+            paths.extend(
+                reader
+                    .payload_sources()
+                    .iter()
+                    .skip(1)
+                    .map(|s| s.path.as_path()),
+            );
+        }
+        paths
+    }
+    #[must_use]
     pub fn compression(&self) -> Compression {
         self.source.compression()
     }
     #[must_use]
     pub fn frames(&self) -> usize {
         match &self.backend {
+            #[cfg(feature = "containers")]
+            Backend::Spe(r) => r.frames(),
+            #[cfg(feature = "containers")]
+            Backend::Mrc(r) => r.frames(),
+            #[cfg(feature = "containers")]
+            Backend::Dm3(r) => r.frames(),
+            #[cfg(feature = "bruker")]
+            Backend::Bruker(r) => r.frames(),
+            #[cfg(feature = "oxford")]
+            Backend::Oxford(r) => r.frames(),
+            #[cfg(feature = "raxis")]
+            Backend::Raxis(r) => r.frames(),
+            #[cfg(feature = "xsd")]
+            Backend::Xsd(r) => r.frames(),
             Backend::Native(r) => r.frames(),
             Backend::Edf(r) => r.frames(),
             Backend::Cbf(_) => 1,
@@ -133,6 +226,20 @@ impl Reader {
             return None;
         }
         match &self.backend {
+            #[cfg(feature = "containers")]
+            Backend::Spe(r) => Some(Metadata::Spe(r.metadata())),
+            #[cfg(feature = "containers")]
+            Backend::Mrc(r) => Some(Metadata::Mrc(r.metadata())),
+            #[cfg(feature = "containers")]
+            Backend::Dm3(r) => Some(Metadata::Dm3(r.metadata())),
+            #[cfg(feature = "bruker")]
+            Backend::Bruker(r) => Some(Metadata::Bruker(r.metadata())),
+            #[cfg(feature = "oxford")]
+            Backend::Oxford(r) => Some(Metadata::Oxford(r.metadata())),
+            #[cfg(feature = "raxis")]
+            Backend::Raxis(r) => Some(Metadata::Raxis(r.metadata())),
+            #[cfg(feature = "xsd")]
+            Backend::Xsd(r) => Some(Metadata::Xsd(r.metadata())),
             Backend::Native(r) => Some(Metadata::Native(r.metadata())),
             Backend::Edf(r) => r.metadata(index).map(Metadata::Edf),
             Backend::Cbf(r) => Some(Metadata::Cbf(r.metadata())),
@@ -168,6 +275,20 @@ impl Reader {
                     unreachable!()
                 };
                 match backend {
+                    #[cfg(feature = "containers")]
+                    Backend::Spe(r) => r.read_frame_into(index, b)?,
+                    #[cfg(feature = "containers")]
+                    Backend::Mrc(r) => r.read_frame_into(index, b)?,
+                    #[cfg(feature = "containers")]
+                    Backend::Dm3(r) => r.read_frame_into(index, b)?,
+                    #[cfg(feature = "bruker")]
+                    Backend::Bruker(r) => r.read_frame_into(b)?,
+                    #[cfg(feature = "oxford")]
+                    Backend::Oxford(r) => r.read_frame_into(b)?,
+                    #[cfg(feature = "raxis")]
+                    Backend::Raxis(r) => r.read_frame_into(b)?,
+                    #[cfg(feature = "xsd")]
+                    Backend::Xsd(r) => r.read_frame_into(b)?,
                     Backend::Native(r) => r.read_frame_into(index, b)?,
                     Backend::Edf(r) => r.read_frame_into(index, b)?,
                     Backend::Cbf(r) => r.read_frame_into(b)?,

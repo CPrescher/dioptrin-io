@@ -13,6 +13,7 @@ import hashlib
 import importlib
 import importlib.metadata
 import inspect
+import io
 import json
 import os
 import pathlib
@@ -31,7 +32,11 @@ ADAPTERS = {
     "cbfimage": "cbf", "tifimage": "tiff", "binaryimage": "raw",
     "fit2dspreadsheetimage": "spreadsheet",
     "hdf5image":"hdf5", "eigerimage":"eiger", "limaimage":"lima", "lambdaimage":"lambda",
-    "marccdimage":"tiff", "pilatusimage":"tiff",
+    "marccdimage":"marccd", "pilatusimage":"pilatus",
+    "speimage":"spe", "mrcimage":"mrc", "dm3image":"dm3",
+    "brukerimage":"bruker86", "bruker100image":"bruker100",
+    "OXDimage":"oxford", "raxisimage":"raxis",
+    "jpegimage":"jpeg", "jpeg2kimage":"jpeg2000", "xsdimage":"xsd",
 }
 
 
@@ -144,9 +149,11 @@ def main():
             record.update(status="test_adapter_missing",reason="Rust reader exists; the comparison harness has no adapter for it")
             return
         record["adapter"] = adapter
-        if codec in {"marccdimage","pilatusimage"}:
-            record["reader_scope"]="generic TIFF pixels and raw tags; detector-specific semantic header parser still pending"
         extra = []
+        if codec == "raxisimage":
+            record["interpretation_policy"] = "PhotomultiplierExpanded explicitly selected; default native reader preserves stored uint16 words and flags"
+        if codec in {"speimage", "mrcimage"}:
+            record["reference_frame_policy"] = "fresh .read(path, frame=i) for every declared frame; pinned generic getframe/nframes behavior is incomplete"
         if codec == "edfimage":
             record["source_policy"] = "snapshot external payloads; explicit basename relocation; unique .gz/.bz2 counterpart only if exact path is absent; no missing-count repair"
         if codec == "cbfimage" and image.data.dtype != np.dtype("int32"):
@@ -184,13 +191,29 @@ def main():
                 return
             try:
                 frames = [json.loads(line) for line in native.stdout.splitlines()]
-                expected_frames = image.nframes
+                manifest = {}
+                for frame in frames:
+                    for name in frame.get("sources", []):
+                        source_path = pathlib.Path(name)
+                        source_hash = sha_file(source_path)
+                        manifest[source_hash] = {"name": source_path.name, "bytes": source_path.stat().st_size}
+                if manifest:
+                    record["source_manifest"] = manifest
+                    report["source_files"].update(manifest)
+                # SPE declares its stack in the header but the pinned reader
+                # inherits nframes=1. MRC's inherited getframe fails on data=None.
+                expected_frames = int(image.header["num_frames"]) if codec == "speimage" else image.nframes
+                record["reference"]["declared_frames"] = expected_frames
                 if len(frames) != expected_frames:
                     record.update(status="frame_count_mismatch", native=len(frames), reference=expected_frames)
                     return
                 failures = []
                 for index, frame in enumerate(frames):
-                    ref = image.data if expected_frames == 1 else image.getframe(index).data
+                    if codec in {"speimage", "mrcimage"}:
+                        ref_source = io.BytesIO(captured) if captured is not None else str(source)
+                        ref = type(image)().read(ref_source, frame=index).data
+                    else:
+                        ref = image.data if expected_frames == 1 else image.getframe(index).data
                     canonical = np.ascontiguousarray(ref.astype(ref.dtype.newbyteorder("<"), copy=False))
                     expected = {"shape": list(ref.shape), "dtype": ref.dtype.name,
                                 "sample_sha256": hashlib.sha256(canonical.tobytes()).hexdigest()}

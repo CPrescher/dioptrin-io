@@ -7,10 +7,12 @@ use std::error::Error;
 fn report(
     index: usize,
     frames: usize,
-    shape: [usize; 2],
+    shape: impl Into<Vec<usize>>,
     pixels: &PixelBuffer,
     fields: serde_json::Value,
+    sources: &[&std::path::Path],
 ) {
+    let shape = shape.into();
     let mut hash = Sha256::new();
     macro_rules! digest { ($($variant:ident,$name:literal);*) => {
         match pixels { $(PixelBuffer::$variant(values) => {
@@ -50,7 +52,7 @@ fn report(
     println!(
         "{}",
         json!({"frame":index,"frames":frames,"shape":shape,"dtype":dtype,
-        "sample_sha256":format!("{:x}",hash.finalize()),"fields":fields})
+        "sample_sha256":format!("{:x}",hash.finalize()),"fields":fields,"sources":sources})
     );
 }
 
@@ -72,6 +74,26 @@ fn run() -> Result<(), Box<dyn Error>> {
             "cbf64",
             "tiff",
         ];
+        for (enabled, feature, names) in [
+            (
+                cfg!(feature = "containers"),
+                "containers",
+                &["spe", "mrc", "dm3"][..],
+            ),
+            (
+                cfg!(feature = "bruker"),
+                "bruker",
+                &["bruker86", "bruker100"][..],
+            ),
+            (cfg!(feature = "oxford"), "oxford", &["oxford"][..]),
+            (cfg!(feature = "raxis"), "raxis", &["raxis"][..]),
+            (cfg!(feature = "xsd"), "xsd", &["xsd"][..]),
+        ] {
+            if enabled {
+                features.push(feature);
+                adapters.extend(names);
+            }
+        }
         if cfg!(feature = "hdf5") {
             features.push("hdf5");
             adapters.extend(["hdf5", "eiger", "lima", "lambda"]);
@@ -82,7 +104,9 @@ fn run() -> Result<(), Box<dyn Error>> {
                 "numpyimage":"native","dtrekimage":"native","adscimage":"native","fit2dmaskimage":"native",
                 "HiPiCimage":"native","pnmimage":"native","binaryimage":"native","fit2dspreadsheetimage":"native",
                 "edfimage":"edf","cbfimage":"cbf","tifimage":"tiff","marccdimage":"tiff","pilatusimage":"tiff","hdf5image":"hdf5",
-                "eigerimage":"hdf5","limaimage":"hdf5","lambdaimage":"hdf5"
+                "eigerimage":"hdf5","limaimage":"hdf5","lambdaimage":"hdf5",
+                "speimage":"containers","mrcimage":"containers","dm3image":"containers",
+                "brukerimage":"bruker","bruker100image":"bruker","OXDimage":"oxford","raxisimage":"raxis","xsdimage":"xsd"
             }})
         );
         return Ok(());
@@ -122,6 +146,7 @@ fn run() -> Result<(), Box<dyn Error>> {
                 buffer.shape().unwrap(),
                 buffer.pixels().unwrap(),
                 json!(reader.fields()),
+                &[],
             );
         }
         return Ok(());
@@ -176,10 +201,27 @@ fn run() -> Result<(), Box<dyn Error>> {
             buffer.shape().unwrap(),
             buffer.pixels().unwrap(),
             json!({}),
+            &[],
         );
         return Ok(());
     }
     let format = match args[1].as_str() {
+        #[cfg(feature = "containers")]
+        "spe" => wrapped::Format::Spe,
+        #[cfg(feature = "containers")]
+        "mrc" => wrapped::Format::Mrc,
+        #[cfg(feature = "containers")]
+        "dm3" => wrapped::Format::Dm3,
+        #[cfg(feature = "bruker")]
+        "bruker86" | "bruker100" => wrapped::Format::Bruker,
+        #[cfg(feature = "oxford")]
+        "oxford" => wrapped::Format::Oxford,
+        #[cfg(feature = "raxis")]
+        "raxis" => {
+            wrapped::Format::Raxis(dioptrin_io::raxis::Interpretation::PhotomultiplierExpanded)
+        }
+        #[cfg(feature = "xsd")]
+        "xsd" => wrapped::Format::Xsd,
         "edf" => wrapped::Format::EdfExternal {
             policy: dioptrin_io::edf::ExternalPayloads::FollowCompressedSnapshot,
             basenames: true,
@@ -208,6 +250,18 @@ fn run() -> Result<(), Box<dyn Error>> {
     for i in 0..reader.frames() {
         reader.read_frame_into(i, &mut buffer)?;
         let fields = match reader.metadata(i).unwrap() {
+            #[cfg(feature = "containers")]
+            wrapped::Metadata::Spe(m) => json!(m.fields),
+            #[cfg(feature = "containers")]
+            wrapped::Metadata::Mrc(_) | wrapped::Metadata::Dm3(_) => json!({}),
+            #[cfg(feature = "bruker")]
+            wrapped::Metadata::Bruker(m) => json!(m.fields),
+            #[cfg(feature = "oxford")]
+            wrapped::Metadata::Oxford(_) => json!({}),
+            #[cfg(feature = "raxis")]
+            wrapped::Metadata::Raxis(_) => json!({}),
+            #[cfg(feature = "xsd")]
+            wrapped::Metadata::Xsd(_) => json!({}),
             wrapped::Metadata::Native(m) => json!(m.fields),
             wrapped::Metadata::Edf(m) => json!(m.fields),
             wrapped::Metadata::Cbf(m) => json!(m.binary_fields),
@@ -219,6 +273,7 @@ fn run() -> Result<(), Box<dyn Error>> {
             buffer.shape().unwrap(),
             buffer.pixels().unwrap(),
             fields,
+            &reader.source_paths(),
         );
     }
     Ok(())
