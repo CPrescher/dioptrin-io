@@ -20,6 +20,9 @@ pub struct Metadata {
     pub pixel_type: PixelType,
     pub little_endian: bool,
     pub compression: String,
+    /// Complete stored payload including EDF binary padding; only the declared
+    /// image samples are returned. Padding bytes are never exposed as counts.
+    pub stored_bytes: usize,
     /// Original padded header bytes, retained without interpreting geometry.
     pub header: Vec<u8>,
     /// Case-normalized EDF keys; raw spelling/ordering remains in `header`.
@@ -68,8 +71,9 @@ impl Reader {
                     break;
                 }
             }
-            let text = std::str::from_utf8(&header)
-                .map_err(|_| Error("EDF headers must be UTF-8/ASCII".into()))?;
+            // Byte-preserving Latin-1 mapping also admits legacy non-ASCII
+            // acquisition comments. The original bytes remain authoritative.
+            let text: String = header.iter().map(|&b| char::from(b)).collect();
             let body = text
                 .trim_start()
                 .strip_prefix('{')
@@ -78,14 +82,18 @@ impl Reader {
                     Error("invalid EDF header braces; outer compression is unsupported".into())
                 })?;
             let mut fields = BTreeMap::new();
-            for entry in body.split(';') {
+            let mut entries = body.split(';').peekable();
+            while let Some(entry) = entries.next() {
                 let entry = entry.trim();
                 if entry.is_empty() {
                     continue;
                 }
-                let (k, v) = entry
-                    .split_once('=')
-                    .ok_or_else(|| Error("invalid EDF header assignment".into()))?;
+                let Some((k, v)) = entry.split_once('=') else {
+                    if entries.peek().is_none() {
+                        break;
+                    } // Original header padding.
+                    return Err(Error("invalid EDF header assignment".into()));
+                };
                 if fields
                     .insert(k.trim().to_ascii_uppercase(), v.trim().to_owned())
                     .is_some()
@@ -128,6 +136,13 @@ impl Reader {
                 .get("COMPRESSION")
                 .map(|s| s.to_ascii_uppercase())
                 .unwrap_or_else(|| "NONE".into());
+            let compression = match compression.as_str() {
+                "GZIPCOMPRESSION" => "GZIP".to_owned(),
+                "ZCOMPRESSION" => "ZLIB".to_owned(),
+                "BZCOMPRESSION" | "BZ2COMPRESSION" => "BZ2".to_owned(),
+                "FALSE" => "NONE".to_owned(),
+                _ => compression,
+            };
             if ![
                 "NONE",
                 "NO",
@@ -142,15 +157,20 @@ impl Reader {
             {
                 return Err(Error(format!("unsupported EDF compression {compression}")));
             }
+            let plain = ["NONE", "NO", "NO COMPRESSION"].contains(&compression.as_str());
             let bytes = if fields.contains_key("EDF_BINARYSIZE") {
                 number("EDF_BINARYSIZE")?
-            } else {
+            } else if fields.contains_key("SIZE") {
                 number("SIZE")?
+            } else if plain {
+                // Size is optional for an uncompressed, dimensioned EDF frame.
+                count * pixel_type.bytes()
+            } else {
+                return Err(Error("compressed EDF requires binary size".into()));
             };
-            let plain = ["NONE", "NO", "NO COMPRESSION"].contains(&compression.as_str());
             if bytes == 0
                 || bytes > limits.encoded_bytes
-                || (plain && bytes != count * pixel_type.bytes())
+                || (plain && bytes < count * pixel_type.bytes())
             {
                 return Err(Error("invalid EDF encoded payload size".into()));
             }
@@ -170,7 +190,7 @@ impl Reader {
             total = total
                 .checked_add(
                     header_size
-                        .saturating_mul(2)
+                        .saturating_mul(3)
                         .saturating_add(fields.len().saturating_mul(128)),
                 )
                 .ok_or_else(|| Error("EDF header storage overflow".into()))?;
@@ -190,6 +210,7 @@ impl Reader {
                     pixel_type,
                     little_endian,
                     compression,
+                    stored_bytes: bytes,
                     header,
                     fields,
                 },
@@ -238,7 +259,11 @@ impl Reader {
             .resize(meta.pixel_type, count)
             .map_err(Error)?;
         if matches!(meta.compression.as_str(), "NONE" | "NO" | "NO COMPRESSION") {
-            copy_samples(&buffer.encoded, &mut buffer.pixels, meta.little_endian)?;
+            copy_samples(
+                &buffer.encoded[..bytes],
+                &mut buffer.pixels,
+                meta.little_endian,
+            )?;
         } else {
             resize_bytes(&mut buffer.decoded, bytes)?;
             match meta.compression.as_str() {

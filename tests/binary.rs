@@ -263,3 +263,37 @@ fn corrupt_and_overlong_edf_streams_fail_without_exposing_partial_pixels() {
     }
     std::fs::remove_file(path).unwrap();
 }
+
+#[cfg(feature = "edf")]
+#[test]
+fn independent_legacy_edf_aliases_optional_size_and_binary_padding() {
+    use dioptrin_io::{
+        PixelBuffer,
+        edf::{FrameBuffer, Limits, Reader},
+    };
+    let mut buffer = FrameBuffer::default();
+    for name in [
+        "gzip-alias.edf",
+        "zlib-alias.edf",
+        "bzip2-alias.edf",
+        "optional-size.edf",
+        "binary-padding.edf",
+    ] {
+        let reader = Reader::open(fixture("edf", name), Limits::default()).unwrap();
+        reader.read_frame_into(0, &mut buffer).unwrap();
+        assert_eq!(
+            buffer.pixels(),
+            Some(&PixelBuffer::U16((0..6).map(|x| x * 11000).collect())),
+            "{name}"
+        );
+        if name == "binary-padding.edf" {
+            assert_eq!(reader.metadata(0).unwrap().stored_bytes, 32);
+        }
+        if name == "gzip-alias.edf" {
+            assert_eq!(
+                reader.metadata(0).unwrap().fields["COMPRESSION"],
+                "GzipCompression"
+            );
+        }
+    }
+}

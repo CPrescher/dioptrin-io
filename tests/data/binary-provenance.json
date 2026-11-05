@@ -200,7 +200,7 @@
       "dtype": "float64"
     },
     "edf/compressed-stack.edf": {
-      "file_sha256": "55c431286526e6ac63e1033122dae1348c5836e4c020c88c0646875a40b1fb61",
+      "file_sha256": "5fafc9f64a4b255960123c206ed61b58219db51c0458bbf3a1a9d087b5b8330b",
       "codecs": [
         "GZIP",
         "ZLIB",
@@ -211,6 +211,31 @@
         3,
         4
       ]
+    },
+    "edf/gzip-alias.edf": {
+      "file_sha256": "3193d3e340174f6868e7bf274e0008063e448e874a4c49c3c2c63e21902c802b",
+      "dtype": "uint16",
+      "compression_alias": "GzipCompression"
+    },
+    "edf/zlib-alias.edf": {
+      "file_sha256": "9e4d7d020ab52a6ab24228bd532ec50047d3a1acb142f4fd036fbc13f70dc67d",
+      "dtype": "uint16",
+      "compression_alias": "ZCompression"
+    },
+    "edf/bzip2-alias.edf": {
+      "file_sha256": "8709b52c5ca4136e3149ce5dfb21634ba1e1369e213b7a3c5dcd9e80d7a2ee3a",
+      "dtype": "uint16",
+      "compression_alias": "BZ2"
+    },
+    "edf/optional-size.edf": {
+      "file_sha256": "867a6dc5fc3c4491f6e79f639ec4c25c183c171ef1ad9d348b52a29f4ccc1c16",
+      "dtype": "uint16",
+      "size": "inferred from dimensions, uncompressed only"
+    },
+    "edf/binary-padding.edf": {
+      "file_sha256": "9553ec26bfeb08a562c569d75a21c99ac2c8292ba89cb349f5c49cd95043b1ad",
+      "dtype": "uint16",
+      "binary_padding_bytes": 20
     }
   }
 }

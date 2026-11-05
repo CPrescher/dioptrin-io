@@ -20,7 +20,7 @@ for dtype in ['uint8','uint16','uint32','uint64','int8','int16','int32','int64']
 types={'uint8':'UnsignedByte','uint16':'UnsignedShort','uint32':'UnsignedInteger','uint64':'Unsigned64','int8':'SignedByte','int16':'SignedShort','int32':'SignedInteger','int64':'Signed64','float32':'FloatValue','float64':'DoubleValue'}
 def frame(a,order='<',compression='NONE'):
  payload=a.astype(a.dtype.newbyteorder(order)).tobytes()
- payload={'NONE':lambda x:x,'GZIP':gzip.compress,'ZLIB':zlib.compress,'BZ2':bz2.compress}[compression](payload)
+ payload={'NONE':lambda x:x,'GZIP':lambda x:gzip.compress(x,mtime=0),'ZLIB':zlib.compress,'BZ2':bz2.compress}[compression](payload)
  h='{\nHeaderID = EH:000001:000000:000000;\nImage = 1;\n'
  h+=f'ByteOrder = {"LowByteFirst" if order=="<" else "HighByteFirst"};\nDataType = {types[a.dtype.name]};\nDim_1 = {a.shape[1]};\nDim_2 = {a.shape[0]};\nSize = {len(payload)};\nCompression = {compression};\nEDF_HeaderSize = 512;\nUserValue = Original header;\n'
  return h.encode()+b' '*(512-len(h)-2)+b'}\n'+payload
@@ -39,4 +39,29 @@ path=root/'edf'/'compressed-stack.edf';path.write_bytes(b''.join(frame(a+i,'>',c
 ref=fabio.open(path);assert ref.nframes==3
 for i in range(3):assert np.array_equal(ref.getframe(i).data,a+i)
 manifest['files']['edf/compressed-stack.edf']={'file_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'codecs':['GZIP','ZLIB','BZ2'],'shape':[3,3,4]}
+# Legacy size/compression spellings and binary padding observed in FabIO's
+# upstream corpus, reproduced independently with tiny CC0 source arrays.
+a=np.arange(6,dtype='uint16').reshape(2,3)*11000
+for name,compression,alias in [('gzip-alias','GZIP','GzipCompression'),('zlib-alias','ZLIB','ZCompression'),('bzip2-alias','BZ2','BZ2')]:
+ data=frame(a,'<',compression).replace(('Compression = '+compression).encode(),('Compression = '+alias).encode())
+ # Rebuild the 512-byte header because the alias has a different text length.
+ marker=data.index(b'}\n')+2
+ body=data[:marker].rstrip(b'\n').rstrip(b'}').rstrip()
+ data=body+b' '*(512-len(body)-2)+b'}\n'+data[marker:]
+ path=root/'edf'/(name+'.edf');path.write_bytes(data)
+ assert np.array_equal(fabio.open(path).data,a)
+ manifest['files']['edf/'+path.name]={'file_sha256':hashlib.sha256(data).hexdigest(),'dtype':'uint16','compression_alias':alias}
+data=frame(a)
+text=data[:512].decode().replace('Size = 12;','')
+body=text[:text.index('}')].rstrip().encode()
+data=body+b' '*(512-len(body)-2)+b'}\n'+data[512:]
+path=root/'edf'/'optional-size.edf';path.write_bytes(data)
+assert np.array_equal(fabio.open(path).data,a)
+manifest['files']['edf/'+path.name]={'file_sha256':hashlib.sha256(data).hexdigest(),'dtype':'uint16','size':'inferred from dimensions, uncompressed only'}
+data=frame(a);text=data[:512].decode().replace('Size = 12;','Size = 32;').replace('UserValue = Original header;','UserValue = Original header;\nEDF_BinarySize = 32;')
+body=text[:text.index('}')].rstrip().encode()
+data=body+b' '*(512-len(body)-2)+b'}\n'+data[512:]+bytes([0xab])*20
+path=root/'edf'/'binary-padding.edf';path.write_bytes(data)
+assert np.array_equal(fabio.open(path).data,a)
+manifest['files']['edf/'+path.name]={'file_sha256':hashlib.sha256(data).hexdigest(),'dtype':'uint16','binary_padding_bytes':20}
 (root/'binary-provenance.json').write_text(json.dumps(manifest,indent=2)+'\n')

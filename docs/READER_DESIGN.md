@@ -82,10 +82,68 @@ establish universal CBF/CIF header or multiple-array support.
 
 EDF supports inline 2D frames (including concatenated frames with differing
 metadata), all ten scalar types, both byte orders and bounded internal
-none/gzip/zlib/bzip2. Original padded header bytes and parsed fields are retained.
-External binary sources, global/general headers, volumes, float128, optional
-byte-offset EDF and outer compressed-file wrappers remain explicit gaps.
+none/gzip/zlib/bzip2, including GzipCompression/ZCompression spellings. The Size
+field is optional for uncompressed dimensioned frames. Declared binary padding
+is retained in stored-byte metadata and skipped after the exact image samples.
+Original padded header bytes and parsed fields are retained. Legacy non-ASCII
+text uses a reversible Latin-1 mapping; no bytes are silently dropped.
+External binary sources, global/general headers, volumes, float128 and optional
+byte-offset EDF remain explicit gaps. Outer wrappers have a separate API below.
 Neither reader pads truncated pixels with zeros or substitutes neighboring files.
+
+## NPY, raw input and smaller detector formats
+
+The optional `native` feature provides explicitly selected NPY, d*TREK/ADSC,
+Fit2D mask/spreadsheet, HiPiC and PNM readers. They share bounded scalar decoding
+and immutable source checks. Header bytes and type/endian metadata remain
+available. Raw input requires explicit dimensions, scalar type, byte order and
+absolute or EOF-relative location, with checked range arithmetic. FabIO negative
+offset `-n` maps to `FromEnd { trailing_bytes: n - 1 }`.
+
+NPY v1/v2/v3 accepts the ten native scalar types and nonempty scalar/1D/2D/higher
+dimensional arrays (at most 32 axes). C-order leading axes are flattened into
+frame numbers. Fortran storage is read in logical axis order into row-major
+frames without a whole-array allocation; it currently performs one positional
+seek/read per sample and has no performance claim. The original descriptor,
+shape and storage-order flag survive. Object, structured, string, bool, complex,
+float16 and float128 types fail explicitly. Shape/byte arithmetic is checked
+before reads. No Python expressions or pickle are executed.
+
+d*TREK supports its seven scalar types, both byte orders and the ADSC legacy
+unsigned_short TYPE spelling. Nested braces in header values are retained.
+Only 2D images are admitted; 1D/volumes and missing-type repair remain gaps.
+Fit2D masks unpack little-endian LSB-first bits to 0/1 u8, skip row alignment
+bits and retain all 1024 header bytes. They do not apply masks to detector data.
+Fit2D spreadsheet rows require exact dimensions and parse decimal text through
+f64 into the format's f32 representation, matching the reference.
+
+HiPiC reads little-endian u16 IM images without the old 12-bit signed-intensity
+reinterpretation. Binary offsets/header type and raw comments are retained.
+UTF8 comment assignments are exposed as a map; repeated keys follow the last
+assignment, with every original entry still present in raw header bytes.
+
+PNM supports P1/P2 ASCII and big-endian P5 u8/u16/u32, preserving black/white
+values without inversion. Comments and exact sample counts are checked. P5
+admits a single raster delimiter, or extra line whitespace of a length proven
+by the exact raster size (including FabIO's space-plus-newline writer). It does
+not trim initial binary sample bytes. Color/packed variants remain unsupported.
+The pinned FabIO P1/P2 loops never advance their row index; dioptrin-io retains
+all original rows and records this reference bug as a behavior difference.
+
+## Outer file wrappers
+
+The optional `wrappers` feature includes the above readers and exposes
+`wrapped::Reader` for magic-detected gzip/bzip2 around native/EDF/CBF/TIFF files.
+It streams decompressed bytes into a private tempfile, admitting concatenated
+members and checking compression checksums. Transport limits independently bound
+the encoded file and total uncompressed staging bytes. This is bounded disk
+staging, not a whole-file RAM buffer or a decoded-pixel cache. Backend frame,
+metadata and scratch limits still apply. The source snapshot and open handle
+are checked before/after staging and every read; a changed original invalidates
+already staged data. Backend handles are dropped before the temporary file for
+Windows compatibility. Corrupt/truncated/trailing wrapper garbage fails closed.
+Direct file-like streams and HDF5 wrappers remain pending. CBF dialect selection
+remains explicit, including through this wrapper API.
 
 ## Library evaluation and licensing
 
@@ -105,6 +163,18 @@ Neither reader pads truncated pixels with zeros or substitutes neighboring files
   is GPL-3.0+, so it is not incorporated into this MIT crate. No source was
   copied from it. CBF/EDF use independently written bounded parsers with
   independent test fixtures instead.
+- `npyz` 0.9.1 (MIT) was evaluated for reuse. Its header interpretation computes
+  unchecked shape/stride products before caller admission (`read.rs`), so it
+  was not incorporated. The bounded scalar-only NPY grammar is independently
+  implemented; broader dtypes remain visible gaps. Registry searches did not
+  locate reusable permissive d*TREK/HiPiC/Fit2D detector readers. These small
+  parsers use the pinned format reference and independent licensed fixtures.
+- `tempfile` 3.27.0 (MIT/Apache-2.0) supplies private, automatically removed
+  staging files. Existing flate2/bzip2 decoders are reused for wrappers.
+
+The pinned FabIO source/test-suite copyright notice is retained under
+`licenses/native-readers`. No GPL/LGPL FabIO native codec implementation was
+incorporated into the MIT production crate. Upstream test data stays outside Git.
 
 Cargo lockfiles pin exact build dependency resolution. New reader/codec notices
 are under `licenses/native-readers`; original attribution remains unchanged.

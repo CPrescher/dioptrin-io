@@ -20,6 +20,18 @@ settings are recorded in `tiff/provenance.json` and `binary-provenance.json`.
   reserved/extreme integers, nonfinite floats and signed zero.
 
 Fixture generation dependencies are separate from the Rust runtime and tests.
+
+`scripts/generate_native_fixtures.py` adds CC0 NPY v1/v2/v3, ten scalar types,
+both byte orders, C/Fortran stacks with distinct leading-axis frames, seven
+d*TREK scalar types in both byte orders, aligned/unaligned Fit2D masks, HiPiC,
+Fit2D spreadsheets and PNM. Original sample hashes and per-file FabIO comparison
+status are recorded in `native/provenance.json`. P1/P2 use independent original
+values because the pinned reference loses rows. EDF includes small independent
+legacy compression aliases, optional Size and binary padding fixtures; gzip
+fixture headers now use deterministic mtime zero.
+
+The larger upstream FabIO corpus is external, with exact file/download hashes
+in the suite reports under `docs/fabio-parity/`; it is not redistributed here.
 Reference environment used NumPy 2.5.4, FabIO 2026.6.0, tifffile 2026.10.15 and
 imagecodecs 2026.10.10. Reproduction versions and the binary files' own hashes are
 in the manifests. Full real Eiger data is external; its provenance/count hashes

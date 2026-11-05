@@ -1,5 +1,23 @@
 # Validation, 2026-11-05
 
+The next native-reader expansion passes:
+
+- `cargo fmt --check`
+- `cargo clippy --all-targets --all-features -- -D warnings`
+- `cargo test --all-features`: 32 Rust tests, including 71 small independently
+  verified native-format fixtures and wrapper/padding/alias regressions.
+- Separate no-default-feature check/tests, native-only tests and strict Clippy
+  for every optional format feature and the wrapper feature.
+
+The pinned upstream FabIO codec suite is now run against the same actual files
+using a test-only Rust/Python comparison bridge. Full reading parity is **not**
+established. Exact scope, reproduction, source/download hashes and remaining
+reading-contract gaps are in `FABIO_PARITY.md` and `fabio-parity/`.
+These local changes have not been pushed; expanded Windows/Linux/macOS CI is
+still pending. No new performance claim is made for these additional readers.
+
+## Previous expansion
+
 Local macOS/aarch64 validation for the initial native-reader expansion:
 
 - `cargo fmt --check`

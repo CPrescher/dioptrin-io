@@ -7,15 +7,25 @@
 mod pixels;
 pub use pixels::{PixelBuffer, PixelType};
 
-#[cfg(any(feature = "hdf5", feature = "tiff", feature = "cbf", feature = "edf"))]
+#[cfg(any(
+    feature = "hdf5",
+    feature = "tiff",
+    feature = "cbf",
+    feature = "edf",
+    feature = "native"
+))]
 mod source;
 
-#[cfg(any(feature = "cbf", feature = "edf"))]
+#[cfg(any(feature = "cbf", feature = "edf", feature = "native"))]
 mod binary;
 #[cfg(feature = "cbf")]
 pub mod cbf;
 #[cfg(feature = "edf")]
 pub mod edf;
+#[cfg(feature = "native")]
+pub mod native;
+#[cfg(feature = "wrappers")]
+pub mod wrapped;
 
 #[cfg(feature = "hdf5")]
 pub mod hdf5;

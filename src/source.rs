@@ -37,7 +37,7 @@ impl Snapshot {
         let stamp = Stamp::new(std::fs::metadata(&path).map_err(|e| e.to_string())?)?;
         Ok(Self { path, stamp })
     }
-    #[cfg(any(feature = "hdf5", feature = "cbf", feature = "edf"))]
+    #[cfg(any(feature = "hdf5", feature = "cbf", feature = "edf", feature = "native"))]
     pub fn bytes(&self) -> u64 {
         self.stamp.bytes
     }

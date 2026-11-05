@@ -86,7 +86,7 @@ impl PixelBuffer {
         self.len() == 0
     }
 
-    #[cfg(any(feature = "hdf5", feature = "cbf", feature = "edf"))]
+    #[cfg(any(feature = "hdf5", feature = "cbf", feature = "edf", feature = "native"))]
     pub(crate) fn resize(&mut self, ty: PixelType, len: usize) -> Result<(), String> {
         macro_rules! resize {
             ($v:ident, $zero:expr) => {{
@@ -114,7 +114,7 @@ impl PixelBuffer {
         }
         Ok(())
     }
-    #[cfg(any(feature = "hdf5", feature = "edf"))]
+    #[cfg(any(feature = "hdf5", feature = "edf", feature = "native"))]
     pub(crate) fn bytes_mut(&mut self) -> &mut [u8] {
         match self {
             Self::U8(v) => v,

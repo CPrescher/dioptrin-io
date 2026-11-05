@@ -86,7 +86,7 @@ pub(crate) fn resize_bytes(v: &mut Vec<u8>, len: usize) -> Result<(), Error> {
     v.resize(len, 0);
     Ok(())
 }
-#[cfg(feature = "edf")]
+#[cfg(any(feature = "edf", feature = "native"))]
 pub(crate) fn copy_samples(
     input: &[u8],
     output: &mut PixelBuffer,

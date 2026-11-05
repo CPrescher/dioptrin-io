@@ -16,14 +16,14 @@
         "gzip (.gz)",
         "bzip2 (.bz2)"
       ],
-      "implementation": "pending; internal EDF gzip/bzip2 is separate",
+      "implementation": "optional wrappers feature: magic-detected gzip/bzip2, bounded temporary staging, original-source checks; native/EDF/CBF/TIFF; HDF5 and direct file-like APIs pending",
       "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/fabioutils.py"
     },
     "file_series": "pending explicit series API; numbered neighboring files must not be silently substituted",
     "autodetection": "pending; current backends are explicitly selected by caller",
     "orientation": "return stored rows/columns and metadata; consumer transformations are explicit",
     "source_mutation": "immutable snapshots check normal filesystem changes; no adversarial metadata-preserving writes or live refresh",
-    "header_coverage": "raw EDF/CBF headers and typed TIFF tags; HDF5 finite scalar API only; semantic detector header maps pending"
+    "header_coverage": "raw EDF/CBF/native headers, parsed native fields and typed TIFF tags; HDF5 finite scalar API only; complete semantic detector header maps pending"
   },
   "formats": [
     {
@@ -38,7 +38,7 @@
       "subformats_and_types": "EDF 0/1/2/3; concatenated frames; general headers; inline/external binary; 2D/volume; integer/float aliases including optional float128",
       "compression": "none; internal gzip/zlib/bzip2; optional byte-offset; outer gzip/bzip2",
       "stack": "concatenated frames",
-      "implementation": "partial: inline 2D, ten scalar types, both byte orders, none/gzip/zlib/bzip2; general/external/volume/float128/offset/outer wrappers pending",
+      "implementation": "partial: inline 2D, ten scalar types, both byte orders, none/gzip/zlib/bzip2 aliases, optional uncompressed Size and binary padding; general/external/volume/float128/offset pending; outer wrappers via wrapped::Reader",
       "validation": [
         "tests/data/edf/*.edf",
         "tests/binary.rs"
@@ -56,8 +56,13 @@
       "subformats_and_types": "d*TREK / ADSC; Rigaku 1.1; endian scalar data and text header",
       "compression": "uncompressed",
       "stack": "single image; external file series",
-      "implementation": "pending",
-      "validation": [],
+      "implementation": "partial: seven scalar types, both byte orders, nested-brace headers, legacy ADSC TYPE alias, raw padded headers; 1D/volume and permissive missing-type defaults pending",
+      "validation": [
+        "tests/data/native/provenance.json",
+        "tests/native.rs",
+        "tests/wrapped.rs",
+        "docs/FABIO_PARITY.md"
+      ],
       "parity_verified": false
     },
     {
@@ -127,8 +132,13 @@
       "subformats_and_types": "Fit2D packed bit mask; width alignment and stored orientation",
       "compression": "packed bits",
       "stack": "single image",
-      "implementation": "pending",
-      "validation": [],
+      "implementation": "implemented bounded little-endian packed masks, aligned/unaligned row widths, raw 1024-byte header and unchanged orientation; same upstream face/click files compared",
+      "validation": [
+        "tests/data/native/provenance.json",
+        "tests/native.rs",
+        "tests/wrapped.rs",
+        "docs/FABIO_PARITY.md"
+      ],
       "parity_verified": false
     },
     {
@@ -230,8 +240,13 @@
       "subformats_and_types": "Hamamatsu HiPiC IM header, comments and integer pixels",
       "compression": "uncompressed",
       "stack": "single image",
-      "implementation": "pending",
-      "validation": [],
+      "implementation": "partial: little-endian u16 IM images, raw binary header/comments, parsed UTF8 comments with repeated keys retained in raw bytes; other header/type variants pending",
+      "validation": [
+        "tests/data/native/provenance.json",
+        "tests/native.rs",
+        "tests/wrapped.rs",
+        "docs/FABIO_PARITY.md"
+      ],
       "parity_verified": false
     },
     {
@@ -261,8 +276,13 @@
       "subformats_and_types": "Fit2D spreadsheet dimensions and numeric text",
       "compression": "ASCII",
       "stack": "single image",
-      "implementation": "pending",
-      "validation": [],
+      "implementation": "implemented bounded f32 text rows, dimensions, raw title/comment header; invalid or incomplete numeric rows fail explicitly",
+      "validation": [
+        "tests/data/native/provenance.json",
+        "tests/native.rs",
+        "tests/wrapped.rs",
+        "docs/FABIO_PARITY.md"
+      ],
       "parity_verified": false
     },
     {
@@ -291,7 +311,7 @@
       "subformats_and_types": "CBF/imgCIF and miniCBF/Pilatus; signed/unsigned integers 8/16/32/64; raw CIF/MIME headers",
       "compression": "x-CBF_BYTE_OFFSET only in pinned FabIO; distinguish terminal32 and extended64 escapes",
       "stack": "single 2D image in pinned reference",
-      "implementation": "partial: all eight integer types; explicit Legacy32/Extended64 dialects; MD5; raw CIF headers. Semantic CIF/Pilatus parsing, outer wrappers and multiple sections pending",
+      "implementation": "partial: all eight integer types; explicit Legacy32/Extended64 dialects; MD5; raw CIF headers; outer wrappers via wrapped::Reader. Semantic CIF/Pilatus parsing and multiple sections pending",
       "validation": [
         "tests/data/cbf/*.cbf",
         "tests/binary.rs"
@@ -325,8 +345,13 @@
       "subformats_and_types": "caller-specified dimensions/offset/type/endianness; no autodetection",
       "compression": "uncompressed",
       "stack": "single explicitly configured image",
-      "implementation": "pending",
-      "validation": [],
+      "implementation": "implemented explicit shape, ten scalar types, both byte orders, absolute/EOF-relative offsets, immutable source checks; no autodetection by design",
+      "validation": [
+        "tests/data/native/provenance.json",
+        "tests/native.rs",
+        "tests/wrapped.rs",
+        "docs/FABIO_PARITY.md"
+      ],
       "parity_verified": false
     },
     {
@@ -368,8 +393,13 @@
       "subformats_and_types": "NPY array; 2D image / higher-dimensional reshaped frame sequence",
       "compression": "NPY binary; do not assume NPZ support",
       "stack": "array-leading frame dimension",
-      "implementation": "pending",
-      "validation": [],
+      "implementation": "partial: NPY versions 1/2/3, ten scalar types, both byte orders, C/Fortran arrays, scalar/1D/2D/stack/leading axes; bool/complex/structured/string/float16/float128/empty arrays pending; never executes pickle",
+      "validation": [
+        "tests/data/native/provenance.json",
+        "tests/native.rs",
+        "tests/wrapped.rs",
+        "docs/FABIO_PARITY.md"
+      ],
       "parity_verified": false
     },
     {
@@ -567,8 +597,13 @@
       "subformats_and_types": "compatibility alias to DtrekImage (same registered codec identity)",
       "compression": "same as dtrekimage",
       "stack": "same as dtrekimage",
-      "implementation": "pending alias; not a distinct 36th decoder",
-      "validation": [],
+      "implementation": "implemented via native::Format::Dtrek with legacy TYPE=unsigned_short; same decoder and remaining gaps as dtrekimage",
+      "validation": [
+        "tests/data/native/provenance.json",
+        "tests/native.rs",
+        "tests/wrapped.rs",
+        "docs/FABIO_PARITY.md"
+      ],
       "parity_verified": false
     },
     {

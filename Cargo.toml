@@ -14,6 +14,8 @@ hdf5 = ["dep:hdf5-backend", "dep:hdf5-bitshuffle", "dep:libz-sys", "dep:lz4_flex
 tiff = ["dep:tiff-backend"]
 cbf = ["dep:md-5"]
 edf = ["dep:bytemuck", "dep:flate2", "dep:bzip2"]
+native = ["dep:bytemuck"]
+wrappers = ["native", "tiff", "cbf", "edf", "dep:tempfile"]
 
 [dependencies]
 hdf5-backend = { package = "hdf5-metno", version = "=0.15.1", optional = true, features = ["static", "zlib", "lzf"] }
@@ -25,10 +27,16 @@ tiff-backend = { package = "tiff", version = "=0.11.3", optional = true, default
 md-5 = { version = "0.10", optional = true }
 flate2 = { version = "1.1", optional = true, default-features = false, features = ["rust_backend"] }
 bzip2 = { version = "0.6", optional = true }
+tempfile = { version = "3.27", optional = true }
 
 [dev-dependencies]
 sha2 = "0.10"
+serde_json = "1.0"
 
 [[example]]
 name = "inspect_frames"
 required-features = ["hdf5"]
+
+[[example]]
+name = "parity_probe"
+required-features = ["wrappers"]
