@@ -2,10 +2,9 @@
 //! Immutable decoded-count cache identity, mutation isolation and payload admission.
 use dioptrin_io::hdf5::{Limits, cache::CachedReader};
 use hdf5_backend as hdf5;
-use std::{
-    path::PathBuf,
-    sync::atomic::{AtomicUsize, Ordering},
-};
+use std::path::PathBuf;
+#[cfg(unix)]
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 fn fixture() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/counts-bitshuffle-lz4.h5")
