@@ -1,122 +1,201 @@
-//! Strict EDF inline detector frames with stored orientation and native scalars.
-//! Supports concatenated 2D frames, ordinary endian types and bounded internal
-//! gzip/zlib/bzip2. External payloads/general headers and outer compression are
-//! explicitly unsupported in this first implementation.
+//! Bounded EDF frames, general headers and explicitly followed binary sources.
 pub use crate::binary::{Error, FrameBuffer, Limits};
+pub use crate::transport::{Compression, Limits as TransportLimits};
 use crate::{
     PixelType,
     binary::{copy_samples, resize_bytes},
-    source::Snapshot,
+    transport::PreparedSource,
 };
 use std::{
     collections::BTreeMap,
     fs::File,
-    io::{BufReader, Read, Seek, SeekFrom},
-    path::Path,
+    io::{BufReader, Cursor, Read, Seek, SeekFrom},
+    path::{Path, PathBuf},
 };
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum ExternalPayloads {
+    #[default]
+    Reject,
+    /// Follow exactly the header filename, snapshotting the source.
+    FollowSnapshot,
+    /// Additionally allow .gz/.bz2 counterparts only when the exact filename
+    /// is absent. Ambiguous counterparts fail; a present corrupt file is never retried.
+    FollowCompressedSnapshot,
+}
+#[derive(Debug, Clone)]
+pub struct Options {
+    pub external_payloads: ExternalPayloads,
+    /// Directory of the original header when a caller has staged its wrapper.
+    pub source_directory: Option<PathBuf>,
+    /// Explicit FabIO acquisition-file relocation convention. Default false:
+    /// preserve relative/absolute header paths rather than discarding them.
+    pub external_basenames: bool,
+    pub transport: TransportLimits,
+    pub source_files: usize,
+}
+impl Default for Options {
+    fn default() -> Self {
+        Self {
+            external_payloads: ExternalPayloads::Reject,
+            source_directory: None,
+            external_basenames: false,
+            transport: TransportLimits::default(),
+            source_files: 128,
+        }
+    }
+}
+#[derive(Debug, Clone)]
+pub struct GeneralHeader {
+    pub header: Vec<u8>,
+    pub fields: BTreeMap<String, String>,
+}
+#[derive(Debug, Clone)]
+pub struct PayloadSource {
+    pub path: PathBuf,
+    pub bytes: u64,
+    pub outer_compression: Compression,
+}
 #[derive(Debug, Clone)]
 pub struct Metadata {
     pub shape: [usize; 2],
     pub pixel_type: PixelType,
     pub little_endian: bool,
     pub compression: String,
-    /// Complete stored payload including EDF binary padding; only the declared
-    /// image samples are returned. Padding bytes are never exposed as counts.
     pub stored_bytes: usize,
-    /// Original padded header bytes, retained without interpreting geometry.
+    /// Exact local header through its closing newline, including original padding.
     pub header: Vec<u8>,
-    /// Case-normalized EDF keys; raw spelling/ordering remains in `header`.
+    /// Case-normalized keys, last local assignment wins; raw bytes retain repeats.
+    /// Non-reserved general fields are inherited without changing local fields.
     pub fields: BTreeMap<String, String>,
+    pub general_header: Option<usize>,
+    pub payload_source: usize,
+    pub payload_offset: u64,
 }
 struct Page {
     metadata: Metadata,
     offset: u64,
     bytes: usize,
+    source: usize,
 }
 pub struct Reader {
-    snapshot: Snapshot,
-    file: File,
+    // Close read handles before removing source staging files on Windows.
+    files: Vec<File>,
+    sources: Vec<PreparedSource>,
     pages: Vec<Page>,
+    general: Vec<GeneralHeader>,
+    records: Vec<PayloadSource>,
+    decoded_limit: usize,
+    trailing_padding: usize,
 }
 impl Reader {
-    /// Index an immutable inline EDF scan. All primary frames are checked before
-    /// pixel allocation; headers are not silently defaulted or repaired.
+    /// Open immutable inline EDF, including bounded outer gzip/bzip2. External
+    /// sources require explicit options; counts are never repaired or zero padded.
     /// # Errors
-    /// Unsupported type/compression/external layout, malformed headers or limits.
+    /// Invalid/truncated/unsupported layouts, dimensions, headers, codecs or limits.
     pub fn open(path: impl AsRef<Path>, limits: Limits) -> Result<Self, Error> {
+        Self::open_with_options(path, limits, Options::default())
+    }
+    /// Open with explicit external-file and wrapper budgets. Every resolved source
+    /// is checked around every frame, including already staged compressed sources.
+    /// # Errors
+    /// Missing/ambiguous/changed sources, unsupported interpretation or read bounds.
+    pub fn open_with_options(
+        path: impl AsRef<Path>,
+        limits: Limits,
+        options: Options,
+    ) -> Result<Self, Error> {
         limits.validate()?;
-        let snapshot = Snapshot::open(path).map_err(Error)?;
-        let file = File::open(&snapshot.path)?;
-        snapshot.check_handle(&file).map_err(Error)?;
-        let mut input = BufReader::new(file.try_clone()?);
+        if options.source_files == 0 {
+            return Err(Error("EDF source-file limit must be positive".into()));
+        }
+        let first = PreparedSource::open(path, options.transport)?;
+        let directory = options
+            .source_directory
+            .clone()
+            .unwrap_or_else(|| first.original_path().parent().unwrap().to_path_buf());
+        let mut input = BufReader::new(File::open(first.path())?);
+        let mut files = vec![File::open(first.path())?];
+        let mut records = vec![PayloadSource {
+            path: first.original_path().to_path_buf(),
+            bytes: first.bytes(),
+            outer_compression: first.compression(),
+        }];
+        let mut source_bytes = first.bytes();
+        let mut sources = vec![first];
         let mut pages = Vec::new();
-        let mut offset = 0;
-        let mut total = 0_usize;
-        while offset < snapshot.bytes() {
-            if pages.len() >= limits.frames {
-                return Err(Error("EDF exceeds frame limit".into()));
+        let mut general: Vec<GeneralHeader> = Vec::new();
+        let mut active_general = None;
+        let mut offset = 0u64;
+        let mut metadata_bytes = 0usize;
+        let mut blocks = 0usize;
+        let mut trailing_padding = 0;
+        while offset < sources[0].bytes() {
+            if blocks >= limits.frames {
+                return Err(Error("EDF exceeds header/frame limit".into()));
             }
+            blocks += 1;
             input.seek(SeekFrom::Start(offset))?;
-            let mut header = Vec::new();
-            loop {
-                if header.len() >= limits.header_bytes {
-                    return Err(Error(
-                        "EDF header exceeds limit or lacks closing brace".into(),
-                    ));
-                }
-                let mut b = [0];
-                input.read_exact(&mut b)?;
-                header.push(b[0]);
-                if b[0] == b'}' {
+            // Classic acquisition files may finish at the next 512-byte boundary
+            // with zero-filled storage padding. Admit only that exact suffix.
+            let remaining = sources[0].bytes() - offset;
+            if !pages.is_empty() && remaining < 512 && sources[0].bytes().is_multiple_of(512) {
+                let mut tail = vec![0; remaining as usize];
+                input.read_exact(&mut tail)?;
+                if tail.iter().all(|&b| b == 0) {
+                    trailing_padding = tail.len();
                     break;
                 }
+                input.seek(SeekFrom::Start(offset))?;
             }
-            // Byte-preserving Latin-1 mapping also admits legacy non-ASCII
-            // acquisition comments. The original bytes remain authoritative.
-            let text: String = header.iter().map(|&b| char::from(b)).collect();
-            let body = text
-                .trim_start()
-                .strip_prefix('{')
-                .and_then(|s| s.strip_suffix('}'))
-                .ok_or_else(|| {
-                    Error("invalid EDF header braces; outer compression is unsupported".into())
-                })?;
-            let mut fields = BTreeMap::new();
-            let mut entries = body.split(';').peekable();
-            while let Some(entry) = entries.next() {
-                let entry = entry.trim();
-                if entry.is_empty() {
-                    continue;
-                }
-                let Some((k, v)) = entry.split_once('=') else {
-                    if entries.peek().is_none() {
-                        break;
-                    } // Original header padding.
-                    return Err(Error("invalid EDF header assignment".into()));
-                };
-                if fields
-                    .insert(k.trim().to_ascii_uppercase(), v.trim().to_owned())
-                    .is_some()
-                {
-                    return Err(Error("duplicate EDF header field".into()));
-                }
-            }
-            let field = |k: &str| {
-                fields
-                    .get(k)
-                    .map(String::as_str)
-                    .ok_or_else(|| Error(format!("missing EDF field {k}")))
+            let Some((header, local)) = read_header(&mut input, limits)? else {
+                break;
             };
-            let number = |k: &str| {
-                field(k)?
-                    .parse::<usize>()
-                    .map_err(|_| Error(format!("invalid EDF field {k}")))
-            };
-            if fields.contains_key("EDF_BINARYFILENAME") {
-                return Err(Error(
-                    "external EDF payloads require separate source validation".into(),
-                ));
+            let payload = offset
+                .checked_add(header.len() as u64)
+                .ok_or_else(|| Error("EDF header offset overflow".into()))?;
+            let is_general = local.contains_key("EDF_DATAFORMATVERSION");
+            metadata_bytes = metadata_bytes
+                .checked_add(header_cost(&header, &local))
+                .filter(|n| *n <= limits.metadata_bytes)
+                .ok_or_else(|| Error("EDF metadata exceeds total budget".into()))?;
+            if is_general {
+                let bytes = optional_number(&local, "EDF_BINARYSIZE")?
+                    .or(optional_number(&local, "SIZE")?)
+                    .unwrap_or(0);
+                if bytes != 0 {
+                    return Err(Error(
+                        "general EDF binary blocks require a separate metadata-payload contract"
+                            .into(),
+                    ));
+                }
+                active_general = Some(general.len());
+                general.push(GeneralHeader {
+                    header,
+                    fields: local,
+                });
+                offset = payload;
+                continue;
             }
+            let mut fields = local;
+            if let Some(index) = active_general {
+                for (key, value) in &general[index].fields {
+                    if !key.starts_with("EDF_")
+                        && !["SIZE", "IMAGE", "HEADERID"].contains(&key.as_str())
+                    {
+                        fields.entry(key.clone()).or_insert_with(|| value.clone());
+                    }
+                }
+            }
+            if header_cost(&[], &fields)
+                .checked_add(metadata_bytes)
+                .is_none_or(|n| n > limits.metadata_bytes)
+            {
+                return Err(Error("inherited EDF metadata exceeds budget".into()));
+            }
+            metadata_bytes = metadata_bytes
+                .checked_add(header_cost(&[], &fields))
+                .ok_or_else(|| Error("EDF metadata overflow".into()))?;
             if fields
                 .keys()
                 .filter(|k| k.starts_with("DIM_"))
@@ -124,108 +203,183 @@ impl Reader {
             {
                 return Err(Error("EDF volume dimensions are unsupported".into()));
             }
-            let shape = [number("DIM_2")?, number("DIM_1")?];
-            let pixel_type = edf_type(field("DATATYPE")?)?;
+            let shape = [number(&fields, "DIM_2")?, number(&fields, "DIM_1")?];
+            let pixel_type = edf_type(field(&fields, "DATATYPE")?)?;
             let count = limits.pixels(shape, pixel_type)?;
-            let little_endian = match field("BYTEORDER")?.to_ascii_lowercase().as_str() {
+            let decoded = count * pixel_type.bytes();
+            let little_endian = match field(&fields, "BYTEORDER")?.to_ascii_lowercase().as_str() {
                 "lowbytefirst" => true,
                 "highbytefirst" => false,
                 _ => return Err(Error("unsupported EDF byte order".into())),
             };
-            let compression = fields
+            let compression = match fields
                 .get("COMPRESSION")
                 .map(|s| s.to_ascii_uppercase())
-                .unwrap_or_else(|| "NONE".into());
-            let compression = match compression.as_str() {
-                "GZIPCOMPRESSION" => "GZIP".to_owned(),
-                "ZCOMPRESSION" => "ZLIB".to_owned(),
-                "BZCOMPRESSION" | "BZ2COMPRESSION" => "BZ2".to_owned(),
-                "FALSE" => "NONE".to_owned(),
-                _ => compression,
-            };
-            if ![
-                "NONE",
-                "NO",
-                "NO COMPRESSION",
-                "GZIP",
-                "ZLIB",
-                "Z",
-                "BZ2",
-                "BZIP2",
-            ]
-            .contains(&compression.as_str())
+                .as_deref()
             {
-                return Err(Error(format!("unsupported EDF compression {compression}")));
+                None | Some("NONE" | "NO" | "NO COMPRESSION" | "FALSE") => "NONE",
+                Some("GZIP" | "GZIPCOMPRESSION") => "GZIP",
+                Some("Z" | "ZLIB" | "ZCOMPRESSION") => "ZLIB",
+                Some("BZ2" | "BZ" | "BZIP2" | "BZCOMPRESSION" | "BZ2COMPRESSION") => "BZ2",
+                Some(value) => return Err(Error(format!("unsupported EDF compression {value}"))),
             }
-            let plain = ["NONE", "NO", "NO COMPRESSION"].contains(&compression.as_str());
-            let bytes = if fields.contains_key("EDF_BINARYSIZE") {
-                number("EDF_BINARYSIZE")?
-            } else if fields.contains_key("SIZE") {
-                number("SIZE")?
-            } else if plain {
-                // Size is optional for an uncompressed, dimensioned EDF frame.
-                count * pixel_type.bytes()
-            } else {
-                return Err(Error("compressed EDF requires binary size".into()));
-            };
+            .to_owned();
+            let plain = compression == "NONE";
+            let physical = optional_number(&fields, "EDF_BINARYSIZE")?
+                .or(optional_number(&fields, "SIZE")?)
+                .unwrap_or(if plain { decoded } else { 0 });
+            if physical > limits.encoded_bytes {
+                return Err(Error("EDF encoded block exceeds limit".into()));
+            }
+            offset = payload
+                .checked_add(physical as u64)
+                .filter(|&n| n <= sources[0].bytes())
+                .ok_or_else(|| Error("truncated EDF binary payload".into()))?;
+            let (source, frame_offset, bytes) =
+                if let Some(name) = fields.get("EDF_BINARYFILENAME") {
+                    if options.external_payloads == ExternalPayloads::Reject {
+                        return Err(Error(
+                            "external EDF payload requires explicit FollowSnapshot policy".into(),
+                        ));
+                    }
+                    let name = Path::new(name);
+                    let name = if options.external_basenames {
+                        name.file_name()
+                            .map(Path::new)
+                            .ok_or_else(|| Error("invalid EDF external filename".into()))?
+                    } else {
+                        name
+                    };
+                    let mut path = if name.is_absolute() {
+                        name.to_path_buf()
+                    } else {
+                        directory.join(name)
+                    };
+                    if !path.try_exists()?
+                        && options.external_payloads == ExternalPayloads::FollowCompressedSnapshot
+                    {
+                        let candidates = [
+                            PathBuf::from(format!("{}.gz", path.display())),
+                            PathBuf::from(format!("{}.bz2", path.display())),
+                        ];
+                        let found = candidates
+                            .into_iter()
+                            .filter_map(|p| match p.try_exists() {
+                                Ok(true) => Some(Ok(p)),
+                                Ok(false) => None,
+                                Err(e) => Some(Err(e)),
+                            })
+                            .collect::<Result<Vec<_>, _>>()?;
+                        if found.len() != 1 {
+                            return Err(Error(
+                                "missing or ambiguous compressed EDF payload counterpart".into(),
+                            ));
+                        }
+                        path = found[0].clone();
+                    }
+                    let canonical = std::fs::canonicalize(path)?;
+                    let source = if let Some(index) =
+                        sources.iter().position(|s| s.original_path() == canonical)
+                    {
+                        index
+                    } else {
+                        if sources.len() >= options.source_files {
+                            return Err(Error("EDF exceeds source-file limit".into()));
+                        }
+                        let remaining = options
+                            .transport
+                            .source_bytes
+                            .checked_sub(source_bytes)
+                            .filter(|&n| n > 0)
+                            .ok_or_else(|| {
+                                Error("EDF sources exceed total staging/source budget".into())
+                            })?;
+                        let prepared = PreparedSource::open(
+                            &canonical,
+                            TransportLimits {
+                                source_bytes: remaining,
+                                ..options.transport
+                            },
+                        )?;
+                        source_bytes = source_bytes
+                            .checked_add(prepared.bytes())
+                            .ok_or_else(|| Error("EDF total source size overflow".into()))?;
+                        metadata_bytes = metadata_bytes
+                            .checked_add(
+                                canonical
+                                    .as_os_str()
+                                    .len()
+                                    .saturating_mul(2)
+                                    .saturating_add(256),
+                            )
+                            .filter(|n| *n <= limits.metadata_bytes)
+                            .ok_or_else(|| {
+                                Error("EDF source manifest exceeds metadata budget".into())
+                            })?;
+                        files.push(File::open(prepared.path())?);
+                        records.push(PayloadSource {
+                            path: canonical,
+                            bytes: prepared.bytes(),
+                            outer_compression: prepared.compression(),
+                        });
+                        sources.push(prepared);
+                        sources.len() - 1
+                    };
+                    if source == 0 {
+                        return Err(Error(
+                            "EDF external payload must be a distinct source file".into(),
+                        ));
+                    }
+                    let start =
+                        optional_number(&fields, "EDF_BINARYFILEPOSITION")?.unwrap_or(0) as u64;
+                    let bytes = optional_number(&fields, "EDF_BINARYFILESIZE")?
+                        .unwrap_or(if plain { decoded } else { 0 });
+                    (source, start, bytes)
+                } else {
+                    (0, payload, physical)
+                };
             if bytes == 0
                 || bytes > limits.encoded_bytes
-                || (plain && bytes < count * pixel_type.bytes())
+                || (plain && bytes < decoded)
+                || frame_offset
+                    .checked_add(bytes as u64)
+                    .is_none_or(|n| n > sources[source].bytes())
             {
-                return Err(Error("invalid EDF encoded payload size".into()));
+                return Err(Error("invalid/truncated EDF payload window".into()));
             }
-            let header_size = if fields.contains_key("EDF_HEADERSIZE") {
-                number("EDF_HEADERSIZE")?
-            } else if fields.contains_key("HEADERSIZE") {
-                number("HEADERSIZE")?
-            } else {
-                (header.len() + 1).div_ceil(512) * 512
+            let metadata = Metadata {
+                shape,
+                pixel_type,
+                little_endian,
+                compression,
+                stored_bytes: bytes,
+                header,
+                fields,
+                general_header: active_general,
+                payload_source: source,
+                payload_offset: frame_offset,
             };
-            if header_size < header.len() || header_size > limits.header_bytes {
-                return Err(Error("invalid EDF header size".into()));
-            }
-            let previous = header.len();
-            resize_bytes(&mut header, header_size)?;
-            input.read_exact(&mut header[previous..])?;
-            total = total
-                .checked_add(
-                    header_size
-                        .saturating_mul(3)
-                        .saturating_add(fields.len().saturating_mul(128)),
-                )
-                .ok_or_else(|| Error("EDF header storage overflow".into()))?;
-            if total > limits.metadata_bytes {
-                return Err(Error("EDF exceeds total metadata budget".into()));
-            }
-            let payload = offset
-                .checked_add(header_size as u64)
-                .ok_or_else(|| Error("EDF offset overflow".into()))?;
-            offset = payload
-                .checked_add(bytes as u64)
-                .filter(|&n| n <= snapshot.bytes())
-                .ok_or_else(|| Error("truncated EDF binary payload".into()))?;
             pages.push(Page {
-                metadata: Metadata {
-                    shape,
-                    pixel_type,
-                    little_endian,
-                    compression,
-                    stored_bytes: bytes,
-                    header,
-                    fields,
-                },
-                offset: payload,
+                metadata,
+                offset: frame_offset,
                 bytes,
+                source,
             });
         }
         if pages.is_empty() {
-            return Err(Error("empty EDF file".into()));
+            return Err(Error("EDF file has no image frames".into()));
         }
-        snapshot.check_handle(&file).map_err(Error)?;
+        for source in &sources {
+            source.check()?;
+        }
         Ok(Self {
-            snapshot,
-            file,
+            files,
+            sources,
             pages,
+            general,
+            records,
+            decoded_limit: limits.frame_bytes,
+            trailing_padding,
         })
     }
     #[must_use]
@@ -236,19 +390,37 @@ impl Reader {
     pub fn metadata(&self, index: usize) -> Option<&Metadata> {
         self.pages.get(index).map(|p| &p.metadata)
     }
-    /// Read one original frame into worker-owned, reusable native buffers.
+    #[must_use]
+    pub fn trailing_padding(&self) -> usize {
+        self.trailing_padding
+    }
+    #[must_use]
+    pub fn general_headers(&self) -> &[GeneralHeader] {
+        &self.general
+    }
+    #[must_use]
+    pub fn payload_sources(&self) -> &[PayloadSource] {
+        &self.records
+    }
+    /// Read original samples into reusable storage. All source identities are
+    /// checked before and after reading; failed output is inaccessible.
     /// # Errors
-    /// Invalid index, changed source, corrupt/truncated/oversized decoded stream.
+    /// Out-of-range frame, changed source, corrupt stream or exact-size mismatch.
     pub fn read_frame_into(&self, index: usize, buffer: &mut FrameBuffer) -> Result<(), Error> {
         buffer.shape = None;
-        self.snapshot.check_handle(&self.file).map_err(Error)?;
+        for source in &self.sources {
+            source.check()?;
+        }
         let page = self
             .pages
             .get(index)
             .ok_or_else(|| Error("EDF frame index outside file".into()))?;
-        let mut file = File::open(&self.snapshot.path)?;
-        self.snapshot.check_handle(&file).map_err(Error)?;
+        let mut file = File::open(self.sources[page.source].path())?;
         file.seek(SeekFrom::Start(page.offset))?;
+        // The retained handle also binds this indexed source to its file identity.
+        if file.metadata()?.len() != self.files[page.source].metadata()?.len() {
+            return Err(Error("EDF payload source changed".into()));
+        }
         resize_bytes(&mut buffer.encoded, page.bytes)?;
         file.read_exact(&mut buffer.encoded)?;
         let meta = &page.metadata;
@@ -258,7 +430,7 @@ impl Reader {
             .pixels
             .resize(meta.pixel_type, count)
             .map_err(Error)?;
-        if matches!(meta.compression.as_str(), "NONE" | "NO" | "NO COMPRESSION") {
+        if meta.compression == "NONE" {
             copy_samples(
                 &buffer.encoded[..bytes],
                 &mut buffer.pixels,
@@ -266,31 +438,169 @@ impl Reader {
             )?;
         } else {
             resize_bytes(&mut buffer.decoded, bytes)?;
-            match meta.compression.as_str() {
-                "GZIP" => decode_exact(
-                    &mut flate2::read::MultiGzDecoder::new(&buffer.encoded[..]),
-                    &mut buffer.decoded,
-                )?,
-                "ZLIB" | "Z" => {
-                    let mut decoder = flate2::read::ZlibDecoder::new(&buffer.encoded[..]);
-                    decode_exact(&mut decoder, &mut buffer.decoded)?;
-                    if decoder.total_in() != buffer.encoded.len() as u64 {
-                        return Err(Error("extra EDF zlib payload bytes".into()));
-                    }
-                }
-                "BZ2" | "BZIP2" => decode_exact(
-                    &mut bzip2::read::MultiBzDecoder::new(&buffer.encoded[..]),
-                    &mut buffer.decoded,
-                )?,
-                _ => return Err(Error("unsupported EDF compression".into())),
-            }
+            decode_payload(
+                &meta.compression,
+                &buffer.encoded,
+                &mut buffer.decoded,
+                self.decoded_limit,
+            )?;
             copy_samples(&buffer.decoded, &mut buffer.pixels, meta.little_endian)?;
         }
-        self.snapshot.check_handle(&file).map_err(Error)?;
+        for source in &self.sources {
+            source.check()?;
+        }
         buffer.shape = Some(meta.shape);
         Ok(())
     }
 }
+fn trim(s: &str) -> &str {
+    s.trim_matches(|c: char| c == '\0' || c.is_ascii_whitespace())
+}
+fn field<'a>(fields: &'a BTreeMap<String, String>, key: &str) -> Result<&'a str, Error> {
+    fields
+        .get(key)
+        .map(String::as_str)
+        .ok_or_else(|| Error(format!("missing EDF field {key}")))
+}
+fn number(fields: &BTreeMap<String, String>, key: &str) -> Result<usize, Error> {
+    field(fields, key)?
+        .parse()
+        .map_err(|_| Error(format!("invalid EDF field {key}")))
+}
+fn optional_number(fields: &BTreeMap<String, String>, key: &str) -> Result<Option<usize>, Error> {
+    if fields.contains_key(key) {
+        number(fields, key).map(Some)
+    } else {
+        Ok(None)
+    }
+}
+fn header_cost(header: &[u8], fields: &BTreeMap<String, String>) -> usize {
+    fields.iter().fold(header.len(), |n, (k, v)| {
+        n.saturating_add(k.len())
+            .saturating_add(v.len())
+            .saturating_add(128)
+    })
+}
+type HeaderBlock = (Vec<u8>, BTreeMap<String, String>);
+
+fn read_header(input: &mut impl Read, limits: Limits) -> Result<Option<HeaderBlock>, Error> {
+    let mut header = Vec::new();
+    let mut opened = false;
+    loop {
+        if header.len() >= limits.header_bytes {
+            return Err(Error(
+                "EDF header exceeds limit or lacks closing newline".into(),
+            ));
+        }
+        let mut b = [0];
+        if input.read(&mut b)? == 0 {
+            if !opened && header.iter().all(u8::is_ascii_whitespace) {
+                return Ok(None);
+            }
+            return Err(Error("truncated EDF header".into()));
+        }
+        if !opened {
+            if b[0] == b'{' {
+                opened = true;
+            } else if !b[0].is_ascii_whitespace() {
+                return Err(Error("invalid EDF header opening".into()));
+            }
+        }
+        header.push(b[0]);
+        if header.ends_with(b"}\n") || header.ends_with(b"}\r\n") {
+            break;
+        }
+    }
+    let start = header.iter().position(|&b| b == b'{').unwrap() + 1;
+    let end = header.len() - if header.ends_with(b"}\r\n") { 3 } else { 2 };
+    let text: String = header[start..end].iter().map(|&b| char::from(b)).collect();
+    let mut fields = BTreeMap::new();
+    for entry in text.split(';') {
+        if let Some((key, value)) = entry.split_once('=') {
+            let key = trim(key).to_ascii_uppercase();
+            if key.is_empty() {
+                return Err(Error("empty EDF header key".into()));
+            }
+            fields.insert(key, trim(value).to_owned());
+        }
+    }
+    if let Some(declared) =
+        optional_number(&fields, "EDF_HEADERSIZE")?.or(optional_number(&fields, "HEADERSIZE")?)
+        && declared > limits.header_bytes
+    {
+        return Err(Error("EDF declared header size exceeds limit".into()));
+    }
+    Ok(Some((header, fields)))
+}
+fn decode_exact(input: &mut impl Read, output: &mut [u8]) -> Result<(), Error> {
+    input.read_exact(output)?;
+    let mut extra = [0];
+    if input.read(&mut extra)? != 0 {
+        return Err(Error(
+            "EDF decoded stream exceeds declared dimensions".into(),
+        ));
+    }
+    Ok(())
+}
+fn decode_payload(codec: &str, input: &[u8], output: &mut [u8], limit: usize) -> Result<(), Error> {
+    if output.len() > limit {
+        return Err(Error("EDF decode exceeds frame budget".into()));
+    }
+    match codec {
+        "GZIP" => {
+            let mut offset = 0usize;
+            let mut filled = 0usize;
+            loop {
+                let mut decoder = flate2::bufread::GzDecoder::new(Cursor::new(&input[offset..]));
+                loop {
+                    if filled < output.len() {
+                        let n = decoder.read(&mut output[filled..])?;
+                        if n == 0 {
+                            break;
+                        }
+                        filled += n;
+                    } else {
+                        let mut extra = [0];
+                        if decoder.read(&mut extra)? != 0 {
+                            return Err(Error(
+                                "EDF decoded stream exceeds declared dimensions".into(),
+                            ));
+                        }
+                        break;
+                    }
+                }
+                let consumed = decoder.into_inner().position() as usize;
+                if consumed == 0 {
+                    return Err(Error("empty EDF gzip member".into()));
+                }
+                offset = offset
+                    .checked_add(consumed)
+                    .ok_or_else(|| Error("EDF gzip offset overflow".into()))?;
+                if input
+                    .get(offset..)
+                    .is_some_and(|b| b.starts_with(&[31, 139]))
+                {
+                    continue;
+                }
+                break;
+            }
+            if filled != output.len() {
+                return Err(Error("truncated EDF gzip samples".into()));
+            }
+            Ok(())
+        }
+        "ZLIB" => decode_exact(
+            &mut flate2::bufread::ZlibDecoder::new(Cursor::new(input)),
+            output,
+        ),
+        "BZ2" => decode_exact(
+            &mut bzip2::bufread::BzDecoder::new(Cursor::new(input)),
+            output,
+        ),
+        _ => Err(Error("unsupported EDF compression".into())),
+    }
+}
+
 fn edf_type(s: &str) -> Result<PixelType, Error> {
     Ok(match s.to_ascii_lowercase().as_str() {
         "signedbyte" | "signed8" => PixelType::I8,
@@ -305,15 +615,4 @@ fn edf_type(s: &str) -> Result<PixelType, Error> {
         "double" | "doublevalue" | "floatieee64" | "doubleieee64" => PixelType::F64,
         _ => return Err(Error(format!("unsupported EDF scalar type {s}"))),
     })
-}
-
-fn decode_exact(input: &mut impl Read, output: &mut [u8]) -> Result<(), Error> {
-    input.read_exact(output)?;
-    let mut extra = [0];
-    if input.read(&mut extra)? != 0 {
-        return Err(Error(
-            "EDF decoded stream exceeds declared dimensions".into(),
-        ));
-    }
-    Ok(())
 }

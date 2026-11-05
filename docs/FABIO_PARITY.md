@@ -103,3 +103,27 @@ count-preservation contract takes precedence, and each such difference must be
 resolved or documented explicitly. The pinned PNM P1/P2 implementation also
 fails to advance its row index; native input preserves all rows rather than
 adopting that bug. Reference quirks do not remove any format from the target.
+
+## EDF source continuation
+
+The EDF reader now retains general headers, raw repeated fields and the actual
+closing-newline boundary, including CRLF and boundaries crossing a 512-byte
+block. Local fields override inherited general fields. Compressed storage slots
+may contain encoded padding, while decoded sample counts and checksums remain
+strict. A final zero-filled suffix ending at the next 512-byte boundary is
+reported as storage padding rather than another frame.
+
+External payloads are rejected by default. `edf::Options` explicitly selects
+snapshot following, optional basename relocation and optional `.gz`/`.bz2`
+counterparts when the exact named file is absent. Ambiguous alternatives and
+present corrupt files fail. Limits cover the total expanded source bytes and
+number of files. Every source, including a compressed original whose payload
+was staged, is revalidated around each frame. The parity probe records its
+explicit acquisition-file relocation policy.
+
+Some upstream external EDF examples declare 140000 bytes for a 28800-byte image
+in a 37376-byte file at offset 8192. These remain rejected because the declared
+source window extends beyond EOF. No pixels are invented or silently supplied
+from another source. Similarly, partial headers and incomplete compressed
+streams remain errors, although the reference may return earlier frames or
+zero-fill data. These cases remain visible in the acceptance report.

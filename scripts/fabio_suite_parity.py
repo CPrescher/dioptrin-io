@@ -147,6 +147,8 @@ def main():
         if codec in {"marccdimage","pilatusimage"}:
             record["reader_scope"]="generic TIFF pixels and raw tags; detector-specific semantic header parser still pending"
         extra = []
+        if codec == "edfimage":
+            record["source_policy"] = "snapshot external payloads; explicit basename relocation; unique .gz/.bz2 counterpart only if exact path is absent; no missing-count repair"
         if codec == "cbfimage" and image.data.dtype != np.dtype("int32"):
             # Explicit source-type policy, never a retry after decoding failure.
             adapter = "cbf64"

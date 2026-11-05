@@ -2,37 +2,19 @@
 //! temporary file under an explicit disk/output bound, never an unbounded RAM
 //! buffer. The original source is checked around staging and every frame read.
 pub use crate::binary::Error;
-use crate::{PixelBuffer, cbf, edf, native, source::Snapshot, tiff};
-use std::{
-    fs::File,
-    io::{Read, Seek, SeekFrom},
-    path::Path,
-};
+pub use crate::transport::{Compression, Limits};
+use crate::{PixelBuffer, cbf, edf, native, tiff, transport::PreparedSource};
+use std::path::Path;
 
-#[derive(Debug, Clone, Copy)]
-pub struct Limits {
-    pub encoded_bytes: u64,
-    /// Maximum staged uncompressed file size; a disk bound, not a RAM budget.
-    pub source_bytes: u64,
-}
-impl Default for Limits {
-    fn default() -> Self {
-        Self {
-            encoded_bytes: 2 * 1024 * 1024 * 1024,
-            source_bytes: 8 * 1024 * 1024 * 1024,
-        }
-    }
-}
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Compression {
-    None,
-    Gzip,
-    Bzip2,
-}
 #[derive(Debug, Clone, Copy)]
 pub enum Format {
     Native(native::Format),
     Edf,
+    /// Explicit external EDF source convention, including optional relocation.
+    EdfExternal {
+        policy: edf::ExternalPayloads,
+        basenames: bool,
+    },
     Cbf(cbf::ByteOffsetMode),
     Tiff,
 }
@@ -89,10 +71,7 @@ pub enum Metadata<'a> {
 pub struct Reader {
     // Drop the backend before deleting its open staging file (Windows).
     backend: Backend,
-    _staged: Option<tempfile::NamedTempFile>,
-    snapshot: Snapshot,
-    source_handle: File,
-    compression: Compression,
+    source: PreparedSource,
 }
 impl Reader {
     /// Open one explicit backend, detecting only the outer file wrapper by its
@@ -106,78 +85,38 @@ impl Reader {
         image: native::Limits,
         tiff: tiff::Limits,
     ) -> Result<Self, Error> {
-        if transport.encoded_bytes == 0
-            || transport.source_bytes == 0
-            || transport.source_bytes == u64::MAX
-        {
-            return Err(Error(
-                "wrapper limits must be positive and source_bytes below u64::MAX".into(),
-            ));
-        }
-        let snapshot = Snapshot::open(path).map_err(Error)?;
-        let mut source_handle = File::open(&snapshot.path)?;
-        snapshot.check_handle(&source_handle).map_err(Error)?;
-        let mut prefix = [0; 3];
-        let n = snapshot.bytes().min(3) as usize;
-        source_handle.read_exact(&mut prefix[..n])?;
-        source_handle.seek(SeekFrom::Start(0))?;
-        let compression = if n >= 2 && prefix[..2] == [31, 139] {
-            Compression::Gzip
-        } else if n == 3 && prefix == *b"BZh" {
-            Compression::Bzip2
-        } else {
-            Compression::None
-        };
-        let mut staged = None;
-        if compression != Compression::None {
-            if snapshot.bytes() > transport.encoded_bytes {
-                return Err(Error("wrapped source exceeds encoded file limit".into()));
-            }
-            let mut temp = tempfile::NamedTempFile::new()?;
-            let decoder: Box<dyn Read + '_> = match compression {
-                Compression::Gzip => {
-                    Box::new(flate2::read::MultiGzDecoder::new(&mut source_handle))
-                }
-                Compression::Bzip2 => {
-                    Box::new(bzip2::read::MultiBzDecoder::new(&mut source_handle))
-                }
-                Compression::None => unreachable!(),
-            };
-            let bytes = std::io::copy(
-                &mut decoder.take(transport.source_bytes + 1),
-                temp.as_file_mut(),
-            )?;
-            if bytes > transport.source_bytes {
-                return Err(Error("wrapper output exceeds staged source limit".into()));
-            }
-            staged = Some(temp);
-        } else if snapshot.bytes() > transport.source_bytes {
-            return Err(Error("source exceeds file size limit".into()));
-        }
-        snapshot.check_handle(&source_handle).map_err(Error)?;
-        let input = staged
-            .as_ref()
-            .map_or(snapshot.path.as_path(), |f| f.path());
+        let source = PreparedSource::open(path, transport)?;
+        let input = source.path();
         let backend = match format {
             Format::Native(format) => Backend::Native(native::Reader::open(input, format, image)?),
-            Format::Edf => Backend::Edf(edf::Reader::open(input, image)?),
+            Format::Edf | Format::EdfExternal { .. } => {
+                let (external_payloads, external_basenames) = match format {
+                    Format::EdfExternal { policy, basenames } => (policy, basenames),
+                    _ => (edf::ExternalPayloads::Reject, false),
+                };
+                Backend::Edf(edf::Reader::open_with_options(
+                    input,
+                    image,
+                    edf::Options {
+                        external_payloads,
+                        external_basenames,
+                        source_directory: source.original_path().parent().map(Path::to_path_buf),
+                        transport,
+                        ..edf::Options::default()
+                    },
+                )?)
+            }
             Format::Cbf(mode) => Backend::Cbf(cbf::Reader::open_with_mode(input, image, mode)?),
             Format::Tiff => Backend::Tiff(Box::new(
                 tiff::Reader::open(input, tiff).map_err(|e| Error(e.to_string()))?,
             )),
         };
-        snapshot.check_handle(&source_handle).map_err(Error)?;
-        Ok(Self {
-            backend,
-            _staged: staged,
-            snapshot,
-            source_handle,
-            compression,
-        })
+        source.check()?;
+        Ok(Self { backend, source })
     }
     #[must_use]
     pub fn compression(&self) -> Compression {
-        self.compression
+        self.source.compression()
     }
     #[must_use]
     pub fn frames(&self) -> usize {
@@ -206,9 +145,7 @@ impl Reader {
     /// Invalid frame, changed original/staged source or backend decoding failure.
     pub fn read_frame_into(&mut self, index: usize, buffer: &mut FrameBuffer) -> Result<(), Error> {
         buffer.valid = false;
-        self.snapshot
-            .check_handle(&self.source_handle)
-            .map_err(Error)?;
+        self.source.check()?;
         if index >= self.frames() {
             return Err(Error("wrapped frame index outside source".into()));
         }
@@ -238,9 +175,7 @@ impl Reader {
                 }
             }
         }
-        self.snapshot
-            .check_handle(&self.source_handle)
-            .map_err(Error)?;
+        self.source.check()?;
         buffer.valid = true;
         Ok(())
     }

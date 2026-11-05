@@ -180,7 +180,10 @@ fn run() -> Result<(), Box<dyn Error>> {
         return Ok(());
     }
     let format = match args[1].as_str() {
-        "edf" => wrapped::Format::Edf,
+        "edf" => wrapped::Format::EdfExternal {
+            policy: dioptrin_io::edf::ExternalPayloads::FollowCompressedSnapshot,
+            basenames: true,
+        },
         "cbf" => wrapped::Format::Cbf(cbf::ByteOffsetMode::Legacy32),
         "cbf64" => wrapped::Format::Cbf(cbf::ByteOffsetMode::Extended64),
         "tiff" => wrapped::Format::Tiff,

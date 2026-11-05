@@ -13,7 +13,7 @@ default = []
 hdf5 = ["dep:hdf5-backend", "dep:hdf5-sys", "dep:hdf5-bitshuffle", "dep:libz-sys", "dep:lz4_flex", "dep:bytemuck"]
 tiff = ["dep:tiff-backend"]
 cbf = ["dep:md-5"]
-edf = ["dep:bytemuck", "dep:flate2", "dep:bzip2"]
+edf = ["dep:bytemuck", "dep:flate2", "dep:bzip2", "dep:tempfile"]
 native = ["dep:bytemuck"]
 wrappers = ["native", "tiff", "cbf", "edf", "dep:tempfile"]
 

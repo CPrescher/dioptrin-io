@@ -24,6 +24,8 @@ pub mod cbf;
 pub mod edf;
 #[cfg(feature = "native")]
 pub mod native;
+#[cfg(feature = "edf")]
+mod transport;
 #[cfg(feature = "wrappers")]
 pub mod wrapped;
 
