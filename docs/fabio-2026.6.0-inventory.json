@@ -38,12 +38,15 @@
       "subformats_and_types": "EDF 0/1/2/3; concatenated frames; general headers; inline/external binary; 2D/volume; integer/float aliases including optional float128",
       "compression": "none; internal gzip/zlib/bzip2; optional byte-offset; outer gzip/bzip2",
       "stack": "concatenated frames",
-      "implementation": "partial: 2D ten scalar types, both byte orders, general inheritance/raw repeats and exact closing boundaries; bounded inline/outer gzip/zlib/bzip2 with explicit padding; external snapshots/relocation/counterparts require options; volume/float128/offset pending; truncated declared windows rejected",
+      "implementation": "partial: 2D ten scalar types, both byte orders, general inheritance/raw repeats and exact closing boundaries; bounded inline/outer gzip/zlib/bzip2 with explicit padding; external snapshots/relocation/counterparts require options; default Exact external windows stay strict, explicit UpToDeclared compatibility records declared/effective bytes and still requires complete samples/codecs; volume/float128/offset pending; truncated counts rejected",
       "validation": [
         "tests/data/edf/*.edf",
         "tests/binary.rs",
         "tests/edf_sources.rs",
-        "src/transport.rs"
+        "src/transport.rs",
+        "tests/edf_windows.rs",
+        "tests/wrapped_views.rs",
+        "docs/rejection-audits/2026-11-06-edf.json"
       ],
       "parity_verified": false
     },
@@ -79,13 +82,16 @@
       "subformats_and_types": "classic TIFF/BigTIFF; endian scalar/color; strip/tile/IFD; photometric/predictor variants",
       "compression": "reference TiffIO/Pillow capabilities vary; none/PackBits/LZW/Deflate/JPEG require distinct fixtures",
       "stack": "primary IFD pages",
-      "implementation": "partial: scalar/packed/WhiteIsZero/color/planar/IFD/strip/tile/BigTIFF counts, Group4/PackBits/LZW/Deflate/JPEG; source F16 explicitly widened to F32; palette indices/ColorMap, CFA raw and opaque malformed description bytes retained; optional Pillow13/TiffIO display views qualified separately; SubIFD/Group3/RLE/old JPEG/subsampled YCbCr/FillOrder gaps and two Pillow planar16 defects remain",
+      "implementation": "partial: scalar/packed/WhiteIsZero/color/planar/IFD/strip/tile/BigTIFF counts, Group3 1D/Group4/PackBits/LZW/Deflate/JPEG; source F16 explicitly widened to F32; palette indices/ColorMap, CFA raw and opaque malformed description bytes retained; optional Pillow13/TiffIO display views qualified separately; SubIFD/Group3 2D/RLE/old JPEG/subsampled YCbCr/remaining FillOrder gaps and two Pillow planar16 defects remain",
       "validation": [
         "tests/data/tiff/*.tif",
         "tests/tiff.rs",
         "tests/image_codecs.rs",
         "tests/data/images/provenance.json",
         "docs/IMAGE_READERS.md",
+        "tests/tiff_rejections.rs",
+        "tests/data/tiff-rejections/provenance.json",
+        "docs/rejection-audits/2026-11-05-tiff.json",
         "tests/tiff_view.rs",
         "tests/tiff_alias_bounds.rs",
         "tests/wrapped_views.rs",
@@ -246,15 +252,18 @@
       ],
       "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/OXDimage.py",
       "source_sha256": "0e33333333adcf400d190e7186d1e6a567f94ccfd04aa6da0de5e29222ce10aa",
-      "subformats_and_types": "Oxford Sapphire/KM4CCD; uncompressed/TY1; TY5 reference explicitly marked known broken",
-      "compression": "none; TY1 differential plus exception arrays; experimental TY5",
+      "subformats_and_types": "Oxford Sapphire/KM4CCD; uncompressed/TY1/TY5; reference TY5 predictor/dtype defects independently qualified",
+      "compression": "none; TY1 exception arrays; TY5 row-indexed inline differences",
       "stack": "single image",
-      "implementation": "partial: Oxford raw and TY1, exception tables and signed counts, raw/typed acquisition sections; negative reference wrap not reproduced; TY5 explicitly unsupported pending independent authority",
+      "implementation": "partial: Oxford raw/TY1 and bounded BSD3 dxtbx TY5 adaptation, original row offsets/header/trailer and signed counts; actual TY5 and independent fixtures match compiled native authority; negative TY1 wrap and nonsquare TY5 reference bugs not reproduced; unsupported supplementary layouts remain explicit",
       "validation": [
         "tests/legacy.rs",
         "tests/data/legacy/provenance.json",
         "docs/legacy-readers/2026-11-05-reference.json",
-        "docs/LEGACY_READERS.md"
+        "docs/LEGACY_READERS.md",
+        "tests/oxford_ty5.rs",
+        "tests/data/ty5/provenance.json",
+        "docs/rejection-audits/2026-11-05-lambda-ty5.json"
       ],
       "parity_verified": false
     },
@@ -706,7 +715,10 @@
       "validation": [
         "tests/hdf5_typed.rs",
         "tests/data/hdf5-native/provenance.json",
-        "docs/fabio-parity/2026-11-05-hdf5.json"
+        "docs/fabio-parity/2026-11-05-hdf5.json",
+        "tests/lambda_vds_rejection.rs",
+        "tests/data/lambda-vds-rejection/provenance.json",
+        "docs/rejection-audits/LAMBDA_TY5.md"
       ],
       "parity_verified": false
     },

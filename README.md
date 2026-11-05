@@ -17,13 +17,13 @@ Every format dependency is optional; default features are empty.
 | Feature | Implemented scope | Important remaining gaps |
 |---|---|---|
 | `hdf5` | Typed 2D/3D images/stacks with ten standard scalar types, both byte orders, Eiger/LImA/Lambda discovery and explicit external-file snapshots; original u32 compatibility reader; opt-in indexed raw u16/u32 chunks and bounded parallel consumers | VDS/master relocation, raw external storage, complex/custom/float16 samples, arbitrary metadata and live refresh; raw fast path retains its narrower contract |
-| `tiff` | Scalar/packed/WhiteIsZero/palette/CFA/color/planar TIFF and BigTIFF; primary IFD pages, strips/tiles, lossless codecs, Group4 and modern JPEG; Pilatus/MAR acquisition headers | SubIFD traversal and some photometric/compression layouts; F16 explicitly widens to F32; separate Pillow13/TiffIO display views and reference defects are qualified |
+| `tiff` | Scalar/packed/WhiteIsZero/palette/CFA/color/planar TIFF and BigTIFF; primary IFD pages, strips/tiles, lossless codecs, Group3 1D/Group4 and modern JPEG; Pilatus/MAR acquisition headers | SubIFD traversal and some photometric/compression layouts; F16 explicitly widens to F32; separate Pillow13/TiffIO display views and reference defects are qualified |
 | `jpeg`, `jpeg2000` | Mature libjpeg-turbo/OpenJPEG backends; lossless high-precision JPEG; original channels, precision, lossy provenance and headers | Unsupported precision/component layouts fail explicitly; see image contracts |
 | `cbf` | Eight integer types, explicit byte-offset dialects, Content-MD5 and raw CIF headers | Semantic CIF/Pilatus maps and multiple sections |
-| `edf` | Ten scalar types, stacks/general headers, internal/outer compression and bounded padding, explicit external-source snapshots | Volumes, float128, byte-offset; incomplete declared windows rejected |
+| `edf` | Ten scalar types, stacks/general headers, internal/outer compression and bounded padding, explicit external-source snapshots | Volumes, float128, byte-offset; default Exact windows remain strict, with explicit bounded external-window compatibility |
 | `native` | NPY v1/2/3 scalars/complex arrays, C/Fortran storage; d*TREK/ADSC, Fit2D masks/spreadsheets, HiPiC, PNM and explicit raw input | Remaining dtype/dimension variants; no autodetection |
 | `containers` | SPE v2/v3/ROI/frames, typed MRC stacks and nested DM3 image/tag selection | Unsupported layouts/types; pinned reference quirks documented |
-| `bruker`, `oxford`, `raxis` | Bruker86/100 tables/baselines, Oxford raw/TY1, R-AXIS words and explicit expanded-intensity view | Bruker LINEAR float encoding has an explicit decoded view; TY5 rejected; unknown record layouts fail |
+| `bruker`, `oxford`, `raxis` | Bruker86/100 tables/baselines, Oxford raw/TY1/TY5, R-AXIS words and explicit expanded-intensity view | Bruker LINEAR float encoding has an explicit decoded view; unknown record layouts fail |
 | `fixed` | GE intact/blank/EDF-prefixed headers and Pixi fixed frame records | Adjacent-file series traversal |
 | `fit2d`, `kcd`, `mpa` | FIT2D primary/mask/axis arrays, separate KCD readouts/explicit sum, MPA CDAT maps and DATA spectra | Binary MPA and unsupported record layouts/types |
 | `esperanto` | Original signed32 Long32/AGI bitfield counts, row indexes, headers and strict source bounds | Unsupported header variants fail; no writer-style reshaping on read |
@@ -182,6 +182,8 @@ The [upstream FabIO suite harness](docs/FABIO_PARITY.md) runs all pinned codec
 test modules and compares the same actual files, including generated cases,
 against a Rust probe. Unsupported readers, rejected cases, reference failures,
 skips and missing metadata coverage remain explicit and keep the parity gate red.
+The [rejection audit](docs/rejection-audits/README.md) separates malformed or
+inconsistent inputs, real codec/layout gaps and unavailable source contracts.
 
 ## Provenance and build
 

@@ -79,7 +79,7 @@ explicit reference views and modeled reconstruction:
 | `feature_disabled` | The optional reader exists but its Cargo feature is absent from this test binary. |
 | `native_rejected` | The reader was called and explicitly rejected this variant, storage, source or malformed input. |
 | `counts_match` | Every exposed frame's shape/dtype/sample hash matches; semantic header gaps can still remain. |
-| `reference_view_match` | An explicitly selected display/inverse-encoding view matches; raw stored samples are recorded separately. |
+| `reference_view_match` | An explicitly selected display, inverse-encoding or exact dtype view matches; raw stored samples are recorded separately. |
 | `reconstruction_match` | An explicit deterministic sparse background view matches; original source components/events are compared independently. |
 
 The executable publishes its compiled features, known readers and adapter
@@ -88,7 +88,7 @@ container/legacy/image readers and detector TIFF acquisition headers. A separate
 feature-disabled run distinguishes unavailable compilation features from missing
 readers. Every original registry entry remains in the ledger.
 
-Current evidence is recorded in `fabio-parity/2026-11-05-mar-sparse.json`;
+Current evidence is recorded in `fabio-parity/2026-11-06-rejection-continuation.json`;
 the earlier baseline and typed-HDF5 reports are retained. The current report is
 a failing full-parity gate, with exact native successes, unsupported layouts,
 reference differences and remaining readers kept separate.
@@ -178,3 +178,35 @@ deliberately disabled reference-backend tests. A monkeypatched missing Python
 JPEG backend is an environment difference, not a native input rejection.
 Direct stream APIs, complete semantic metadata, autodetection, neighboring-file
 series and unsupported variants remain in the full-parity gate.
+
+## Rejection audit and captured test inputs
+
+The rejection continuation audits every one of the preceding report's 91 rejected
+read events by its original source hash. Repeated calls are retained, while
+classification groups the 31 distinct inputs. Input condition and reader action
+are independent: a complete image with a wrong size field does not become a well
+formed file because an explicit compatibility policy can read its samples.
+`rejection-audits/README.md` records the complete classification, evidence and
+remaining codec/layout/source-contract work.
+
+The bridge explicitly selects `ExternalWindow::UpToDeclared` for external EDF
+windows. The production default remains `Exact`; inline header/payload navigation
+is unchanged. Every compared frame records declared/effective window sizes,
+source and offset. Missing sample bytes, incomplete codecs and source changes
+remain errors. TY5 production output stays I32; the bridge's separately recorded
+I32-to-F64 view reproduces the pinned Python API exactly without losing an integer.
+Independent dxtbx comparisons establish the original native counts.
+
+Some upstream tests create and remove malformed sources. Use
+`--rejected-source-dir /tmp/dioptrin-rejected-inputs` to retain exact rejected bytes
+before cleanup. The directory must be outside the repository; reports record
+copy hashes and capture failures. Reuse requires the same hash. Process crashes
+and unexpected exit codes are `native_process_failure`, rather than input
+rejections. Historical gzip timestamps and generated TIFF date fields can prevent
+byte-identical reproduction of an old ephemeral source; audit records distinguish
+recreated pinned-test cases from exact original source evidence.
+
+Regenerate the complete classification from the three scoped audits with
+`scripts/aggregate_rejection_audits.py`. It rejects missing/duplicate source
+classifications, incorrect event counts, changed baselines and mismatched test
+identities; no case is removed merely because it is malformed.

@@ -1,5 +1,35 @@
 # Validation, 2026-11-05
 
+## Rejection classification and native gaps, 2026-11-06
+
+All 139 Rust tests pass, including external container/fixed/Esperanto/MAR345
+manifests. Formatting, strict all-target/all-feature Clippy, no-default check/tests
+and 20 isolated optional-feature checks pass (25 commands total).
+
+The full pinned FabIO suite runs 213 tests with no failures/errors and one upstream
+skip. Results: 482 direct format comparisons / 2,404 frames, 26 additional explicit
+reference views, and one deterministic sparse reconstruction / 100 frames.
+Native rejections decrease 91→44; the two known Pillow planar16 defects remain
+mismatches. There are no missing adapters/decoders, unexpected comparison failures
+or compared-header differences. Both full and minimal-feature source/bridge/probe
+hashes remain stable. The minimal proof runs 47 tests and identifies 129 events as
+feature-disabled, with four matches and one known malformed EDF rejection.
+
+Every preceding rejection event has a classification and verified current outcome:
+79 inconsistent/malformed/truncated events, eight codec/layout or legacy variants,
+two unavailable exact-source events, one mixed-tag legacy dialect and one
+ThunderScan integrity qualification. Five events close through native reader
+changes; 42 more require an explicit EDF window policy. `Exact` remains default;
+complete samples/codecs and unchanged sources are mandatory. No missing counts
+or EOL markers are supplied. New count readers retain original signed/packed
+values and metadata; reference dtype/display views are explicit.
+
+See `rejection-audits/README.md`,
+`fabio-parity/2026-11-06-rejection-continuation.json`, and
+`fabio-parity/2026-11-06-rejection-native-checks.json` for exact evidence. Complete
+format parity, expanded platform CI, publication and new throughput claims remain
+unestablished. Older sections below retain their original historical results.
+
 ## MAR345, sparse and explicit reference views
 
 The current local macOS continuation passes formatting, strict all-target /

@@ -100,6 +100,14 @@ precision, while unpacked buffers expose integer values. Float16 widens exactly
 to F32 with original bit width retained; this is explicit source/output type
 metadata rather than raw dtype parity. EXIF/TIFF orientation is never applied.
 
+Group3 one-dimensional strips reuse the pinned fax Huffman tables under bounded
+TIFF row framing: real EOL markers, exact terminating runs, declared strip windows
+and explicit end/padding admission. Output retains unpacked source 0/1 words.
+FillOrder2 is admitted for Group3 and uncompressed packed grayscale; original
+`fill_order` remains metadata. Other unsupported bit-order/codec combinations
+fail. Invalid inline descriptive ASCII retains its complete original descriptor
+and bytes as opaque metadata; structural source windows are never repaired.
+
 `detector_tiff` reuses the same pixel reader and adds Pilatus semantic text maps
 and MAR's typed binary acquisition fields/raw reserved bytes. Detector-specific
 success is now checked independently of generic TIFF counts. Detailed admitted
@@ -143,8 +151,12 @@ payloads require explicit snapshot options, optionally selecting basename
 relocation or unique compressed counterparts. The source graph and expanded
 staging bytes are bounded; every original/staged source and read handle is
 checked around reads. Exact closing-newline boundaries and admitted bounded
-storage padding are retained explicitly. Unexplained codec tails, incomplete
-streams and declared windows beyond EOF fail. Volumes, float128 and optional
+storage padding are retained explicitly. Unexplained codec tails and incomplete
+streams fail. External windows beyond EOF fail under the default `Exact` policy.
+Explicit `ExternalWindow::UpToDeclared` caps only external reads to available
+source bytes, retaining declared/effective sizes and still requiring complete
+samples/full codecs. It does not change inline block navigation or repair missing
+pixels. `wrapped::Format::EdfExternalWindow` exposes this choice through wrappers. Volumes, float128 and optional
 byte-offset EDF remain gaps. Outer wrappers also have the separate API below.
 Neither reader pads truncated pixels with zeros or substitutes neighboring files.
 
