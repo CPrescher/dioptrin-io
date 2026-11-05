@@ -110,3 +110,46 @@ fn malformed_xml_ambiguous_shapes_checksums_lengths_and_changed_sources_fail() {
     assert!(reader.read_frame_into(&mut b).is_err());
     assert!(b.pixels().is_none());
 }
+
+#[test]
+fn descriptors_must_belong_to_one_image_record() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("ambiguous.xml");
+    for xml in [
+        "<root><a><shape>3</shape><shape>1</shape></a><b><size>3</size><dtype>uint8</dtype><coding><value>base64</value></coding><data>AP8B</data></b></root>",
+        "<XSDataImage><shape>3</shape><shape>1</shape><size>3</size><dtype>uint8</dtype><coding><value>base64</value><value>base16</value></coding><data>AP8B</data></XSDataImage>",
+        "<root><XSDataImage><shape>3</shape><shape>1</shape><size>3</size><dtype>uint8</dtype><coding><value>base64</value></coding><data>AP8B</data></XSDataImage><XSDataImage><data>AP8B</data></XSDataImage></root>",
+    ] {
+        std::fs::write(&path, xml).unwrap();
+        assert!(Reader::open(&path, Limits::default()).is_err());
+    }
+}
+
+#[test]
+fn xml_data_attributes_are_retained_charged_and_namespaces_are_explicit() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("attributes.xml");
+    let xml = "<XSDataImage><shape>1</shape><shape>1</shape><size>1</size><dtype>uint8</dtype><coding><value>base64</value></coding><data label=\"stored\">/w==</data></XSDataImage>";
+    std::fs::write(&path, xml).unwrap();
+    let reader = Reader::open(&path, Limits::default()).unwrap();
+    let meta = reader.metadata();
+    let mut reconstructed = meta.header_parts[0].clone();
+    reconstructed.extend(b"/w==");
+    reconstructed.extend(&meta.header_parts[1]);
+    assert_eq!(reconstructed, xml.as_bytes());
+    let large = xml.replace("stored", &"x".repeat(2048));
+    std::fs::write(&path, &large).unwrap();
+    assert!(
+        Reader::open(
+            &path,
+            Limits {
+                header_bytes: 512,
+                ..Limits::default()
+            }
+        )
+        .is_err()
+    );
+    let namespaced = xml.replace("<XSDataImage>", "<XSDataImage xmlns=\"urn:unrelated\">");
+    std::fs::write(&path, namespaced).unwrap();
+    assert!(Reader::open(&path, Limits::default()).is_err());
+}

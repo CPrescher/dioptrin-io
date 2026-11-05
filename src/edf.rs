@@ -533,8 +533,18 @@ fn read_header(input: &mut impl Read, limits: Limits) -> Result<Option<HeaderBlo
     }
     Ok(Some((header, fields)))
 }
-fn decode_exact(input: &mut impl Read, output: &mut [u8]) -> Result<(), Error> {
-    input.read_exact(output)?;
+fn decode_member(
+    input: &mut impl Read,
+    output: &mut [u8],
+    filled: &mut usize,
+) -> Result<(), Error> {
+    while *filled < output.len() {
+        let n = input.read(&mut output[*filled..])?;
+        if n == 0 {
+            return Ok(());
+        }
+        *filled += n;
+    }
     let mut extra = [0];
     if input.read(&mut extra)? != 0 {
         return Err(Error(
@@ -547,59 +557,55 @@ fn decode_payload(codec: &str, input: &[u8], output: &mut [u8], limit: usize) ->
     if output.len() > limit {
         return Err(Error("EDF decode exceeds frame budget".into()));
     }
-    match codec {
-        "GZIP" => {
-            let mut offset = 0usize;
-            let mut filled = 0usize;
-            loop {
-                let mut decoder = flate2::bufread::GzDecoder::new(Cursor::new(&input[offset..]));
-                loop {
-                    if filled < output.len() {
-                        let n = decoder.read(&mut output[filled..])?;
-                        if n == 0 {
-                            break;
-                        }
-                        filled += n;
-                    } else {
-                        let mut extra = [0];
-                        if decoder.read(&mut extra)? != 0 {
-                            return Err(Error(
-                                "EDF decoded stream exceeds declared dimensions".into(),
-                            ));
-                        }
-                        break;
-                    }
-                }
-                let consumed = decoder.into_inner().position() as usize;
-                if consumed == 0 {
-                    return Err(Error("empty EDF gzip member".into()));
-                }
-                offset = offset
-                    .checked_add(consumed)
-                    .ok_or_else(|| Error("EDF gzip offset overflow".into()))?;
-                if input
-                    .get(offset..)
-                    .is_some_and(|b| b.starts_with(&[31, 139]))
-                {
-                    continue;
-                }
-                break;
+    let mut offset = 0;
+    let mut filled = 0;
+    loop {
+        let cursor = Cursor::new(&input[offset..]);
+        let consumed = match codec {
+            "GZIP" => {
+                let mut decoder = flate2::bufread::GzDecoder::new(cursor);
+                decode_member(&mut decoder, output, &mut filled)?;
+                decoder.into_inner().position() as usize
             }
-            if filled != output.len() {
-                return Err(Error("truncated EDF gzip samples".into()));
+            "ZLIB" => {
+                let mut decoder = flate2::bufread::ZlibDecoder::new(cursor);
+                decode_member(&mut decoder, output, &mut filled)?;
+                decoder.into_inner().position() as usize
             }
-            Ok(())
+            "BZ2" => {
+                let mut decoder = bzip2::bufread::BzDecoder::new(cursor);
+                decode_member(&mut decoder, output, &mut filled)?;
+                decoder.into_inner().position() as usize
+            }
+            _ => return Err(Error("unsupported EDF compression".into())),
+        };
+        if consumed == 0 {
+            return Err(Error("empty EDF compressed member".into()));
         }
-        "ZLIB" => decode_exact(
-            &mut flate2::bufread::ZlibDecoder::new(Cursor::new(input)),
-            output,
-        ),
-        "BZ2" => decode_exact(
-            &mut bzip2::bufread::BzDecoder::new(Cursor::new(input)),
-            output,
-        ),
-        _ => Err(Error("unsupported EDF compression".into())),
+        offset = offset
+            .checked_add(consumed)
+            .ok_or_else(|| Error("EDF codec offset overflow".into()))?;
+        let tail = &input[offset..];
+        if (codec == "GZIP" && tail.starts_with(&[31, 139]))
+            || (codec == "BZ2" && tail.starts_with(b"BZh"))
+        {
+            continue;
+        }
+        // Recorded acquisition slots are padded to 512 bytes with zeros/spaces.
+        // Unknown tails and additional zlib streams are not silently discarded.
+        if !tail.is_empty()
+            && (tail.len() >= 512
+                || !input.len().is_multiple_of(512)
+                || !tail.iter().all(|&b| b == 0 || b.is_ascii_whitespace()))
+        {
+            return Err(Error("unexplained EDF trailing encoded bytes".into()));
+        }
+        break;
     }
+    if filled != output.len() {
+        return Err(Error("truncated EDF compressed samples".into()));
+    }
+    Ok(())
 }
 
 fn edf_type(s: &str) -> Result<PixelType, Error> {

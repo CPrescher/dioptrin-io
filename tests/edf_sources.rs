@@ -205,3 +205,65 @@ fn only_bounded_zero_and_whitespace_final_padding_is_admitted() {
     fs::write(&path, bytes).unwrap();
     assert!(Reader::open(&path, Limits::default()).is_err());
 }
+
+#[test]
+fn encoded_tails_and_additional_members_cannot_hide_unexplained_counts() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("tails.edf");
+    for codec in ["Gzip", "Zlib", "BZ2"] {
+        let bytes = [0, 0, 255, 255, 1, 128];
+        let encode = |samples: &[u8]| -> Vec<u8> {
+            match codec {
+                "Gzip" => gzip(samples),
+                "Zlib" => {
+                    let mut e =
+                        flate2::write::ZlibEncoder::new(Vec::new(), flate2::Compression::default());
+                    e.write_all(samples).unwrap();
+                    e.finish().unwrap()
+                }
+                _ => {
+                    let mut e =
+                        bzip2::write::BzEncoder::new(Vec::new(), bzip2::Compression::default());
+                    e.write_all(samples).unwrap();
+                    e.finish().unwrap()
+                }
+            }
+        };
+        for extra in [vec![42, 37], encode(&[3, 4])] {
+            let mut payload = encode(&bytes);
+            payload.extend(extra);
+            let header = block(
+                &format!(
+                    "Size = {}; Dim_1 = 3; Dim_2 = 1; DataType = UnsignedShort; ByteOrder = LowByteFirst; Compression = {codec};",
+                    payload.len()
+                ),
+                b"}\n",
+            );
+            let mut file = header;
+            file.extend(payload);
+            fs::write(&path, file).unwrap();
+            let reader = Reader::open(&path, Limits::default()).unwrap();
+            let mut output = FrameBuffer::default();
+            assert!(reader.read_frame_into(0, &mut output).is_err(), "{codec}");
+            assert!(output.pixels().is_none());
+        }
+        let mut payload = encode(&bytes);
+        payload.resize(512, 32);
+        let header = block(
+            &format!(
+                "Size = 512; Dim_1 = 3; Dim_2 = 1; DataType = UnsignedShort; ByteOrder = LowByteFirst; Compression = {codec};"
+            ),
+            b"}\n",
+        );
+        let mut file = header;
+        file.extend(payload);
+        fs::write(&path, file).unwrap();
+        let reader = Reader::open(&path, Limits::default()).unwrap();
+        let mut output = FrameBuffer::default();
+        reader.read_frame_into(0, &mut output).unwrap();
+        assert_eq!(
+            output.pixels(),
+            Some(&PixelBuffer::U16(vec![0, 65535, 32769]))
+        );
+    }
+}

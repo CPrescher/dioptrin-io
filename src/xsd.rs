@@ -27,7 +27,7 @@ pub struct Metadata {
     pub dtype: String,
     pub coding: Coding,
     pub md5: Option<String>,
-    /// Original XML before/after the data element, with every metadata byte
+    /// Original XML before/after the encoded payload text, with every metadata byte
     /// retained. The complete payload is read again from its immutable source.
     pub header_parts: [Vec<u8>; 2],
 }
@@ -140,8 +140,48 @@ fn parse(source: &[u8], limits: Limits) -> Result<(Metadata, String), Error> {
         },
     )
     .map_err(|e| Error(format!("invalid XSD XML: {e}")))?;
+    // A record owns every descriptor and its payload as direct children.
+    // Multiple image records, or descriptors hidden in unrelated descendants,
+    // must never be combined into a seemingly valid array.
+    let mut records = doc
+        .descendants()
+        .filter(|n| n.is_element() && n.children().any(|c| c.has_tag_name("data")));
+    let image = records
+        .next()
+        .ok_or_else(|| Error("missing XSD image record".into()))?;
+    if records.next().is_some()
+        || !matches!(image.tag_name().name(), "XSDataImage" | "outputMatrix")
+    {
+        return Err(Error("ambiguous or unsupported XSD image record".into()));
+    }
+    let root = doc.root_element();
+    let valid_root = root.tag_name().namespace().is_none()
+        && if root == image {
+            root.has_tag_name("XSDataImage")
+        } else {
+            image.parent() == Some(root)
+                && matches!(
+                    root.tag_name().name(),
+                    "XSDataResultReadMatrix" | "XSDataResultMatrixInvert"
+                )
+                && image.has_tag_name("outputMatrix")
+        };
+    if !valid_root || image.tag_name().namespace().is_some() {
+        return Err(Error("unsupported XSD root or namespace".into()));
+    }
+    for node in doc.descendants().filter(|n| {
+        n.is_element()
+            && matches!(
+                n.tag_name().name(),
+                "shape" | "size" | "dtype" | "coding" | "data" | "md5sum"
+            )
+    }) {
+        if node.parent() != Some(image) || node.tag_name().namespace().is_some() {
+            return Err(Error("XSD descriptor outside selected image record".into()));
+        }
+    }
     let one = |name: &str| -> Result<roxmltree::Node<'_, '_>, Error> {
-        let mut nodes = doc.descendants().filter(|n| n.has_tag_name(name));
+        let mut nodes = image.children().filter(|n| n.has_tag_name(name));
         let first = nodes
             .next()
             .ok_or_else(|| Error(format!("missing XSD {name}")))?;
@@ -162,8 +202,8 @@ fn parse(source: &[u8], limits: Limits) -> Result<(Metadata, String), Error> {
             .trim()
             .into())
     };
-    let shapes = doc
-        .descendants()
+    let shapes = image
+        .children()
         .filter(|n| n.has_tag_name("shape"))
         .map(|n| {
             value(n)?
@@ -205,8 +245,8 @@ fn parse(source: &[u8], limits: Limits) -> Result<(Metadata, String), Error> {
         "base16" => Coding::Base16,
         _ => return Err(Error("unsupported XSD coding".into())),
     };
-    let checksums: Vec<_> = doc
-        .descendants()
+    let checksums: Vec<_> = image
+        .children()
         .filter(|n| n.has_tag_name("md5sum"))
         .collect();
     if checksums.len() > 1 {
@@ -229,7 +269,7 @@ fn parse(source: &[u8], limits: Limits) -> Result<(Metadata, String), Error> {
     {
         return Err(Error("nested XSD data elements unsupported".into()));
     }
-    let range = data.range();
+    let range = data.children().find(|n| n.is_text()).unwrap().range();
     let metadata_bytes = source.len() - (range.end - range.start);
     if metadata_bytes > limits.header_bytes
         || metadata_bytes.saturating_mul(3) > limits.metadata_bytes
@@ -260,8 +300,8 @@ fn child_value<'a, 'input>(
     let first = nodes
         .next()
         .ok_or_else(|| Error("missing XSD descriptor/value".into()))?;
-    if nodes.next().is_some() {
-        return Err(Error("duplicate XSD descriptor/value".into()));
+    if nodes.next().is_some() || first.tag_name().namespace().is_some() {
+        return Err(Error("duplicate or namespaced XSD descriptor/value".into()));
     }
     Ok(first)
 }

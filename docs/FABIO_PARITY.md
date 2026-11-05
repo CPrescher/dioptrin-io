@@ -109,7 +109,8 @@ adopting that bug. Reference quirks do not remove any format from the target.
 The EDF reader now retains general headers, raw repeated fields and the actual
 closing-newline boundary, including CRLF and boundaries crossing a 512-byte
 block. Local fields override inherited general fields. Compressed storage slots
-may contain encoded padding, while decoded sample counts and checksums remain
+may contain less than 512 bytes of zero/ASCII-space padding when the declared
+slot ends on a 512-byte boundary, while decoded sample counts and checksums remain
 strict. A final suffix shorter than 512 bytes containing only zeros and ASCII
 whitespace is reported as storage padding rather than another frame.
 
