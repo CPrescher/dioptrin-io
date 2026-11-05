@@ -295,16 +295,21 @@ def main():
                     entry=image.h5[image.h5.attrs["default"]]
                     nx_data=entry[entry.attrs.get("pyFAI_sparse_frames") or entry.attrs["default"]]
                     expected_components=set()
-                    def collect_numeric(prefix):
-                        def visit(name,obj):
+                    def collect_numeric(group,prefix,ancestors=frozenset()):
+                        # visititems deduplicates hard links. Source components
+                        # retain every named alias, including errors/intensity.
+                        identity=(group.file.filename,h5py.h5o.get_info(group.id).addr)
+                        if identity in ancestors:raise ValueError("cyclic reference sparse component group")
+                        for name,obj in group.items():
                             if isinstance(obj,h5py.Dataset) and obj.dtype.kind in "iuf":
                                 expected_components.add(prefix+name)
-                        return visit
-                    nx_data.visititems(collect_numeric(""))
+                            elif isinstance(obj,h5py.Group):
+                                collect_numeric(obj,prefix+name+"/",ancestors|{identity})
+                    collect_numeric(nx_data,"")
                     for name in ("sparsify","peaks"):
                         if name in entry:
                             obj=entry[name]
-                            if isinstance(obj,h5py.Group):obj.visititems(collect_numeric("entry/"+name+"/"))
+                            if isinstance(obj,h5py.Group):collect_numeric(obj,"entry/"+name+"/")
                             elif obj.dtype.kind in "iuf":expected_components.add("entry/"+name)
                     native_components={item["name"] for item in frames[0].get("source_components",[])}
                     record["source_component_inventory_differences"]={
