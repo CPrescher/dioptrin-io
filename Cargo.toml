@@ -10,6 +10,7 @@ readme = "README.md"
 
 [features]
 default = []
+sparse = ["hdf5", "native"]
 hdf5 = ["dep:hdf5-backend", "dep:hdf5-sys", "dep:hdf5-bitshuffle", "dep:libz-sys", "dep:lz4_flex", "dep:bytemuck"]
 tiff = ["dep:tiff-backend", "dep:tiff-jpeg-header"]
 jpeg = ["dep:jpeg-backend", "dep:turbojpeg-backend"]
@@ -79,3 +80,7 @@ required-features = ["fit2d", "kcd", "mpa"]
 [[example]]
 name = "tiff_view_probe"
 required-features = ["tiff", "jpeg"]
+
+[[example]]
+name = "sparse_probe"
+required-features = ["sparse"]

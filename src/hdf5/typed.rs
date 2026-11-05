@@ -236,15 +236,6 @@ impl Reader {
         for (source, path) in requests {
             let (source, path) = sources.resolve(source, &path)?;
             let dataset = sources.file(source).dataset(&path)?;
-            let plist = dataset.dcpl()?;
-            if dataset.layout() == hdf5_backend::dataset::Layout::Virtual
-                || !plist.get_external()?.is_empty()
-            {
-                return Err(Error(
-                    "HDF5 virtual datasets/external raw storage require separate source contracts"
-                        .into(),
-                ));
-            }
             let source_shape = dataset.shape();
             let (count, shape) = match source_shape.as_slice() {
                 [h, w] => (1, [*h, *w]),
@@ -272,51 +263,12 @@ impl Reader {
                 .checked_add(count)
                 .filter(|&n| n <= limits.frames)
                 .ok_or_else(|| Error("HDF5 sequence exceeds frame limit".into()))?;
-            if let Some(chunk) = dataset.chunk()
-                && chunk
-                    .into_iter()
-                    .try_fold(pixel_type.bytes(), usize::checked_mul)
-                    .is_none_or(|n| n > limits.chunk_bytes)
-            {
-                return Err(Error("HDF5 decoded chunk exceeds byte limit".into()));
-            }
-            let mut filters = Vec::new();
-            for filter in dataset.filters() {
-                let id = filter.id();
-                if ![1, 2, 3, 32000, 32008].contains(&id) || !filter.decode_enabled() {
-                    return Err(Error(format!(
-                        "unsupported/unavailable typed HDF5 filter {id}"
-                    )));
-                }
-                let parameters = if let hdf5_backend::filters::Filter::User(_, p) = &filter {
-                    p.clone()
-                } else {
-                    Vec::new()
-                };
-                filters.push(Filter {
-                    id,
-                    parameters,
-                    decode_enabled: true,
-                });
-            }
-            let fill_value = fill(&dataset, pixel_type)?;
-            let fill_time = plist.get_fill_time()?;
-            let storage_allocated = hdf5_backend::sync::sync(|| {
-                let mut status = H5D_space_status_t::H5D_SPACE_STATUS_ERROR;
-                // SAFETY: live dataset ID and writable native status enum.
-                if unsafe { H5Dget_space_status(dataset.id(), &mut status) } < 0 {
-                    return Err(Error("cannot determine HDF5 storage allocation".into()));
-                }
-                Ok(status == H5D_space_status_t::H5D_SPACE_STATUS_ALLOCATED)
-            })?;
-            if !storage_allocated
-                && (fill_value.is_none() || fill_time == hdf5_backend::dataset::FillTime::Never)
-            {
-                return Err(Error(
-                    "unallocated HDF5 regions have undefined fill; refusing to invent counts"
-                        .into(),
-                ));
-            }
+            let Storage {
+                filters,
+                fill_value,
+                fill_time,
+                storage_allocated,
+            } = admit_storage(&dataset, pixel_type, limits)?;
             sources.charge(
                 path.len()
                     .saturating_mul(2)
@@ -436,7 +388,93 @@ impl Reader {
         Ok(())
     }
 }
-fn standard_type(dtype: &Datatype) -> Result<(PixelType, bool), Error> {
+
+/// Shared storage admission for typed images and explicitly selected sparse arrays.
+pub(super) struct Storage {
+    pub filters: Vec<Filter>,
+    pub fill_value: Option<PixelBuffer>,
+    pub storage_allocated: bool,
+    pub fill_time: hdf5_backend::dataset::FillTime,
+}
+pub(super) fn admit_storage(
+    dataset: &Dataset,
+    pixel_type: PixelType,
+    limits: Limits,
+) -> Result<Storage, Error> {
+    let filters = admit_filters(dataset, pixel_type.bytes(), limits)?;
+    let plist = dataset.dcpl()?;
+    let fill_value = fill(dataset, pixel_type)?;
+    let fill_time = plist.get_fill_time()?;
+    let storage_allocated = storage_allocated(dataset)?;
+    if !storage_allocated
+        && (fill_value.is_none() || fill_time == hdf5_backend::dataset::FillTime::Never)
+    {
+        return Err(Error(
+            "unallocated HDF5 regions have undefined fill; refusing to invent counts".into(),
+        ));
+    }
+
+    Ok(Storage {
+        filters,
+        fill_value,
+        fill_time,
+        storage_allocated,
+    })
+}
+
+pub(super) fn admit_filters(
+    dataset: &Dataset,
+    element_bytes: usize,
+    limits: Limits,
+) -> Result<Vec<Filter>, Error> {
+    let plist = dataset.dcpl()?;
+    if dataset.layout() == hdf5_backend::dataset::Layout::Virtual
+        || !plist.get_external()?.is_empty()
+    {
+        return Err(Error(
+            "HDF5 virtual datasets/external raw storage require separate source contracts".into(),
+        ));
+    }
+    if let Some(chunk) = dataset.chunk()
+        && chunk
+            .into_iter()
+            .try_fold(element_bytes, usize::checked_mul)
+            .is_none_or(|n| n > limits.chunk_bytes)
+    {
+        return Err(Error("HDF5 decoded chunk exceeds byte limit".into()));
+    }
+    let mut filters = Vec::new();
+    for filter in dataset.filters() {
+        let id = filter.id();
+        if ![1, 2, 3, 32000, 32008].contains(&id) || !filter.decode_enabled() {
+            return Err(Error(format!(
+                "unsupported/unavailable typed HDF5 filter {id}"
+            )));
+        }
+        let parameters = if let hdf5_backend::filters::Filter::User(_, p) = &filter {
+            p.clone()
+        } else {
+            Vec::new()
+        };
+        filters.push(Filter {
+            id,
+            parameters,
+            decode_enabled: true,
+        });
+    }
+    Ok(filters)
+}
+pub(super) fn storage_allocated(dataset: &Dataset) -> Result<bool, Error> {
+    hdf5_backend::sync::sync(|| {
+        let mut status = H5D_space_status_t::H5D_SPACE_STATUS_ERROR;
+        // SAFETY: live dataset ID and writable native status enum.
+        if unsafe { H5Dget_space_status(dataset.id(), &mut status) } < 0 {
+            return Err(Error("cannot determine HDF5 storage allocation".into()));
+        }
+        Ok(status == H5D_space_status_t::H5D_SPACE_STATUS_ALLOCATED)
+    })
+}
+pub(super) fn standard_type(dtype: &Datatype) -> Result<(PixelType, bool), Error> {
     use hdf5_backend::globals::*;
     hdf5_backend::sync::sync(|| {
         macro_rules! admit {($($v:ident,$le:ident,$be:ident);*)=>{$(
@@ -453,7 +491,7 @@ fn standard_type(dtype: &Datatype) -> Result<(PixelType, bool), Error> {
         Err(Error("HDF5 samples must use a standard 8/16/32/64-bit integer or IEEE f32/f64 type; custom precision, enums, complex and compound types are unsupported".into()))
     })
 }
-fn memory_type(ty: PixelType) -> Result<Datatype, Error> {
+pub(super) fn memory_type(ty: PixelType) -> Result<Datatype, Error> {
     macro_rules! types {($($v:ident,$t:ty);*)=>{match ty {$(PixelType::$v=>Datatype::from_type::<$t>()?),*,_=>return Err(Error("complex HDF5 samples need a separate dtype contract".into()))}};}
     Ok(types!(U8,u8;I8,i8;U16,u16;I16,i16;U32,u32;I32,i32;U64,u64;I64,i64;F32,f32;F64,f64))
 }

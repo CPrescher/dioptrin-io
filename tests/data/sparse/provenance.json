@@ -1,0 +1,575 @@
+{
+  "license": "CC0-1.0",
+  "generator": "scripts/generate_sparse_fixtures.py",
+  "h5py": "3.15.1",
+  "files": {
+    "signed-model.h5": {
+      "file_sha256": "4c2f6e218f4a3738d2a93fc8a64daea54c5959c284619c27590829429adaefc6",
+      "components": {
+        "mask": {
+          "shape": [
+            2,
+            4
+          ],
+          "dtype": "float64",
+          "little_endian": false,
+          "sha256": "97751b6d76159dbbdf0acc306bbcc1007b9148283718db6c79b9742e61305d8d"
+        },
+        "radius": {
+          "shape": [
+            3
+          ],
+          "dtype": "float64",
+          "little_endian": false,
+          "sha256": "b0c45303f7f11848cb5e6e5b2af2fb2aecd0b72c28748b88b583ab6bb76df174"
+        },
+        "background_avg": {
+          "shape": [
+            2,
+            3
+          ],
+          "dtype": "float32",
+          "little_endian": true,
+          "sha256": "052f36588eec01ffda12e3cf19739bedac16eb91b572736353bfb4cb0b833525"
+        },
+        "background_std": {
+          "shape": [
+            2,
+            3
+          ],
+          "dtype": "float32",
+          "little_endian": true,
+          "sha256": "188f8ec80851791d171ea09f8981400ac86f154ea170b7ab8dcb271eb2edd4fe"
+        },
+        "normalization": {
+          "shape": [
+            2,
+            4
+          ],
+          "dtype": "float64",
+          "little_endian": false,
+          "sha256": "e67d9e73e8003e7a73d95a8e91cc510ce4aeeae4d8ef0145c3bfa14f0355364c"
+        },
+        "frame_ptr": {
+          "shape": [
+            3
+          ],
+          "dtype": "uint64",
+          "little_endian": false,
+          "sha256": "a955c6c593a4f03328fb14905a735f8b66b60b5c75756d5ebbb30b81ba47b2ba"
+        },
+        "index": {
+          "shape": [
+            4
+          ],
+          "dtype": "uint32",
+          "little_endian": false,
+          "sha256": "5be0560e7211af4bf8a256ea69d5e6c0fd1a63b8d76841e8e89c8676a1ac431c"
+        },
+        "intensity": {
+          "shape": [
+            4
+          ],
+          "dtype": "int16",
+          "little_endian": false,
+          "sha256": "294e834f486fa55ad35599a79227cc01eb1789e1527a16351b397f28c487f928"
+        },
+        "dummy": {
+          "shape": [],
+          "dtype": "int16",
+          "little_endian": false,
+          "sha256": "085edad400785fca7e7e90b1fac4beb776fc2beee5aa24352d5f39b5d57efcad"
+        }
+      },
+      "dense": [
+        {
+          "dtype": "int16",
+          "shape": [
+            2,
+            4
+          ],
+          "sha256": "e8cb8460b986b35a55159f76422b6b09a2fe04cfde908bbd999b52dd1dcaa919"
+        },
+        {
+          "dtype": "int16",
+          "shape": [
+            2,
+            4
+          ],
+          "sha256": "627c9b81b8730c253e98372ad37722cefe6ec0a085f42605f0cf138944217b54"
+        }
+      ],
+      "reference_gap": "Pinned native densifier rejects non-native endian source buffers"
+    },
+    "signed-model-le.h5": {
+      "file_sha256": "423ed510f224b41fd5773cd07fe75a402cab81222b5d52a76892cfcc411405a5",
+      "components": {
+        "mask": {
+          "shape": [
+            2,
+            4
+          ],
+          "dtype": "float64",
+          "little_endian": true,
+          "sha256": "97751b6d76159dbbdf0acc306bbcc1007b9148283718db6c79b9742e61305d8d"
+        },
+        "radius": {
+          "shape": [
+            3
+          ],
+          "dtype": "float64",
+          "little_endian": true,
+          "sha256": "b0c45303f7f11848cb5e6e5b2af2fb2aecd0b72c28748b88b583ab6bb76df174"
+        },
+        "background_avg": {
+          "shape": [
+            2,
+            3
+          ],
+          "dtype": "float32",
+          "little_endian": true,
+          "sha256": "052f36588eec01ffda12e3cf19739bedac16eb91b572736353bfb4cb0b833525"
+        },
+        "background_std": {
+          "shape": [
+            2,
+            3
+          ],
+          "dtype": "float32",
+          "little_endian": true,
+          "sha256": "188f8ec80851791d171ea09f8981400ac86f154ea170b7ab8dcb271eb2edd4fe"
+        },
+        "normalization": {
+          "shape": [
+            2,
+            4
+          ],
+          "dtype": "float64",
+          "little_endian": true,
+          "sha256": "e67d9e73e8003e7a73d95a8e91cc510ce4aeeae4d8ef0145c3bfa14f0355364c"
+        },
+        "frame_ptr": {
+          "shape": [
+            3
+          ],
+          "dtype": "uint64",
+          "little_endian": true,
+          "sha256": "a955c6c593a4f03328fb14905a735f8b66b60b5c75756d5ebbb30b81ba47b2ba"
+        },
+        "index": {
+          "shape": [
+            4
+          ],
+          "dtype": "uint32",
+          "little_endian": true,
+          "sha256": "5be0560e7211af4bf8a256ea69d5e6c0fd1a63b8d76841e8e89c8676a1ac431c"
+        },
+        "intensity": {
+          "shape": [
+            4
+          ],
+          "dtype": "int16",
+          "little_endian": true,
+          "sha256": "294e834f486fa55ad35599a79227cc01eb1789e1527a16351b397f28c487f928"
+        },
+        "dummy": {
+          "shape": [],
+          "dtype": "int16",
+          "little_endian": true,
+          "sha256": "085edad400785fca7e7e90b1fac4beb776fc2beee5aa24352d5f39b5d57efcad"
+        }
+      },
+      "dense": [
+        {
+          "dtype": "int16",
+          "shape": [
+            2,
+            4
+          ],
+          "sha256": "e8cb8460b986b35a55159f76422b6b09a2fe04cfde908bbd999b52dd1dcaa919"
+        },
+        {
+          "dtype": "int16",
+          "shape": [
+            2,
+            4
+          ],
+          "sha256": "627c9b81b8730c253e98372ad37722cefe6ec0a085f42605f0cf138944217b54"
+        }
+      ]
+    },
+    "float-events.h5": {
+      "file_sha256": "e27aef0f12784e50d5c3e251efa5760b420b2f3ec326542549e1ca4de902e973",
+      "components": {
+        "mask": {
+          "shape": [
+            2,
+            3
+          ],
+          "dtype": "float32",
+          "little_endian": true,
+          "sha256": "b89d2b658018fd9653c2e987040395ffd7d434a8246992f4253451e153c2e186"
+        },
+        "frame_ptr": {
+          "shape": [
+            3
+          ],
+          "dtype": "int32",
+          "little_endian": true,
+          "sha256": "5c4f0026a5866967334fd37912b9c876b024f0b17f5fac1252ad635a96848b51"
+        },
+        "index": {
+          "shape": [
+            4
+          ],
+          "dtype": "uint64",
+          "little_endian": false,
+          "sha256": "bad20cb7355a5f4f984b2ecb170b7fc21e0cbca85dc183ef60cf3f720dab5fcf"
+        },
+        "intensity": {
+          "shape": [
+            4
+          ],
+          "dtype": "float64",
+          "little_endian": false,
+          "sha256": "0973f09924ac295a3573f3e4a40bebe72f501a9b895b5c9ddc0144c128a23a1f"
+        },
+        "normalization": {
+          "shape": [
+            2,
+            3
+          ],
+          "dtype": "uint16",
+          "little_endian": true,
+          "sha256": "9279aba84b65c836059f143f595b35fa7ff78a64c750da958a15319d1a333f2f"
+        }
+      },
+      "dense": [
+        {
+          "dtype": "float64",
+          "shape": [
+            2,
+            3
+          ],
+          "sha256": "7649dc37e901fbb8cb9cd3277c384e1a8f84be7c4ed91d057a5fbf38ca460c29"
+        },
+        {
+          "dtype": "float64",
+          "shape": [
+            2,
+            3
+          ],
+          "sha256": "7b4e0d313eab3e1122ac66335af475cb7f7551be26490ec97c70227ef502aef6"
+        }
+      ],
+      "reference_gap": "Pinned native densifier rejects non-native endian source buffers and uint64 indices"
+    },
+    "float-events-le.h5": {
+      "file_sha256": "db354ae977488956cf95b7c07b775975db42321362c12feec9202870a3ff6a5d",
+      "components": {
+        "mask": {
+          "shape": [
+            2,
+            3
+          ],
+          "dtype": "float32",
+          "little_endian": true,
+          "sha256": "b89d2b658018fd9653c2e987040395ffd7d434a8246992f4253451e153c2e186"
+        },
+        "frame_ptr": {
+          "shape": [
+            3
+          ],
+          "dtype": "int32",
+          "little_endian": true,
+          "sha256": "5c4f0026a5866967334fd37912b9c876b024f0b17f5fac1252ad635a96848b51"
+        },
+        "index": {
+          "shape": [
+            4
+          ],
+          "dtype": "uint32",
+          "little_endian": true,
+          "sha256": "fd8ea20404bbd2568f0ac79a227ad19d03c56530743b8c998bba8409071f9d26"
+        },
+        "intensity": {
+          "shape": [
+            4
+          ],
+          "dtype": "float64",
+          "little_endian": true,
+          "sha256": "0973f09924ac295a3573f3e4a40bebe72f501a9b895b5c9ddc0144c128a23a1f"
+        },
+        "normalization": {
+          "shape": [
+            2,
+            3
+          ],
+          "dtype": "uint16",
+          "little_endian": true,
+          "sha256": "9279aba84b65c836059f143f595b35fa7ff78a64c750da958a15319d1a333f2f"
+        }
+      },
+      "dense": [
+        {
+          "dtype": "float64",
+          "shape": [
+            2,
+            3
+          ],
+          "sha256": "7649dc37e901fbb8cb9cd3277c384e1a8f84be7c4ed91d057a5fbf38ca460c29"
+        },
+        {
+          "dtype": "float64",
+          "shape": [
+            2,
+            3
+          ],
+          "sha256": "7b4e0d313eab3e1122ac66335af475cb7f7551be26490ec97c70227ef502aef6"
+        }
+      ]
+    },
+    "uint64-events.h5": {
+      "file_sha256": "e24a5daad2368a1eef9322e4b6aa203836151f31ba5d59800fc4b70859f21ef9",
+      "components": {
+        "mask": {
+          "shape": [
+            1,
+            4
+          ],
+          "dtype": "float32",
+          "little_endian": true,
+          "sha256": "4c9c4f354e74153db012329d71c8562ec23e498148174b2c49de58f45d47cdbe"
+        },
+        "frame_ptr": {
+          "shape": [
+            2
+          ],
+          "dtype": "uint32",
+          "little_endian": true,
+          "sha256": "1b03ab083d0fb41e44d480f48d5bba181c623c0594bda1aa8ea71a3b67dbf3b1"
+        },
+        "index": {
+          "shape": [
+            4
+          ],
+          "dtype": "uint32",
+          "little_endian": true,
+          "sha256": "baed642339816affb3fe8719792d0e4ce82f12db72b7373d244eaa65445800fe"
+        },
+        "intensity": {
+          "shape": [
+            4
+          ],
+          "dtype": "uint64",
+          "little_endian": false,
+          "sha256": "1d91021602823e01bff972b8bb55be7ba96d4cd475dc4ab934b28d2db8ff5fd4"
+        },
+        "dummy": {
+          "shape": [],
+          "dtype": "uint64",
+          "little_endian": false,
+          "sha256": "12a3ae445661ce5dee78d0650d33362dec29c4f82af05e7e57fb595bbbacf0ca"
+        }
+      },
+      "dense": [
+        {
+          "dtype": "uint64",
+          "shape": [
+            1,
+            4
+          ],
+          "sha256": "1d91021602823e01bff972b8bb55be7ba96d4cd475dc4ab934b28d2db8ff5fd4"
+        }
+      ],
+      "reference_gap": "Pinned native densifier rejects non-native endian source buffers"
+    },
+    "empty-model.h5": {
+      "file_sha256": "fa882e31e683f138afb2370b59cf63ed7fcafecc54592c264444f79546f7b3b5",
+      "components": {
+        "mask": {
+          "shape": [
+            2,
+            3
+          ],
+          "dtype": "float32",
+          "little_endian": true,
+          "sha256": "b0021673f4702ce3c07cce9964e799dcc66b20362f4226c093dab57abdeed91b"
+        },
+        "radius": {
+          "shape": [
+            3
+          ],
+          "dtype": "float32",
+          "little_endian": true,
+          "sha256": "e3f6e33972cfb3a22c6a43b01454af89e5a8f834b4788d6567e26762b583bb05"
+        },
+        "background_avg": {
+          "shape": [
+            2,
+            3
+          ],
+          "dtype": "float32",
+          "little_endian": true,
+          "sha256": "9edfd2ea40b1e39a50400244cb95f6c0847f928da7968cca7e3e1ec4d1bcef43"
+        },
+        "background_std": {
+          "shape": [
+            2,
+            3
+          ],
+          "dtype": "float32",
+          "little_endian": true,
+          "sha256": "f46913286d895f62d646314f400fc3d7a543cf34eb4ae56df87f43dc4582a36b"
+        },
+        "frame_ptr": {
+          "shape": [
+            3
+          ],
+          "dtype": "uint32",
+          "little_endian": true,
+          "sha256": "15ec7bf0b50732b49f8228e07d24365338f9e3ab994b00af08e5a3bffe55fd8b"
+        },
+        "index": {
+          "shape": [
+            0
+          ],
+          "dtype": "uint32",
+          "little_endian": true,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "intensity": {
+          "shape": [
+            0
+          ],
+          "dtype": "float32",
+          "little_endian": true,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "dense": [
+        {
+          "dtype": "float32",
+          "shape": [
+            2,
+            3
+          ],
+          "sha256": "acdd9221eeb3e9786e22a40f00348ae45eb79b0272133e1d22d48b6f287ba9db"
+        },
+        {
+          "dtype": "float32",
+          "shape": [
+            2,
+            3
+          ],
+          "sha256": "b34c4fd6a15b29cc83f1d43535103583c9d14213d756f1010be0597fc7e0e8a1"
+        }
+      ]
+    }
+  },
+  "invalid": {
+    "invalid-pointer-origin.h5": {
+      "file_sha256": "6d11ef7dc02ed132ac92358c847dcb1d9b1f0de343412664b308f1a34dc16b7a",
+      "failure": "open"
+    },
+    "invalid-pointer-final.h5": {
+      "file_sha256": "86a4dac9db5f95ec6497bf00afb18b8e6fd497c83e868f5207d944c324aeb812",
+      "failure": "open"
+    },
+    "invalid-pointer-order.h5": {
+      "file_sha256": "992cbff518f62b758c626f2cc38e24ef242461b009828a4fcba839f7580b7525",
+      "failure": "open"
+    },
+    "invalid-pointer-float.h5": {
+      "file_sha256": "7783b68f9fe391f67dbbc9aa8abe6b77fc800463595d25c24436204333fbeb8c",
+      "failure": "open"
+    },
+    "invalid-negative-index.h5": {
+      "file_sha256": "39a9dfb13445567f1d799dcc18dd661dc5524d60d0312615948cccae92e08907",
+      "failure": "open"
+    },
+    "invalid-outside-index.h5": {
+      "file_sha256": "a3cadf8acb52be4f11c0b41ed3e6f99118058a88128247d984770498453d438f",
+      "failure": "open"
+    },
+    "invalid-duplicate-index.h5": {
+      "file_sha256": "454b602b44e04a45dcfadde8567f00c6476b15ee5552b0e95fc78715b5f3a07f",
+      "failure": "open"
+    },
+    "invalid-float-index.h5": {
+      "file_sha256": "82596634ccd190850acbf32cf4361ad9616472b4ff5027c11b971ded69420da5",
+      "failure": "open"
+    },
+    "invalid-index-length.h5": {
+      "file_sha256": "486d2eaed37d47ad2458eb0a2e678619b8aa82041c71a6c6014c740864ee28df",
+      "failure": "open"
+    },
+    "invalid-normalization-shape.h5": {
+      "file_sha256": "e541a9e4992f2d723a586a90c09dea5ef8d25201be1fe313e66544b022f47fde",
+      "failure": "open"
+    },
+    "invalid-radius-order.h5": {
+      "file_sha256": "0c2bc917ffaeae09a94a305ae9717fc14075a8ba84aca64fd6161734bcb65011",
+      "failure": "open"
+    },
+    "invalid-background-shape.h5": {
+      "file_sha256": "529e83138046a756a99483a9ed79492804c3356d4f055e5baf75dc85ab930722",
+      "failure": "open"
+    },
+    "invalid-scale-offset.h5": {
+      "file_sha256": "e0eec3420a08ce556d0ea749315ede8e1b8c145f8177b61695286a4fba9f1af0",
+      "failure": "open"
+    },
+    "invalid-virtual.h5": {
+      "file_sha256": "9f84d54b0fabc6065b2830e063c48d3f63648eb98550d0b776f1ee09e7f8727d",
+      "failure": "open"
+    },
+    "invalid-external-raw.h5": {
+      "file_sha256": "ee060c2e734360358a6333e163be29af64356551d25cb22d1baf0ae59a7e4c75",
+      "failure": "open"
+    },
+    "invalid-undefined-fill.h5": {
+      "file_sha256": "b396fc0b5fec2fb11b81fc09bf7813cb98f35f2c7ce0d47415ed08f14947cd1a",
+      "failure": "open"
+    },
+    "invalid-custom-precision.h5": {
+      "file_sha256": "b472e4d33b75845115901b67c1ae121f56d4e5f25c124d1b3801a24c019178b5",
+      "failure": "open"
+    },
+    "invalid-link-cycle.h5": {
+      "file_sha256": "fddd26b4b505d02a8d7fb0f67937e2c352bc755db2a16113ac4e1491cc07526b",
+      "failure": "open"
+    },
+    "invalid-missing-link.h5": {
+      "file_sha256": "2f55fec7e80e17f92e1804bc02bd615b584f065aa2b6975911fce8ea1b3f1cd9",
+      "failure": "open"
+    },
+    "invalid-partial-model.h5": {
+      "file_sha256": "ca48f561870cf1fc941a8870669c44643076438523d26372b007658224cb36e6",
+      "failure": "dense"
+    },
+    "invalid-irregular-model.h5": {
+      "file_sha256": "8d5ebdf78c95eb260b5228a71387a7081ea8b687316e5efccb83dd3eec099cfd",
+      "failure": "dense"
+    },
+    "invalid-overflow-model.h5": {
+      "file_sha256": "a0d52a7e998f67aea1d870528e3f6e9fba0e034e86f984f677ab420f395d3dae",
+      "failure": "dense"
+    }
+  },
+  "growing": {
+    "file": "growing.h5",
+    "file_sha256": "710da2d1498e1d00cc5f454609b56898ce5e771ee0f22e6748f2248cfebb2fd0"
+  },
+  "links": {
+    "external-master.h5": {
+      "file_sha256": "458c8e5cb64aa25b628d82dbb29a105f7b9549ff74ca15d77971f8e87e0f6490"
+    },
+    "external-relay.h5": {
+      "file_sha256": "28850e7722473c7bcd3f87d300448e1a85a77817ad6c345510dafefb11841704"
+    },
+    "external-target.h5": {
+      "file_sha256": "e00ccae5b267379253c8d957f8561d6b0c9c93b00d1265ec778b6576407b1029"
+    }
+  }
+}

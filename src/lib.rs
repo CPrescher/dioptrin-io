@@ -85,3 +85,5 @@ pub mod esperanto;
 
 #[cfg(feature = "mar345")]
 pub mod mar345;
+#[cfg(feature = "sparse")]
+pub use hdf5::sparse;

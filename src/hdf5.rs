@@ -8,6 +8,8 @@
 pub mod cache;
 pub mod raw;
 mod sources;
+#[cfg(feature = "sparse")]
+pub mod sparse;
 pub mod typed;
 
 use hdf5_backend::{Dataset, File};
