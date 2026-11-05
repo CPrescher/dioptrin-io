@@ -27,6 +27,7 @@ PIN = "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece"
 VERSION = "2026.6.0"
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 ADAPTERS = {
+    "mar345image":"mar345",
     "esperantoimage":"esperanto", "numpyimage": "npy", "dtrekimage": "dtrek", "fit2dmaskimage": "mask",
     "HiPiCimage": "hipic", "pnmimage": "pnm", "edfimage": "edf",
     "cbfimage": "cbf", "tifimage": "tiff", "binaryimage": "raw",
@@ -34,7 +35,7 @@ ADAPTERS = {
     "hdf5image":"hdf5", "eigerimage":"eiger", "limaimage":"lima", "lambdaimage":"lambda",
     "marccdimage":"marccd", "pilatusimage":"pilatus",
     "speimage":"spe", "mrcimage":"mrc", "dm3image":"dm3",
-    "brukerimage":"bruker86", "bruker100image":"bruker100",
+    "brukerimage":"bruker86-view", "bruker100image":"bruker100",
     "OXDimage":"oxford", "raxisimage":"raxis",
     "jpegimage":"jpeg", "jpeg2kimage":"jpeg2000", "xsdimage":"xsd", "GEimage":"ge", "pixiimage":"pixi",
 }
@@ -99,10 +100,10 @@ def main():
         if {p.stem for p in paths} != requested:
             parser.error("unknown codec test module")
     ledger = json.loads((ROOT / "docs/fabio-2026.6.0-inventory.json").read_text())
-    report = {"schema": 2, "reference": ledger["reference"],
+    report = {"schema": 3, "reference": ledger["reference"],
               "selection": {"all_codec_modules": not bool(args.modules), "modules": []},
               "contract": "read-count/dtype/shape comparison at successful upstream .read calls; not Python API or full header parity",
-              "gaps": ["semantic headers not completely compared", "native content autodetection not exercised", "file-like streams materialized by test harness", "read paths bypassing .read not intercepted", "reference rejection cases recorded but not yet compared to native rejection"],
+              "gaps": ["semantic headers not completely compared", "native content autodetection not exercised", "file-like streams materialized by test harness", "read paths bypassing .read not intercepted"],
               "out_of_scope": ["Python mutation/writing APIs and numerical statistics"],
               "reads": [], "reference_rejections": [], "source_files": {}, "reference_import_errors": [], "reference_tests": {}}
     report["environment"] = {"python": sys.version, "packages": {}}
@@ -124,6 +125,62 @@ def main():
         "scripts/fabio_suite_parity.py", "scripts/inventory_fabio.py", "examples/parity_probe.rs", "docs/fabio-2026.6.0-inventory.json"]}
     active = False
     current_test = None
+
+    def compare_rejection(codec, source, positional, keywords, captured, error):
+        record = {"test": current_test, "codec": codec,
+                  "source": str(source) if isinstance(source, (str, os.PathLike)) else type(source).__name__,
+                  "error": f"{type(error).__name__}: {error}"}
+        report["reference_rejections"].append(record)
+        feature = capabilities["known_readers"].get(codec)
+        adapter = ADAPTERS.get(codec)
+        if feature is None:
+            record.update(status="decoder_missing")
+            return
+        if feature not in capabilities["features"]:
+            record.update(status="feature_disabled")
+            return
+        if adapter not in capabilities["adapters"]:
+            record.update(status="test_adapter_missing")
+            return
+        # A failed selected-frame/configuration call is not equivalent to
+        # asking the native probe to decode its default complete scan.
+        if (positional and positional != (None,)) or any(key != "frame" or value is not None for key, value in keywords.items()):
+            record.update(status="configuration_not_compared", configuration={"positional":list(map(repr,positional)),"keywords":{key:repr(value) for key,value in keywords.items()}})
+            return
+        environment_failure = codec == "jpegimage" and sys.modules["fabio.jpegimage"].Image is None
+        with tempfile.TemporaryDirectory(prefix="dioptrin-fabio-reject-") as temporary:
+            if captured is not None:
+                path = pathlib.Path(temporary) / "stream.bin"
+                path.write_bytes(captured)
+                record["stream_materialized"] = True
+            elif isinstance(source, (str, os.PathLike)):
+                path = pathlib.Path(str(source).split("::", 1)[0])
+            else:
+                record.update(status="unsupported_source")
+                return
+            if path.is_file():
+                file_hash = sha_file(path)
+                record["file_sha256"] = file_hash
+                report["source_files"].setdefault(file_hash, {"name": path.name, "bytes": path.stat().st_size})
+            else:
+                record["source_missing"] = not path.exists()
+            argument = str(source) if codec == "hdf5image" and captured is None else str(path)
+            try:
+                native = subprocess.run([str(probe_path), adapter, argument], capture_output=True, text=True, timeout=args.probe_timeout)
+            except subprocess.TimeoutExpired:
+                record.update(status="native_timeout")
+                return
+            record["native_exit_code"] = native.returncode
+            record["native_error"] = native.stderr.strip()[:2000]
+            if environment_failure and native.returncode == 0:
+                record.update(status="reference_environment_difference",
+                              reason="upstream test deliberately disables Pillow; native decoding is independent of Python backend globals")
+            elif native.returncode == 2:
+                record.update(status="rejection_match")
+            elif native.returncode == 0:
+                record.update(status="native_accepted_reference_rejection")
+            else:
+                record.update(status="native_process_failure")
 
     def compare(codec, image, source, positional, keywords, captured):
         nonlocal current_test
@@ -157,6 +214,10 @@ def main():
             return
         record["adapter"] = adapter
         extra = []
+        if codec == "dtrekimage" and image.data.ndim != 2:
+            record["frame_mapping_policy"] = "stored C-order leading axes mapped to 2D planes; complete original array shape retained"
+        if codec == "brukerimage":
+            record["interpretation_policy"] = "stored words compared first; explicit Bruker86 LINEAR float decoding reported separately as a reference view"
         if codec == "kcdimage":
             record["interpretation_policy"] = "SumReadouts explicitly selected with checked i32 arithmetic; default native reader exposes original per-readout u16 words"
         if codec == "tifimage":
@@ -213,31 +274,65 @@ def main():
                 # SPE declares its stack in the header but the pinned reader
                 # inherits nframes=1. MRC's inherited getframe fails on data=None.
                 expected_frames = int(image.header["num_frames"]) if codec == "speimage" else image.nframes
-                record["reference"]["declared_frames"] = expected_frames
+                if codec == "dtrekimage":
+                    expected_frames = int(np.prod(image.data.shape[:-2])) if image.data.ndim > 2 else 1
+                record["reference"]["compared_frames"] = expected_frames
                 if len(frames) != expected_frames:
                     record.update(status="frame_count_mismatch", native=len(frames), reference=expected_frames)
                     return
                 failures = []
+                stored_differences = []
+                view_policies = []
+                reconstruction = False
                 for index, frame in enumerate(frames):
-                    if codec in {"speimage", "mrcimage"}:
+                    if codec == "dtrekimage":
+                        ref = image.data.reshape((-1,) + image.data.shape[-2:])[index] if image.data.ndim > 2 else image.data.reshape((1,-1)) if image.data.ndim == 1 else image.data
+                    elif codec in {"speimage", "mrcimage"}:
                         ref_source = io.BytesIO(captured) if captured is not None else str(source)
                         ref = type(image)().read(ref_source, frame=index).data
                     else:
                         ref = image.data if expected_frames == 1 else image.getframe(index).data
-                    canonical = np.ascontiguousarray(ref.astype(ref.dtype.newbyteorder("<"), copy=False))
+                    if ref.dtype == np.dtype("bool"):
+                        # Pillow can expose true bools backed by 0xff; Rust bool
+                        # and NumPy logical casts use 0x01. Compare logical values
+                        # and retain the opaque reference bytes as provenance.
+                        physical = np.ascontiguousarray(ref).tobytes()
+                        canonical = np.ascontiguousarray(ref.astype(np.uint8))
+                        record.setdefault("boolean_reference_storage", []).append({"frame":index,
+                            "physical_sha256":hashlib.sha256(physical).hexdigest(),
+                            "logical_byte_policy":"false=0,true=1"})
+                    else:
+                        canonical = np.ascontiguousarray(ref.astype(ref.dtype.newbyteorder("<"), copy=False))
                     expected = {"shape": list(ref.shape), "dtype": ref.dtype.name,
                                 "sample_sha256": hashlib.sha256(canonical.tobytes()).hexdigest()}
+                    raw_differences = [{"frame": index, "field": key, "native": frame[key], "reference": value}
+                                       for key, value in expected.items() if frame[key] != value]
+                    selected = frame
+                    if raw_differences and frame.get("reference_view") is not None:
+                        selected = frame["reference_view"]
+                        stored_differences.extend(raw_differences)
+                        view_policies.append(frame["view_policy"])
+                    if frame.get("reconstruction_policy") is not None:
+                        reconstruction = True
+                        view_policies.append(frame["reconstruction_policy"])
+                    if frame.get("view_error") is not None:
+                        record.setdefault("view_errors", []).append({"frame": index, "error": frame["view_error"]})
                     for key, value in expected.items():
-                        if frame[key] != value:
-                            failures.append({"frame": index, "field": key, "native": frame[key], "reference": value})
-                record.update(status="mismatch" if failures else "counts_match", frames=len(frames), mismatches=failures)
+                        if selected[key] != value:
+                            failures.append({"frame": index, "field": key, "native": selected[key], "reference": value})
+                status = "mismatch" if failures else "reconstruction_match" if reconstruction else "reference_view_match" if view_policies else "counts_match"
+                record.update(status=status, frames=len(frames), mismatches=failures)
+                if stored_differences:
+                    record["stored_representation_differences"] = stored_differences
+                if view_policies:
+                    record["view_policies"] = view_policies
                 if codec in {"dtrekimage", "edfimage", "pilatusimage", "marccdimage"}:
                     # These two maps expose directly comparable text fields.
                     # Preserve full header coverage as a separate gate: CBF CIF,
                     # TIFF private detector fields etc. still need schemas.
                     header_differences = []
                     for index, frame in enumerate(frames):
-                        ref_header = image.header if len(frames) == 1 else image.getframe(index).header
+                        ref_header = image.header if len(frames) == 1 or codec == "dtrekimage" else image.getframe(index).header
                         if codec == "marccdimage":
                             semantic = type(image)()
                             with semantic._open(str(path), "rb") as header_source:
@@ -295,9 +390,7 @@ def main():
                     try:
                         result = original(image, source, *positional, **keywords)
                     except Exception as error:
-                        report["reference_rejections"].append({"test": current_test, "codec": codec,
-                            "source": str(source) if isinstance(source, (str, os.PathLike)) else type(source).__name__,
-                            "error": f"{type(error).__name__}: {error}"})
+                        compare_rejection(codec, source, positional, keywords, captured, error)
                         raise
                     compare(codec, image, source, positional, keywords, captured)
                     return result
@@ -331,12 +424,16 @@ def main():
     report["summary"] = dict(collections.Counter(r["status"] for r in report["reads"]))
     # A green reference suite alone says nothing about Rust parity. Every gap,
     # absent codec, skipped reference test or unmatched read keeps this false.
-    compared_codecs = {r["codec"] for r in report["reads"] if r["status"] == "counts_match"}
+    matching_statuses = {"counts_match", "reference_view_match", "reconstruction_match"}
+    compared_codecs = {r["codec"] for r in report["reads"] if r["status"] in matching_statuses}
+    report["rejection_summary"] = dict(collections.Counter(r["status"] for r in report["reference_rejections"]))
+    if any(r["status"] not in {"rejection_match", "reference_environment_difference"} for r in report["reference_rejections"]):
+        report["gaps"].append("some reference rejection inputs/configurations remain unmatched")
     required = set(canonical_modules.values())
     report["unexercised_codecs"] = sorted(required - compared_codecs)
     report["full_reading_parity"] = (not args.modules and result.wasSuccessful() and not result.skipped
         and not report["reference_import_errors"] and not report["unexercised_codecs"]
-        and not report["gaps"] and all(r["status"] in {"counts_match", "reference_no_pixels"}
+        and not report["gaps"] and all(r["status"] in matching_statuses | {"reference_no_pixels"}
             and not r.get("header_field_differences") for r in report["reads"])
         and all(x["matches_pinned_source"] for x in report["reference_codec_sources"].values()))
     report["download_base"] = args.download_base

@@ -8,6 +8,8 @@ use std::path::Path;
 
 #[derive(Debug, Clone, Copy)]
 pub enum Format {
+    #[cfg(feature = "mar345")]
+    Mar345,
     #[cfg(feature = "esperanto")]
     Esperanto,
     #[cfg(feature = "fit2d")]
@@ -33,6 +35,8 @@ pub enum Format {
     Dm3,
     #[cfg(feature = "bruker")]
     Bruker,
+    #[cfg(feature = "bruker")]
+    BrukerLinear,
     #[cfg(feature = "oxford")]
     Oxford,
     #[cfg(feature = "raxis")]
@@ -51,6 +55,8 @@ pub enum Format {
 }
 
 enum Backend {
+    #[cfg(feature = "mar345")]
+    Mar345(crate::mar345::Reader),
     #[cfg(feature = "esperanto")]
     Esperanto(crate::esperanto::Reader),
     #[cfg(feature = "fit2d")]
@@ -76,6 +82,8 @@ enum Backend {
     Dm3(crate::dm3::Reader),
     #[cfg(feature = "bruker")]
     Bruker(crate::bruker::Reader),
+    #[cfg(feature = "bruker")]
+    BrukerLinear(crate::bruker::Reader),
     #[cfg(feature = "oxford")]
     Oxford(crate::oxford::Reader),
     #[cfg(feature = "raxis")]
@@ -144,6 +152,8 @@ impl FrameBuffer {
 }
 
 pub enum Metadata<'a> {
+    #[cfg(feature = "mar345")]
+    Mar345(&'a crate::mar345::Metadata),
     #[cfg(feature = "esperanto")]
     Esperanto(&'a crate::esperanto::Metadata),
     #[cfg(feature = "fit2d")]
@@ -200,6 +210,8 @@ impl Reader {
         let source = PreparedSource::open(path, transport)?;
         let input = source.path();
         let backend = match format {
+            #[cfg(feature = "mar345")]
+            Format::Mar345 => Backend::Mar345(crate::mar345::Reader::open(input, image)?),
             #[cfg(feature = "esperanto")]
             Format::Esperanto => Backend::Esperanto(crate::esperanto::Reader::open(input, image)?),
             #[cfg(feature = "fit2d")]
@@ -234,6 +246,10 @@ impl Reader {
             Format::Dm3 => Backend::Dm3(crate::dm3::Reader::open(input, image)?),
             #[cfg(feature = "bruker")]
             Format::Bruker => Backend::Bruker(crate::bruker::Reader::open(input, image)?),
+            #[cfg(feature = "bruker")]
+            Format::BrukerLinear => {
+                Backend::BrukerLinear(crate::bruker::Reader::open(input, image)?)
+            }
             #[cfg(feature = "oxford")]
             Format::Oxford => Backend::Oxford(crate::oxford::Reader::open(input, image)?),
             #[cfg(feature = "raxis")]
@@ -296,6 +312,8 @@ impl Reader {
     #[must_use]
     pub fn frames(&self) -> usize {
         match &self.backend {
+            #[cfg(feature = "mar345")]
+            Backend::Mar345(r) => r.frames(),
             #[cfg(feature = "esperanto")]
             Backend::Esperanto(r) => r.frames(),
             #[cfg(feature = "fit2d")]
@@ -320,7 +338,7 @@ impl Reader {
             #[cfg(feature = "containers")]
             Backend::Dm3(r) => r.frames(),
             #[cfg(feature = "bruker")]
-            Backend::Bruker(r) => r.frames(),
+            Backend::Bruker(r) | Backend::BrukerLinear(r) => r.frames(),
             #[cfg(feature = "oxford")]
             Backend::Oxford(r) => r.frames(),
             #[cfg(feature = "raxis")]
@@ -339,6 +357,8 @@ impl Reader {
             return None;
         }
         match &self.backend {
+            #[cfg(feature = "mar345")]
+            Backend::Mar345(r) => Some(Metadata::Mar345(r.metadata())),
             #[cfg(feature = "esperanto")]
             Backend::Esperanto(r) => Some(Metadata::Esperanto(r.metadata())),
             #[cfg(feature = "fit2d")]
@@ -363,7 +383,7 @@ impl Reader {
             #[cfg(feature = "containers")]
             Backend::Dm3(r) => Some(Metadata::Dm3(r.metadata())),
             #[cfg(feature = "bruker")]
-            Backend::Bruker(r) => Some(Metadata::Bruker(r.metadata())),
+            Backend::Bruker(r) | Backend::BrukerLinear(r) => Some(Metadata::Bruker(r.metadata())),
             #[cfg(feature = "oxford")]
             Backend::Oxford(r) => Some(Metadata::Oxford(r.metadata())),
             #[cfg(feature = "raxis")]
@@ -435,6 +455,8 @@ impl Reader {
                     unreachable!()
                 };
                 match backend {
+                    #[cfg(feature = "mar345")]
+                    Backend::Mar345(r) => r.read_frame_into(index, b)?,
                     #[cfg(feature = "esperanto")]
                     Backend::Esperanto(r) => r.read_frame_into(index, b)?,
                     #[cfg(feature = "fit2d")]
@@ -460,6 +482,8 @@ impl Reader {
                     Backend::Dm3(r) => r.read_frame_into(index, b)?,
                     #[cfg(feature = "bruker")]
                     Backend::Bruker(r) => r.read_frame_into(b)?,
+                    #[cfg(feature = "bruker")]
+                    Backend::BrukerLinear(r) => crate::bruker::view::read_linear_into(r, b)?,
                     #[cfg(feature = "oxford")]
                     Backend::Oxford(r) => r.read_frame_into(b)?,
                     #[cfg(feature = "raxis")]

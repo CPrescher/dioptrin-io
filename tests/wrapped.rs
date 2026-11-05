@@ -49,6 +49,10 @@ fn same_files_through_both_wrappers_keep_counts_headers_and_stacks() {
         ("edf/compressed-stack.edf", Format::Edf),
         ("cbf/int32.cbf", Format::Cbf(cbf::ByteOffsetMode::Legacy32)),
         ("tiff/le-bigtiff.tif", Format::Tiff),
+        #[cfg(feature = "mar345")]
+        ("mar345/field32-nonzero.mar345", Format::Mar345),
+        #[cfg(feature = "bruker")]
+        ("legacy/bruker86-linear.sfrm", Format::BrukerLinear),
         #[cfg(feature = "esperanto")]
         ("esperanto/agi-extrema-cols34.esperanto", Format::Esperanto),
         #[cfg(feature = "fit2d")]

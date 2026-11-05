@@ -4,14 +4,14 @@ use serde_json::json;
 use sha2::{Digest, Sha256};
 use std::error::Error;
 
-fn report(
+fn frame_record(
     index: usize,
     frames: usize,
     shape: impl Into<Vec<usize>>,
     pixels: &PixelBuffer,
     fields: serde_json::Value,
     sources: &[&std::path::Path],
-) {
+) -> serde_json::Value {
     let shape = shape.into();
     let mut hash = Sha256::new();
     macro_rules! digest { ($($variant:ident,$name:literal);*) => {
@@ -49,10 +49,20 @@ fn report(
             digest!(U8,"uint8";U16,"uint16";U32,"uint32";U64,"uint64";I8,"int8";I16,"int16";I32,"int32";I64,"int64";F32,"float32";F64,"float64")
         }
     };
+    json!({"frame":index,"frames":frames,"shape":shape,"dtype":dtype,
+        "sample_sha256":format!("{:x}",hash.finalize()),"fields":fields,"sources":sources})
+}
+fn report(
+    index: usize,
+    frames: usize,
+    shape: impl Into<Vec<usize>>,
+    pixels: &PixelBuffer,
+    fields: serde_json::Value,
+    sources: &[&std::path::Path],
+) {
     println!(
         "{}",
-        json!({"frame":index,"frames":frames,"shape":shape,"dtype":dtype,
-        "sample_sha256":format!("{:x}",hash.finalize()),"fields":fields,"sources":sources})
+        frame_record(index, frames, shape, pixels, fields, sources)
     );
 }
 
@@ -102,6 +112,7 @@ fn run() -> Result<(), Box<dyn Error>> {
             "pilatus",
         ];
         for (enabled, feature, names) in [
+            (cfg!(feature = "mar345"), "mar345", &["mar345"][..]),
             (cfg!(feature = "esperanto"), "esperanto", &["esperanto"][..]),
             (cfg!(feature = "fit2d"), "fit2d", &["fit2d"][..]),
             (cfg!(feature = "kcd"), "kcd", &["kcd"][..]),
@@ -117,7 +128,7 @@ fn run() -> Result<(), Box<dyn Error>> {
             (
                 cfg!(feature = "bruker"),
                 "bruker",
-                &["bruker86", "bruker100"][..],
+                &["bruker86", "bruker86-view", "bruker100"][..],
             ),
             (cfg!(feature = "oxford"), "oxford", &["oxford"][..]),
             (cfg!(feature = "raxis"), "raxis", &["raxis"][..]),
@@ -142,7 +153,7 @@ fn run() -> Result<(), Box<dyn Error>> {
                 "speimage":"containers","mrcimage":"containers","dm3image":"containers",
                 "brukerimage":"bruker","bruker100image":"bruker","OXDimage":"oxford","raxisimage":"raxis","xsdimage":"xsd",
                 "GEimage":"fixed","pixiimage":"fixed","jpegimage":"jpeg","jpeg2kimage":"jpeg2000",
-                "fit2dimage":"fit2d","kcdimage":"kcd","mpaimage":"mpa","esperantoimage":"esperanto"
+                "fit2dimage":"fit2d","kcdimage":"kcd","mpaimage":"mpa","esperantoimage":"esperanto","mar345image":"mar345"
             }})
         );
         return Ok(());
@@ -193,6 +204,54 @@ fn run() -> Result<(), Box<dyn Error>> {
         return Ok(());
     }
     let limits = native::Limits::default();
+    #[cfg(feature = "bruker")]
+    if args[1] == "bruker86-view" {
+        let mut reader = wrapped::Reader::open(
+            path,
+            wrapped::Format::Bruker,
+            wrapped::Limits::default(),
+            limits,
+            tiff::Limits::default(),
+        )?;
+        let mut stored = wrapped::FrameBuffer::default();
+        reader.read_frame_into(0, &mut stored)?;
+        let wrapped::Metadata::Bruker(meta) = reader.metadata(0).unwrap() else {
+            unreachable!()
+        };
+        let mut row = frame_record(
+            0,
+            1,
+            stored.sample_shape().unwrap(),
+            stored.pixels().unwrap(),
+            json!(meta.fields),
+            &reader.source_paths(),
+        );
+        if meta
+            .linear
+            .is_some_and(|[slope, offset]| slope != 1.0 || offset != 0.0)
+        {
+            let mut decoded_reader = wrapped::Reader::open(
+                path,
+                wrapped::Format::BrukerLinear,
+                wrapped::Limits::default(),
+                limits,
+                tiff::Limits::default(),
+            )?;
+            let mut decoded = wrapped::FrameBuffer::default();
+            decoded_reader.read_frame_into(0, &mut decoded)?;
+            row["reference_view"] = frame_record(
+                0,
+                1,
+                decoded.sample_shape().unwrap(),
+                decoded.pixels().unwrap(),
+                json!({}),
+                &decoded_reader.source_paths(),
+            );
+            row["view_policy"] = json!({"name":"Bruker86.LINEAR.FabIO2026.6","kind":"encoded_float_view","coefficients":meta.linear,"stored_dtype":format!("{:?}",meta.pixel_type)});
+        }
+        println!("{row}");
+        return Ok(());
+    }
     if args[1] == "raw" {
         if args.len() != 8 {
             return Err("raw input needs WIDTH HEIGHT OFFSET DTYPE ENDIAN".into());
@@ -247,6 +306,8 @@ fn run() -> Result<(), Box<dyn Error>> {
         return Ok(());
     }
     let format = match args[1].as_str() {
+        #[cfg(feature = "mar345")]
+        "mar345" => wrapped::Format::Mar345,
         #[cfg(feature = "esperanto")]
         "esperanto" => wrapped::Format::Esperanto,
         #[cfg(feature = "fit2d")]
@@ -309,6 +370,8 @@ fn run() -> Result<(), Box<dyn Error>> {
     for i in 0..reader.frames() {
         reader.read_frame_into(i, &mut buffer)?;
         let fields = match reader.metadata(i).unwrap() {
+            #[cfg(feature = "mar345")]
+            wrapped::Metadata::Mar345(m) => json!(m.fields),
             #[cfg(feature = "esperanto")]
             wrapped::Metadata::Esperanto(m) => json!(m.fields),
             #[cfg(feature = "fit2d")]
