@@ -8,7 +8,7 @@
 //! typed values, including private tags understood by the backend's value parser.
 use crate::{PixelBuffer, PixelType, source::Snapshot};
 mod ifd_view;
-use ifd_view::{Admission, FileView, OriginalPhoto};
+use ifd_view::{Admission, ChunkWindows, FileView, OriginalPhoto};
 pub mod view;
 #[cfg(feature = "jpeg")]
 mod view_jpeg;
@@ -18,6 +18,7 @@ use std::{
     fs::File,
     io::{BufReader, Read, Seek, SeekFrom},
     path::Path,
+    sync::Arc,
 };
 pub use tiff_backend::decoder::ifd::Value as TagValue;
 use tiff_backend::{
@@ -129,6 +130,7 @@ pub struct Reader {
     identity_handle: File,
     snapshot: Snapshot,
     pages: Vec<Metadata>,
+    chunk_windows: Vec<ChunkWindows>,
     #[cfg(feature = "jpeg")]
     intermediate_bytes: usize,
 }
@@ -165,6 +167,7 @@ impl Reader {
         } = Admission::open(file, limits)?;
         let mut decoder = Decoder::new(BufReader::new(file))?.with_limits(native);
         let mut pages = Vec::new();
+        let mut chunk_windows = Vec::new();
         let mut metadata_bytes = retained;
         loop {
             if pages.len() >= limits.frames {
@@ -189,7 +192,15 @@ impl Reader {
             };
             let offsets = decoder.get_tag(offset_tag)?.into_u64_vec()?;
             let lengths = decoder.get_tag(count_tag)?.into_u64_vec()?;
-            decoder.inner().get_ref().check_chunks(&offsets, &lengths)?;
+            validate_chunk_lengths(&mut decoder, &page, &offsets, &lengths)?;
+            metadata_bytes = offsets
+                .len()
+                .checked_mul(16)
+                .and_then(|n| n.checked_add(32))
+                .and_then(|n| metadata_bytes.checked_add(n))
+                .filter(|&n| n <= limits.metadata_bytes)
+                .ok_or_else(|| Error("TIFF chunk windows exceed metadata budget".into()))?;
+            chunk_windows.push(decoder.inner().get_ref().check_chunks(&offsets, &lengths)?);
             if page.compression == 7 {
                 validate_jpeg_chunks(&mut decoder, &page, &snapshot, limits)?;
             }
@@ -205,6 +216,7 @@ impl Reader {
             identity_handle,
             snapshot,
             pages,
+            chunk_windows,
             #[cfg(feature = "jpeg")]
             intermediate_bytes: limits.intermediate_bytes,
         })
@@ -230,10 +242,20 @@ impl Reader {
             .get(index)
             .ok_or_else(|| Error("TIFF page index outside file".into()))?;
         self.decoder.seek_to_image(index)?;
+        // Discard any metadata prefetch before switching to bounded sample
+        // windows. The backend seeks to every chunk before reading it.
+        discard_prefetch(self.decoder.inner())?;
+        self.decoder
+            .inner()
+            .get_mut()
+            .begin_samples(Arc::clone(&self.chunk_windows[index]));
         let mut native = into_native(std::mem::take(&mut buffer.pixels));
         // Move the allocation back even on failure; no partial frame is exposed.
         let decoded = self.decoder.read_image_to_buffer(&mut native);
+        self.decoder.inner().get_mut().end_samples();
         buffer.pixels = from_native(native)?;
+        // Discard sample prefetch before permitting subsequent metadata reads.
+        discard_prefetch(self.decoder.inner())?;
         let layout = decoded?;
         let mut byte_count = buffer
             .pixels
@@ -482,6 +504,57 @@ fn metadata(
         tags,
         opaque_tags,
     })
+}
+// BufReader::stream_position preserves its cache. This actual seek is needed
+// to discard bytes prefetched under the previous metadata/sample access mode.
+#[allow(clippy::seek_from_current)]
+fn discard_prefetch(reader: &mut BufReader<FileView>) -> Result<(), Error> {
+    reader
+        .seek(SeekFrom::Current(0))
+        .map_err(|e| Error(e.to_string()))?;
+    Ok(())
+}
+// The native uncompressed codec ignores declared chunk byte counts. Admit
+// source bytes (including packed row alignment and horizontal tile padding),
+// rather than the decoder's potentially widened/interleaved output layout.
+fn validate_chunk_lengths(
+    decoder: &mut Decoder<BufReader<FileView>>,
+    page: &Metadata,
+    offsets: &[u64],
+    lengths: &[u64],
+) -> Result<(), Error> {
+    let chunks = if decoder.get_chunk_type() == ChunkType::Tile {
+        decoder.tile_count()?
+    } else {
+        decoder.strip_count()?
+    };
+    if chunks == 0 || offsets.len() != chunks as usize || lengths.len() != offsets.len() {
+        return Err(Error("invalid TIFF chunk table".into()));
+    }
+    if page.compression == 1 {
+        let samples = if page.planar_configuration == 2 {
+            1
+        } else {
+            page.channels as u64
+        };
+        let row = u64::from(decoder.chunk_dimensions().0)
+            .checked_mul(u64::from(page.bits_per_sample))
+            .and_then(|n| n.checked_mul(samples))
+            .and_then(|n| n.checked_add(7))
+            .map(|n| n / 8)
+            .ok_or_else(|| Error("TIFF encoded row size overflow".into()))?;
+        for (index, &length) in lengths.iter().enumerate() {
+            let required = row
+                .checked_mul(u64::from(decoder.chunk_data_dimensions(index as u32).1))
+                .ok_or_else(|| Error("TIFF encoded chunk size overflow".into()))?;
+            if length < required {
+                return Err(Error(
+                    "TIFF uncompressed chunk shorter than required source rows".into(),
+                ));
+            }
+        }
+    }
+    Ok(())
 }
 // TIFF's JPEG backend reads only the bytes required by its IFD layout. Its
 // native decoder can otherwise accept an RGB JPEG strip labeled as gray and

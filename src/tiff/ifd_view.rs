@@ -6,15 +6,18 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     fs::File,
     io::{Read, Seek, SeekFrom},
+    sync::Arc,
 };
 #[derive(Clone, Debug)]
 pub(super) struct OriginalPhoto {
     pub value: u16,
     pub typed: TagValue,
 }
+pub(super) type ChunkWindows = Arc<[(u64, u64)]>;
 pub(super) struct FileView {
     file: File,
     patches: BTreeMap<u64, [u8; 2]>,
+    samples: Option<(ChunkWindows, Option<u64>)>,
 }
 pub(super) struct Admission {
     pub file: FileView,
@@ -61,7 +64,7 @@ impl Admission {
         let mut photos = BTreeMap::new();
         let mut opaque: BTreeMap<u64, BTreeMap<u16, OpaqueTag>> = BTreeMap::new();
         let mut payloads = Vec::new();
-        let mut tables = Vec::new();
+        let mut tables: BTreeMap<u64, u64> = BTreeMap::new();
         let mut retained = 0usize;
         while next != 0 {
             if visited.len() >= limits.frames || !visited.insert(next) {
@@ -82,13 +85,15 @@ impl Admission {
                 .and_then(|n| entries.checked_add(n))
                 .filter(|&n| n.checked_add(offset_bytes).is_some_and(|end| end <= length))
                 .ok_or_else(|| Error("TIFF IFD table exceeds source bounds".into()))?;
+            let table_end = end + offset_bytes;
             if tables
-                .iter()
-                .any(|&(start, stop)| next < stop && end + offset_bytes > start)
+                .range(..table_end)
+                .next_back()
+                .is_some_and(|(_, &stop)| stop > next)
             {
                 return Err(Error("overlapping TIFF IFD tables".into()));
             }
-            tables.push((next, end + offset_bytes));
+            tables.insert(next, table_end);
             if count > limits.metadata_bytes as u64 / 24 {
                 return Err(Error("TIFF IFD entry count exceeds metadata budget".into()));
             }
@@ -184,11 +189,11 @@ impl Admission {
             read_at(&mut file, end, &mut offset[..offset_bytes as usize])?;
             next = number(&offset[..offset_bytes as usize]);
         }
+        // Coalesce source tag intervals once; patch admission must not scan
+        // every payload for every IFD in a metadata-heavy source.
+        coalesce_ranges(&mut payloads);
         for &offset in patches.keys() {
-            if payloads
-                .iter()
-                .any(|&(start, end)| start < offset + 2 && end > offset)
-            {
+            if overlaps_ranges(&payloads, offset, offset + 2) {
                 return Err(Error(
                     "TIFF adapted tag overlaps source metadata payload".into(),
                 ));
@@ -196,7 +201,11 @@ impl Admission {
         }
         file.seek(SeekFrom::Start(0)).map_err(io)?;
         Ok(Self {
-            file: FileView { file, patches },
+            file: FileView {
+                file,
+                patches,
+                samples: None,
+            },
             photos,
             opaque,
             retained,
@@ -206,14 +215,18 @@ impl Admission {
 impl FileView {
     /// Prevent an intentionally aliased pixel window from observing adapted
     /// metadata bytes as if they were original detector samples.
-    pub fn check_chunks(&self, offsets: &[u64], lengths: &[u64]) -> Result<(), Error> {
+    pub fn check_chunks(&self, offsets: &[u64], lengths: &[u64]) -> Result<ChunkWindows, Error> {
         if offsets.len() != lengths.len() {
             return Err(Error("TIFF chunk table length mismatch".into()));
         }
+        let source_len = self.file.metadata().map_err(io)?.len();
+        let mut windows = Vec::with_capacity(offsets.len());
         for (&start, &length) in offsets.iter().zip(lengths) {
             let end = start
                 .checked_add(length)
-                .ok_or_else(|| Error("TIFF chunk offset overflow".into()))?;
+                .filter(|&end| length != 0 && end <= source_len)
+                .ok_or_else(|| Error("TIFF chunk exceeds source bounds".into()))?;
+            windows.push((start, end));
             if self
                 .patches
                 .range(start.saturating_sub(1)..end)
@@ -225,7 +238,16 @@ impl FileView {
                 ));
             }
         }
-        Ok(())
+        windows.sort_unstable();
+        Ok(windows.into())
+    }
+    /// Metadata reads may use adapted bytes; sample reads are strictly bounded
+    /// by the selected original declared chunk, for every backend codec.
+    pub fn begin_samples(&mut self, windows: ChunkWindows) {
+        self.samples = Some((windows, None));
+    }
+    pub fn end_samples(&mut self) {
+        self.samples = None;
     }
 }
 fn io(error: std::io::Error) -> Error {
@@ -238,7 +260,16 @@ fn read_at(file: &mut File, offset: u64, bytes: &mut [u8]) -> Result<(), Error> 
 impl Read for FileView {
     fn read(&mut self, buffer: &mut [u8]) -> std::io::Result<usize> {
         let start = self.file.stream_position()?;
-        let count = self.file.read(buffer)?;
+        let limit = if let Some((_, end)) = &self.samples {
+            let end =
+                end.ok_or_else(|| std::io::Error::other("TIFF sample read without chunk seek"))?;
+            usize::try_from(end.saturating_sub(start))
+                .unwrap_or(usize::MAX)
+                .min(buffer.len())
+        } else {
+            buffer.len()
+        };
+        let count = self.file.read(&mut buffer[..limit])?;
         let end = start + count as u64;
         for (&offset, patch) in self.patches.range(start.saturating_sub(1)..end) {
             for (index, &value) in patch.iter().enumerate() {
@@ -253,6 +284,69 @@ impl Read for FileView {
 }
 impl Seek for FileView {
     fn seek(&mut self, pos: SeekFrom) -> std::io::Result<u64> {
+        if let Some((windows, end)) = &mut self.samples {
+            let SeekFrom::Start(start) = pos else {
+                return Err(std::io::Error::other("unsupported TIFF sample-phase seek"));
+            };
+            let index = windows.partition_point(|&(offset, _)| offset < start);
+            *end = Some(
+                windows
+                    .get(index)
+                    .filter(|&&(offset, _)| offset == start)
+                    .ok_or_else(|| {
+                        std::io::Error::other("TIFF seek outside admitted sample chunks")
+                    })?
+                    .1,
+            );
+        }
         self.file.seek(pos)
+    }
+}
+
+fn coalesce_ranges(ranges: &mut Vec<(u64, u64)>) {
+    ranges.sort_unstable();
+    let mut kept = 0;
+    for index in 0..ranges.len() {
+        let (start, end) = ranges[index];
+        if kept > 0 && start <= ranges[kept - 1].1 {
+            ranges[kept - 1].1 = ranges[kept - 1].1.max(end);
+        } else {
+            ranges[kept] = (start, end);
+            kept += 1;
+        }
+    }
+    ranges.truncate(kept);
+}
+fn overlaps_ranges(ranges: &[(u64, u64)], start: u64, end: u64) -> bool {
+    let count = ranges.partition_point(|&(left, _)| left < end);
+    count
+        .checked_sub(1)
+        .is_some_and(|index| ranges[index].1 > start)
+}
+#[cfg(test)]
+mod interval_tests {
+    use super::*;
+    #[test]
+    fn sorted_admission_agrees_with_independent_source_interval_scan() {
+        let mut seed = 0x12345678u64;
+        let mut original = Vec::new();
+        for _ in 0..500 {
+            seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1);
+            let start = (seed >> 32) % 10000;
+            original.push((start, start + 1 + (seed % 100)));
+        }
+        let mut indexed = original.clone();
+        coalesce_ranges(&mut indexed);
+        for start in (0..10200).step_by(3) {
+            let end = start + 2;
+            assert_eq!(
+                overlaps_ranges(&indexed, start, end),
+                original
+                    .iter()
+                    .any(|&(left, right)| left < end && right > start)
+            );
+        }
+        assert!(!overlaps_ranges(&[(2, 4), (6, 8)], 4, 6));
+        assert!(overlaps_ranges(&[(2, 4), (6, 8)], 3, 6));
     }
 }

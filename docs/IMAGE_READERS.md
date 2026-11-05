@@ -196,3 +196,16 @@ Large upstream sources remain external; only hashes/provenance are committed.
 
 Runtime codec licenses/notices are retained in `licenses/native-readers`.
 This software is based in part on the work of the Independent JPEG Group.
+
+TIFF chunk integrity qualification: all codec reads are confined to their original
+nonempty declared strip/tile source windows, with metadata prefetch discarded on
+entry/exit. Uncompressed windows must cover each complete packed source row,
+including horizontal tile padding and actual last-strip/bottom-tile row counts;
+float16 bounds use original 16-bit storage. The native Deflate decoder requests
+only the bytes needed for samples and does not drain the zlib stream to verify
+its final checksum/footer. Missing or invalid Deflate footer bytes after all
+samples have been produced may therefore be accepted; this reader does not claim
+full Deflate integrity validation. Truncation before required samples fails,
+and bytes beyond the declared chunk cannot supply samples or adapted metadata.
+`tests/tiff_alias_bounds.rs` independently exercises these distinctions for both
+Deflate IDs, packed rows, float16, padded edge tiles and repeated failed reads.
