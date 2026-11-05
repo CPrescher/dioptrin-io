@@ -362,7 +362,7 @@
     },
     "white-is-zero.tif": {
       "sha256": "aeea39884612f6773afeb5cb24f5f1c87ed734dd6e225b3815a352a1b46c5b30",
-      "expected": "explicit rejection"
+      "expected": "stored uint8 samples [0,255], no inversion"
     }
   }
 }

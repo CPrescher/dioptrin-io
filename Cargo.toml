@@ -12,6 +12,8 @@ readme = "README.md"
 default = []
 hdf5 = ["dep:hdf5-backend", "dep:hdf5-sys", "dep:hdf5-bitshuffle", "dep:libz-sys", "dep:lz4_flex", "dep:bytemuck"]
 tiff = ["dep:tiff-backend"]
+jpeg = ["dep:jpeg-backend", "dep:turbojpeg-backend"]
+jpeg2000 = ["dep:jpeg2000-backend"]
 cbf = ["dep:md-5"]
 edf = ["dep:bytemuck", "dep:flate2", "dep:bzip2", "dep:tempfile"]
 native = ["dep:bytemuck"]
@@ -29,7 +31,10 @@ hdf5-bitshuffle = { version = "=1.0.0", optional = true }
 libz-sys = { version = "1.1", optional = true, features = ["static"] }
 lz4_flex = { version = "=0.14.0", optional = true, default-features = false, features = ["std", "safe-decode", "checked-decode"] }
 bytemuck = { version = "1.24", optional = true }
-tiff-backend = { package = "tiff", version = "=0.11.3", optional = true, default-features = false, features = ["deflate", "lzw"] }
+tiff-backend = { package = "tiff", version = "=0.11.3", optional = true, default-features = false, features = ["deflate", "lzw", "fax", "jpeg"] }
+jpeg-backend = { package = "jpeg-decoder", version = "=0.3.2", optional = true, default-features = false }
+turbojpeg-backend = { package = "turbojpeg", version = "=1.5.1", optional = true, default-features = false, features = ["cmake"] }
+jpeg2000-backend = { package = "jpeg2k", version = "=0.10.1", optional = true, default-features = false, features = ["openjpeg-sys", "strict-mode"] }
 md-5 = { version = "0.10", optional = true }
 flate2 = { version = "1.1", optional = true, default-features = false, features = ["rust_backend"] }
 bzip2 = { version = "0.6", optional = true }
@@ -55,3 +60,7 @@ required-features = ["wrappers"]
 [[example]]
 name = "legacy_probe"
 required-features = ["bruker", "oxford", "raxis"]
+
+[[example]]
+name = "image_probe"
+required-features = ["tiff", "jpeg", "jpeg2000"]

@@ -34,7 +34,7 @@ for compression in ['deflate','lzw','packbits']:
     write(compression+'-tiles.tif',a, tile=(16,16),compression=compression)
 for order in ['<','>']:
     write(('le' if order=='<' else 'be')+'-bigtiff.tif',a.astype('int32'),bigtiff=True,byteorder=order,compression='deflate',predictor=2)
-# Explicit unsupported photometric sample for regression against count inversion.
+# Regression sample: native unsigned WhiteIsZero counts must not be inverted.
 tifffile.imwrite(root/'white-is-zero.tif', np.array([[0,255]],dtype='u1'),photometric='miniswhite',metadata=None)
-manifest['files']['white-is-zero.tif']={'sha256':hashlib.sha256((root/'white-is-zero.tif').read_bytes()).hexdigest(),'expected':'explicit rejection'}
+manifest['files']['white-is-zero.tif']={'sha256':hashlib.sha256((root/'white-is-zero.tif').read_bytes()).hexdigest(),'expected':'stored uint8 samples [0,255], no inversion'}
 (root/'provenance.json').write_text(json.dumps(manifest,indent=2)+'\n')

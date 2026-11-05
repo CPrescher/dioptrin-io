@@ -1,8 +1,10 @@
 //! Count-preserving TIFF/BigTIFF detector pages using the MIT `tiff` crate.
 //!
-//! Single-channel BlackIsZero images only. The stored row order and Orientation
-//! tag are retained; no display transform occurs. JPEG, palette/color, packed
-//! samples and WhiteIsZero are explicitly rejected. Header tags are retained as
+//! Stored row order, scalar sample bits and Orientation are retained. Supported
+//! integer WhiteIsZero inversions are exactly undone, packed gray samples are
+//! unpacked without intensity scaling, and color planes are interleaved.
+//! Float16 source values widen exactly to f32, with the source bit width retained.
+//! Palette and unsupported photometrics fail explicitly. Tags remain
 //! typed values, including private tags understood by the backend's value parser.
 use crate::{PixelBuffer, PixelType, source::Snapshot};
 use std::{collections::BTreeMap, fmt, fs::File, io::BufReader, path::Path};
@@ -14,7 +16,7 @@ use tiff_backend::{
 };
 
 #[derive(Debug)]
-pub struct Error(String);
+pub struct Error(pub(crate) String);
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str(&self.0)
@@ -52,6 +54,14 @@ impl Default for Limits {
 pub struct Metadata {
     pub shape: [usize; 2],
     pub pixel_type: PixelType,
+    /// Original TIFF scalar bit width (may be 1/2/4 for unpacked u8 output).
+    pub bits_per_sample: u8,
+    /// Number of original scalar channels; buffers interleave channels last.
+    pub channels: usize,
+    pub photometric_interpretation: u16,
+    pub planar_configuration: u16,
+    /// True for TIFF JPEG/WebP compression; decoded values retain that provenance.
+    pub lossy: bool,
     pub little_endian: bool,
     /// TIFF Orientation, retained without applying it (default 1).
     pub orientation: u16,
@@ -65,6 +75,7 @@ pub struct Metadata {
 pub struct FrameBuffer {
     pixels: PixelBuffer,
     shape: Option<[usize; 2]>,
+    channels: usize,
 }
 impl FrameBuffer {
     #[must_use]
@@ -74,6 +85,17 @@ impl FrameBuffer {
     #[must_use]
     pub fn shape(&self) -> Option<[usize; 2]> {
         self.shape
+    }
+    /// Full scalar-array shape: (height,width) or (height,width,channels).
+    #[must_use]
+    pub fn sample_shape(&self) -> Option<Vec<usize>> {
+        self.shape.map(|s| {
+            if self.channels == 1 {
+                s.to_vec()
+            } else {
+                vec![s[0], s[1], self.channels]
+            }
+        })
     }
 }
 
@@ -156,8 +178,59 @@ impl Reader {
         // Move the allocation back even on failure; no partial frame is exposed.
         let decoded = self.decoder.read_image_to_buffer(&mut native);
         buffer.pixels = from_native(native)?;
-        decoded?;
-        if buffer.pixels.len() != page.shape[0] * page.shape[1]
+        let layout = decoded?;
+        let mut byte_count = buffer
+            .pixels
+            .len()
+            .checked_mul(buffer.pixels.pixel_type().bytes())
+            .ok_or_else(|| Error("TIFF decoded size overflow".into()))?;
+        if page.bits_per_sample == 16 && page.pixel_type == PixelType::F32 {
+            byte_count /= 2;
+        }
+        if byte_count != layout.complete_len {
+            return Err(Error(
+                "TIFF backend returned only a subset of color planes".into(),
+            ));
+        }
+        if page.photometric_interpretation == 0 {
+            undo_white(&mut buffer.pixels)?;
+        }
+        if page.bits_per_sample < 8 {
+            let PixelBuffer::U8(packed) = &buffer.pixels else {
+                return Err(Error("packed TIFF output must be u8".into()));
+            };
+            let stride = layout
+                .row_stride
+                .ok_or_else(|| Error("missing packed TIFF row stride".into()))?
+                .get();
+            let mut unpacked = Vec::new();
+            unpacked
+                .try_reserve_exact(page.shape[0] * page.shape[1])
+                .map_err(|e| Error(e.to_string()))?;
+            for y in 0..page.shape[0] {
+                for x in 0..page.shape[1] {
+                    let offset = x * usize::from(page.bits_per_sample);
+                    let byte = *packed
+                        .get(y * stride + offset / 8)
+                        .ok_or_else(|| Error("truncated packed TIFF row".into()))?;
+                    unpacked.push(
+                        (byte >> (8 - usize::from(page.bits_per_sample) - offset % 8))
+                            & ((1u8 << page.bits_per_sample) - 1),
+                    );
+                }
+            }
+            buffer.pixels = PixelBuffer::U8(unpacked);
+        } else if layout.planes > 1 {
+            if layout.planes != page.channels {
+                return Err(Error("TIFF planar channel mismatch".into()));
+            }
+            interleave(
+                &mut buffer.pixels,
+                page.shape[0] * page.shape[1],
+                page.channels,
+            )?;
+        }
+        if buffer.pixels.len() != page.shape[0] * page.shape[1] * page.channels
             || buffer.pixels.pixel_type() != page.pixel_type
         {
             return Err(Error("TIFF decoded sample count/type mismatch".into()));
@@ -166,6 +239,7 @@ impl Reader {
             .check_handle(&self.identity_handle)
             .map_err(Error)?;
         buffer.shape = Some(page.shape);
+        buffer.channels = page.channels;
         Ok(())
     }
 }
@@ -176,33 +250,91 @@ fn metadata(
     total: &mut usize,
 ) -> Result<Metadata, Error> {
     let (w, h) = decoder.dimensions()?;
-    let ColorType::Gray(bits) = decoder.colortype()? else {
-        return Err(Error(
-            "TIFF detector pages must be single-channel grayscale".into(),
-        ));
+    let color = decoder.colortype()?;
+    let (bits, channels) = match color {
+        ColorType::Gray(bits) => (bits, 1),
+        ColorType::RGB(bits) | ColorType::YCbCr(bits) => (bits, 3),
+        ColorType::RGBA(bits) => (bits, 4),
+        ColorType::CMYK(bits) => (bits, 4),
+        ColorType::CMYKA(bits) => (bits, 5),
+        ColorType::Multiband {
+            bit_depth,
+            num_samples,
+        } => (bit_depth, usize::from(num_samples)),
+        _ => return Err(Error(
+            "unsupported TIFF photometric interpretation; no implicit color conversion is applied"
+                .into(),
+        )),
     };
-    let format = decoder
-        .find_tag_unsigned::<u16>(Tag::SampleFormat)?
-        .unwrap_or(1);
+    let formats = decoder
+        .find_tag_unsigned_vec::<u16>(Tag::SampleFormat)?
+        .unwrap_or_else(|| vec![1]);
+    let format = *formats
+        .first()
+        .ok_or_else(|| Error("empty TIFF SampleFormat".into()))?;
+    if formats.iter().any(|&v| v != format) {
+        return Err(Error("mixed TIFF sample types are unsupported".into()));
+    }
     let samples = decoder
         .find_tag_unsigned::<u16>(Tag::SamplesPerPixel)?
         .unwrap_or(1);
     let photo = decoder
         .find_tag_unsigned::<u16>(Tag::PhotometricInterpretation)?
         .unwrap_or(1);
-    if samples != 1 || photo != 1 {
-        return Err(Error("TIFF detector pages require one BlackIsZero sample; display inversions are unsupported".into()));
+    let planar = decoder
+        .find_tag_unsigned::<u16>(Tag::PlanarConfiguration)?
+        .unwrap_or(1);
+    let fill_order = decoder
+        .find_tag_unsigned::<u16>(Tag::FillOrder)?
+        .unwrap_or(1);
+    if usize::from(samples) != channels
+        || channels == 0
+        || ![1, 2].contains(&planar)
+        || ![0, 1, 2, 5, 6].contains(&photo)
+    {
+        return Err(Error(
+            "unsupported TIFF scalar/channel/photometric layout".into(),
+        ));
+    }
+    if photo == 0 && (channels != 1 || format != 1) {
+        return Err(Error("WhiteIsZero requires unsigned integer source samples; floating inversion is not lossless".into()));
+    }
+    if fill_order != 1 {
+        return Err(Error(
+            "TIFF FillOrder other than MSB-first is unsupported".into(),
+        ));
+    }
+    if bits < 8 && (channels != 1 || format != 1 || ![1, 2, 4].contains(&bits)) {
+        return Err(Error(
+            "unsupported packed TIFF layout; admit 1/2/4-bit single-channel MSB-first integers"
+                .into(),
+        ));
     }
     let compression = decoder
         .find_tag_unsigned::<u16>(Tag::Compression)?
         .unwrap_or(1);
-    if ![1, 5, 8, 32946, 32773].contains(&compression) {
+    if ![1, 4, 5, 7, 8, 32946, 32773].contains(&compression) {
         return Err(Error(format!(
-            "unsupported TIFF detector compression {compression}; lossy codecs are not admitted"
+            "unsupported TIFF detector compression {compression}"
         )));
     }
+    if photo == 6 && compression != 7 {
+        return Err(Error(
+            "TIFF YCbCr admitted only through native JPEG component decoding".into(),
+        ));
+    }
+    if compression == 4 && (channels != 1 || bits != 1) {
+        return Err(Error(
+            "TIFF Group 4 requires single-channel bilevel data".into(),
+        ));
+    }
+    if compression == 7 && (format != 1 || bits != 8 || ![1, 3, 4].contains(&channels)) {
+        return Err(Error(
+            "unsupported TIFF JPEG precision/channel layout".into(),
+        ));
+    }
     let pixel_type = match (format, bits) {
-        (1, 8) => PixelType::U8,
+        (1, 1 | 2 | 4 | 8) => PixelType::U8,
         (1, 16) => PixelType::U16,
         (1, 32) => PixelType::U32,
         (1, 64) => PixelType::U64,
@@ -210,7 +342,7 @@ fn metadata(
         (2, 16) => PixelType::I16,
         (2, 32) => PixelType::I32,
         (2, 64) => PixelType::I64,
-        (3, 32) => PixelType::F32,
+        (3, 16 | 32) => PixelType::F32,
         (3, 64) => PixelType::F64,
         _ => {
             return Err(Error(format!(
@@ -222,6 +354,7 @@ fn metadata(
         || h == 0
         || (w as usize)
             .checked_mul(h as usize)
+            .and_then(|n| n.checked_mul(channels))
             .and_then(|n| n.checked_mul(pixel_type.bytes()))
             .is_none_or(|n| n > limits.frame_bytes)
     {
@@ -254,6 +387,11 @@ fn metadata(
     Ok(Metadata {
         shape: [h as usize, w as usize],
         pixel_type,
+        bits_per_sample: bits,
+        channels,
+        photometric_interpretation: photo,
+        planar_configuration: planar,
+        lossy: matches!(compression, 6 | 7 | 50001),
         little_endian: decoder.byte_order() == tiff_backend::tags::ByteOrder::LittleEndian,
         orientation,
         compression,
@@ -287,8 +425,63 @@ fn from_native(pixels: DecodingResult) -> Result<PixelBuffer, Error> {
         DecodingResult::I64(v) => PixelBuffer::I64(v),
         DecodingResult::F32(v) => PixelBuffer::F32(v),
         DecodingResult::F64(v) => PixelBuffer::F64(v),
-        DecodingResult::F16(_) => {
-            return Err(Error("float16 detector samples are not supported".into()));
-        }
+        DecodingResult::F16(v) => PixelBuffer::F32(
+            v.into_iter()
+                .map(|x| {
+                    // Bit expansion preserves even signaling NaN payloads without a
+                    // floating arithmetic operation or hardware NaN quieting.
+                    let bits = u32::from(x.to_bits());
+                    let sign = (bits & 0x8000) << 16;
+                    let exp = (bits >> 10) & 31;
+                    let frac = bits & 1023;
+                    let out = match (exp, frac) {
+                        (0, 0) => sign,
+                        (0, _) => {
+                            let leading = frac.ilog2();
+                            sign | ((leading + 103) << 23)
+                                | ((frac - (1 << leading)) << (23 - leading))
+                        }
+                        (31, _) => sign | 0x7f800000 | (frac << 13),
+                        _ => sign | ((exp + 112) << 23) | (frac << 13),
+                    };
+                    f32::from_bits(out)
+                })
+                .collect(),
+        ),
     })
+}
+
+fn undo_white(pixels: &mut PixelBuffer) -> Result<(), Error> {
+    match pixels {
+        PixelBuffer::U8(v) => v.iter_mut().for_each(|x| *x = !*x),
+        PixelBuffer::U16(v) => v.iter_mut().for_each(|x| *x = !*x),
+        PixelBuffer::U32(v) => v.iter_mut().for_each(|x| *x = !*x),
+        PixelBuffer::U64(v) => v.iter_mut().for_each(|x| *x = !*x),
+        _ => {
+            return Err(Error(
+                "TIFF WhiteIsZero inversion is not losslessly reversible for this type".into(),
+            ));
+        }
+    }
+    Ok(())
+}
+fn interleave(pixels: &mut PixelBuffer, plane: usize, channels: usize) -> Result<(), Error> {
+    macro_rules! rearrange {($($v:ident);*)=>{match pixels {$(PixelBuffer::$v(v)=>{
+        if v.len()!=plane*channels {return Err(Error("TIFF planar sample count mismatch".into()));}
+        let mut interleaved=Vec::new();interleaved.try_reserve_exact(v.len()).map_err(|e|Error(e.to_string()))?;
+        for index in 0..plane {for channel in 0..channels {interleaved.push(v[channel*plane+index]);}}
+        *v=interleaved;
+    }),*,_=>return Err(Error("unsupported TIFF planar sample type".into()))}};}
+    rearrange!(U8;U16;U32;U64;I8;I16;I32;I64;F32;F64);
+    Ok(())
+}
+impl Metadata {
+    #[must_use]
+    pub fn sample_shape(&self) -> Vec<usize> {
+        if self.channels == 1 {
+            self.shape.to_vec()
+        } else {
+            vec![self.shape[0], self.shape[1], self.channels]
+        }
+    }
 }

@@ -12,7 +12,9 @@ pub use pixels::{PixelBuffer, PixelType};
     feature = "tiff",
     feature = "cbf",
     feature = "edf",
-    feature = "native"
+    feature = "native",
+    feature = "jpeg",
+    feature = "jpeg2000"
 ))]
 mod source;
 
@@ -49,5 +51,13 @@ pub mod xsd;
 #[cfg(feature = "hdf5")]
 pub mod hdf5;
 
+#[cfg(feature = "tiff")]
+pub mod detector_tiff;
+#[cfg(feature = "jpeg")]
+pub mod jpeg;
+#[cfg(feature = "jpeg2000")]
+pub mod jpeg2000;
+#[cfg(any(feature = "jpeg", feature = "jpeg2000"))]
+mod raster;
 #[cfg(feature = "tiff")]
 pub mod tiff;

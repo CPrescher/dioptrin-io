@@ -109,7 +109,10 @@ fn independent_multiframe_compressed_edge_tiles_and_bigtiff_endianness() {
 
 #[test]
 fn unsupported_modes_limits_and_truncation_are_explicit() {
-    assert!(Reader::open(fixture("white-is-zero.tif"), Limits::default()).is_err());
+    let mut reader = Reader::open(fixture("white-is-zero.tif"), Limits::default()).unwrap();
+    let mut buffer = FrameBuffer::default();
+    reader.read_frame_into(0, &mut buffer).unwrap();
+    assert_eq!(buffer.pixels(), Some(&PixelBuffer::U8(vec![0, 255])));
     for limits in [
         Limits {
             frames: 1,

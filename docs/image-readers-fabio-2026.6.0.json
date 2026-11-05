@@ -1,0 +1,94 @@
+{
+  "reference": {
+    "fabio": "2026.6.0",
+    "source_commit": "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece",
+    "date": "2026-11-05",
+    "corpus": "external upstream FabIO corpus, files not redistributed"
+  },
+  "comparison": "shape, dtype and little-endian sample SHA256; raw semantic values with byte representation normalized",
+  "results": [
+    {
+      "format": "jpeg",
+      "name": "rand_uint8.jpg",
+      "source_sha256": "ab79c3c46091508c550df375de496547391c0d000c8dae78551824b8d78834c8",
+      "frames": 1,
+      "exact_pixels": true,
+      "semantic": null,
+      "sample_hashes": [
+        "0911998f11a706dcd57f93799dfd911f4f14e0eeab44f8dd8a5c314c60f575d4"
+      ]
+    },
+    {
+      "format": "jpeg2000",
+      "name": "binned_data_uint8.jp2",
+      "source_sha256": "5b715a53308a259c34f058cc6efcc468a942e3f87e43420b1f2542a0f61f94fc",
+      "frames": 1,
+      "exact_pixels": true,
+      "semantic": null,
+      "sample_hashes": [
+        "256cea453acf49b17b4401d58e3ff8a7b88646957d1e25495cb0865fbb4e62f7"
+      ]
+    },
+    {
+      "format": "jpeg2000",
+      "name": "binned_data_uint16.jp2",
+      "source_sha256": "17116078f11e6f5dd8e97379348279efa2dfb48d49eebd8d5e19da6284140a20",
+      "frames": 1,
+      "exact_pixels": true,
+      "semantic": null,
+      "sample_hashes": [
+        "205ca109da856c4c4ac196def574b858fedb13ff5a7936d16a0e0d8893efd4f9"
+      ]
+    },
+    {
+      "format": "mar",
+      "name": "corkcont2_H_0089.mccd",
+      "source_sha256": "b1dad2815c8ec103a9f12a4a44250a09b9314f89eaf7922c2c9474e26fb8e11a",
+      "frames": 1,
+      "exact_pixels": true,
+      "semantic": {
+        "keys": 125,
+        "differences": {}
+      },
+      "sample_hashes": [
+        "734b6aa0ae84fbc4a1c0ca259d1804c6f631a848ec2897cb2447339965e1d853"
+      ]
+    },
+    {
+      "format": "mar",
+      "name": "somedata_0001.mccd",
+      "source_sha256": "093c0cf1210d3fa8a4b41e3a17af313b4f67d242294f559e063c1116da847ff5",
+      "frames": 1,
+      "exact_pixels": true,
+      "semantic": {
+        "keys": 125,
+        "differences": {}
+      },
+      "sample_hashes": [
+        "7695524197b31177a14d5a4d5ba8c57061cd6d841b8f8f52840049f7e8449d82"
+      ]
+    },
+    {
+      "format": "pilatus",
+      "name": "lysb_5mg-1.90s_SAXS",
+      "source_sha256": "a5a7c5f936825f244c7e6ec84de733a8c99b16dd9c9573167b5f15319cabd293",
+      "frames": 1,
+      "exact_pixels": true,
+      "semantic": true,
+      "sample_hashes": [
+        "75756d5a66a093b27161ceb6e3efaa1dadeccb7b8a7c3483e4adaefa1d5ccf5e"
+      ]
+    },
+    {
+      "format": "pilatus",
+      "name": "Pilatus1M.tif",
+      "source_sha256": "e8f502d67521ba34b3170f522dcb38966a0b04573a7a1e7361b4f8c9299b36f2",
+      "frames": 1,
+      "exact_pixels": true,
+      "semantic": true,
+      "sample_hashes": [
+        "34bd2dd880cac38a13411fd433542afd66e617bf47aa28263cf79266d8dd8c22"
+      ]
+    }
+  ]
+}
