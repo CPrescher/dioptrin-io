@@ -1,0 +1,287 @@
+{
+  "date": "2026-11-06",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "scope": "Xcalibur CCD source metadata, explicit terminal truncation policy, mask projections and native binary-mask decomposition; existing image outcomes retained",
+  "required_checks": [
+    {
+      "command": "cargo fmt --check",
+      "exit_code": 0,
+      "seconds": 0.306
+    },
+    {
+      "command": "cargo clippy --locked --all-targets --all-features -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.279
+    },
+    {
+      "command": "cargo test --locked --all-features",
+      "exit_code": 0,
+      "seconds": 60.556,
+      "tests_passed": 210
+    }
+  ],
+  "isolated_feature_checks": [
+    {
+      "command": "cargo check --locked --no-default-features",
+      "exit_code": 0,
+      "seconds": 0.486
+    },
+    {
+      "command": "cargo test --locked --no-default-features",
+      "exit_code": 0,
+      "seconds": 18.149,
+      "tests_passed": 0
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features bruker -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.876
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features cbf -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.751
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features containers -- -D warnings",
+      "exit_code": 0,
+      "seconds": 2.089
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features edf -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.806
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features esperanto -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.742
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features fit2d -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.762
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features fixed -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.756
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features hdf5 -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.924
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features jpeg -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.999
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features jpeg2000 -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.735
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features kcd -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.731
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features mar345 -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.752
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features mpa -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.741
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features native -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.784
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features oxford -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.778
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features raxis -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.845
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features sparse -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.965
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features tiff -- -D warnings",
+      "exit_code": 0,
+      "seconds": 2.678
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features wrappers -- -D warnings",
+      "exit_code": 0,
+      "seconds": 2.331
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features xsd -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.759
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features xcalibur -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.866
+    }
+  ],
+  "optional_features_checked": 21,
+  "python_controls": {
+    "command": "env DYLD_LIBRARY_PATH=/opt/homebrew/lib /tmp/dioptrin-io-fabio-suite-env/bin/python -m unittest discover -s scripts -p 'test_*.py'",
+    "exit_code": 0,
+    "tests_passed": 22
+  },
+  "full_suite_report": "docs/fabio-parity/2026-11-06-xcalibur.json",
+  "full_suite_report_sha256": "d3de1c407378ebee8c8c7520821f653715f936c718822fba083ce3ee2396e4d8",
+  "full_suite_exit_code": 1,
+  "full_suite_exit_reason": "full reading parity remains false for known reference differences, explicit incomplete sources and remaining discovery/stream/series/companion/variant contracts",
+  "full_suite_results": {
+    "run": 213,
+    "failures": [],
+    "errors": [],
+    "skipped": [
+      [
+        "fabio.test.codecs.test_mar345image.TestMar345.test_memoryleak",
+        "very slow test"
+      ]
+    ]
+  },
+  "full_reading_parity": false,
+  "xcalibur_api_summary": {
+    "match": 11
+  },
+  "xcalibur_mask_api_parity": true,
+  "xcalibur_field_occurrences": 430,
+  "incomplete_original_ccd_files": 5,
+  "prior_report": "docs/fabio-parity/2026-11-06-headers-attributes.json",
+  "unchanged_prior_outcomes": {
+    "events": 580,
+    "test_codec_status_frame_reference_properties": true,
+    "read_summary": true,
+    "metadata_summary": true,
+    "attribute_summary": true
+  },
+  "feature_disabled_report": "docs/fabio-parity/2026-11-06-xcalibur-feature-disabled.json",
+  "feature_disabled_report_sha256": "0eb0bcde3bb2577271bbbb3b6232d2f19afe695cee6f09ce353723c39de04943",
+  "feature_disabled_exit_code": 1,
+  "feature_disabled_probe_build": "cargo build --release --locked --no-default-features --features wrappers --example parity_probe --target-dir /tmp/dioptrin-xcalibur-disabled-target",
+  "feature_disabled_result": {
+    "feature_disabled": 11
+  },
+  "rust_sources_sha256": {
+    "src/binary.rs": "b2464ed8ac2a848116f44faa2280f25ac40c2f15b3d25720a2d3eb4cfd83e50d",
+    "src/bruker/common.rs": "58ebb4b8bc1e89dba4288caa1224cae78f02812bbce4d911ec3159983c7020bc",
+    "src/bruker/view.rs": "4fb7483ddf6e85120b4a08e959de7c2716ae02e5cebd98d50c2d798ce6d2e059",
+    "src/bruker.rs": "3b7d0ea45d1e418697b96015b38bce2f6dc2c02926b1bdb8cebb76386568d8e0",
+    "src/cbf/header.rs": "77a4b385e60b3ca6dfc0b284506c33d9b7eda8cf65910574c9eaa0ae9312b5b8",
+    "src/cbf.rs": "4eadacdfc2277cf1000d579331abe0483c9fc82e393298e0a6a1525a84de39a4",
+    "src/detector_tiff/mar_schema.rs": "0d224ae8a52443423f144a61604176be37727deec320333fdb4c947581ffb819",
+    "src/detector_tiff.rs": "06cbc9b5a8db291196e6fa3bfab75baeb860c4948dba5dd21811a001160712fd",
+    "src/dm3.rs": "a7b9ad01a2eac150156c92f2aec088587786ffa90e80c502f1628e0537747b93",
+    "src/edf/recovery.rs": "83743b0cd404172389d599a271caf247aaa736efcf1bdcf535d1ac0e7a4fd34c",
+    "src/edf.rs": "625a552a6cc415eea291a32bdf99d798c43761bcc57bf23ba71303353f5f50c3",
+    "src/esperanto.rs": "d2bb2f34e02000e28810a62479b9f16958c9f7ebe6bc4a9400b41b1841abc8ed",
+    "src/fit2d.rs": "a3dfab6f09927651c98f9561fc497788d9f4736a0795be9c6c37de52de3c2004",
+    "src/ge.rs": "73ef7bbb055d7e90f7fb8ffcef887bd5382b5a82c818f1972558a51d522e4326",
+    "src/hdf5/cache.rs": "2b2927c6cc7bcf4d8daae4add9a72c9fa2414b93dd51950cffb634beaf45c050",
+    "src/hdf5/raw.rs": "aa1c6fa0a31303cc769214393039fec9975bff9c1e1d54eca59808e98d3927fc",
+    "src/hdf5/sources.rs": "be360972436d1322c16f34c1a4903de09a5068f6e3861d9a6a40790cab40cfa7",
+    "src/hdf5/sparse/numeric.rs": "9e842fc99100d24a6913d506dd86e7f63b0213eee695cea2a82515712be78433",
+    "src/hdf5/sparse/reconstruction.rs": "801f9c866a9e5796e7de966cad42f50e5c128183cf895660d155265cd99df364",
+    "src/hdf5/sparse.rs": "4040cd94500621d5e96129a7b2833b46336cf1dc8c500ea7e02260f602960233",
+    "src/hdf5/typed.rs": "8f9fc6e75624262f7aabc93a76f7b233cd6c4e101be0336c64d7ff6facaa8b6e",
+    "src/hdf5/vds.rs": "e8e82c3152e40d589e196a31a5165723f056ed7f2875deb235dc8f587dd68207",
+    "src/hdf5.rs": "17143e26bc1dbc3bd9df3c12c86f6bdbfe9c75199f11cdef7b30278576d2e0ec",
+    "src/jpeg.rs": "ab2e7dbea38cf2c876e4ad2a73ce74e4e2ee19c28a193365054b33082522f445",
+    "src/jpeg2000.rs": "be8ad6f74a6c161532e73aaae16dff9d37533f6c1181f66eae35fc5ff99ba7e3",
+    "src/kcd.rs": "fb532aa6e23648399ea52e0872edf0f57e45aacfe951c1284c1f46d3e12330e8",
+    "src/lib.rs": "c54217a078e6b98e0dca25e44605ccf8ba690642452388514ba3c4a5982b4368",
+    "src/mar345.rs": "cf527509342046e1725b12ebe5ffbc4ad2f21f6c63b9d820e9c168c9818e16aa",
+    "src/mpa.rs": "6c81d70a3ef9b7f6a95a2f52a7add8aa14c70c15bd21c9ecb252e98b3e4cda9a",
+    "src/mrc.rs": "eb01640b8d6436f363b3b45531050de3ff06f42b4ecb4e3a120bce8ea16bca28",
+    "src/native.rs": "b526d517a3e35d9e020bfa26944b41f4198d5aa6347289d44710402d406f28c2",
+    "src/oxford/ty5.rs": "1ca4411422d7b4ecc6ed574bdc8a5ac592d27f0a2baae0b77ded7a7e457e5136",
+    "src/oxford.rs": "134d222d921b9685483a486177e50984159afa6d91bb850d55f59ee1973c9a0d",
+    "src/pilatus.rs": "f87ab50599b638171c46f8ac16df4b0f1efaec4dfba580cefcd45071dbc9a436",
+    "src/pixels.rs": "89f9b646e2970e79c77c625529f367f5fe96bd35c9ecf73cad67bbb59dde3c12",
+    "src/pixi.rs": "2522bc7b5cfc0a70f4624d87193fade8075857b08c7cf34fb05ce9f0ddf5b7ee",
+    "src/raster.rs": "f27377deff1a475984240c548cc77890d8d1f53181245ac8654333fdd7a29c1f",
+    "src/raxis.rs": "c0bee389a94056c437a18948996c1449351aefcae9ea9191dd228ce1d63e11db",
+    "src/source.rs": "956a62bf69093aa2f9544bc1476b1f03cd28548320353db96ae9987eb0853a02",
+    "src/spe.rs": "48849be1954fe507ed36d9eb7ae476b43b2810abe434dcf889165af7df71fb98",
+    "src/tiff/compatibility.rs": "ee3dc5bdd237f58bde81538c46ee6a393793b0632e9c921e867479f3c7a4e541",
+    "src/tiff/group3.rs": "ede0d60ba03fc62e6e707bd2a4f7a06d8fc272f83ba9d0bd1ab62943cb49f1da",
+    "src/tiff/header.rs": "d0c018ff4ed229641c7e12c60bdf49681b0f4e10c4cd872123cc1b7dc917871d",
+    "src/tiff/ifd_view.rs": "75d7ac11299d65d1780a5f8bf1a43649a17f5fe17f95d52f9c00e48d0d21a77b",
+    "src/tiff/jpeg_components.rs": "8cc9ef27459a54f7a6e47ea6e594d5a51bdb0b0820d10c2c93a778f010014c53",
+    "src/tiff/ojpeg.rs": "27ea210bfa75c251d75a396fb949b1d466fe68c67b5e8201cb25f7a81296176a",
+    "src/tiff/thunderscan.rs": "7d299c5032402b5af16f79ec7f66d9609a03046a058fe91b9cc13206673fff2c",
+    "src/tiff/view.rs": "c4f32a6903c98c8030047a217ef572c6f03261e37fe4d4b0724315f5f4dbc2ed",
+    "src/tiff/view_jpeg.rs": "8f8df0d1a26d93e9f15715d9d238e47c7bd420afe8d3c7337004691c0af522e1",
+    "src/tiff/view_ycbcr.rs": "9fbb8713ae4739ef0433441e15412d54ad8920b297652caab687b14c57d9f583",
+    "src/tiff/ycbcr.rs": "12958c127df223a150ee186094d70126a2841d79ccccb68bd3a08d78e4cdaa19",
+    "src/tiff/ycbcr_jpeg.rs": "3a70a695fed2fca125b2609356989c669b3020eeaeaed6d86a4c1c3f2365e679",
+    "src/tiff.rs": "e3090d8f9315ae9e95869f41730bdc0f7eb2e5499de1e8b37df1e46bd38eef56",
+    "src/transport.rs": "16aab3b4c31947bc599a66bebfa0909653ec2bc13005c4255d933417b5630c30",
+    "src/wrapped.rs": "6ae13e8d1d06542843c60f14ba9510778cd93d4f5fcba490e8cc4e166a209cc7",
+    "src/xcalibur/decomposition.rs": "b3d2d3e0decf3ae69fdfc742fc2ebe623459b98e817550a01efe774a4c886269",
+    "src/xcalibur.rs": "69f995c39143e1872604948b2498fb79957ec7e6503f3b969cb624ef83c98d8d",
+    "src/xsd.rs": "bcfe7328bc0d9d809dc6abda92d790039069e3829332abcfb300b0379e0ac601"
+  },
+  "build_files_sha256": {
+    "Cargo.toml": "a69777eeaab62b2abc9ce6d6422cb81a772270c2d572afe9032c9cfc9fb0e469",
+    "Cargo.lock": "e0206f1f8defd7d6c31232193928691a191fb2d1495aa0aa3450e12d708dba29",
+    "build.rs": "d2a7178ee320636f7cad875759fb90447e5969fb90737b0a1cf21233b3d2c982"
+  },
+  "bridge_sources_sha256": {
+    "scripts/fabio_suite_parity.py": "acc84dfc7b55c9853d683afe26572bfa38f00f443039ed4374cc78e46b542bee",
+    "scripts/tiff_component_reference.py": "74b7a9fa2900ed7cb143652314d912f0aa44d2b1c358be4d4509cde2a9db3fbe",
+    "scripts/edf_recovery_reference.py": "1d6f13ec7a567d34dd86eafd148a36fa49b5e0b03f5464bae1aeb4054b4f1091",
+    "scripts/thunderscan_reference.py": "d311a75653571d4c9dd7728b128f99bf74ba1e8a58c5dc93c74cd4cc532846d9",
+    "scripts/pillow_planar16_reference.py": "d4e6e41d35c914eeee066ebc466982af37251539eaa7132b5c8f05ad7f8ff5a1",
+    "scripts/metadata_parity.py": "36d190c08896f1dbe6f01659edc8c35cf6207fbf5bd5335e5972e2922e222231",
+    "scripts/test_metadata_parity.py": "4f3536409c38c7219e688e9d3357d52cc5885ef49d8a5b4432395b66fddf96bd",
+    "scripts/metadata_attributes.py": "b9180b1c669bf352eea4f6494bb45e94299d16daffee62e4a3da2ec1592e9386",
+    "scripts/test_metadata_attributes.py": "99608e18e07e1839580c67b8147676cf4d6977ecd5b23e5519fd05ad9e7e4615",
+    "scripts/header_reference.py": "1dea4d20e8136148d972efd4c971218a0891cf3b7bc0ff05703c059f15c44fbf",
+    "scripts/xcalibur_reference.py": "525c3f34bace525a4333eec0943f0422295a1522f879c1dc5309034b5e85a1d2",
+    "scripts/test_xcalibur_reference.py": "b0eef707252cc47355598985cc32fbd71972a0d64df1e4fbf8cb9ff6b26fdaec",
+    "scripts/generate_xcalibur_fixtures.py": "706537dd54674c91ae6dd3a78db0f883c9cb61e9e27428f825ec5f4da88dacbb",
+    "scripts/inventory_fabio.py": "639ef41a9367a5e0b322e27f95653b2c65cbf8f8bfb268a369156181185e5cc7",
+    "examples/parity_probe.rs": "d575171a94174ec256fd5fe9dd6c5d28786f84b3adc3a82224f8a20de6c812e7",
+    "docs/fabio-2026.6.0-inventory.json": "8d3c118d876b9a6834890dafa736434409281267be0117b014848690d6719a57"
+  },
+  "test_fixture_license_sha256": {
+    "tests/xcalibur.rs": "463e655845226dab274c2c2c60e1a265b8c666bbf1629369a63e23c8e6150869",
+    "tests/data/xcalibur/records.ccd": "ac411bb46aef81b8914e986fad16a46916a92a31f3db95280625735c4cfbc538",
+    "tests/data/xcalibur/README.md": "579c94688747f00578be02fcb407828f373cbaf7e9175d7cbfdbd07754969f3e",
+    "licenses/native-readers/FabIO-Xcalibur-MIT.txt": "49fa8677f8b81883b39109ecefc9681a63adcbf13fd8db83f89e6e16f68ccb6b"
+  },
+  "external_manifest_environment": {
+    "CONTAINER_PARITY_MANIFEST": "/tmp/dioptrin-containers-upstream.json",
+    "FIXED_PARITY_MANIFEST": "/tmp/dioptrin-fixed-upstream.json",
+    "ESPERANTO_PARITY_MANIFEST": "/tmp/dioptrin-esperanto-upstream.json",
+    "MAR345_PARITY_MANIFEST": "/tmp/dioptrin-mar345-upstream.json"
+  },
+  "all_full_suite_fingerprints_unchanged": true,
+  "external_manifest_sha256": {
+    "/tmp/dioptrin-containers-upstream.json": "ef20a19a14847c2d1a39f49053d4657eda6f16d813ace5b73f4475c9b1c7ec8f",
+    "/tmp/dioptrin-fixed-upstream.json": "208b3e42e28126077f0f01ca7119f7a927eee5c68cbe4a05fbd44826a8a43a06",
+    "/tmp/dioptrin-esperanto-upstream.json": "ae0619810b4147f7101f0375b79c567bce21357d2d0b5cc39aeee6c69fcdab2f",
+    "/tmp/dioptrin-mar345-upstream.json": "5b107a4cd175c7c72630e6c63925baec91bba9d3938c48cb6017d152aba6d0b7"
+  }
+}

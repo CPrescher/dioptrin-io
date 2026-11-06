@@ -1,4 +1,15 @@
-# Header-only and attribute coverage, 2026-11-06
+# Xcalibur API coverage, 2026-11-06
+
+The [current schema 9 report](2026-11-06-xcalibur.json) adds **11 matching Xcalibur
+CCD/mask API events**, retaining every prior image-reading outcome. The
+[Xcalibur audit](../XCALIBUR_MASKS.md) records partial machine-function tails in
+all five original CCD files, 430 accounted field occurrences, exact native mask
+decomposition and the remaining API contracts. Validation passes 210 Rust tests,
+22 Python comparison controls and all 21 isolated feature checks. The
+[check record](2026-11-06-xcalibur-native-checks.json) retains commands and hashes.
+Full reading/API parity remains false.
+
+## Previous header-only and attribute coverage, retained
 
 The [current audit](../metadata-parity/HEADER_ATTRIBUTES.md) closes all 25
 previously unqualified header-only events and accounts for all observed source
@@ -152,3 +163,13 @@ are reported separately.
 | speimage | 42 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | tifimage | 33 | 24 | 4 | 0 | 1 | 2 | 0 | 24 |
 | xsdimage | 5 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+## Xcalibur API continuation
+
+`2026-11-06-xcalibur.json` is the schema 9 continuation, retaining the prior
+pixel/header/attribute outcomes and adding 11 CCD mask API events. All 430
+top-level CCD field occurrences are accounted for; five original files have
+explicitly retained truncated machine-function tails. Native full decomposition
+reconstructs the source Pilatus mask exactly, independently of the upstream
+pyFAI-dependent assertion. See [XCALIBUR_MASKS.md](../XCALIBUR_MASKS.md) for the
+source and projection contracts, reference defects and remaining API work.

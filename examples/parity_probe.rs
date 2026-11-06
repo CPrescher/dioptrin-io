@@ -381,6 +381,90 @@ fn vds_selection(selection: &dioptrin_io::hdf5::typed::VdsSelection) -> serde_js
     }
 }
 
+#[cfg(feature = "xcalibur")]
+fn xcalibur_point(point: dioptrin_io::xcalibur::Point) -> serde_json::Value {
+    json!({"ix":point.x,"iy":point.y})
+}
+#[cfg(feature = "xcalibur")]
+fn xcalibur_polygons(values: &[dioptrin_io::xcalibur::Polygon]) -> serde_json::Value {
+    json!(
+        values
+            .iter()
+            .map(|p| json!({"itype":p.kind,"ipoints":p.points,"iax":p.x,"iay":p.y}))
+            .collect::<Vec<_>>()
+    )
+}
+#[cfg(feature = "xcalibur")]
+fn xcalibur_points(values: &[dioptrin_io::xcalibur::BadPoint]) -> serde_json::Value {
+    json!(values.iter().map(|p|json!({"spt":xcalibur_point(p.point),"sptreplace1":xcalibur_point(p.replacements[0]),"sptreplace2":xcalibur_point(p.replacements[1]),"itreatment":p.treatment})).collect::<Vec<_>>())
+}
+#[cfg(feature = "xcalibur")]
+fn xcalibur_row(p: &dioptrin_io::xcalibur::BadRow) -> serde_json::Value {
+    json!({"sptstart":xcalibur_point(p.start),"sptend":xcalibur_point(p.end),"sptstartreplace":xcalibur_point(p.replacements[0]),"sptendreplace":xcalibur_point(p.replacements[1]),"itreatment":p.treatment})
+}
+#[cfg(feature = "xcalibur")]
+fn xcalibur_fields(m: &dioptrin_io::xcalibur::Characteristics) -> serde_json::Value {
+    let mut fields = json!({"dwversion":m.version,"ddarkcurrentinADUpersec":header_float(m.dark_current),"dreadnoiseinADU":header_float(m.read_noise),
+        "iisfip60origin":m.fip_origin[0],"ifip60xorigin":m.fip_origin[1],"ifip60yorigin":m.fip_origin[2],
+        "inumofcornermasks":m.corner_count,"iacornermaskx":m.corner_x,"iacornermasky":m.corner_y,
+        "inumofglowingcornermasks":m.glowing_count,"iaglowingcornermaskx":m.glowing_x,"iaglowingcornermasky":m.glowing_y});
+    for (key, text) in [
+        "ccharacteristicsfil",
+        "cccdproducer",
+        "cccdchiptype",
+        "cccdchipserial",
+        "ctaperproducer",
+        "ctapertype",
+        "ctaperserial",
+    ]
+    .iter()
+    .zip(&m.text)
+    {
+        fields[*key] = match text.text() {
+            Ok(text) => json!(text),
+            Err(_) => json!({"source_bytes_hex":bytes_hex(&text.0)}),
+        };
+    }
+    if let Some(values) = &m.polygons {
+        fields["ibadpolygons"] = json!(values.len());
+        fields["pschipbadpolygon"] = xcalibur_polygons(values);
+    }
+    if let Some(values) = &m.points {
+        fields["ibadpoints"] = json!(values.len());
+        fields["pschipbadpoint"] = xcalibur_points(values);
+    }
+    for (i, suffix) in ["", "1x1", "2x2", "4x4"].iter().enumerate() {
+        if let Some(values) = &m.columns[i] {
+            fields[format!("ibadcolumns{suffix}")] = json!(values.len());
+            fields[format!("pschipbadcolumn{suffix}")] = json!(
+                values
+                    .iter()
+                    .map(|p| {
+                        let mut value = xcalibur_row(&p.row);
+                        value["ilowlimit"] = json!(p.low_limit);
+                        value["ihighlimit"] = json!(p.high_limit);
+                        value
+                    })
+                    .collect::<Vec<_>>()
+            );
+        }
+        if let Some(values) = &m.rows[i] {
+            fields[format!("ibadrows{suffix}")] = json!(values.len());
+            fields[format!("pschipbadrow{suffix}")] =
+                json!(values.iter().map(xcalibur_row).collect::<Vec<_>>());
+        }
+    }
+    if let Some(e) = &m.electronics {
+        fields["iscintillatorid"] = json!(e.scintillator);
+        fields["dgain_mo"] = header_float(e.gain_mo);
+        fields["dgain_cu"] = header_float(e.gain_cu);
+        if let Some(machine) = &e.machine {
+            fields["chipmachinefunction"] = json!({"iismachinefunction":machine.enabled,"da_machinefct":header_float(machine.a),"db_machinefct":header_float(machine.b)});
+        }
+    }
+    fields
+}
+
 fn run() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = std::env::args().collect();
     if args.get(1).is_some_and(|s| s == "--capabilities") {
@@ -407,6 +491,11 @@ fn run() -> Result<(), Box<dyn Error>> {
         ];
         for (enabled, feature, names) in [
             (cfg!(feature = "sparse"), "sparse", &["sparse"][..]),
+            (
+                cfg!(feature = "xcalibur"),
+                "xcalibur",
+                &["xcalibur-ccd", "xcalibur-bytes", "xcalibur-decompose"][..],
+            ),
             (cfg!(feature = "mar345"), "mar345", &["mar345"][..]),
             (cfg!(feature = "esperanto"), "esperanto", &["esperanto"][..]),
             (cfg!(feature = "fit2d"), "fit2d", &["fit2d"][..]),
@@ -457,6 +546,78 @@ fn run() -> Result<(), Box<dyn Error>> {
         return Err("usage: parity_probe FORMAT PATH [WIDTH HEIGHT OFFSET DTYPE ENDIAN]".into());
     }
     let path = &args[2];
+    #[cfg(feature = "xcalibur")]
+    if args[1] == "xcalibur-ccd" || args[1] == "xcalibur-bytes" {
+        use dioptrin_io::xcalibur::{Projection, ReadPolicy, Reader};
+        let policy = if args.iter().any(|s| s == "--retain-truncated-tail") {
+            ReadPolicy::RetainTruncatedMachineFunction
+        } else {
+            ReadPolicy::Strict
+        };
+        let reader = Reader::open_with_policy(path, native::Limits::default(), policy)?;
+        let parsed;
+        let m = if args[1] == "xcalibur-bytes" {
+            parsed = dioptrin_io::xcalibur::Characteristics::from_bytes_with_policy(
+                &reader.metadata()?.original,
+                native::Limits::default(),
+                policy,
+            )?;
+            &parsed
+        } else {
+            reader.metadata()?
+        };
+        let mut record = json!({"kind":"xcalibur_characteristics","fields":xcalibur_fields(m),"source_sha256":format!("{:x}",Sha256::digest(&m.original)),"parsed_bytes":m.parsed_bytes,"source_bytes":m.original.len(),"trailing_sha256":format!("{:x}",Sha256::digest(&m.original[m.parsed_bytes..])),"missing_sections":m.columns.iter().filter(|v|v.is_none()).count()+m.rows.iter().filter(|v|v.is_none()).count()+usize::from(m.polygons.is_none())+usize::from(m.points.is_none())+usize::from(m.electronics.is_none())});
+        record["incomplete_machine_function"] = match &m.incomplete_machine_function {
+            Some(d) => {
+                json!({"offset":d.offset,"expected_bytes":d.expected_bytes,"available_bytes":d.available_bytes})
+            }
+            None => json!(null),
+        };
+        if args.len() >= 5 && !args[3].starts_with("--") {
+            let shape = [args[3].parse()?, args[4].parse()?];
+            let projection = if args.get(5).is_some_and(|s| s == "fabio") {
+                Projection::Fabio2026
+            } else {
+                Projection::Strict
+            };
+            let mask = reader.build_mask(shape, projection, native::Limits::default())?;
+            record["mask"] = json!({"dtype":"uint8","shape":shape,"sha256":format!("{:x}",Sha256::digest(&mask.values)),"ignored_records":mask.ignored_records,"kind":"explicit_derived_mask"});
+        }
+        println!("{record}");
+        return Ok(());
+    }
+    #[cfg(feature = "xcalibur")]
+    if args[1] == "xcalibur-decompose" {
+        let shape = [
+            args.get(3).ok_or("height required")?.parse()?,
+            args.get(4).ok_or("width required")?.parse()?,
+        ];
+        let full = args.get(5).is_some_and(|s| s == "full");
+        let raw = native::Reader::open_raw(
+            path,
+            native::RawLayout {
+                shape,
+                pixel_type: PixelType::U8,
+                little_endian: true,
+                offset: native::Offset::Absolute(0),
+            },
+            native::Limits::default(),
+        )?;
+        let mut buffer = native::FrameBuffer::default();
+        raw.read_frame_into(0, &mut buffer)?;
+        let PixelBuffer::U8(values) = buffer.pixels().unwrap() else {
+            unreachable!()
+        };
+        let regions =
+            dioptrin_io::xcalibur::decompose(values, shape, full, native::Limits::default())?;
+        let mask = regions.build_mask(native::Limits::default())?;
+        println!(
+            "{}",
+            json!({"kind":"explicit_mask_decomposition","complete":regions.complete,"polygons":xcalibur_polygons(&regions.polygons),"points":xcalibur_points(&regions.points),"reconstructed":{"dtype":"uint8","shape":shape,"sha256":format!("{:x}",Sha256::digest(&mask.values))},"source_sha256":format!("{:x}",Sha256::digest(values))})
+        );
+        return Ok(());
+    }
+
     if args[1] == "dtrek-header" {
         let reader = wrapped::HeaderReader::open(
             path,

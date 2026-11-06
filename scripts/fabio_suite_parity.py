@@ -185,11 +185,11 @@ def main():
         if {p.stem for p in paths} != requested:
             parser.error("unknown codec test module")
     ledger = json.loads((ROOT / "docs/fabio-2026.6.0-inventory.json").read_text())
-    report = {"schema": 8, "reference": ledger["reference"],
+    report = {"schema": 9, "reference": ledger["reference"],
               "selection": {"all_codec_modules": not bool(args.modules), "modules": []},
               "contract": "uniform count/dtype/shape and independent native component/unit comparisons, with separate explicit display views, at successful upstream .read calls; not Python API or full header parity",
               "recovery_contract": "explicit source recipes selected before decoding; independently verified partial spans/header-only access are separate from complete count parity and expected input errors",
-              "gaps": ["semantic headers not completely compared", "native content autodetection not exercised", "file-like streams materialized by test harness", "read paths bypassing .read not intercepted"],
+              "gaps": ["exact reference metadata differs in qualified reference defects/presentation conventions", "native content autodetection not exercised", "file-like streams materialized by test harness", "reading APIs beyond .read and the explicitly instrumented CCD mask API remain unqualified"],
               "out_of_scope": ["Python mutation/writing APIs and numerical statistics"],
               "reads": [], "reference_rejections": [], "source_files": {}, "reference_import_errors": [], "reference_tests": {}}
     report["environment"] = {"python": sys.version, "packages": {}}
@@ -226,7 +226,7 @@ def main():
     report["build_files_sha256"] = {name: sha_file(ROOT/name) for name in ["Cargo.toml", "Cargo.lock", "build.rs"] if (ROOT/name).is_file()}
     report["bridge_sources_sha256"] = {name: sha_file(ROOT/name) for name in [
         "scripts/fabio_suite_parity.py", "scripts/tiff_component_reference.py", "scripts/edf_recovery_reference.py",
-        "scripts/thunderscan_reference.py", "scripts/pillow_planar16_reference.py", "scripts/metadata_parity.py", "scripts/test_metadata_parity.py", "scripts/metadata_attributes.py", "scripts/test_metadata_attributes.py", "scripts/header_reference.py", "scripts/inventory_fabio.py", "examples/parity_probe.rs", "docs/fabio-2026.6.0-inventory.json"]}
+        "scripts/thunderscan_reference.py", "scripts/pillow_planar16_reference.py", "scripts/metadata_parity.py", "scripts/test_metadata_parity.py", "scripts/metadata_attributes.py", "scripts/test_metadata_attributes.py", "scripts/header_reference.py", "scripts/xcalibur_reference.py", "scripts/test_xcalibur_reference.py", "scripts/generate_xcalibur_fixtures.py", "scripts/inventory_fabio.py", "examples/parity_probe.rs", "docs/fabio-2026.6.0-inventory.json"]}
     active = False
     current_test = None
 
@@ -750,6 +750,10 @@ def main():
             return read
         cls.read = make_wrapper(original, codec)
 
+    from xcalibur_reference import Bridge as XcaliburBridge
+    xcalibur_bridge = XcaliburBridge(probe_path, capabilities, args.probe_timeout, report, lambda: current_test)
+    xcalibur_bridge.install()
+
     class Result(unittest.TextTestResult):
         def startTest(self, test):
             nonlocal current_test
@@ -780,11 +784,18 @@ def main():
     report["rejection_summary"] = dict(collections.Counter(r["status"] for r in report["reference_rejections"]))
     if any(r["status"] not in {"rejection_match", "reference_environment_difference"} for r in report["reference_rejections"]):
         report["gaps"].append("some reference rejection inputs/configurations remain unmatched")
+    api_events = report["xcalibur_api"]
+    report["xcalibur_api_summary"] = dict(collections.Counter(r["status"] for r in api_events))
+    report["xcalibur_mask_api_parity"] = ({r["operation"] for r in api_events} == {"read", "loads", "decompose"}
+        and all(r["status"] == "match" for r in api_events))
+    if report["xcalibur_mask_api_parity"]:
+        compared_codecs.add("xcaliburimage")
+    report["xcalibur_contract"] = "CCD source fields and explicit derived masks/decomposition; placeholder XcaliburImage.read pixels are not source detector counts; distinct from image-reading coverage"
     required = set(canonical_modules.values())
     report["unexercised_codecs"] = sorted(required - compared_codecs)
     report["full_reading_parity"] = (not args.modules and result.wasSuccessful() and not result.skipped
         and not report["reference_import_errors"] and not report["unexercised_codecs"]
-        and not report["gaps"] and all(r["status"] in matching_statuses | {"reference_no_pixels"}
+        and report["xcalibur_mask_api_parity"] and not report["gaps"] and all(r["status"] in matching_statuses | {"reference_no_pixels"}
             and not r.get("header_field_differences") for r in report["reads"])
         and all(x["matches_pinned_source"] for x in report["reference_codec_sources"].values()))
     if args.metadata:

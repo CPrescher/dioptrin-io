@@ -29,6 +29,7 @@ Every format dependency is optional; default features are empty.
 | `esperanto` | Original signed32 Long32/AGI bitfield counts, row indexes, headers and strict source bounds | Unsupported header variants fail; no writer-style reshaping on read |
 | `mar345` | MAR345/MAR555 PCK V1, original unsigned counts, high-count tables and headers, both byte orders | V2, spiral/old IMAGE, degenerate predictor shapes and implicit series |
 | `sparse` | Original HDF5 sparse events/components/attributes and explicit deterministic background reconstruction | Stochastic noise; native reference and Python fallback have separate semantics; reconstructed backgrounds are derived |
+| `xcalibur` | CCD characteristics/source records, explicit mask reconstruction and native lossless binary-mask decomposition | No fabricated source images; truncated machine tails require an explicit policy; .run companion records pending |
 | `xsd` | Explicit 2D XSData XML arrays, base64/base32/base16, ten scalar/complex types and optional MD5 | Other ranks/types/encodings and namespaces |
 | `wrappers` | Bounded gzip/bzip2 disk staging for implemented backends when their optional feature is compiled; source checks on every read | HDF5 wrappers, direct file-like streams and implicit neighboring-file series |
 
@@ -190,6 +191,9 @@ bytes and streams into a private temporary file. `source_bytes` bounds staged
 disk output; decoding does not retain the whole file in RAM. The original file
 is checked around staging and every frame read. There is no automatic source,
 CBF dialect or backend substitution.
+
+See [Xcalibur mask APIs](docs/XCALIBUR_MASKS.md) for caller-shaped derived masks,
+explicit truncated-metadata diagnostics and same-file qualification.
 
 ## Validation and performance
 

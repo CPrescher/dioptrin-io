@@ -126,7 +126,7 @@ container/legacy/image readers and detector TIFF acquisition headers. A separate
 feature-disabled run distinguishes unavailable compilation features from missing
 readers. Every original registry entry remains in the ledger.
 
-Current evidence is recorded in `fabio-parity/2026-11-06-headers-attributes.json`;
+Current evidence is recorded in `fabio-parity/2026-11-06-xcalibur.json`;
 the earlier baseline and typed-HDF5 reports are retained. The current report is
 a failing full-parity gate, with exact native successes, unsupported layouts,
 reference differences and remaining readers kept separate.
@@ -215,8 +215,11 @@ same default configuration and available source. Reports distinguish matching
 input rejections, unsupported comparison configurations, process failures and
 deliberately disabled reference-backend tests. A monkeypatched missing Python
 JPEG backend is an environment difference, not a native input rejection.
-Direct stream APIs, header-only/other-attribute metadata, autodetection,
-neighboring-file series and unsupported variants remain in the full-parity gate.
+Header-only and observed source-attribute comparisons are qualified separately
+in `metadata-parity/HEADER_ATTRIBUTES.md`. Xcalibur CCD masks now have 11 separately
+instrumented API events; see [XCALIBUR_MASKS.md](XCALIBUR_MASKS.md). Direct streams,
+autodetection, neighboring-file series, companion readers and unsupported variants
+remain in the full-parity gate.
 
 ## Rejection audit and captured test inputs
 
