@@ -12,7 +12,7 @@ Dependencies remain optional; there is no Python runtime bridge.
 
 The `tiff` feature reuses `tiff` 0.11.3 for TIFF/BigTIFF primary IFD pages,
 strips/tiles, uniform integer/floating samples, contiguous/planar color, packed
-1/2/4-bit grayscale, one-dimensional Group3 strips, Group4, PackBits, LZW and Deflate. Planar buffers
+1/2/4-bit grayscale, CCITT RLE, Group3 1D/2D, Group4, PackBits, LZW and Deflate. Planar buffers
 are interleaved; rows and channel values are retained. WhiteIsZero samples
 bypass the backend display inversion, including floating and signed samples. Packed values are unpacked to their
 native integer values, without full-range scaling. `bits_per_sample`,
@@ -39,11 +39,12 @@ count from the independent libjpeg-turbo reference because IDCT rounding differs
 That test is explicitly a bounded lossy comparison, not exact FabIO parity.
 Subsampled YCbCr now exposes original component grids and source padding, without
 implicit expansion. Lossless sampling units support none/LZW; original and modern
-JPEG components reuse libjpeg-turbo when `jpeg` is compiled. Bounded single-chunk
-old-style JPEG is admitted under its original table/interchange contract.
-CCITT RLE, fragmented legacy JPEG, two-dimensional Group3, mixed scalar types/bit widths,
-packed color, and LSB FillOrder outside uncompressed packed grayscale/Group3
-remain unsupported. The Group3 adapter reuses the optional MIT `fax` 0.2.7
+JPEG components reuse libjpeg-turbo when `jpeg` is compiled. Bounded
+single-chunk, fragmented/global and sequential planar old-style JPEG profiles
+are qualified in [OJPEG_READER.md](OJPEG_READER.md). RLE and Group3 2D source
+contracts are in [TIFF_LAYOUTS.md](TIFF_LAYOUTS.md). Mixed scalar types/bit widths,
+packed color and additional LSB FillOrder combinations remain optional variants;
+see the [classified backlog](READING_GAPS.md). The Group3 adapter reuses the optional MIT `fax` 0.2.7
 Huffman tables, requiring exact terminating runs within each source byte window,
 strict EOL framing and declared fill-bit alignment. It accepts complete TIFF-F
 last rows without fabricating a trailing EOL/RTC, and rejects extra coded rows or
@@ -71,10 +72,10 @@ count, entire IFD record, every literal value byte and reason. Typed `tags`
 omits that entry. The adapter presents undefined bytes only internally; it
 never treats 0xAF as offset 175 or invents text. Structural tags remain strict.
 
-Only primary IFDs are frames. SubIFD pointer tags remain visible, but SubIFD
-pixels are not enumerated or decoded. The mature backend has no public API for
-selecting an arbitrary image IFD. A separate topology/API extension is required;
-this implementation does not claim SubIFD parity.
+Default frames remain the primary IFD chain. A bounded directory catalog and
+explicit reachable SubIFD selection preserve topology and allow a supported
+child image to be read independently; arbitrary offsets remain rejected.
+See [TIFF_LAYOUTS.md](TIFF_LAYOUTS.md) and [TIFF_API_PARITY.md](TIFF_API_PARITY.md).
 
 `detector_tiff::Reader::open(path, Format::{Pilatus,MarCcd}, tiff::Limits)` layers
 semantic acquisition headers on the same pixel reader. Pilatus retains original

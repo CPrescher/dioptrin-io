@@ -1,106 +1,273 @@
-"""Audit the complete default FabIO registry at an exact source revision.
-Usage: python scripts/inventory_fabio.py /path/to/fabio-checkout
-No FabIO installation is needed; source is parsed, never imported/executed.
+"""Render the pinned reference catalog and classified native reading inventory.
+
+python scripts/inventory_fabio.py [PINNED_FABIO_CHECKOUT] [--check]
+Without a checkout, retain the committed reference descriptors and hashes.
+Native scope, boundaries and validation priorities have one authored source:
+docs/reading-inventory.json. No reference module is imported or executed.
 """
-import ast,hashlib,json,pathlib,subprocess,sys
-PIN='9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece'
-repo=pathlib.Path(sys.argv[1]);root=pathlib.Path(__file__).resolve().parents[1]
-assert subprocess.check_output(['git','-C',str(repo),'rev-parse','HEAD'],text=True).strip()==PIN
-src=repo/'src/fabio'
-registry=ast.parse((src/'fabioformats.py').read_text())
-codecs=next(ast.literal_eval(n.value) for n in registry.body if isinstance(n,ast.Assign) and any(isinstance(a,ast.Name) and a.id=='_default_codecs' for a in n.targets))
-# Audited against each pinned reader implementation. A listed reference branch
-# is a coverage target, not a promise that every malformed/input variant works.
-DETAILS={
-'edfimage':('EDF 0/1/2/3; concatenated frames; general headers; inline/external binary; 2D/volume; integer/float aliases including optional float128', 'none; internal gzip/zlib/bzip2; optional byte-offset; outer gzip/bzip2', 'concatenated frames', 'partial: 2D ten scalar types, both byte orders, general inheritance/raw repeats and exact closing boundaries; bounded inline/outer gzip/zlib/bzip2 with explicit padding; external snapshots/relocation/counterparts require options; default Exact external windows stay strict, explicit UpToDeclared compatibility records declared/effective bytes and still requires complete samples/codecs; explicit parsed-boundary Size windows and exact-label stored-raw policies retain original declarations; dense reads reject truncated counts, separate typed-prefix/header/member-integrity recovery available; volume/float128/offset pending'),
-'dtrekimage':('d*TREK / ADSC; Rigaku 1.1; endian scalar data and text header', 'uncompressed', 'single image; external file series', 'partial: seven scalar types, both byte orders, nested-brace headers, legacy ADSC TYPE alias, raw padded headers; rank1..32 source arrays mapped to stored C-order planes; permissive missing-type defaults pending'),
-'tifimage':('classic TIFF/BigTIFF; endian scalar/color; strip/tile/IFD; photometric/predictor variants', 'reference TiffIO/Pillow capabilities vary; none/PackBits/LZW/Deflate/JPEG require distinct fixtures', 'primary IFD pages', 'partial: scalar/packed/WhiteIsZero/color/planar/IFD/strip/tile/BigTIFF counts, Group3 1D/Group4/PackBits/LZW/Deflate/JPEG; source F16 explicitly widened to F32; explicit legacy LSB/late LZW via minimally patched vendored TIFF; original YCbCr grids/units/padding for none/LZW and JPEG, bounded single-chunk OJPEG with jpeg feature; explicit bounded uncompressed-window and mixed strip/tile metadata policies retain original IFDs; original ThunderScan codec with complete-only dense reads and separate available-row spans; optional Pillow13/TiffIO views separate; palette/CFA/opaque metadata retained; SubIFD/Group3 2D/RLE/fragmented OJPEG/other sampled layouts remain; uncompressed Pillow planar16 reference defects independently qualified; compressed planar16 views and native plane-relative edge-tile padding verified'),
-'marccdimage':('MAR CCD/Mosaic TIFF pixels plus binary acquisition header', 'TIFF codecs', 'inherits TIFF pages', 'partial: native TIFF counts plus 125 typed acquisition fields/raw reserved bytes/endian header; both actual files match all numeric/byte fields; generic TIFF gaps remain'),
-'mar345image':('MAR345 imaging plate / MAR555; supported detector dimensions; overflow table', 'PCK packed V1; V2 and raw variants require separate contracts', 'single image; file series', 'partial: bounded MIT PCK V1 adaptation, MAR345/MAR555 dimensions, both byte orders, original headers/high-count tables and U32 counts; both actual sources and endian rewrites exact; V2/spiral/old IMAGE and degenerate predictor shapes explicitly unsupported; pinned unsigned/mask/whitespace defects independently qualified'),
-'fit2dmaskimage':('Fit2D packed bit mask; width alignment and stored orientation', 'packed bits', 'single image', 'implemented bounded little-endian packed masks, aligned/unaligned row widths, raw 1024-byte header and unchanged orientation; same upstream face/click files compared'),
-'brukerimage':('Bruker format 86; 8/16/32-bit storage, overflow records, LINEAR header handling', 'overflow tables / linear encoding', 'single image; NFRAMES metadata can describe series', 'partial: format86 1/2/4-byte counts and ASCII overflow table, raw/parsed headers; LINEAR float encoding retained in raw words, with explicit inverse-encoding view; same actual source counts and selected reference view verified'),
-'bruker100image':('Bruker format 100; base counts, underflow/16/32-bit overflow arrays', 'underflow/overflow tables', 'single image', 'partial: format100 underflow/16/32-bit overflow tables and baseline expansion with strict record/count bounds; raw headers/types retained; same actual file counts verified'),
-'pnmimage':('PBM/PGM/PPM/PAM registry: P1/P2/P5 read branches; P3/P4/P6/P7 explicitly not implemented by pinned reference', 'ASCII / raw big-endian P5', 'single image', 'implemented bounded P1/P2/P5 with original rows, MAXVAL/type and big-endian samples retained; pinned P1/P2 row-loss bug remains a reference difference; unsupported reference P3/P4/P6/P7 not invented'),
-'GEimage':('GE Angio; standard, EDF-prefixed and blank/ADEPT headers; fixed default dimensions', 'uncompressed', 'multiple fixed-size frames', 'partial: intact/zero-8192/EDF-in-GE headers, u8/u16/u32 and exact frame records; all actual suite GE files/frames verified; malformed record defaults and neighboring series not guessed'),
-'OXDimage':('Oxford Sapphire/KM4CCD; uncompressed/TY1/TY5; reference TY5 predictor/dtype defects independently qualified', 'none; TY1 exception arrays; TY5 row-indexed inline differences', 'single image', 'partial: Oxford raw/TY1 and bounded BSD3 dxtbx TY5 adaptation, original row offsets/header/trailer and signed counts; actual TY5 and independent fixtures match compiled native authority; negative TY1 wrap and nonsquare TY5 reference bugs not reproduced; unsupported supplementary layouts remain explicit'),
-'dm3image':('DigitalMicrograph DM3 tagged binary structures; nested tags / type codes', 'uncompressed tagged data', 'one selected image exposed', 'partial: bounded nested tags, seven scalar types/both byte orders, explicit image selection and stacks; thumbnail/main default documented; unsupported type codes/DM4 pending'),
-'HiPiCimage':('Hamamatsu HiPiC IM header, comments and integer pixels', 'uncompressed', 'single image', 'partial: little-endian u16 IM images, raw binary header/comments, parsed UTF8 comments with repeated keys retained in raw bytes; other header/type variants pending'),
-'pilatusimage':('Pilatus TIFF + image-description detector header', 'TIFF codecs', 'inherits TIFF pages', 'partial: native TIFF counts plus ImageDescription semantic assignments/duplicates/raw unparsed lines; both actual detector headers match; generic TIFF gaps remain'),
-'fit2dspreadsheetimage':('Fit2D spreadsheet dimensions and numeric text', 'ASCII', 'single image', 'implemented bounded f32 text rows, dimensions, raw title/comment header; invalid or incomplete numeric rows fail explicitly'),
-'kcdimage':('Nonius KappaCCD; header byte type and multiple readouts', 'uncompressed multiple readouts combined by reference', 'single resulting image', 'partial: original separate u16 readouts and source prefix/type metadata; explicit checked SumReadouts i32 view for reference comparison; exact actual readouts/sum; unknown record prefixes rejected'),
-'cbfimage':('CBF/imgCIF and miniCBF/Pilatus; signed/unsigned integers 8/16/32/64; raw CIF/MIME headers', 'x-CBF_BYTE_OFFSET only in pinned FabIO; distinguish terminal32 and extended64 escapes', 'single 2D image in pinned reference', 'partial: all eight integer types; explicit Legacy32/Extended64 dialects; MD5; raw CIF headers; outer wrappers via wrapped::Reader. Semantic CIF/Pilatus parsing and multiple sections pending'),
-'xsdimage':('XSDataImage XML; base64 binary array; dimension/type descriptors', 'base64; storage interpretation in XML', 'single image', 'partial: one explicit 2D XSDataImage/outputMatrix XML record, ten scalar and complex types, base64/base32/base16 and optional MD5; raw metadata retained, DTD/ambiguity/size errors rejected; other ranks/types/encodings pending'),
-'binaryimage':('caller-specified dimensions/offset/type/endianness; no autodetection', 'uncompressed', 'single explicitly configured image', 'implemented explicit shape, ten scalar types, both byte orders, absolute/EOF-relative offsets, immutable source checks; no autodetection by design'),
-'pixiimage':('Pixirad fixed-frame record header and uint16 data', 'uncompressed', 'multiple fixed-size frames', 'partial: fixed 476x512 u16 records, every 24-byte header and full source length validated; all generated suite file frames verified; neighboring-file traversal remains explicit gap'),
-'raxisimage':('Rigaku R-AXIS binary/text header, endian data and high-bit dynamic-range flag', 'high-bit intensity-range encoding', 'single image', 'partial: explicit endian policy, native stored u16 words/flags and optional PhotomultiplierExpanded view; single declared header record and complete source window required; same file expanded counts verified'),
-'numpyimage':('NPY array; 2D image / higher-dimensional reshaped frame sequence', 'NPY binary; do not assume NPZ support', 'array-leading frame dimension', 'partial: NPY v1/2/3, ten scalar plus complex64/complex128 types, both byte orders, C/Fortran order, scalar/1D/2D/leading-axis stacks; bool/structured/string/float16/float128/empty pending; no pickle'),
-'eigerimage':('Eiger/Dectris HDF5; direct dataset, grouped data_NNNNNN, master/external links; detector metadata', 'dataset HDF5 filter pipeline (Bitshuffle/LZ4, gzip etc.)', 'dataset(s) mapped to frame sequence', 'partial: typed Eiger discovery handles entry/data, grouped data_N and legacy entry/data_N sequences; explicit FollowSnapshot policy tracks every external/intermediate file, fails on missing sources, preserves per-part types/shapes; explicit bound regular frame-preserving 3D VDS snapshots reuse typed source admission; nested/printf/irregular VDS and complete detector metadata/live acquisition pending; original raw u16/u32 benchmark retained'),
-'hdf5image':('explicit file::dataset HDF5 image or stack, nested frame selection', 'native HDF5 filters', '2D/3D datasets', 'partial: typed snapshots read explicit 2D/3D images/stacks with ten standard integer/IEEE types, both byte orders, group/data selection, native lossless filters, declared fill and source manifests; regular nonoverlapping frame-preserving 3D VDS with explicit filename bindings/fill and full source graph; complex/float16/custom precision, nested/printf/irregular VDS, raw external storage, arbitrary attributes and live refresh pending'),
-'fit2dimage':('Fit2D binary $FFF_START records and endian numeric arrays', 'uncompressed records', 'single image', 'partial: named bounded FIT2D scalar arrays, packed masks and axes, endian hex metadata and primary image selection; actual primary/auxiliary arrays exact; unknown ranks/encodings rejected'),
-'speimage':('Princeton SPE versions 2/3; binary header and v3 XML metadata/ROI', 'uncompressed typed pixels', 'frame selection (no generic getframe override)', 'partial: SPE v2/v3 four scalar types, XML metadata, explicit ROI selection/frame padding, stored axes and all declared frames; per-frame acquisition byte layout retained; other XML layouts/types pending'),
-'jpegimage':('JPEG/JFIF/Exif via Pillow; lossy source samples must retain decoded values and provenance', 'JPEG', 'single image', 'partial: mature libjpeg-turbo 8-bit JPEG and lossless 12/16-bit decoder, grayscale/color metadata and explicit precision/lossy provenance; actual corpus exact; unsupported precision and source transforms explicit'),
-'jpeg2kimage':('JPEG2000 codestream/JP2/JPX via optional Glymur/Pillow', 'JPEG2000 lossless/lossy require separate fixtures', 'single image', 'partial: mature OpenJPEG JP2/J2K backend, scalar/color signed/unsigned components, precision/origin/wavelet/raw metadata retained; actual corpus exact; mixed component precision/layouts explicitly rejected'),
-'mpaimage':('MPA multiwire; text configuration + spectrum/data blocks', 'ASCII or binary branches per source', 'single image', 'partial: original DATA spectra and CDAT maps with ASCII/f64 source encoding explicit; all sections retained and selected independently; binary/external headers and non-exact large integers rejected'),
-'mrcimage':('MRC/CCP4/MAP/FEI; endian header, supported mode codes and extended header', 'uncompressed typed arrays', 'NZ image stack', 'partial: strict endian machine-stamp policy, modes 0/1/2/3/4/6, complete stacks/extended headers; complex-i16 stored components plus explicit f32 view; pinned mode3/getframe bugs documented; other modes pending'),
-'esperantoimage':('CrysAlisPro Esperanto; ASCII header, int32 image, raw or compressed format selector', '4-byte integers / AGI bitfield', 'single image', 'partial: native signed32 Long32 and AGI bitfield, exact row indexes/size/escapes/wrapping, original headers and bounded zero alignment padding; same actual and upstream-writer files exact; no implicit array padding on read'),
-'limaimage':('LImA HDF5 creator/default path discovery and acquisition metadata', 'HDF5 filters', '3D detector dataset', 'partial: native default-entry/measurement/data discovery, detector-name fields, typed 2D/3D dataset reading and explicit external-source snapshots; full acquisition metadata and live acquisition pending'),
-'lambdaimage':('Lambda HDF5/NeXus detector-description/path convention', 'HDF5 filters', '3D detector dataset', 'partial: native detector-description/local-name/path discovery and typed samples; same upstream module files and all five relocated VDS master frames read with explicit bindings, frozen module-derived extent and separately recorded declared gap fill; nested/printf/irregular VDS and complete NeXus metadata remain pending'),
-'adscimage':('compatibility alias to DtrekImage (same registered codec identity)', 'same as dtrekimage', 'same as dtrekimage', 'implemented via native::Format::Dtrek with legacy TYPE=unsigned_short; same decoder and remaining gaps as dtrekimage'),
-'sparseimage':('pyFAI/LImA sparse Bragg HDF5: frame pointers/index/intensity/background/noise; reconstruction policy matters', 'HDF5 filters plus sparse/background representation', 'sparse frame sequence', 'partial: original typed frame_ptr/index/intensity and all admitted source components/attributes, explicit linked snapshots; separate deterministic native NOISY=False background view exact over 100 actual frames; actual corpus has zero events, nonempty/extreme events covered independently; stochastic reconstruction and Python fallback remain unqualified'),
-'xcaliburimage':('Xcalibur CCD/masked-pixel binary structs and masks', 'binary records', 'single mask/image exposed', 'reference .read fabricates a fixed 50x60 zero array instead of source samples; native does not reproduce it. CCD characteristics/mask-structure API remains pending separately from detector count reading'),
+import argparse
+import ast
+import collections
+import hashlib
+import json
+import pathlib
+import re
+import subprocess
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+PIN = '9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece'
+ALIASES = {'adscimage': 'dtrekimage'}
+CONFIG = 'docs/reading-inventory.json'
+CATALOG = 'docs/fabio-2026.6.0-inventory.json'
+CATEGORIES = {
+    'confirmed_compatibility_gap': 'Confirmed supplemental compatibility gaps',
+    'optional_variant': 'Optional variants: implement when an acquired file requires them',
+    'intentional_difference': 'Intentional source and interpretation policies',
+    'reference_limitation': 'Reference limitations, not native implementation tasks',
+    'out_of_scope': 'Outside native detector input',
 }
-fixtures={
-'edfimage':['tests/data/edf/*.edf','tests/binary.rs'],
-'cbfimage':['tests/data/cbf/*.cbf','tests/binary.rs'],
-'tifimage':['tests/data/tiff/*.tif','tests/tiff.rs'],
-'eigerimage':['tests/data/counts-bitshuffle-lz4.h5','tests/reader.rs','tests/raw.rs','docs/benchmarks/2026-11-05-native-eiger/count-reference.json'],
-'hdf5image':['tests/reader.rs','tests/raw.rs','tests/cache.rs'],
+QUALIFIED = {
+    'counts_match', 'reference_view_match', 'reference_no_pixels',
+    'partial_source_read', 'reconstruction_match', 'component_view_match',
+    'reference_decoder_defect',
 }
-fixtures.update({module:['tests/data/native/provenance.json','tests/native.rs','tests/wrapped.rs','docs/FABIO_PARITY.md'] for module in ['dtrekimage','adscimage','fit2dmaskimage','HiPiCimage','fit2dspreadsheetimage','binaryimage','numpyimage']})
-for module in ['hdf5image','eigerimage','limaimage','lambdaimage']:
- fixtures.setdefault(module,[]).extend(['tests/hdf5_typed.rs','tests/data/hdf5-native/provenance.json','docs/fabio-parity/2026-11-05-hdf5.json'])
-for module in ['marccdimage','pilatusimage']:
- fixtures[module]=['docs/fabio-parity/2026-11-05-hdf5.json','examples/parity_probe.rs']
-for module in ['speimage','mrcimage','dm3image']:
- fixtures[module]=['tests/containers.rs','tests/data/containers/provenance.json','tests/data/containers/upstream-provenance.json','docs/CONTAINERS_DESIGN.md']
-for module in ['brukerimage','bruker100image','OXDimage','raxisimage']:
- fixtures[module]=['tests/legacy.rs','tests/data/legacy/provenance.json','docs/legacy-readers/2026-11-05-reference.json','docs/LEGACY_READERS.md']
-for module in ['GEimage','pixiimage']:
- fixtures[module]=['tests/fixed.rs','tests/data/fixed/provenance.json','tests/data/fixed/upstream-provenance.json','docs/FIXED_DESIGN.md']
-for module in ['jpegimage','jpeg2kimage','marccdimage','pilatusimage']:
- fixtures[module]=['tests/image_codecs.rs','tests/data/images/provenance.json','docs/image-readers-fabio-2026.6.0.json','docs/IMAGE_READERS.md']
-fixtures['xsdimage']=['tests/xsd.rs','tests/data/xsd/provenance.json','docs/XSD_READER.md']
-fixtures['pnmimage']=['tests/native.rs','tests/data/native/provenance.json']
-fixtures['edfimage'].extend(['tests/edf_sources.rs','src/transport.rs'])
-fixtures['tifimage'].extend(['tests/image_codecs.rs','tests/data/images/provenance.json','docs/IMAGE_READERS.md'])
-for module in ['fit2dimage','kcdimage','mpaimage']:
- fixtures[module]=['tests/records.rs','tests/data/records/provenance.json','docs/legacy-readers/2026-11-05-record-reference.json','docs/RECORD_READERS.md']
-fixtures['esperantoimage']=['tests/esperanto.rs','tests/data/esperanto/provenance.json','tests/data/esperanto/upstream-provenance.json','docs/ESPERANTO_DESIGN.md']
-fixtures['edfimage'].extend(['tests/edf_windows.rs','tests/wrapped_views.rs','docs/rejection-audits/2026-11-06-edf.json'])
-fixtures['OXDimage'].extend(['tests/oxford_ty5.rs','tests/data/ty5/provenance.json','docs/rejection-audits/2026-11-05-lambda-ty5.json'])
-fixtures['lambdaimage'].extend(['tests/lambda_vds_rejection.rs','tests/data/lambda-vds-rejection/provenance.json','docs/rejection-audits/LAMBDA_TY5.md'])
-fixtures['mar345image']=['tests/mar345.rs','tests/data/mar345/provenance.json','tests/data/mar345/upstream-provenance.json','docs/MAR345_READER.md','docs/MAR345_XCALIBUR_AUDIT.md']
-fixtures['sparseimage']=['tests/sparse.rs','tests/data/sparse/provenance.json','docs/sparse/2026-11-05-reference.json','docs/SPARSE_READERS.md']
-fixtures['tifimage'].extend(['tests/tiff_legacy_lzw.rs','docs/TIFF_LEGACY_LZW.md','docs/tiff-legacy-lzw-2026-11-06.json','tests/tiff_ojpeg.rs','docs/OJPEG_READER.md','docs/ojpeg/2026-11-06-components.json','tests/tiff_ycbcr.rs','docs/tiff-ycbcr/README.md','docs/tiff-ycbcr/2026-11-06-proof.json','docs/tiff-ycbcr/2026-11-06-modern-jpeg-proof.json','tests/tiff_rejections.rs','tests/data/tiff-rejections/provenance.json','docs/rejection-audits/2026-11-05-tiff.json','tests/tiff_view.rs','tests/tiff_alias_bounds.rs','tests/wrapped_views.rs','tests/data/tiff-view/provenance.json','docs/tiff-views-fabio-2026.6.0.json'])
-fixtures['tifimage'].extend(['tests/pillow_planar16.rs','tests/data/pillow-planar16/provenance.json','tests/data/pillow-planar16/multitile-provenance.json','docs/pillow-planar16/README.md','docs/pillow-planar16/2026-11-06-proof.json'])
-fixtures['xcaliburimage']=['docs/MAR345_XCALIBUR_AUDIT.md']
-fixtures['edfimage'].extend(['tests/edf_recovery.rs','docs/source-recovery/README.md','docs/source-recovery/read-policies.json'])
-fixtures['tifimage'].extend(['tests/tiff_recovery.rs','tests/data/tiff-recovery/provenance.json','docs/source-recovery/README.md'])
-for module in ['hdf5image','eigerimage','limaimage','lambdaimage']:
- fixtures[module].extend(['tests/vds.rs','tests/data/vds/provenance.json','docs/source-recovery/README.md'])
-rows=[]
-for module,cls in codecs:
- path=src/(module+'.py');data=path.read_bytes();t=ast.parse(data)
- c=next((n for n in t.body if isinstance(n,ast.ClassDef) and n.name==cls),None)
- extensions=[]
- if c:
-  extensions=next((ast.literal_eval(n.value) for n in c.body if isinstance(n,ast.Assign) and any(isinstance(a,ast.Name) and a.id=='DEFAULT_EXTENSIONS' for a in n.targets)),[])
- variants,compression,stack,status=DETAILS[module]
- rows.append({'module':module,'class':cls,'extensions':extensions,'source':f'https://github.com/silx-kit/fabio/blob/{PIN}/src/fabio/{module}.py','source_sha256':hashlib.sha256(data).hexdigest(),'subformats_and_types':variants,'compression':compression,'stack':stack,'implementation':status,'validation':fixtures.get(module,[]),'parity_verified':False})
-out={'reference':{'package':'FabIO','version':'2026.6.0','tag':'v2026.06','commit':PIN,'registry_entries':len(codecs),'unique_registered_codecs':35,'registry_source':f'https://github.com/silx-kit/fabio/blob/{PIN}/src/fabio/fabioformats.py','registry_sha256':hashlib.sha256((src/'fabioformats.py').read_bytes()).hexdigest()},'scope':'All default readers, aliases, explicit raw input, format discovery, source types/headers, subformats, compression and stack semantics. No format-level parity claim without independent fixtures. Write/conversion APIs are out of scope.','cross_cutting_targets':{'outer_file_compression':{'reference':['gzip (.gz)','bzip2 (.bz2)'],'implementation':'optional wrappers feature: magic-detected gzip/bzip2, bounded temporary staging, original-source checks; native/EDF/CBF/TIFF, typed containers, fixed/legacy/MAR345 detectors and JPEG/JPEG2000 when compiled; HDF5 and direct file-like APIs pending','source':f'https://github.com/silx-kit/fabio/blob/{PIN}/src/fabio/fabioutils.py'},'file_series':'pending explicit series API; numbered neighboring files must not be silently substituted','autodetection':'pending; current backends are explicitly selected by caller','orientation':'return stored rows/columns and metadata; consumer transformations are explicit','source_mutation':'immutable snapshots check normal filesystem changes; no adversarial metadata-preserving writes or live refresh','header_coverage':'raw EDF/CBF/native headers, parsed native fields and typed TIFF tags; typed HDF5 shape/dtype/endian/filter/fill/source metadata and selected discovery fields; arbitrary attributes and complete semantic detector header maps pending'},'formats':rows}
-(root/'docs/fabio-2026.6.0-inventory.json').write_text(json.dumps(out,indent=2)+'\n')
-lines=['# FabIO reading coverage target','',f'Reference: [FabIO 2026.6.0, tag v2026.06](https://github.com/silx-kit/fabio/tree/{PIN}), commit `{PIN}`. The pinned registry has 36 entries and 35 unique codecs; ADSC aliases d*TREK. This inventory retains **every reader**, including raw input and masks. It is a target inventory, not a parity claim.','', 'Machine-readable subformats, compression, stacks, provenance and validation are in [the inventory](fabio-2026.6.0-inventory.json). Regenerate with `python scripts/inventory_fabio.py /path/to/pinned/fabio`.','', '| Reader | Subformats / source types | Compression | Stack | Current status |','|---|---|---|---|---|']
-for row in rows:
- lines.append('| '+' | '.join([f'[{row["module"]}]({row["source"]})',row['subformats_and_types'],row['compression'],row['stack'],row['implementation']])+' |')
-lines+=['','Outer gzip/bzip2 wrappers are supported by the optional wrapped::Reader for implemented native/container/legacy/image backends when their features are compiled. Content autodetection, HDF5 wrappers and neighboring-file series remain separate pending targets. A TIFF-based detector is not marked supported merely because a generic TIFF can be decoded. Likewise, explicit HDF5 dataset reading alone does not establish Eiger-master/LImA/Lambda/sparse reconstruction parity.','', 'The pinned PNM reader explicitly rejects P3/P4/P6/P7; its P1/P2 loops do not advance the row index, which is recorded as a reference behavior difference, and its Oxford TY5 branch is marked known broken. Those require independent evidence before treating them as working reference implementations. Sparse reconstructions and R-AXIS dynamic-range encoding also need explicit data/interpretation contracts.','', 'Continue through every remaining row, using the pinned upstream codec suite and its exact files as an acceptance corpus (see FABIO_PARITY.md). CBF/EDF semantic/external headers, HDF5 typed/master sources, remaining codecs, full metadata comparisons and discovery all remain part of the target. No PhaseSmith migration or Dioptas changes are part of this branch.','']
-(root/'docs/FORMAT_COVERAGE.md').write_text('\n'.join(lines))
+OUTPUTS = (CATALOG, 'docs/FORMAT_COVERAGE.md', 'docs/READING_GAPS.md')
+
+
+def load(path):
+    return json.loads(pathlib.Path(path).read_text())
+
+
+def sha(path):
+    return hashlib.sha256(pathlib.Path(path).read_bytes()).hexdigest()
+
+
+def reference_catalog(checkout, stored):
+    """Preserve only reference facts; native annotations always come from CONFIG."""
+    keys = ('module', 'class', 'extensions', 'source', 'source_sha256')
+    if checkout is None:
+        if stored['reference']['commit'] != PIN:
+            raise ValueError('stored reference is not the pinned FabIO revision')
+        return stored['reference'], [{k: row[k] for k in keys} for row in stored['formats']]
+    if subprocess.check_output(['git', '-C', str(checkout), 'rev-parse', 'HEAD'], text=True).strip() != PIN:
+        raise ValueError('requires the pinned FabIO checkout')
+    src = checkout / 'src/fabio'
+    registry = ast.parse((src / 'fabioformats.py').read_text())
+    codecs = next(ast.literal_eval(n.value) for n in registry.body if isinstance(n, ast.Assign)
+                  and any(isinstance(a, ast.Name) and a.id == '_default_codecs' for a in n.targets))
+    rows = []
+    for module, cls in codecs:
+        path = src / (module + '.py')
+        # A dirty reference must not silently acquire the pinned commit's identity.
+        expected = subprocess.check_output(['git', '-C', str(checkout), 'show', f'{PIN}:src/fabio/{module}.py'])
+        if path.read_bytes() != expected:
+            raise ValueError(f'reference module differs from pinned source: {module}')
+        tree = ast.parse(expected)
+        c = next((n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == cls), None)
+        extensions = [] if c is None else next((ast.literal_eval(n.value) for n in c.body
+            if isinstance(n, ast.Assign) and any(isinstance(a, ast.Name) and a.id == 'DEFAULT_EXTENSIONS' for a in n.targets)), [])
+        rows.append(dict(module=module, **{'class': cls}, extensions=extensions,
+                         source=f'https://github.com/silx-kit/fabio/blob/{PIN}/src/fabio/{module}.py',
+                         source_sha256=hashlib.sha256(expected).hexdigest()))
+    reference = dict(stored['reference'])
+    reference.update(registry_entries=len(rows), unique_registered_codecs=len({ALIASES.get(r['module'], r['module']) for r in rows}),
+                     registry_sha256=sha(src / 'fabioformats.py'))
+    expected_registry = subprocess.check_output(['git', '-C', str(checkout), 'show', f'{PIN}:src/fabio/fabioformats.py'])
+    if (src / 'fabioformats.py').read_bytes() != expected_registry:
+        raise ValueError('reference registry differs from pinned source')
+    return reference, rows
+
+
+def snapshot(config, root=ROOT):
+    report = load(root / config['evidence_snapshot']['main_report'])
+    if report['reference']['commit'] != PIN:
+        raise ValueError('evidence report reference differs from inventory')
+    unknown = set(report['summary']) - QUALIFIED
+    if unknown or not report['input_api_summary']['all_events_qualified']:
+        raise ValueError('unclassified detector-reading outcome: reconcile the evidence first')
+    if report['reference_tests']['failures'] or report['reference_tests']['errors']:
+        raise ValueError('reference test failures require inventory review')
+    unresolved = sum(v['unresolved_fields'] for v in report['metadata_summary'].values())
+    attr = sum(len(v.get('unresolved', {})) for v in report['attribute_summary'].values())
+    if unresolved or attr:
+        raise ValueError('unresolved compared metadata requires inventory review')
+    return dict(input_outcomes=len(report['reads']), input_status=report['input_api_summary']['status'],
+                reading_outcomes=report['summary'], reference_tests=report['reference_tests']['run'],
+                reference_test_skips=len(report['reference_tests']['skipped']),
+                unresolved_compared_header_fields=unresolved, unresolved_compared_attributes=attr,
+                strict_full_reading_parity=report['full_reading_parity'])
+
+
+def confirmed_cases(entry, root=ROOT):
+    """Count only named native rejections of completed unchanged reference reads."""
+    report = load(root / entry['evidence'][0])
+    rows = report.get('unsupported', report.get('rejections', []))
+    index = {}
+    for row in rows:
+        name = row.get('dataset', row.get('case', {}).get('kind'))
+        if name not in entry['case_names']:
+            continue
+        if name in index:
+            raise ValueError('duplicate supplemental case name')
+        index[name] = row
+    if len(set(entry['case_names'])) != entry['case_count']:
+        raise ValueError('confirmed case count must name distinct fixtures')
+    for name in entry['case_names']:
+        row = index.get(name, {})
+        if (row.get('input_condition') != 'well_formed_variant'
+                or row.get('reader_action') != 'unsupported'
+                or row.get('reference', {}).get('status') != 'completed'
+                or row.get('native', {}).get('status') not in {'error', 'not_completed'}):
+            raise ValueError(f'not a demonstrated completed-reference/native-rejection case: {name}')
+    return entry['case_count']
+
+
+def validate(config, reference, rows, root=ROOT):
+    if config['schema'] != 1 or config['reference_commit'] != PIN:
+        raise ValueError('unsupported inventory schema/reference')
+    modules = [r['module'] for r in rows]
+    if len(modules) != len(set(modules)) or set(modules) != set(config['formats']):
+        raise ValueError('every registered reader/alias must have exactly one scope record')
+    if len(rows) != reference['registry_entries'] or len({ALIASES.get(r['module'], r['module']) for r in rows}) != reference['unique_registered_codecs']:
+        raise ValueError('reference registry cardinality changed')
+    entries = config['entries']
+    ids = [e['id'] for e in entries]
+    if len(ids) != len(set(ids)):
+        raise ValueError('duplicate inventory identifier')
+    for e in entries:
+        if e['category'] not in CATEGORIES:
+            raise ValueError('unknown inventory category')
+        if not all(e.get(k) for k in ['id', 'title', 'detail', 'evidence']):
+            raise ValueError('each boundary needs a description and evidence')
+        if e['category'] in {'confirmed_compatibility_gap', 'optional_variant'} and e.get('priority') != 'file_triggered':
+            raise ValueError('optional capability is not an automatic detector blocker')
+        for p in e['evidence']:
+            if not (root / p).is_file():
+                raise ValueError(f'missing evidence: {p}')
+        if e['category'] == 'confirmed_compatibility_gap':
+            confirmed_cases(e, root)
+    for module, data in config['formats'].items():
+        if set(data['boundary_ids']) - set(ids):
+            raise ValueError(f'unknown boundary for {module}')
+        for p in data['validation']:
+            if p not in OUTPUTS and not list(root.glob(p)):
+                raise ValueError(f'missing validation path: {p}')
+    for e in config['closed'] + config['validation_batches']:
+        for p in e.get('evidence', e.get('existing_evidence', [])):
+            if not (root / p).is_file():
+                raise ValueError(f'missing closure/validation evidence: {p}')
+    # New acquired-file incidents must carry their own evidence; never manufacture
+    # a detector blocker from a broad optional-family count.
+    for incident in config['confirmed_detector_gaps']:
+        if not incident.get('reproducer') or not (root / incident['reproducer']).is_file():
+            raise ValueError('confirmed detector gap needs a retained reproducer/manifest')
+    return snapshot(config, root)
+
+
+def link(path):
+    target = path.removeprefix('docs/') if path.startswith('docs/') else '../' + path
+    return f'[{pathlib.Path(path).stem}]({target})'
+
+
+def render(config, reference, rows, stats):
+    counts = collections.Counter(e['category'] for e in config['entries'])
+    cases = sum(e['case_count'] for e in config['entries'] if e['category'] == 'confirmed_compatibility_gap')
+    summary = dict(confirmed_detector_issues=len(config['confirmed_detector_gaps']),
+                   confirmed_compatibility_areas=counts['confirmed_compatibility_gap'],
+                   confirmed_compatibility_fixture_cases=cases,
+                   optional_variant_families=counts['optional_variant'],
+                   real_file_validation_batches=len(config['validation_batches']))
+    formats = []
+    for row in rows:
+        native = config['formats'][row['module']]
+        formats.append(dict(row, **{k: native[k] for k in ['subformats_and_types', 'compression', 'stack', 'implementation', 'validation', 'boundary_ids']}, parity_verified=False))
+    catalog = dict(schema=2, reference=reference,
+        scope='All pinned default readers/aliases remain visible. Qualified reading scope is separate from universal reference equality, optional variants and intentional policies. Write/object-mutation APIs are outside this crate.',
+        native_inventory=dict(source=CONFIG, backlog='docs/READING_GAPS.md', summary=summary,
+                              evidence_snapshot=config['evidence_snapshot'], measured_scope=stats),
+        cross_cutting_targets=config['cross_cutting_targets'], formats=formats)
+    overview = [
+        '# FabIO reader coverage and current native scope', '',
+        f'Reference: FabIO 2026.6.0, commit `{PIN}`; {reference["registry_entries"]} registry entries / {reference["unique_registered_codecs"]} distinct codecs (ADSC aliases d*TREK).', '',
+        '**Current backlog and priorities: [READING_GAPS.md](READING_GAPS.md).**', '',
+        'This catalog keeps every pinned reader visible. A restricted scope is not automatically a detector-reading bug. Boundary IDs distinguish demonstrated compatibility cases, optional variants, source policies and reference limitations. `parity_verified=false` means universal reference equality has not been certified; it is not a task count.', '',
+        'Authored native scope and classifications have one source, [reading-inventory.json](reading-inventory.json). The [generated catalog](fabio-2026.6.0-inventory.json) preserves pinned reference descriptors/hashes. Dated proofs remain historical evidence.', '',
+        '```sh', 'python scripts/inventory_fabio.py /path/to/pinned/fabio',
+        'python scripts/inventory_fabio.py --check', '```', '',
+        '| Reader | Reference subformats/types | Compression | Stack | Qualified native scope | Boundary IDs |',
+        '|---|---|---|---|---|---|',
+    ]
+    for row in formats:
+        boundaries = ', '.join(f'[{id}](READING_GAPS.md#{id.lower()})' for id in row['boundary_ids'])
+        overview.append('| ' + ' | '.join([f'[{row["module"]}]({row["source"]})', row['subformats_and_types'], row['compression'], row['stack'], row['implementation'], boundaries]) + ' |')
+    overview += ['', 'Read-only CIF1.1/2.0, ASCII table/profile companions, series/navigation, TIFF/Pilatus/NeXus helpers and encoded CBF access have separate qualified contracts linked from the [backlog](READING_GAPS.md).', '',
+        'Captured/nonseekable input, conservative content discovery, optional HDF5/sparse input and explicit frozen series are implemented. No implicit neighboring-file lookup, unavailable-count padding or consumer orientation transform is added by this catalog.', '',
+        'Further implementation is file-triggered: preserve a reproducible acquired source and independent expected counts/metadata before promoting an optional variant to a detector-reading blocker. Real-file validation is the next priority. Dioptas/PhaseSmith migration remains separate.', '']
+    report = config['evidence_snapshot']['main_report']
+    gaps = ['# Current detector-reading gap inventory', '',
+        f'Reviewed {config["review_date"]}. This is the current backlog; dated audits and JSON proof reports retain the scope tested at their revision. Generated from [reading-inventory.json](reading-inventory.json).', '',
+        '## What is actually outstanding', '',
+        '| Measure | Total | Meaning |', '|---|---:|---|',
+        f'| Confirmed acquired-detector incidents in this inventory | {summary["confirmed_detector_issues"]} | No retained unresolved incident; not a universal support claim |',
+        f'| Unclassified outcomes in the acceptance snapshot | 0 / {stats["input_outcomes"]} | Complete reads, explicit views, partial sources and metadata-only events remain distinct |',
+        f'| Confirmed supplemental compatibility areas | {summary["confirmed_compatibility_areas"]} | HDF5 image dtype representations and nonnumeric/structured NPY arrays |',
+        f'| Named unsupported, FabIO-readable fixture cases | {cases} | Four HDF5 and two NPY cases; not six unread acquired detector files |',
+        f'| Optional capability families | {summary["optional_variant_families"]} | Grouped boundaries, not a count of variants or required implementation tickets |',
+        f'| Real-file validation batches | {summary["real_file_validation_batches"]} | Requirements and acquired-source qualification, not known decoder failures |', '',
+        f'The [acceptance snapshot]({report.removeprefix("docs/")}) ran {stats["reference_tests"]} unchanged reference tests with {stats["reference_test_skips"]} existing slow-test skip; compared header fields and source attributes have zero unresolved differences. The [native checks]({config["evidence_snapshot"]["native_checks"].removeprefix("docs/")}) qualify the reader revision. This inventory cleanup does not rerun or rewrite those historical corpus proofs.', '',
+        'The old `full_reading_parity` boolean is a strict reference-equality/instrumentation gate, not a backlog counter. It also requires no upstream skip, excludes independently qualified decoder defects, and retains exact metadata/presentation differences and broad harness annotations. Its false value does not mean that all those conditions need native decoding work.', '',
+        '## Classification and promotion rules', '',
+        '- A confirmed detector-reading gap needs an acquired-source reproducer, the required reading operation, observed failure and independent expected counts/metadata.',
+        '- A confirmed compatibility case is narrower: the retained supplemental fixture completes in unchanged FabIO and the native reader rejects it. Acquired-detector relevance must still be established.',
+        '- Optional variants remain file-triggered. A format name or an old `partial` label alone does not make them release blockers.',
+        '- Intentional policies, failed/undefined reference branches and APIs outside native input are not implementation tickets.',
+        '- Validation needs are tracked separately from code defects. Preserve original counts/dtypes/axes, raw metadata, source manifests and evidence provenance.', '',
+    ]
+    for category, title in CATEGORIES.items():
+        gaps += ['## ' + title, '']
+        for e in config['entries']:
+            if e['category'] != category:
+                continue
+            gaps += [f'<a id="{e["id"].lower()}"></a>', f'### {e["id"]}: {e["title"]}', '', e['detail'], '',
+                     'Evidence: ' + ', '.join(link(p) for p in e['evidence']) + '.', '']
+    gaps += ['## Closed entries removed from the active backlog', '',
+             '| Previously listed as pending | Qualified resolution | Evidence |', '|---|---|---|']
+    for e in config['closed']:
+        gaps.append('| ' + ' | '.join([e['title'], e['resolution'], ', '.join(link(p) for p in e['evidence'])]) + ' |')
+    gaps += ['', 'These closures cover their documented contracts. They do not promote all possible datatype/layout combinations to universal support.', '',
+             '## Next: acquired detector files', '',
+             'Store large originals outside Git. For each acquisition, record detector/software origin, size/hash, source manifests, required reader options, dtype/shape/frame counts, complete count hashes, reserved values and consumer-required metadata with units. Distinguish acquired originals from converted or writer-generated files; use independent source evidence when FabIO fails.', '',
+             '| Batch | Validation target | Existing evidence |', '|---|---|---|']
+    for e in config['validation_batches']:
+        gaps.append('| ' + ' | '.join([e['id'] + ': ' + e['title'], e['check'], ', '.join(link(p) for p in e['existing_evidence'])]) + ' |')
+    gaps += ['', 'Promote a reproducible failure found during these batches into a confirmed detector incident, then close it against the same source. Existing fixture/reference qualifications remain visible; there is no automatic expansion through every optional family.', '']
+    return {CATALOG: json.dumps(catalog, indent=2) + '\n', 'docs/FORMAT_COVERAGE.md': '\n'.join(overview), 'docs/READING_GAPS.md': '\n'.join(gaps)}
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('fabio_source', nargs='?', type=pathlib.Path)
+    parser.add_argument('--check', action='store_true', help='verify generated files without changing them')
+    args = parser.parse_args(argv)
+    config = load(ROOT / CONFIG)
+    reference, rows = reference_catalog(args.fabio_source, load(ROOT / CATALOG))
+    stats = validate(config, reference, rows)
+    rendered = render(config, reference, rows, stats)
+    stale = []
+    for name, text in rendered.items():
+        path = ROOT / name
+        if args.check:
+            if not path.is_file() or path.read_text() != text:
+                stale.append(name)
+        else:
+            path.write_text(text)
+    if stale:
+        parser.error('stale generated inventory: ' + ', '.join(stale))
+    print(json.dumps({'checked' if args.check else 'generated': list(rendered),
+                      'registry_entries': len(rows), 'classified_boundaries': len(config['entries']),
+                      'evidence': config['evidence_snapshot']['main_report']}))
+    return 0
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

@@ -14,9 +14,9 @@ when a read fails.
 
 Every format dependency is optional; default features are empty.
 
-| Feature | Implemented scope | Important remaining gaps |
+| Feature | Implemented scope | Boundaries / explicit policies |
 |---|---|---|
-| `hdf5` | Typed 2D/3D images/stacks with standard scalar, binary16, Boolean and exact packed complex types, both byte orders, Eiger/LImA/Lambda discovery, explicit external-file/raw-window snapshots and bound finite/nested VDS, frame-axis unlimited patterns and explicitly bounded printf mappings; original u32 compatibility reader; opt-in indexed raw u16/u32 chunks and bounded parallel consumers | Cyclic/cross-axis unlimited VDS and unqualified layouts, arbitrary enums/compounds/custom types, other image ranks and live refresh; raw fast path retains its narrower contract |
+| `hdf5` | Typed 2D/3D images/stacks with standard scalar, binary16, Boolean and exact packed complex types, both byte orders, Eiger/LImA/Lambda discovery, explicit external-file/raw-window snapshots and bound finite/nested VDS, frame-axis unlimited patterns and explicitly bounded printf mappings; original u32 compatibility reader; opt-in indexed raw u16/u32 chunks and bounded parallel consumers | Additional VDS layouts/custom types are file-triggered; cyclic graphs are rejected, other ranks and live refresh are outside snapshots; raw fast path retains its narrower contract |
 | `tiff` | Scalar/packed/WhiteIsZero/palette/CFA/color/planar TIFF and BigTIFF; primary pages and explicit SubIFD selection, strips/tiles, lossless codecs, CCITT RLE/Group3 1D/2D/Group4, legacy LZW, native YCbCr grids/units, modern JPEG and bounded OJPEG interchange/table fragments, global streams, planar scans and explicit reset tiles; explicit legacy metadata policies; ThunderScan complete/available-row reads; Pilatus/MAR headers | OJPEG/JPEG component reads need `jpeg`; ambiguous legacy OJPEG profiles and other sampled layouts remain gaps; F16 widening and reference views qualified |
 | `jpeg`, `jpeg2000` | Mature libjpeg-turbo/OpenJPEG backends; lossless high-precision JPEG; original channels, precision, lossy provenance and headers | Unsupported precision/component layouts fail explicitly; see image contracts |
 | `cbf` | Eight integer types, explicit byte-offset dialects, original encoded payload/integrity access, raw CIF headers and separate source-preserving CIF 1.1/2.0 syntax trees | Dictionary semantics, other decoded codecs and multiple binary sections |
@@ -35,11 +35,11 @@ Every format dependency is optional; default features are empty.
 | `xsd` | Explicit 2D XSData XML arrays, base64/base32/base16, ten scalar/complex types and optional MD5 | Other ranks/types/encodings and namespaces |
 | `wrappers` | Bounded path/nonseekable/buffer input, gzip/bzip2 staging, conservative content discovery and EDF/TIFF/d*TREK header access; source checks on every read | File series/navigation use explicit frozen manifests; variants outside the corpus; HDF5/sparse input requires its optional feature |
 
-**Full FabIO reading parity is not established.** The complete version-pinned
-[coverage inventory](docs/FORMAT_COVERAGE.md) tracks all 36 FabIO 2026.6.0
-registry entries (35 distinct codecs), subformats, compression and stack targets,
-independent fixtures and remaining work. Generic TIFF/HDF5 success does not
-establish detector-specific metadata or master-file coverage.
+The [current gap inventory](docs/READING_GAPS.md) separates confirmed
+compatibility cases, optional variants, intentional policies and acquired-file
+validation needs. The [reader catalog](docs/FORMAT_COVERAGE.md) retains all 36
+pinned registry entries (35 distinct codecs). Its boundary labels are not a
+count of release blockers. Full universal FabIO equality is not claimed.
 
 The [current pinned corpus run](docs/fabio-parity/README.md) qualifies all 626
 observed input events, including metadata-only and 11 partial-source cases, with
@@ -47,7 +47,10 @@ no native rejection of a successful reference read. Expected failures and missin
 counts remain explicit. The [two Pillow display differences](docs/pillow-planar16/README.md)
 are independently qualified decoder defects. Related compressed-planar display
 and native partial-edge tile gaps are fixed; no unclassified mismatch remains
-in that pinned corpus.
+in that pinned corpus. Six supplemental enum/compound/structured/string fixture
+cases remain documented compatibility gaps; acquired-detector relevance must
+be established separately. The next priority is the [real-file validation
+matrix](docs/READING_GAPS.md#next-acquired-detector-files).
 
 This development crate is not published. Use a local path dependency:
 

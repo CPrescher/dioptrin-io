@@ -1,7 +1,16 @@
 # Using the upstream FabIO suite as the acceptance corpus
 
-Full reading parity remains the target for every entry in
-`FORMAT_COVERAGE.md`. Native counts from a few synthetic files, or generic TIFF
+For current release priorities use [READING_GAPS.md](READING_GAPS.md).
+`FORMAT_COVERAGE.md` is the complete reader catalog; dated audits below preserve
+their tested scope. The report's `gaps` annotations and `full_reading_parity`
+boolean describe strict reference equality/instrumentation, not a deduplicated
+native implementation backlog. They include qualified metadata/presentation
+and reference defects, and the gate also requires no upstream test skip.
+Read-only APIs added in later standalone proofs must not be relisted as missing
+just because the original suite harness does not instrument them.
+
+The pinned registry remains the complete comparison target. Release priorities
+and optional boundaries are classified in `READING_GAPS.md`. Native counts from a few synthetic files, or generic TIFF
 and HDF5 success, do not establish that target.
 
 `scripts/fabio_suite_parity.py` loads **all 35 codec test modules** directly from

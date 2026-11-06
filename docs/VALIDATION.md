@@ -1,4 +1,13 @@
-# Validation, 2026-11-05
+# Validation evidence
+
+Current qualified reader evidence is linked from the [parity index](fabio-parity/README.md).
+Current implementation priorities and real-file validation needs are in
+[READING_GAPS.md](READING_GAPS.md). The dated notes below are historical receipts;
+their old rejection counts and then-pending variants are not the active backlog.
+
+## Historical validation notes
+
+### Initial validation, 2026-11-05
 
 ## Four TIFF codec/layout sources, 2026-11-06
 

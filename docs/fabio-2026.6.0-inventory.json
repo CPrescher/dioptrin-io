@@ -1,4 +1,5 @@
 {
+  "schema": 2,
   "reference": {
     "package": "FabIO",
     "version": "2026.6.0",
@@ -9,21 +10,77 @@
     "registry_source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/fabioformats.py",
     "registry_sha256": "f983ecb1ffbebe3de851f5ed7d51b2e1eaa439d4a1c991c9afdb52c917619889"
   },
-  "scope": "All default readers, aliases, explicit raw input, format discovery, source types/headers, subformats, compression and stack semantics. No format-level parity claim without independent fixtures. Write/conversion APIs are out of scope.",
+  "scope": "All pinned default readers/aliases remain visible. Qualified reading scope is separate from universal reference equality, optional variants and intentional policies. Write/object-mutation APIs are outside this crate.",
+  "native_inventory": {
+    "source": "docs/reading-inventory.json",
+    "backlog": "docs/READING_GAPS.md",
+    "summary": {
+      "confirmed_detector_issues": 0,
+      "confirmed_compatibility_areas": 2,
+      "confirmed_compatibility_fixture_cases": 6,
+      "optional_variant_families": 12,
+      "real_file_validation_batches": 6
+    },
+    "evidence_snapshot": {
+      "main_report": "docs/fabio-parity/2026-11-06-vds-advanced-ojpeg.json",
+      "native_checks": "docs/fabio-parity/2026-11-06-vds-advanced-ojpeg-native-checks.json",
+      "native_implementation_commit": "d8795e1d74877f0406719d973c6855666f68cf42"
+    },
+    "measured_scope": {
+      "input_outcomes": 626,
+      "input_status": {
+        "qualified": 626
+      },
+      "reading_outcomes": {
+        "counts_match": 555,
+        "reference_view_match": 27,
+        "reference_no_pixels": 26,
+        "partial_source_read": 11,
+        "reconstruction_match": 1,
+        "component_view_match": 4,
+        "reference_decoder_defect": 2
+      },
+      "reference_tests": 237,
+      "reference_test_skips": 1,
+      "unresolved_compared_header_fields": 0,
+      "unresolved_compared_attributes": 0,
+      "strict_full_reading_parity": false
+    }
+  },
   "cross_cutting_targets": {
     "outer_file_compression": {
-      "reference": [
-        "gzip (.gz)",
-        "bzip2 (.bz2)"
-      ],
-      "implementation": "optional wrappers feature: magic-detected gzip/bzip2, bounded temporary staging, original-source checks; native/EDF/CBF/TIFF, typed containers, fixed/legacy/MAR345 detectors and JPEG/JPEG2000 when compiled; HDF5 and direct file-like APIs pending",
-      "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/fabioutils.py"
+      "implementation": "Optional wrapped::Input/Reader: bounded gzip/bzip2 staging, captured/nonseekable input and HDF5/sparse when compiled; explicit source/origin contracts.",
+      "evidence": [
+        "docs/INPUT_APIS.md"
+      ]
     },
-    "file_series": "pending explicit series API; numbered neighboring files must not be silently substituted",
-    "autodetection": "pending; current backends are explicitly selected by caller",
-    "orientation": "return stored rows/columns and metadata; consumer transformations are explicit",
-    "source_mutation": "immutable snapshots check normal filesystem changes; no adversarial metadata-preserving writes or live refresh",
-    "header_coverage": "raw EDF/CBF/native headers, parsed native fields and typed TIFF tags; typed HDF5 shape/dtype/endian/filter/fill/source metadata and selected discovery fields; arbitrary attributes and complete semantic detector header maps pending"
+    "file_series": {
+      "implementation": "Explicit frozen manifests and frame navigation implemented; no implicit neighboring-file substitution.",
+      "evidence": [
+        "docs/SERIES_API.md",
+        "docs/NAVIGATION_API.md"
+      ]
+    },
+    "autodetection": {
+      "implementation": "Conservative content discovery implemented; ambiguous/raw inputs require explicit configuration.",
+      "evidence": [
+        "docs/INPUT_APIS.md"
+      ]
+    },
+    "orientation": {
+      "implementation": "Stored rows/columns retained; metadata and consumer transformations remain explicit.",
+      "classification": "intentional_difference"
+    },
+    "source_mutation": {
+      "implementation": "Immutable snapshots reject ordinary source changes; reopening is explicit; live refresh is separate scope.",
+      "classification": "intentional_difference"
+    },
+    "header_coverage": {
+      "implementation": "Observed .header/source attributes and header-only calls accounted for; qualified reference differences remain. Additional vendor-field interpretation requires real-file consumer requirements.",
+      "evidence": [
+        "docs/metadata-parity/HEADER_ATTRIBUTES.md"
+      ]
+    }
   },
   "formats": [
     {
@@ -38,7 +95,7 @@
       "subformats_and_types": "EDF 0/1/2/3; concatenated frames; general headers; inline/external binary; 2D/volume; integer/float aliases including optional float128",
       "compression": "none; internal gzip/zlib/bzip2; optional byte-offset; outer gzip/bzip2",
       "stack": "concatenated frames",
-      "implementation": "partial: 2D ten scalar types, both byte orders, general inheritance/raw repeats and exact closing boundaries; bounded inline/outer gzip/zlib/bzip2 with explicit padding; external snapshots/relocation/counterparts require options; default Exact external windows stay strict, explicit UpToDeclared compatibility records declared/effective bytes and still requires complete samples/codecs; explicit parsed-boundary Size windows and exact-label stored-raw policies retain original declarations; dense reads reject truncated counts, separate typed-prefix/header/member-integrity recovery available; volume/float128/offset pending",
+      "implementation": "Qualified scope: 2D ten scalar types, both byte orders, general inheritance/raw repeats and exact closing boundaries; bounded inline/outer gzip/zlib/bzip2 with explicit padding; external snapshots/relocation/counterparts require options; default Exact external windows stay strict, explicit UpToDeclared compatibility records declared/effective bytes and still requires complete samples/codecs; explicit parsed-boundary Size windows and exact-label stored-raw policies retain original declarations; dense reads reject truncated counts, separate typed-prefix/header/member-integrity recovery available; rank0..32 arrays and explicit planes preserve record identity; float128/obsolete offset remain unsupported",
       "validation": [
         "tests/data/edf/*.edf",
         "tests/binary.rs",
@@ -49,7 +106,20 @@
         "docs/rejection-audits/2026-11-06-edf.json",
         "tests/edf_recovery.rs",
         "docs/source-recovery/README.md",
-        "docs/source-recovery/read-policies.json"
+        "docs/source-recovery/read-policies.json",
+        "docs/EDF_ARRAYS.md",
+        "docs/EDF_RECOVERY.md",
+        "docs/VDS_READER.md",
+        "docs/SERIES_API.md",
+        "docs/INPUT_APIS.md",
+        "docs/READING_GAPS.md",
+        "tests/edf_arrays.rs",
+        "docs/edf-arrays/2026-11-06-vds-advanced-ojpeg-regression.json"
+      ],
+      "boundary_ids": [
+        "V-EDF",
+        "I-COUNTS",
+        "I-SNAPSHOTS"
       ],
       "parity_verified": false
     },
@@ -64,12 +134,22 @@
       "subformats_and_types": "d*TREK / ADSC; Rigaku 1.1; endian scalar data and text header",
       "compression": "uncompressed",
       "stack": "single image; external file series",
-      "implementation": "partial: seven scalar types, both byte orders, nested-brace headers, legacy ADSC TYPE alias, raw padded headers; rank1..32 source arrays mapped to stored C-order planes; permissive missing-type defaults pending",
+      "implementation": "Qualified scope: seven scalar types, both byte orders, nested-brace headers, legacy ADSC TYPE alias, raw padded headers; rank1..32 source arrays mapped to stored C-order planes; missing/unknown scalar declarations rejected; ADSC unsigned_short alias explicit",
       "validation": [
         "tests/data/native/provenance.json",
         "tests/native.rs",
         "tests/wrapped.rs",
-        "docs/FABIO_PARITY.md"
+        "docs/FABIO_PARITY.md",
+        "docs/NPY_LAYOUTS.md",
+        "docs/READER_DESIGN.md",
+        "docs/VDS_READER.md",
+        "docs/SERIES_API.md",
+        "docs/INPUT_APIS.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "I-OBJECTS",
+        "I-SNAPSHOTS"
       ],
       "parity_verified": false
     },
@@ -85,7 +165,7 @@
       "subformats_and_types": "classic TIFF/BigTIFF; endian scalar/color; strip/tile/IFD; photometric/predictor variants",
       "compression": "reference TiffIO/Pillow capabilities vary; none/PackBits/LZW/Deflate/JPEG require distinct fixtures",
       "stack": "primary IFD pages",
-      "implementation": "partial: scalar/packed/WhiteIsZero/color/planar/IFD/strip/tile/BigTIFF counts, Group3 1D/Group4/PackBits/LZW/Deflate/JPEG; source F16 explicitly widened to F32; explicit legacy LSB/late LZW via minimally patched vendored TIFF; original YCbCr grids/units/padding for none/LZW and JPEG, bounded single-chunk OJPEG with jpeg feature; explicit bounded uncompressed-window and mixed strip/tile metadata policies retain original IFDs; original ThunderScan codec with complete-only dense reads and separate available-row spans; optional Pillow13/TiffIO views separate; palette/CFA/opaque metadata retained; SubIFD/Group3 2D/RLE/fragmented OJPEG/other sampled layouts remain; uncompressed Pillow planar16 reference defects independently qualified; compressed planar16 views and native plane-relative edge-tile padding verified",
+      "implementation": "Qualified scope: scalar/packed/WhiteIsZero/color/planar/IFD/strip/tile/BigTIFF counts, CCITT RLE/Group3 1D/2D/Group4/PackBits/LZW/Deflate/JPEG; source F16 explicitly widened to F32; explicit legacy LSB/late LZW via minimally patched vendored TIFF; original YCbCr grids/units/padding for none/LZW and JPEG, bounded OJPEG interchange/table fragments with jpeg feature; explicit bounded uncompressed-window and mixed strip/tile metadata policies retain original IFDs; original ThunderScan codec with complete-only dense reads and separate available-row spans; optional Pillow13/TiffIO views separate; palette/CFA/opaque metadata retained; bounded declared SubIFD graph/catalog and explicit directory reads; fragmented OJPEG strip/vertical-tile and explicit-header stacked tile profiles qualified separately; global/header-fragment streams, sequential planar scans and explicit independent-reset tiles qualified separately; ambiguous legacy OJPEG and other sampled layouts remain; uncompressed Pillow planar16 reference defects independently qualified; compressed planar16 views and native plane-relative edge-tile padding verified",
       "validation": [
         "tests/data/tiff/*.tif",
         "tests/tiff.rs",
@@ -117,7 +197,26 @@
         "docs/pillow-planar16/2026-11-06-proof.json",
         "tests/tiff_recovery.rs",
         "tests/data/tiff-recovery/provenance.json",
-        "docs/source-recovery/README.md"
+        "docs/source-recovery/README.md",
+        "docs/TIFF_LAYOUTS.md",
+        "docs/READER_DESIGN.md",
+        "docs/SPARSE_READERS.md",
+        "docs/EDF_RECOVERY.md",
+        "docs/VDS_ADVANCED_OJPEG_PARITY.md",
+        "docs/MAR345_V2.md",
+        "docs/CONTAINERS_DESIGN.md",
+        "docs/metadata-parity/HEADER_ATTRIBUTES.md",
+        "docs/READING_GAPS.md",
+        "tests/tiff_layouts.rs",
+        "tests/tiff_ojpeg_advanced.rs",
+        "docs/ojpeg/2026-11-06-vds-advanced-ojpeg.json"
+      ],
+      "boundary_ids": [
+        "V-OJPEG",
+        "V-IMAGES",
+        "I-VIEWS",
+        "I-COUNTS",
+        "R-DEFECTS"
       ],
       "parity_verified": false
     },
@@ -132,12 +231,23 @@
       "subformats_and_types": "MAR CCD/Mosaic TIFF pixels plus binary acquisition header",
       "compression": "TIFF codecs",
       "stack": "inherits TIFF pages",
-      "implementation": "partial: native TIFF counts plus 125 typed acquisition fields/raw reserved bytes/endian header; both actual files match all numeric/byte fields; generic TIFF gaps remain",
+      "implementation": "Qualified scope: native TIFF counts plus 125 typed acquisition fields/raw reserved bytes/endian header; both actual files match all numeric/byte fields; generic TIFF gaps remain",
       "validation": [
         "tests/image_codecs.rs",
         "tests/data/images/provenance.json",
         "docs/image-readers-fabio-2026.6.0.json",
-        "docs/IMAGE_READERS.md"
+        "docs/IMAGE_READERS.md",
+        "docs/OJPEG_READER.md",
+        "docs/TIFF_LAYOUTS.md",
+        "docs/READER_DESIGN.md",
+        "docs/tiff-ycbcr/README.md",
+        "docs/SPARSE_READERS.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "V-OJPEG",
+        "V-IMAGES",
+        "I-VIEWS"
       ],
       "parity_verified": false
     },
@@ -157,15 +267,31 @@
       "source": "https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/mar345image.py",
       "source_sha256": "307c02f85e79fa07a2706c64b961854aa85e67f32921cf68de2edabfdc15ebd7",
       "subformats_and_types": "MAR345 imaging plate / MAR555; supported detector dimensions; overflow table",
-      "compression": "PCK packed V1; V2 and raw variants require separate contracts",
+      "compression": "PCK packed V1/V2; raw variants require separate contracts",
       "stack": "single image; file series",
-      "implementation": "partial: bounded MIT PCK V1 adaptation, MAR345/MAR555 dimensions, both byte orders, original headers/high-count tables and U32 counts; both actual sources and endian rewrites exact; V2/spiral/old IMAGE and degenerate predictor shapes explicitly unsupported; pinned unsigned/mask/whitespace defects independently qualified",
+      "implementation": "Qualified scope: bounded MIT-derived PCK V1/V2 input, MAR345/MAR555 dimensions, both byte orders, original headers/high-count tables and U32 counts; both actual sources and endian rewrites exact; original seven-bit V2 proven against untouched original writer/decoder; incompatible eight-bit interpretation explicit; spiral/old IMAGE and degenerate predictor shapes explicitly unsupported; pinned unsigned/mask/whitespace defects independently qualified",
       "validation": [
         "tests/mar345.rs",
         "tests/data/mar345/provenance.json",
         "tests/data/mar345/upstream-provenance.json",
         "docs/MAR345_READER.md",
-        "docs/MAR345_XCALIBUR_AUDIT.md"
+        "docs/MAR345_XCALIBUR_AUDIT.md",
+        "docs/MAR345_V2.md",
+        "docs/pillow-planar16/README.md",
+        "docs/VDS_ADVANCED_OJPEG_PARITY.md",
+        "docs/CONTAINERS_DESIGN.md",
+        "docs/metadata-parity/HEADER_ATTRIBUTES.md",
+        "docs/VDS_READER.md",
+        "docs/SERIES_API.md",
+        "docs/INPUT_APIS.md",
+        "docs/READING_GAPS.md",
+        "tests/mar345_v2.rs",
+        "docs/mar345/2026-11-06-vds-advanced-ojpeg-regression.json"
+      ],
+      "boundary_ids": [
+        "V-MAR",
+        "R-DEFECTS",
+        "I-SNAPSHOTS"
       ],
       "parity_verified": false
     },
@@ -185,7 +311,14 @@
         "tests/data/native/provenance.json",
         "tests/native.rs",
         "tests/wrapped.rs",
-        "docs/FABIO_PARITY.md"
+        "docs/FABIO_PARITY.md",
+        "docs/READER_DESIGN.md",
+        "docs/tiff-ycbcr/README.md",
+        "docs/SPARSE_READERS.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "I-VIEWS"
       ],
       "parity_verified": false
     },
@@ -198,12 +331,22 @@
       "subformats_and_types": "Bruker format 86; 8/16/32-bit storage, overflow records, LINEAR header handling",
       "compression": "overflow tables / linear encoding",
       "stack": "single image; NFRAMES metadata can describe series",
-      "implementation": "partial: format86 1/2/4-byte counts and ASCII overflow table, raw/parsed headers; LINEAR float encoding retained in raw words, with explicit inverse-encoding view; same actual source counts and selected reference view verified",
+      "implementation": "Qualified scope: format86 1/2/4-byte counts and ASCII overflow table, raw/parsed headers; LINEAR float encoding retained in raw words, with explicit inverse-encoding view; same actual source counts and selected reference view verified",
       "validation": [
         "tests/legacy.rs",
         "tests/data/legacy/provenance.json",
         "docs/legacy-readers/2026-11-05-reference.json",
-        "docs/LEGACY_READERS.md"
+        "docs/LEGACY_READERS.md",
+        "docs/RECORD_READERS.md",
+        "docs/FIXED_DESIGN.md",
+        "docs/READER_DESIGN.md",
+        "docs/tiff-ycbcr/README.md",
+        "docs/SPARSE_READERS.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "V-RECORDS",
+        "I-VIEWS"
       ],
       "parity_verified": false
     },
@@ -218,12 +361,18 @@
       "subformats_and_types": "Bruker format 100; base counts, underflow/16/32-bit overflow arrays",
       "compression": "underflow/overflow tables",
       "stack": "single image",
-      "implementation": "partial: format100 underflow/16/32-bit overflow tables and baseline expansion with strict record/count bounds; raw headers/types retained; same actual file counts verified",
+      "implementation": "Qualified scope: format100 underflow/16/32-bit overflow tables and baseline expansion with strict record/count bounds; raw headers/types retained; same actual file counts verified",
       "validation": [
         "tests/legacy.rs",
         "tests/data/legacy/provenance.json",
         "docs/legacy-readers/2026-11-05-reference.json",
-        "docs/LEGACY_READERS.md"
+        "docs/LEGACY_READERS.md",
+        "docs/RECORD_READERS.md",
+        "docs/FIXED_DESIGN.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "V-RECORDS"
       ],
       "parity_verified": false
     },
@@ -243,7 +392,21 @@
       "implementation": "implemented bounded P1/P2/P5 with original rows, MAXVAL/type and big-endian samples retained; pinned P1/P2 row-loss bug remains a reference difference; unsupported reference P3/P4/P6/P7 not invented",
       "validation": [
         "tests/native.rs",
-        "tests/data/native/provenance.json"
+        "tests/data/native/provenance.json",
+        "docs/HDF5_UNLIMITED_VDS.md",
+        "docs/HDF5_PRINTF_VDS.md",
+        "docs/COLUMNFILE.md",
+        "docs/FORMAT_COVERAGE.md",
+        "docs/pillow-planar16/README.md",
+        "docs/VDS_ADVANCED_OJPEG_PARITY.md",
+        "docs/MAR345_V2.md",
+        "docs/CONTAINERS_DESIGN.md",
+        "docs/metadata-parity/HEADER_ATTRIBUTES.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "R-PRODUCER",
+        "R-DEFECTS"
       ],
       "parity_verified": false
     },
@@ -256,12 +419,22 @@
       "subformats_and_types": "GE Angio; standard, EDF-prefixed and blank/ADEPT headers; fixed default dimensions",
       "compression": "uncompressed",
       "stack": "multiple fixed-size frames",
-      "implementation": "partial: intact/zero-8192/EDF-in-GE headers, u8/u16/u32 and exact frame records; all actual suite GE files/frames verified; malformed record defaults and neighboring series not guessed",
+      "implementation": "Qualified scope: intact/zero-8192/EDF-in-GE headers, u8/u16/u32 and exact frame records; all actual suite GE files/frames verified; malformed record defaults and neighboring series not guessed",
       "validation": [
         "tests/fixed.rs",
         "tests/data/fixed/provenance.json",
         "tests/data/fixed/upstream-provenance.json",
-        "docs/FIXED_DESIGN.md"
+        "docs/FIXED_DESIGN.md",
+        "docs/LEGACY_READERS.md",
+        "docs/RECORD_READERS.md",
+        "docs/VDS_READER.md",
+        "docs/SERIES_API.md",
+        "docs/INPUT_APIS.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "V-RECORDS",
+        "I-SNAPSHOTS"
       ],
       "parity_verified": false
     },
@@ -276,7 +449,7 @@
       "subformats_and_types": "Oxford Sapphire/KM4CCD; uncompressed/TY1/TY5; reference TY5 predictor/dtype defects independently qualified",
       "compression": "none; TY1 exception arrays; TY5 row-indexed inline differences",
       "stack": "single image",
-      "implementation": "partial: Oxford raw/TY1 and bounded BSD3 dxtbx TY5 adaptation, original row offsets/header/trailer and signed counts; actual TY5 and independent fixtures match compiled native authority; negative TY1 wrap and nonsquare TY5 reference bugs not reproduced; unsupported supplementary layouts remain explicit",
+      "implementation": "Qualified scope: Oxford raw/TY1 and bounded BSD3 dxtbx TY5 adaptation, original row offsets/header/trailer and signed counts; actual TY5 and independent fixtures match compiled native authority; negative TY1 wrap and nonsquare TY5 reference bugs not reproduced; unsupported supplementary layouts remain explicit",
       "validation": [
         "tests/legacy.rs",
         "tests/data/legacy/provenance.json",
@@ -284,7 +457,19 @@
         "docs/LEGACY_READERS.md",
         "tests/oxford_ty5.rs",
         "tests/data/ty5/provenance.json",
-        "docs/rejection-audits/2026-11-05-lambda-ty5.json"
+        "docs/rejection-audits/2026-11-05-lambda-ty5.json",
+        "docs/RECORD_READERS.md",
+        "docs/FIXED_DESIGN.md",
+        "docs/pillow-planar16/README.md",
+        "docs/VDS_ADVANCED_OJPEG_PARITY.md",
+        "docs/MAR345_V2.md",
+        "docs/CONTAINERS_DESIGN.md",
+        "docs/metadata-parity/HEADER_ATTRIBUTES.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "V-RECORDS",
+        "R-DEFECTS"
       ],
       "parity_verified": false
     },
@@ -299,12 +484,16 @@
       "subformats_and_types": "DigitalMicrograph DM3 tagged binary structures; nested tags / type codes",
       "compression": "uncompressed tagged data",
       "stack": "one selected image exposed",
-      "implementation": "partial: bounded nested tags, seven scalar types/both byte orders, explicit image selection and stacks; thumbnail/main default documented; unsupported type codes/DM4 pending",
+      "implementation": "Qualified scope: bounded nested tags, seven scalar types/both byte orders, explicit image selection and stacks; thumbnail/main default documented; additional packed/color/complex types and DM4 are optional extensions, not established pinned-reader failures",
       "validation": [
         "tests/containers.rs",
         "tests/data/containers/provenance.json",
         "tests/data/containers/upstream-provenance.json",
-        "docs/CONTAINERS_DESIGN.md"
+        "docs/CONTAINERS_DESIGN.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "V-CONTAINERS"
       ],
       "parity_verified": false
     },
@@ -319,12 +508,19 @@
       "subformats_and_types": "Hamamatsu HiPiC IM header, comments and integer pixels",
       "compression": "uncompressed",
       "stack": "single image",
-      "implementation": "partial: little-endian u16 IM images, raw binary header/comments, parsed UTF8 comments with repeated keys retained in raw bytes; other header/type variants pending",
+      "implementation": "Qualified scope: little-endian u16 IM images, raw binary header/comments, parsed UTF8 comments with repeated keys retained in raw bytes; additional header/type variants need an acquired example before prioritization",
       "validation": [
         "tests/data/native/provenance.json",
         "tests/native.rs",
         "tests/wrapped.rs",
-        "docs/FABIO_PARITY.md"
+        "docs/FABIO_PARITY.md",
+        "docs/LEGACY_READERS.md",
+        "docs/RECORD_READERS.md",
+        "docs/FIXED_DESIGN.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "V-RECORDS"
       ],
       "parity_verified": false
     },
@@ -340,12 +536,23 @@
       "subformats_and_types": "Pilatus TIFF + image-description detector header",
       "compression": "TIFF codecs",
       "stack": "inherits TIFF pages",
-      "implementation": "partial: native TIFF counts plus ImageDescription semantic assignments/duplicates/raw unparsed lines; both actual detector headers match; generic TIFF gaps remain",
+      "implementation": "Qualified scope: native TIFF counts plus ImageDescription semantic assignments/duplicates/raw unparsed lines; both actual detector headers match; generic TIFF gaps remain",
       "validation": [
         "tests/image_codecs.rs",
         "tests/data/images/provenance.json",
         "docs/image-readers-fabio-2026.6.0.json",
-        "docs/IMAGE_READERS.md"
+        "docs/IMAGE_READERS.md",
+        "docs/OJPEG_READER.md",
+        "docs/TIFF_LAYOUTS.md",
+        "docs/READER_DESIGN.md",
+        "docs/tiff-ycbcr/README.md",
+        "docs/SPARSE_READERS.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "V-OJPEG",
+        "V-IMAGES",
+        "I-VIEWS"
       ],
       "parity_verified": false
     },
@@ -365,7 +572,13 @@
         "tests/data/native/provenance.json",
         "tests/native.rs",
         "tests/wrapped.rs",
-        "docs/FABIO_PARITY.md"
+        "docs/FABIO_PARITY.md",
+        "docs/source-recovery/README.md",
+        "docs/EDF_RECOVERY.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "I-COUNTS"
       ],
       "parity_verified": false
     },
@@ -380,12 +593,22 @@
       "subformats_and_types": "Nonius KappaCCD; header byte type and multiple readouts",
       "compression": "uncompressed multiple readouts combined by reference",
       "stack": "single resulting image",
-      "implementation": "partial: original separate u16 readouts and source prefix/type metadata; explicit checked SumReadouts i32 view for reference comparison; exact actual readouts/sum; unknown record prefixes rejected",
+      "implementation": "Qualified scope: original separate u16 readouts and source prefix/type metadata; explicit checked SumReadouts i32 view for reference comparison; exact actual readouts/sum; unknown record prefixes rejected",
       "validation": [
         "tests/records.rs",
         "tests/data/records/provenance.json",
         "docs/legacy-readers/2026-11-05-record-reference.json",
-        "docs/RECORD_READERS.md"
+        "docs/RECORD_READERS.md",
+        "docs/LEGACY_READERS.md",
+        "docs/FIXED_DESIGN.md",
+        "docs/READER_DESIGN.md",
+        "docs/tiff-ycbcr/README.md",
+        "docs/SPARSE_READERS.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "V-RECORDS",
+        "I-VIEWS"
       ],
       "parity_verified": false
     },
@@ -400,10 +623,20 @@
       "subformats_and_types": "CBF/imgCIF and miniCBF/Pilatus; signed/unsigned integers 8/16/32/64; raw CIF/MIME headers",
       "compression": "x-CBF_BYTE_OFFSET only in pinned FabIO; distinguish terminal32 and extended64 escapes",
       "stack": "single 2D image in pinned reference",
-      "implementation": "partial: all eight integer types; explicit Legacy32/Extended64 dialects; MD5; raw CIF headers; outer wrappers via wrapped::Reader. Semantic CIF/Pilatus parsing and multiple sections pending",
+      "implementation": "Qualified scope: all eight integer types; explicit Legacy32/Extended64 dialects; MD5; raw CIF headers; outer wrappers via wrapped::Reader. CIF 1.1/2.0 syntax, Pilatus documents and original encoded payloads separately qualified; dictionary semantics, other decoded conversions and multiple binary sections outside the image contract",
       "validation": [
         "tests/data/cbf/*.cbf",
-        "tests/binary.rs"
+        "tests/binary.rs",
+        "docs/CBF_ENCODED.md",
+        "docs/CIF2_SYNTAX.md",
+        "docs/LOWLEVEL_HELPERS.md",
+        "docs/source-recovery/README.md",
+        "docs/EDF_RECOVERY.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "V-CBF",
+        "I-COUNTS"
       ],
       "parity_verified": false
     },
@@ -419,11 +652,18 @@
       "subformats_and_types": "XSDataImage XML; base64 binary array; dimension/type descriptors",
       "compression": "base64; storage interpretation in XML",
       "stack": "single image",
-      "implementation": "partial: one explicit 2D XSDataImage/outputMatrix XML record, ten scalar and complex types, base64/base32/base16 and optional MD5; raw metadata retained, DTD/ambiguity/size errors rejected; other ranks/types/encodings pending",
+      "implementation": "Qualified scope: one explicit 2D XSDataImage/outputMatrix XML record, ten scalar and complex types, base64/base32/base16 and optional MD5; raw metadata retained, DTD/ambiguity/size errors rejected; other ranks/types/encodings pending",
       "validation": [
         "tests/xsd.rs",
         "tests/data/xsd/provenance.json",
-        "docs/XSD_READER.md"
+        "docs/XSD_READER.md",
+        "docs/NPY_LAYOUTS.md",
+        "docs/READER_DESIGN.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "V-XSD",
+        "I-OBJECTS"
       ],
       "parity_verified": false
     },
@@ -443,7 +683,13 @@
         "tests/data/native/provenance.json",
         "tests/native.rs",
         "tests/wrapped.rs",
-        "docs/FABIO_PARITY.md"
+        "docs/FABIO_PARITY.md",
+        "docs/NPY_LAYOUTS.md",
+        "docs/READER_DESIGN.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "I-OBJECTS"
       ],
       "parity_verified": false
     },
@@ -456,12 +702,22 @@
       "subformats_and_types": "Pixirad fixed-frame record header and uint16 data",
       "compression": "uncompressed",
       "stack": "multiple fixed-size frames",
-      "implementation": "partial: fixed 476x512 u16 records, every 24-byte header and full source length validated; all generated suite file frames verified; neighboring-file traversal remains explicit gap",
+      "implementation": "Qualified scope: fixed 476x512 u16 records, every 24-byte header and full source length validated; all generated suite file frames verified; series/navigation available through explicit frozen manifests",
       "validation": [
         "tests/fixed.rs",
         "tests/data/fixed/provenance.json",
         "tests/data/fixed/upstream-provenance.json",
-        "docs/FIXED_DESIGN.md"
+        "docs/FIXED_DESIGN.md",
+        "docs/LEGACY_READERS.md",
+        "docs/RECORD_READERS.md",
+        "docs/VDS_READER.md",
+        "docs/SERIES_API.md",
+        "docs/INPUT_APIS.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "V-RECORDS",
+        "I-SNAPSHOTS"
       ],
       "parity_verified": false
     },
@@ -476,12 +732,22 @@
       "subformats_and_types": "Rigaku R-AXIS binary/text header, endian data and high-bit dynamic-range flag",
       "compression": "high-bit intensity-range encoding",
       "stack": "single image",
-      "implementation": "partial: explicit endian policy, native stored u16 words/flags and optional PhotomultiplierExpanded view; single declared header record and complete source window required; same file expanded counts verified",
+      "implementation": "Qualified scope: explicit endian policy, native stored u16 words/flags and optional PhotomultiplierExpanded view; single declared header record and complete source window required; same file expanded counts verified",
       "validation": [
         "tests/legacy.rs",
         "tests/data/legacy/provenance.json",
         "docs/legacy-readers/2026-11-05-reference.json",
-        "docs/LEGACY_READERS.md"
+        "docs/LEGACY_READERS.md",
+        "docs/RECORD_READERS.md",
+        "docs/FIXED_DESIGN.md",
+        "docs/READER_DESIGN.md",
+        "docs/tiff-ycbcr/README.md",
+        "docs/SPARSE_READERS.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "V-RECORDS",
+        "I-VIEWS"
       ],
       "parity_verified": false
     },
@@ -496,12 +762,23 @@
       "subformats_and_types": "NPY array; 2D image / higher-dimensional reshaped frame sequence",
       "compression": "NPY binary; do not assume NPZ support",
       "stack": "array-leading frame dimension",
-      "implementation": "partial: NPY v1/2/3, ten scalar plus complex64/complex128 types, both byte orders, C/Fortran order, scalar/1D/2D/leading-axis stacks; bool/structured/string/float16/float128/empty pending; no pickle",
+      "implementation": "Qualified scope: NPY v1/2/3, ten scalar plus complex64/complex128, Boolean and exact binary16 types, both byte orders, C/Fortran order, scalar/1D/2D/leading-axis stacks and explicit empty axes; structured and string arrays are two confirmed compatibility cases; 128-bit floats are platform-dependent optional variants; object unpickling is deliberately excluded",
       "validation": [
         "tests/data/native/provenance.json",
         "tests/native.rs",
         "tests/wrapped.rs",
-        "docs/FABIO_PARITY.md"
+        "docs/FABIO_PARITY.md",
+        "docs/npy-types/2026-11-06-vds-advanced-ojpeg-regression.json",
+        "docs/NPY_LAYOUTS.md",
+        "docs/READER_DESIGN.md",
+        "docs/READING_GAPS.md",
+        "tests/npy_layouts.rs",
+        "docs/npy-types/2026-11-06-vds-advanced-ojpeg-regression.json"
+      ],
+      "boundary_ids": [
+        "C-NPY",
+        "V-NPY",
+        "I-OBJECTS"
       ],
       "parity_verified": false
     },
@@ -517,7 +794,7 @@
       "subformats_and_types": "Eiger/Dectris HDF5; direct dataset, grouped data_NNNNNN, master/external links; detector metadata",
       "compression": "dataset HDF5 filter pipeline (Bitshuffle/LZ4, gzip etc.)",
       "stack": "dataset(s) mapped to frame sequence",
-      "implementation": "partial: typed Eiger discovery handles entry/data, grouped data_N and legacy entry/data_N sequences; explicit FollowSnapshot policy tracks every external/intermediate file, fails on missing sources, preserves per-part types/shapes; explicit bound regular frame-preserving 3D VDS snapshots reuse typed source admission; nested/printf/irregular VDS and complete detector metadata/live acquisition pending; original raw u16/u32 benchmark retained",
+      "implementation": "Qualified scope: typed Eiger discovery handles entry/data, grouped data_N and legacy entry/data_N sequences; explicit FollowSnapshot policy tracks every external/intermediate file, fails on missing sources, preserves per-part types/shapes; explicit bound regular frame-preserving 3D VDS snapshots reuse typed source admission; bounded nested/printf and frame-axis unlimited patterns qualified separately; additional VDS layouts are optional variants; further acquisition-field semantics need real-file requirements; active acquisition is outside snapshot reading; original raw u16/u32 benchmark retained",
       "validation": [
         "tests/data/counts-bitshuffle-lz4.h5",
         "tests/reader.rs",
@@ -528,7 +805,24 @@
         "docs/fabio-parity/2026-11-05-hdf5.json",
         "tests/vds.rs",
         "tests/data/vds/provenance.json",
-        "docs/source-recovery/README.md"
+        "docs/source-recovery/README.md",
+        "docs/hdf5-layouts/2026-11-06-vds-advanced-ojpeg-regression.json",
+        "docs/HDF5_LAYOUTS.md",
+        "docs/VDS_READER.md",
+        "docs/SERIES_API.md",
+        "docs/INPUT_APIS.md",
+        "docs/READING_GAPS.md",
+        "tests/vds_nested.rs",
+        "tests/vds_printf.rs",
+        "tests/vds_unlimited.rs",
+        "docs/vds/2026-11-06-vds-advanced-ojpeg-nested.json",
+        "docs/vds/2026-11-06-vds-advanced-ojpeg-printf.json",
+        "docs/vds/2026-11-06-vds-advanced-ojpeg-unlimited.json"
+      ],
+      "boundary_ids": [
+        "C-HDF5",
+        "V-HDF5",
+        "I-SNAPSHOTS"
       ],
       "parity_verified": false
     },
@@ -543,7 +837,7 @@
       "subformats_and_types": "explicit file::dataset HDF5 image or stack, nested frame selection",
       "compression": "native HDF5 filters",
       "stack": "2D/3D datasets",
-      "implementation": "partial: typed snapshots read explicit 2D/3D images/stacks with ten standard integer/IEEE types, both byte orders, group/data selection, native lossless filters, declared fill and source manifests; regular nonoverlapping frame-preserving 3D VDS with explicit filename bindings/fill and full source graph; complex/float16/custom precision, nested/printf/irregular VDS, raw external storage, arbitrary attributes and live refresh pending",
+      "implementation": "Qualified scope: typed snapshots read explicit 2D/3D images/stacks with ten standard integer/IEEE types, both byte orders, group/data selection, native lossless filters, declared fill and source manifests; explicit nonoverlapping finite strided/irregular selections and regular unlimited 3D VDS with explicit filename bindings/fill and full source graph; exact packed complex64/128, binary16 and Boolean samples/attributes/fill plus explicitly bound contiguous raw external storage supported; bounded nested/printf and frame-axis unlimited patterns qualified separately; four enum/compound fixture cases are confirmed compatibility gaps; other custom types and VDS layouts are optional; cyclic graphs are rejected and live refresh is outside snapshots",
       "validation": [
         "tests/reader.rs",
         "tests/raw.rs",
@@ -553,7 +847,24 @@
         "docs/fabio-parity/2026-11-05-hdf5.json",
         "tests/vds.rs",
         "tests/data/vds/provenance.json",
-        "docs/source-recovery/README.md"
+        "docs/source-recovery/README.md",
+        "docs/hdf5-layouts/2026-11-06-vds-advanced-ojpeg-regression.json",
+        "docs/HDF5_LAYOUTS.md",
+        "docs/VDS_READER.md",
+        "docs/SERIES_API.md",
+        "docs/INPUT_APIS.md",
+        "docs/READING_GAPS.md",
+        "tests/vds_nested.rs",
+        "tests/vds_printf.rs",
+        "tests/vds_unlimited.rs",
+        "docs/vds/2026-11-06-vds-advanced-ojpeg-nested.json",
+        "docs/vds/2026-11-06-vds-advanced-ojpeg-printf.json",
+        "docs/vds/2026-11-06-vds-advanced-ojpeg-unlimited.json"
+      ],
+      "boundary_ids": [
+        "C-HDF5",
+        "V-HDF5",
+        "I-SNAPSHOTS"
       ],
       "parity_verified": false
     },
@@ -568,12 +879,18 @@
       "subformats_and_types": "Fit2D binary $FFF_START records and endian numeric arrays",
       "compression": "uncompressed records",
       "stack": "single image",
-      "implementation": "partial: named bounded FIT2D scalar arrays, packed masks and axes, endian hex metadata and primary image selection; actual primary/auxiliary arrays exact; unknown ranks/encodings rejected",
+      "implementation": "Qualified scope: named bounded FIT2D scalar arrays, packed masks and axes, endian hex metadata and primary image selection; actual primary/auxiliary arrays exact; unknown ranks/encodings rejected",
       "validation": [
         "tests/records.rs",
         "tests/data/records/provenance.json",
         "docs/legacy-readers/2026-11-05-record-reference.json",
-        "docs/RECORD_READERS.md"
+        "docs/RECORD_READERS.md",
+        "docs/LEGACY_READERS.md",
+        "docs/FIXED_DESIGN.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "V-RECORDS"
       ],
       "parity_verified": false
     },
@@ -588,12 +905,16 @@
       "subformats_and_types": "Princeton SPE versions 2/3; binary header and v3 XML metadata/ROI",
       "compression": "uncompressed typed pixels",
       "stack": "frame selection (no generic getframe override)",
-      "implementation": "partial: SPE v2/v3 four scalar types, XML metadata, explicit ROI selection/frame padding, stored axes and all declared frames; per-frame acquisition byte layout retained; other XML layouts/types pending",
+      "implementation": "Qualified scope: SPE v2/v3 four scalar types, XML metadata, explicit ROI selection/frame padding, stored axes and all declared frames; per-frame acquisition byte layout retained; additional region/XML layouts and acquisition-field semantics are optional, with source XML retained",
       "validation": [
         "tests/containers.rs",
         "tests/data/containers/provenance.json",
         "tests/data/containers/upstream-provenance.json",
-        "docs/CONTAINERS_DESIGN.md"
+        "docs/CONTAINERS_DESIGN.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "V-CONTAINERS"
       ],
       "parity_verified": false
     },
@@ -609,12 +930,21 @@
       "subformats_and_types": "JPEG/JFIF/Exif via Pillow; lossy source samples must retain decoded values and provenance",
       "compression": "JPEG",
       "stack": "single image",
-      "implementation": "partial: mature libjpeg-turbo 8-bit JPEG and lossless 12/16-bit decoder, grayscale/color metadata and explicit precision/lossy provenance; actual corpus exact; unsupported precision and source transforms explicit",
+      "implementation": "Qualified scope: mature libjpeg-turbo 8-bit JPEG and lossless 12/16-bit decoder, grayscale/color metadata and explicit precision/lossy provenance; actual corpus exact; unsupported precision and source transforms explicit",
       "validation": [
         "tests/image_codecs.rs",
         "tests/data/images/provenance.json",
         "docs/image-readers-fabio-2026.6.0.json",
-        "docs/IMAGE_READERS.md"
+        "docs/IMAGE_READERS.md",
+        "docs/TIFF_LAYOUTS.md",
+        "docs/READER_DESIGN.md",
+        "docs/tiff-ycbcr/README.md",
+        "docs/SPARSE_READERS.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "V-IMAGES",
+        "I-VIEWS"
       ],
       "parity_verified": false
     },
@@ -633,12 +963,21 @@
       "subformats_and_types": "JPEG2000 codestream/JP2/JPX via optional Glymur/Pillow",
       "compression": "JPEG2000 lossless/lossy require separate fixtures",
       "stack": "single image",
-      "implementation": "partial: mature OpenJPEG JP2/J2K backend, scalar/color signed/unsigned components, precision/origin/wavelet/raw metadata retained; actual corpus exact; mixed component precision/layouts explicitly rejected",
+      "implementation": "Qualified scope: mature OpenJPEG JP2/J2K backend, scalar/color signed/unsigned components, precision/origin/wavelet/raw metadata retained; actual corpus exact; mixed component precision/layouts explicitly rejected",
       "validation": [
         "tests/image_codecs.rs",
         "tests/data/images/provenance.json",
         "docs/image-readers-fabio-2026.6.0.json",
-        "docs/IMAGE_READERS.md"
+        "docs/IMAGE_READERS.md",
+        "docs/TIFF_LAYOUTS.md",
+        "docs/READER_DESIGN.md",
+        "docs/tiff-ycbcr/README.md",
+        "docs/SPARSE_READERS.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "V-IMAGES",
+        "I-VIEWS"
       ],
       "parity_verified": false
     },
@@ -653,12 +992,18 @@
       "subformats_and_types": "MPA multiwire; text configuration + spectrum/data blocks",
       "compression": "ASCII or binary branches per source",
       "stack": "single image",
-      "implementation": "partial: original DATA spectra and CDAT maps with ASCII/f64 source encoding explicit; all sections retained and selected independently; binary/external headers and non-exact large integers rejected",
+      "implementation": "Qualified scope: original DATA spectra and CDAT maps with ASCII/f64 source encoding explicit; all sections retained and selected independently; binary/external headers and non-exact large integers rejected",
       "validation": [
         "tests/records.rs",
         "tests/data/records/provenance.json",
         "docs/legacy-readers/2026-11-05-record-reference.json",
-        "docs/RECORD_READERS.md"
+        "docs/RECORD_READERS.md",
+        "docs/LEGACY_READERS.md",
+        "docs/FIXED_DESIGN.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "V-RECORDS"
       ],
       "parity_verified": false
     },
@@ -675,12 +1020,21 @@
       "subformats_and_types": "MRC/CCP4/MAP/FEI; endian header, supported mode codes and extended header",
       "compression": "uncompressed typed arrays",
       "stack": "NZ image stack",
-      "implementation": "partial: strict endian machine-stamp policy, modes 0/1/2/3/4/6, complete stacks/extended headers; complex-i16 stored components plus explicit f32 view; pinned mode3/getframe bugs documented; other modes pending",
+      "implementation": "Qualified scope: strict endian machine-stamp policy, modes 0/1/2/3/4/6, complete stacks/extended headers; complex-i16 stored components plus explicit f32 view; pinned mode3/getframe bugs documented; modes outside the pinned reader and packed IMOD variants are optional extensions",
       "validation": [
         "tests/containers.rs",
         "tests/data/containers/provenance.json",
         "tests/data/containers/upstream-provenance.json",
-        "docs/CONTAINERS_DESIGN.md"
+        "docs/CONTAINERS_DESIGN.md",
+        "docs/pillow-planar16/README.md",
+        "docs/VDS_ADVANCED_OJPEG_PARITY.md",
+        "docs/MAR345_V2.md",
+        "docs/metadata-parity/HEADER_ATTRIBUTES.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "V-CONTAINERS",
+        "R-DEFECTS"
       ],
       "parity_verified": false
     },
@@ -696,12 +1050,18 @@
       "subformats_and_types": "CrysAlisPro Esperanto; ASCII header, int32 image, raw or compressed format selector",
       "compression": "4-byte integers / AGI bitfield",
       "stack": "single image",
-      "implementation": "partial: native signed32 Long32 and AGI bitfield, exact row indexes/size/escapes/wrapping, original headers and bounded zero alignment padding; same actual and upstream-writer files exact; no implicit array padding on read",
+      "implementation": "Qualified scope: native signed32 Long32 and AGI bitfield, exact row indexes/size/escapes/wrapping, original headers and bounded zero alignment padding; same actual and upstream-writer files exact; no implicit array padding on read",
       "validation": [
         "tests/esperanto.rs",
         "tests/data/esperanto/provenance.json",
         "tests/data/esperanto/upstream-provenance.json",
-        "docs/ESPERANTO_DESIGN.md"
+        "docs/ESPERANTO_DESIGN.md",
+        "docs/source-recovery/README.md",
+        "docs/EDF_RECOVERY.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "I-COUNTS"
       ],
       "parity_verified": false
     },
@@ -717,14 +1077,31 @@
       "subformats_and_types": "LImA HDF5 creator/default path discovery and acquisition metadata",
       "compression": "HDF5 filters",
       "stack": "3D detector dataset",
-      "implementation": "partial: native default-entry/measurement/data discovery, detector-name fields, typed 2D/3D dataset reading and explicit external-source snapshots; full acquisition metadata and live acquisition pending",
+      "implementation": "Qualified scope: native default-entry/measurement/data discovery, detector-name fields, typed 2D/3D dataset reading and explicit external-source snapshots; additional acquisition-field semantics need real-file requirements; active acquisition is outside snapshot reading",
       "validation": [
         "tests/hdf5_typed.rs",
         "tests/data/hdf5-native/provenance.json",
         "docs/fabio-parity/2026-11-05-hdf5.json",
         "tests/vds.rs",
         "tests/data/vds/provenance.json",
-        "docs/source-recovery/README.md"
+        "docs/source-recovery/README.md",
+        "docs/hdf5-layouts/2026-11-06-vds-advanced-ojpeg-regression.json",
+        "docs/HDF5_LAYOUTS.md",
+        "docs/VDS_READER.md",
+        "docs/SERIES_API.md",
+        "docs/INPUT_APIS.md",
+        "docs/READING_GAPS.md",
+        "tests/vds_nested.rs",
+        "tests/vds_printf.rs",
+        "tests/vds_unlimited.rs",
+        "docs/vds/2026-11-06-vds-advanced-ojpeg-nested.json",
+        "docs/vds/2026-11-06-vds-advanced-ojpeg-printf.json",
+        "docs/vds/2026-11-06-vds-advanced-ojpeg-unlimited.json"
+      ],
+      "boundary_ids": [
+        "C-HDF5",
+        "V-HDF5",
+        "I-SNAPSHOTS"
       ],
       "parity_verified": false
     },
@@ -741,7 +1118,7 @@
       "subformats_and_types": "Lambda HDF5/NeXus detector-description/path convention",
       "compression": "HDF5 filters",
       "stack": "3D detector dataset",
-      "implementation": "partial: native detector-description/local-name/path discovery and typed samples; same upstream module files and all five relocated VDS master frames read with explicit bindings, frozen module-derived extent and separately recorded declared gap fill; nested/printf/irregular VDS and complete NeXus metadata remain pending",
+      "implementation": "Qualified scope: native detector-description/local-name/path discovery and typed samples; same upstream module files and all five relocated VDS master frames read with explicit bindings, frozen module-derived extent and separately recorded declared gap fill; bounded nested/printf and frame-axis unlimited patterns qualified separately; additional VDS layouts are optional variants; further NeXus field semantics need real-file requirements",
       "validation": [
         "tests/hdf5_typed.rs",
         "tests/data/hdf5-native/provenance.json",
@@ -751,7 +1128,24 @@
         "docs/rejection-audits/LAMBDA_TY5.md",
         "tests/vds.rs",
         "tests/data/vds/provenance.json",
-        "docs/source-recovery/README.md"
+        "docs/source-recovery/README.md",
+        "docs/hdf5-layouts/2026-11-06-vds-advanced-ojpeg-regression.json",
+        "docs/HDF5_LAYOUTS.md",
+        "docs/VDS_READER.md",
+        "docs/SERIES_API.md",
+        "docs/INPUT_APIS.md",
+        "docs/READING_GAPS.md",
+        "tests/vds_nested.rs",
+        "tests/vds_printf.rs",
+        "tests/vds_unlimited.rs",
+        "docs/vds/2026-11-06-vds-advanced-ojpeg-nested.json",
+        "docs/vds/2026-11-06-vds-advanced-ojpeg-printf.json",
+        "docs/vds/2026-11-06-vds-advanced-ojpeg-unlimited.json"
+      ],
+      "boundary_ids": [
+        "C-HDF5",
+        "V-HDF5",
+        "I-SNAPSHOTS"
       ],
       "parity_verified": false
     },
@@ -769,7 +1163,17 @@
         "tests/data/native/provenance.json",
         "tests/native.rs",
         "tests/wrapped.rs",
-        "docs/FABIO_PARITY.md"
+        "docs/FABIO_PARITY.md",
+        "docs/NPY_LAYOUTS.md",
+        "docs/READER_DESIGN.md",
+        "docs/VDS_READER.md",
+        "docs/SERIES_API.md",
+        "docs/INPUT_APIS.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "I-OBJECTS",
+        "I-SNAPSHOTS"
       ],
       "parity_verified": false
     },
@@ -786,12 +1190,23 @@
       "subformats_and_types": "pyFAI/LImA sparse Bragg HDF5: frame pointers/index/intensity/background/noise; reconstruction policy matters",
       "compression": "HDF5 filters plus sparse/background representation",
       "stack": "sparse frame sequence",
-      "implementation": "partial: original typed frame_ptr/index/intensity and all admitted source components/attributes, explicit linked snapshots; separate deterministic native NOISY=False background view exact over 100 actual frames; actual corpus has zero events, nonempty/extreme events covered independently; stochastic reconstruction and Python fallback remain unqualified",
+      "implementation": "Qualified scope: original typed frame_ptr/index/intensity and all admitted source components/attributes, explicit linked snapshots; separate deterministic native NOISY=False background view exact over 100 actual frames; actual corpus has zero events, nonempty/extreme events covered independently; stochastic reconstruction and Python fallback remain unqualified",
       "validation": [
         "tests/sparse.rs",
         "tests/data/sparse/provenance.json",
         "docs/sparse/2026-11-05-reference.json",
-        "docs/SPARSE_READERS.md"
+        "docs/SPARSE_READERS.md",
+        "docs/READER_DESIGN.md",
+        "docs/tiff-ycbcr/README.md",
+        "docs/VDS_READER.md",
+        "docs/SERIES_API.md",
+        "docs/INPUT_APIS.md",
+        "docs/READING_GAPS.md"
+      ],
+      "boundary_ids": [
+        "V-SPARSE",
+        "I-VIEWS",
+        "I-SNAPSHOTS"
       ],
       "parity_verified": false
     },
@@ -804,9 +1219,24 @@
       "subformats_and_types": "Xcalibur CCD/masked-pixel binary structs and masks",
       "compression": "binary records",
       "stack": "single mask/image exposed",
-      "implementation": "reference .read fabricates a fixed 50x60 zero array instead of source samples; native does not reproduce it. CCD characteristics/mask-structure API remains pending separately from detector count reading",
+      "implementation": "reference .read fabricates a fixed 50x60 zero array instead of source samples; native does not reproduce it. Optional xcalibur::Reader/Characteristics parse all CCD record families; explicit strict/partial-tail metadata contracts, source-checked masks and native exact binary-mask decomposition; all 11 unchanged upstream API events qualified separately from count reading; .run companion and standalone CIF header projections are separately qualified (see [series/companion evidence](SERIES_COMPANIONS_PARITY.md))",
       "validation": [
-        "docs/MAR345_XCALIBUR_AUDIT.md"
+        "docs/MAR345_XCALIBUR_AUDIT.md",
+        "docs/pillow-planar16/README.md",
+        "docs/VDS_ADVANCED_OJPEG_PARITY.md",
+        "docs/MAR345_V2.md",
+        "docs/CONTAINERS_DESIGN.md",
+        "docs/metadata-parity/HEADER_ATTRIBUTES.md",
+        "docs/READER_DESIGN.md",
+        "docs/tiff-ycbcr/README.md",
+        "docs/SPARSE_READERS.md",
+        "docs/READING_GAPS.md",
+        "tests/xcalibur.rs",
+        "docs/XCALIBUR_MASKS.md"
+      ],
+      "boundary_ids": [
+        "R-DEFECTS",
+        "I-VIEWS"
       ],
       "parity_verified": false
     }

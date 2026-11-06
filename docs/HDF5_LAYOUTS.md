@@ -100,10 +100,13 @@ Arbitrary enums, renamed/padded/mixed-endian compounds, native HDF5-2 complex
 types and other custom precision/layout variants remain valid unsupported image
 types. Rank1/rank4 and empty image axes remain outside this 2D/3D image API;
 the pinned `Hdf5Image.read` also explicitly rejects ranks other than 2/3.
-Nested/printf VDS, unlimited irregular mappings and VDS modules with external
-raw storage retain their explicit rejection. Finite irregular mappings now have
-the separately qualified contract in [VDS_READER.md](VDS_READER.md). This
-extension does not claim arbitrary HDF5 datatype grammar or general n-dimensional array support.
+Finite irregular, nested, explicitly bounded printf and source-bound frame-axis
+unlimited VDS have the separately qualified contract in [VDS_READER.md](VDS_READER.md).
+Cross-axis unlimited layouts and VDS leaves using external raw storage remain
+optional variants. The four enum/compound fixture rejections and the distinct
+rank/API boundaries are classified in [the current inventory](READING_GAPS.md).
+This extension does not claim arbitrary HDF5 datatype grammar or general
+n-dimensional array support.
 
 The [frozen proof](hdf5-layouts/2026-11-06-types-external.json) passes all source,
 probe and pinned-reference gates: **9 admitted datasets, 12 complete image

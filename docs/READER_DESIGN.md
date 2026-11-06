@@ -7,6 +7,9 @@ type remain explicit. Zeros, large integers, reserved values, signed values,
 nonfinite floats and negative zero are retained when admitted by a backend.
 Stored row order is never flipped. Header orientation is metadata, not an action.
 
+Current backlog and release boundaries are classified in [READING_GAPS.md](READING_GAPS.md).
+The raw fast-path restrictions below are separate from the broader typed reader.
+
 ## HDF5 general reader and raw snapshots
 
 The original `hdf5::Reader` remains available for its validated 3D u16/u32 scope
@@ -52,8 +55,9 @@ It is not an RSS limit.
 
 `hdf5::typed::Reader` reuses the bundled HDF5 library/codecs for 2D images and
 3D stacks. It admits standard u8/u16/u32/u64, i8/i16/i32/i64 and IEEE f32/f64
-in either byte order. Exact native type equality rejects custom precision and
-padding, enums, compounds, complex and float16. Independent h5py fixtures verify
+in either byte order, plus exact Boolean/binary16 and admitted packed complex
+representations. Arbitrary enums, padded/renamed/mixed compounds and custom
+precision remain outside the exact-type contract; see [type evidence](HDF5_LAYOUTS.md). Independent h5py fixtures verify
 integer extrema, endian conversion, NaN payloads, infinities and signed zero.
 Checked upstream dataspace selections feed native H5Dread into exactly sized,
 reusable typed buffers under the HDF5 mutex. No full-frame float promotion,
@@ -79,8 +83,9 @@ invalidate reused output. There is no live refresh or decoded-count cache.
 Defined HDF5 fill, including default zero, is part of the logical source array.
 Unwritten regions with undefined fill or FillTime::Never are rejected so old
 buffer contents cannot become counts. Fully allocated fill-disabled sources
-remain readable. VDS and raw external storage still require separate mapping,
-availability and relocation contracts. The upstream Lambda VDS master contains
+remain readable. VDS graph/printf/unlimited mappings and raw external windows
+use their explicit source contracts in [VDS_READER.md](VDS_READER.md) and
+[HDF5_LAYOUTS.md](HDF5_LAYOUTS.md). The upstream Lambda VDS master contains
 acquisition-system absolute paths; silently relocating them or filling missing
 modules is not admitted.
 
@@ -89,7 +94,9 @@ HDF5 codec/cache/internal allocations are additional memory. Fixed discovery
 strings are checked before output allocation. Variable-length string allocation
 is managed by the upstream reader, with length checked before retaining/copying
 the result. This post-read admission for vlen attributes is an explicit remaining
-resource-limit limitation. Arbitrary attributes/full detector headers are gaps.
+resource-limit limitation. Admitted typed/text attributes and observed source
+fields are qualified separately; arbitrary vendor-field semantics are a
+real-file requirement/validation need, not a counted decoder defect.
 
 ## TIFF/BigTIFF
 
@@ -112,10 +119,12 @@ and bytes as opaque metadata; structural source windows are never repaired.
 and MAR's typed binary acquisition fields/raw reserved bytes. Detector-specific
 success is now checked independently of generic TIFF counts. Detailed admitted
 codecs/layouts, palette/CFA source samples, explicit display views, image
-fixtures, JPEG qualifications and remaining SubIFD/photometric gaps are in `IMAGE_READERS.md`.
+fixtures and JPEG/component qualifications are in `IMAGE_READERS.md`.
+CCITT RLE/Group3 2D and explicit reachable SubIFD selection are qualified in
+[TIFF_LAYOUTS.md](TIFF_LAYOUTS.md); fragmented/global/planar legacy JPEG profiles
+are qualified in [OJPEG_READER.md](OJPEG_READER.md).
 
-The upstream decoder initially parses the first IFD under its own default
-per-tag bounds; caller limits apply immediately afterward. Admitted metadata,
+Caller metadata/decoder limits apply before initial or selected IFD parsing. Admitted metadata,
 page count, decoded output and intermediate scratch have separate bounds.
 Unknown TIFF field *types* skipped by the backend are not represented in the tag
 map. A bounded read-only IFD adapter retains source photometric tags while exposing
@@ -156,8 +165,11 @@ streams fail. External windows beyond EOF fail under the default `Exact` policy.
 Explicit `ExternalWindow::UpToDeclared` caps only external reads to available
 source bytes, retaining declared/effective sizes and still requiring complete
 samples/full codecs. It does not change inline block navigation or repair missing
-pixels. `wrapped::Format::EdfExternalWindow` exposes this choice through wrappers. Volumes, float128 and optional
-byte-offset EDF remain gaps. Outer wrappers also have the separate API below.
+pixels. `wrapped::Format::EdfExternalWindow` exposes this choice through wrappers.
+Source arrays/volumes and explicit planes are qualified in [EDF_ARRAYS.md](EDF_ARRAYS.md).
+128-bit labels and obsolete byte-offset compression are optional extensions
+with unresolved representation/reference authority, not current corpus blockers.
+Outer wrappers also have the separate API below.
 Neither reader pads truncated pixels with zeros or substitutes neighboring files.
 
 ## NPY, raw input and smaller detector formats
@@ -169,13 +181,15 @@ available. Raw input requires explicit dimensions, scalar type, byte order and
 absolute or EOF-relative location, with checked range arithmetic. FabIO negative
 offset `-n` maps to `FromEnd { trailing_bytes: n - 1 }`.
 
-NPY v1/v2/v3 accepts ten native scalar types plus complex64/complex128 and nonempty scalar/1D/2D/higher
-dimensional arrays (at most 32 axes). C-order leading axes are flattened into
+NPY v1/v2/v3 accepts ten native scalar types plus complex64/complex128,
+Boolean/binary16 and scalar/1D/2D/higher-dimensional arrays including empty
+axes (at most32 axes). C-order leading axes are flattened into
 frame numbers. Fortran storage is read in logical axis order into row-major
 frames without a whole-array allocation; it currently performs one positional
 seek/read per sample and has no performance claim. The original descriptor,
-shape and storage-order flag survive. Object, structured, string, bool,
-float16 and float128 types fail explicitly. Shape/byte arithmetic is checked
+shape and storage-order flag survive. Structured/string arrays are confirmed
+supplemental compatibility cases; float128 is a platform-dependent optional
+variant, and object unpickling is intentionally excluded. Shape/byte arithmetic is checked
 before reads. No Python expressions or pickle are executed.
 
 d*TREK supports its seven scalar types, both byte orders and the ADSC legacy
@@ -214,8 +228,11 @@ metadata and scratch limits still apply. The source snapshot and open handle
 are checked before/after staging and every read; a changed original invalidates
 already staged data. Backend handles are dropped before the temporary file for
 Windows compatibility. Corrupt/truncated/trailing wrapper garbage fails closed.
-Direct file-like streams and HDF5 wrappers remain pending. CBF dialect selection
-remains explicit, including through this wrapper API.
+`wrapped::Input` admits captured nonseekable/buffer input, conservative content
+discovery and optional HDF5/sparse readers with explicit origins/source bindings.
+File series and navigation use frozen manifests. See [INPUT_APIS.md](INPUT_APIS.md)
+and [SERIES_API.md](SERIES_API.md). CBF dialect selection remains explicit,
+including through this wrapper API.
 
 ## Container, record and image-specific contracts
 
