@@ -1,7 +1,10 @@
 //! Bounded read-only metadata adaptation for the mature TIFF sample decoder.
 //! Only explicit WhiteIsZero/palette photometric values are presented as gray;
 //! source samples and all exposed source metadata remain unchanged.
-use super::{Error, Limits, OpaqueTag, TagValue};
+use super::{
+    Error, Limits, OpaqueTag, TagValue,
+    compatibility::{self, Interpretation, Options, SourceEntry},
+};
 use std::{
     collections::{BTreeMap, BTreeSet},
     fs::File,
@@ -24,9 +27,10 @@ pub(super) struct Admission {
     pub photos: BTreeMap<u64, OriginalPhoto>,
     pub opaque: BTreeMap<u64, BTreeMap<u16, OpaqueTag>>,
     pub retained: usize,
+    pub interpretations: BTreeMap<u64, Interpretation>,
 }
 impl Admission {
-    pub fn open(mut file: File, limits: Limits) -> Result<Self, Error> {
+    pub fn open(mut file: File, limits: Limits, options: Options) -> Result<Self, Error> {
         let length = file.metadata().map_err(io)?.len();
         let mut header = [0; 8];
         file.read_exact(&mut header).map_err(io)?;
@@ -66,6 +70,7 @@ impl Admission {
         let mut payloads = Vec::new();
         let mut tables: BTreeMap<u64, u64> = BTreeMap::new();
         let mut retained = 0usize;
+        let mut interpretations = BTreeMap::new();
         while next != 0 {
             if visited.len() >= limits.frames || !visited.insert(next) {
                 return Err(Error("TIFF primary IFD cycle/frame limit".into()));
@@ -96,6 +101,12 @@ impl Admission {
             tables.insert(next, table_end);
             if count > limits.metadata_bytes as u64 / 24 {
                 return Err(Error("TIFF IFD entry count exceeds metadata budget".into()));
+            }
+            let mut records = Vec::new();
+            if options != Options::default() && count > limits.metadata_bytes as u64 / 128 {
+                return Err(Error(
+                    "TIFF compatibility source entries exceed metadata budget".into(),
+                ));
             }
             let mut photo_seen = false;
             let mut description_seen = false;
@@ -133,6 +144,17 @@ impl Admission {
                         ));
                     }
                     payloads.push((start, stop));
+                }
+                if options != Options::default() {
+                    records.push(SourceEntry {
+                        tag,
+                        field_type: ty,
+                        count: n,
+                        entry_offset: pos,
+                        ifd_entry: entry[..stride as usize].to_vec(),
+                        payload_offset: (unit != 0 && size > offset_bytes)
+                            .then(|| number(&entry[value_pos as usize..stride as usize])),
+                    });
                 }
                 if tag == 270 {
                     if description_seen {
@@ -188,9 +210,32 @@ impl Admission {
                     }
                 }
             }
+            if options != Options::default() {
+                if let Some(value) =
+                    compatibility::propose(&mut file, next, records, little, options, limits)?
+                {
+                    retained = value
+                        .retained_bytes()
+                        .and_then(|n| retained.checked_add(n))
+                        .filter(|&n| n <= limits.metadata_bytes)
+                        .ok_or_else(|| {
+                            Error("TIFF compatibility provenance exceeds metadata budget".into())
+                        })?;
+                    interpretations.insert(next, value);
+                }
+            }
             let mut offset = [0; 8];
             read_at(&mut file, end, &mut offset[..offset_bytes as usize])?;
             next = number(&offset[..offset_bytes as usize]);
+        }
+        if !interpretations.is_empty() {
+            let mut metadata_ranges = payloads.clone();
+            metadata_ranges.extend(tables.iter().map(|(&start, &end)| (start, end)));
+            metadata_ranges.push((0, if count_bytes == 2 { 8 } else { 16 }));
+            coalesce_ranges(&mut metadata_ranges);
+            for value in interpretations.values() {
+                compatibility::validate_windows(value, length, &metadata_ranges)?;
+            }
         }
         // Coalesce source tag intervals once; patch admission must not scan
         // every payload for every IFD in a metadata-heavy source.
@@ -212,6 +257,7 @@ impl Admission {
             photos,
             opaque,
             retained,
+            interpretations,
         })
     }
 }

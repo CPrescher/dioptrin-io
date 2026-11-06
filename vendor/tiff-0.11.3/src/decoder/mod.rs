@@ -509,6 +509,17 @@ impl Default for Limits {
 /// The representation of a TIFF decoder
 ///
 /// Currently does not support decoding of interlaced images
+/// Explicit caller-supplied source chunk interpretation. Original IFD entries
+/// remain unchanged and available through normal tag APIs.
+#[derive(Clone, Debug)]
+pub struct ChunkLayoutOverride {
+    pub kind: ChunkType,
+    pub offsets: Vec<u64>,
+    pub byte_counts: Vec<u64>,
+    pub rows_per_strip: u32,
+    pub strict_lzw: bool,
+}
+
 #[derive(Debug)]
 pub struct Decoder<R>
 where
@@ -524,6 +535,7 @@ where
     /// Map from the ifd into the `ifd_offsets` ordered list.
     seen_ifds: cycles::IfdCycles,
     image: Image,
+    chunk_overrides: BTreeMap<u64, ChunkLayoutOverride>,
 }
 
 /// All the information needed to read and interpret byte slices from the underlying file, i.e. to
@@ -785,7 +797,16 @@ fn fix_endianness(buf: &mut [u8], byte_order: ByteOrder, bit_depth: u8) {
 }
 
 impl<R: Read + Seek> Decoder<R> {
-    pub fn new(mut r: R) -> TiffResult<Decoder<R>> {
+    pub fn new(r: R) -> TiffResult<Decoder<R>> {
+        Self::new_with_chunk_layouts(r, BTreeMap::new())
+    }
+
+    /// Use only after independently bounding the supplied source windows.
+    /// The default constructor never supplies a chunk interpretation override.
+    pub fn new_with_chunk_layouts(
+        mut r: R,
+        chunk_overrides: BTreeMap<u64, ChunkLayoutOverride>,
+    ) -> TiffResult<Decoder<R>> {
         let mut endianess = Vec::with_capacity(2);
         (&mut r).take(2).read_to_end(&mut endianess)?;
         let byte_order = match &*endianess {
@@ -843,6 +864,7 @@ impl<R: Read + Seek> Decoder<R> {
             ifd_offsets,
             current_ifd: None,
             seen_ifds: cycles::IfdCycles::new(),
+            chunk_overrides,
             image: Image {
                 ifd: None,
                 width: 0,
@@ -863,6 +885,7 @@ impl<R: Read + Seek> Decoder<R> {
                 chunk_offsets: Vec::new(),
                 chunk_bytes: Vec::new(),
                 chroma_subsampling: (2, 2),
+                strict_lzw_chunks: false,
             },
         };
         decoder.next_image()?;
@@ -872,6 +895,11 @@ impl<R: Read + Seek> Decoder<R> {
     pub fn with_limits(mut self, limits: Limits) -> Decoder<R> {
         self.value_reader.limits = limits;
         self
+    }
+
+    /// Effective chunk tables; original tag APIs continue to expose the source IFD.
+    pub fn effective_chunk_tables(&self) -> (&[u64], &[u64]) {
+        (&self.image.chunk_offsets, &self.image.chunk_bytes)
     }
 
     pub fn dimensions(&mut self) -> TiffResult<(u32, u32)> {
@@ -923,7 +951,12 @@ impl<R: Read + Seek> Decoder<R> {
             let ifd = self.value_reader.read_directory(*ifd_offset)?;
             self.next_ifd = ifd.next();
             self.current_ifd = Some(*ifd_offset);
-            self.image = Image::from_reader(&mut self.value_reader, ifd)?;
+            self.image = Image::from_reader(
+                &mut self.value_reader,
+                ifd,
+                self.current_ifd
+                    .and_then(|ptr| self.chunk_overrides.get(&ptr.0)),
+            )?;
 
             Ok(())
         } else {
@@ -961,7 +994,12 @@ impl<R: Read + Seek> Decoder<R> {
     /// To determine whether there are more images call `TIFFDecoder::more_images` instead.
     pub fn next_image(&mut self) -> TiffResult<()> {
         let ifd = self.next_ifd()?;
-        self.image = Image::from_reader(&mut self.value_reader, ifd)?;
+        self.image = Image::from_reader(
+            &mut self.value_reader,
+            ifd,
+            self.current_ifd
+                .and_then(|ptr| self.chunk_overrides.get(&ptr.0)),
+        )?;
         Ok(())
     }
 

@@ -1,0 +1,9 @@
+{
+  "package": "libtiff-sys",
+  "package_version": "0.2.0",
+  "libtiff_version": "4.7.2",
+  "source": "https://gitlab.com/libtiff/libtiff/-/blob/v4.7.2/libtiff/tif_thunder.c",
+  "source_sha256": "0e1013bc534f49f8b1d99439b19fe87ac18bfcb9bcda390f43d4a909f0236ae6",
+  "license_sha256": "0e27c2382d7b8147972bbb746e04059a1152c8d0fda9d03ef1399d1a433c4ade",
+  "modifications": "none; exact original source compiled with bounded local row-only shim; failed-row zero fill never exposed"
+}

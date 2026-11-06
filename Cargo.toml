@@ -12,7 +12,7 @@ readme = "README.md"
 default = []
 sparse = ["hdf5", "native"]
 hdf5 = ["dep:hdf5-backend", "dep:hdf5-sys", "dep:hdf5-bitshuffle", "dep:libz-sys", "dep:lz4_flex", "dep:bytemuck"]
-tiff = ["dep:tiff-backend", "dep:tiff-jpeg-header", "dep:tiff-fax-backend", "dep:weezl"]
+tiff = ["dep:tiff-backend", "dep:tiff-jpeg-header", "dep:tiff-fax-backend", "dep:weezl", "dep:cc"]
 jpeg = ["dep:jpeg-backend", "dep:turbojpeg-backend"]
 jpeg2000 = ["dep:jpeg2000-backend"]
 cbf = ["dep:md-5"]
@@ -53,6 +53,9 @@ roxmltree = { version = "=0.21.2", optional = true }
 mrc-backend = { package = "mrc", version = "=0.8.0", optional = true, default-features = false }
 
 data-encoding = { version = "=2.11.1", optional = true }
+
+[build-dependencies]
+cc = { version = "=1.11.0", optional = true }
 
 [dev-dependencies]
 tempfile = "3.27"
@@ -102,3 +105,7 @@ required-features = ["tiff"]
 [[example]]
 name = "vds_probe"
 required-features = ["hdf5"]
+
+[[example]]
+name = "tiff_recovery_probe"
+required-features = ["tiff"]

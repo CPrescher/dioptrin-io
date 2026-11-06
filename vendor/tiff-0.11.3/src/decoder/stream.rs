@@ -148,6 +148,7 @@ impl<R: Read> LZWReader<R> {
         compressed_length: usize,
         source_bytes: usize,
         limit: usize,
+        strict: bool,
     ) -> io::Result<Self> {
         let buffer_length = (32 * 1024).min(compressed_length);
         let mut source = reader.take(u64::try_from(compressed_length).unwrap());
@@ -156,7 +157,7 @@ impl<R: Read> LZWReader<R> {
         let mut prefix = [0; 2];
         source.read_exact(&mut prefix)?;
         let mut reader = BufReader::with_capacity(buffer_length, Cursor::new(prefix).chain(source));
-        if super::legacy_lzw::recognized(&prefix) {
+        if strict || super::legacy_lzw::recognized(&prefix) {
             compressed_length
                 .checked_mul(8)
                 .ok_or_else(|| io::Error::other("legacy LZW bit count overflow"))?;
@@ -179,6 +180,7 @@ impl<R: Read> LZWReader<R> {
             return Ok(Self::Legacy(Cursor::new(super::legacy_lzw::decode(
                 &encoded,
                 source_bytes,
+                super::legacy_lzw::recognized(&prefix),
             )?)));
         }
         let configuration =

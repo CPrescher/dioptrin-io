@@ -1,26 +1,251 @@
 --- a/src/decoder/image.rs
 +++ b/src/decoder/image.rs
-@@ -530,6 +530,8 @@
+@@ -86,6 +86,7 @@
+     pub chunk_offsets: Vec<u64>,
+     pub chunk_bytes: Vec<u64>,
+     pub chroma_subsampling: (u16, u16),
++    pub strict_lzw_chunks: bool,
+ }
+ 
+ /// Describes how to read a tile-aligned portion of the image.
+@@ -143,6 +144,7 @@
+     pub fn from_reader<R: Read + Seek>(
+         decoder: &mut ValueReader<R>,
+         ifd: Directory,
++        chunk_override: Option<&super::ChunkLayoutOverride>,
+     ) -> TiffResult<Image> {
+         let mut tag_reader = TagReader { decoder, ifd: &ifd };
+ 
+@@ -305,87 +307,128 @@
+         let chunk_bytes;
+         let strip_decoder;
+         let tile_attributes;
+-        match (
+-            ifd.contains(Tag::StripByteCounts),
+-            ifd.contains(Tag::StripOffsets),
+-            ifd.contains(Tag::TileByteCounts),
+-            ifd.contains(Tag::TileOffsets),
+-        ) {
+-            (true, true, false, false) => {
+-                chunk_type = ChunkType::Strip;
+-
+-                chunk_offsets = tag_reader
+-                    .find_tag(Tag::StripOffsets)?
+-                    .unwrap()
+-                    .into_u64_vec()?;
+-                chunk_bytes = tag_reader
+-                    .find_tag(Tag::StripByteCounts)?
+-                    .unwrap()
+-                    .into_u64_vec()?;
+-                let rows_per_strip = tag_reader
+-                    .find_tag(Tag::RowsPerStrip)?
+-                    .map(Value::into_u32)
+-                    .transpose()?
+-                    .unwrap_or(height);
+-                strip_decoder = Some(StripDecodeState { rows_per_strip });
++        if let Some(layout) = chunk_override {
++            chunk_type = layout.kind;
++            chunk_offsets = layout.offsets.clone();
++            chunk_bytes = layout.byte_counts.clone();
++            if chunk_type == ChunkType::Strip {
++                if layout.rows_per_strip == 0
++                    || chunk_offsets.len() != chunk_bytes.len()
++                    || chunk_offsets.len()
++                        != (height.div_ceil(layout.rows_per_strip) as usize) * usize::from(planes)
++                {
++                    return Err(TiffFormatError::InconsistentSizesEncountered.into());
++                }
++                strip_decoder = Some(StripDecodeState {
++                    rows_per_strip: layout.rows_per_strip,
++                });
+                 tile_attributes = None;
+-
+-                if chunk_offsets.len() != chunk_bytes.len()
+-                    || rows_per_strip == 0
+-                    || u32::try_from(chunk_offsets.len())?
+-                        != (height.saturating_sub(1) / rows_per_strip + 1) * planes as u32
+-                {
+-                    return Err(TiffError::FormatError(
+-                        TiffFormatError::InconsistentSizesEncountered,
+-                    ));
+-                }
+-            }
+-            (false, false, true, true) => {
+-                chunk_type = ChunkType::Tile;
+-
++            } else {
+                 let tile_width =
+                     usize::try_from(tag_reader.require_tag(Tag::TileWidth)?.into_u32()?)?;
+                 let tile_length =
+                     usize::try_from(tag_reader.require_tag(Tag::TileLength)?.into_u32()?)?;
+-
+-                if tile_width == 0 {
+-                    return Err(TiffFormatError::InvalidTagValueType(Tag::TileWidth).into());
+-                } else if tile_length == 0 {
+-                    return Err(TiffFormatError::InvalidTagValueType(Tag::TileLength).into());
+-                }
+-
+-                strip_decoder = None;
+-                tile_attributes = Some(TileAttributes {
+-                    image_width: usize::try_from(width)?,
+-                    image_height: usize::try_from(height)?,
++                if tile_width == 0 || tile_length == 0 {
++                    return Err(TiffFormatError::InconsistentSizesEncountered.into());
++                }
++                let tile = TileAttributes {
++                    image_width: width as usize,
++                    image_height: height as usize,
+                     tile_width,
+                     tile_length,
+-                });
+-                chunk_offsets = tag_reader
+-                    .find_tag(Tag::TileOffsets)?
+-                    .unwrap()
+-                    .into_u64_vec()?;
+-                chunk_bytes = tag_reader
+-                    .find_tag(Tag::TileByteCounts)?
+-                    .unwrap()
+-                    .into_u64_vec()?;
+-
+-                let tile = tile_attributes.as_ref().unwrap();
++                };
+                 if chunk_offsets.len() != chunk_bytes.len()
+                     || chunk_offsets.len()
+-                        != tile.tiles_down() * tile.tiles_across() * planes as usize
++                        != tile.tiles_down() * tile.tiles_across() * usize::from(planes)
+                 {
++                    return Err(TiffFormatError::InconsistentSizesEncountered.into());
++                }
++                strip_decoder = None;
++                tile_attributes = Some(tile);
++            }
++        } else {
++            match (
++                ifd.contains(Tag::StripByteCounts),
++                ifd.contains(Tag::StripOffsets),
++                ifd.contains(Tag::TileByteCounts),
++                ifd.contains(Tag::TileOffsets),
++            ) {
++                (true, true, false, false) => {
++                    chunk_type = ChunkType::Strip;
++
++                    chunk_offsets = tag_reader
++                        .find_tag(Tag::StripOffsets)?
++                        .unwrap()
++                        .into_u64_vec()?;
++                    chunk_bytes = tag_reader
++                        .find_tag(Tag::StripByteCounts)?
++                        .unwrap()
++                        .into_u64_vec()?;
++                    let rows_per_strip = tag_reader
++                        .find_tag(Tag::RowsPerStrip)?
++                        .map(Value::into_u32)
++                        .transpose()?
++                        .unwrap_or(height);
++                    strip_decoder = Some(StripDecodeState { rows_per_strip });
++                    tile_attributes = None;
++
++                    if chunk_offsets.len() != chunk_bytes.len()
++                        || rows_per_strip == 0
++                        || u32::try_from(chunk_offsets.len())?
++                            != (height.saturating_sub(1) / rows_per_strip + 1) * planes as u32
++                    {
++                        return Err(TiffError::FormatError(
++                            TiffFormatError::InconsistentSizesEncountered,
++                        ));
++                    }
++                }
++                (false, false, true, true) => {
++                    chunk_type = ChunkType::Tile;
++
++                    let tile_width =
++                        usize::try_from(tag_reader.require_tag(Tag::TileWidth)?.into_u32()?)?;
++                    let tile_length =
++                        usize::try_from(tag_reader.require_tag(Tag::TileLength)?.into_u32()?)?;
++
++                    if tile_width == 0 {
++                        return Err(TiffFormatError::InvalidTagValueType(Tag::TileWidth).into());
++                    } else if tile_length == 0 {
++                        return Err(TiffFormatError::InvalidTagValueType(Tag::TileLength).into());
++                    }
++
++                    strip_decoder = None;
++                    tile_attributes = Some(TileAttributes {
++                        image_width: usize::try_from(width)?,
++                        image_height: usize::try_from(height)?,
++                        tile_width,
++                        tile_length,
++                    });
++                    chunk_offsets = tag_reader
++                        .find_tag(Tag::TileOffsets)?
++                        .unwrap()
++                        .into_u64_vec()?;
++                    chunk_bytes = tag_reader
++                        .find_tag(Tag::TileByteCounts)?
++                        .unwrap()
++                        .into_u64_vec()?;
++
++                    let tile = tile_attributes.as_ref().unwrap();
++                    if chunk_offsets.len() != chunk_bytes.len()
++                        || chunk_offsets.len()
++                            != tile.tiles_down() * tile.tiles_across() * planes as usize
++                    {
++                        return Err(TiffError::FormatError(
++                            TiffFormatError::InconsistentSizesEncountered,
++                        ));
++                    }
++                }
++                (_, _, _, _) => {
+                     return Err(TiffError::FormatError(
+-                        TiffFormatError::InconsistentSizesEncountered,
+-                    ));
+-                }
+-            }
+-            (_, _, _, _) => {
+-                return Err(TiffError::FormatError(
+-                    TiffFormatError::StripTileTagConflict,
+-                ))
+-            }
+-        };
++                        TiffFormatError::StripTileTagConflict,
++                    ))
++                }
++            };
++        }
+ 
+         Ok(Image {
+             ifd: Some(ifd),
+@@ -407,6 +450,7 @@
+             chunk_offsets,
+             chunk_bytes,
+             chroma_subsampling,
++            strict_lzw_chunks: chunk_override.is_some_and(|layout| layout.strict_lzw),
+         })
+     }
+ 
+@@ -530,6 +574,9 @@
          reader: R,
          compression_method: CompressionMethod,
          compressed_length: u64,
 +        #[cfg_attr(not(feature = "lzw"), allow(unused_variables))] lzw_source_bytes: usize,
 +        #[cfg_attr(not(feature = "lzw"), allow(unused_variables))] intermediate_limit: usize,
++        #[cfg_attr(not(feature = "lzw"), allow(unused_variables))] strict_lzw: bool,
          // FIXME: these should be `expect` attributes or we choose another way of passing them.
          #[cfg_attr(not(feature = "jpeg"), allow(unused_variables))] jpeg_tables: Option<&[u8]>,
          #[cfg_attr(not(feature = "fax"), allow(unused_variables))] dimensions: (u32, u32),
-@@ -541,7 +543,9 @@
+@@ -541,7 +588,10 @@
              CompressionMethod::LZW => Box::new(super::stream::LZWReader::new(
                  reader,
                  usize::try_from(compressed_length)?,
 -            )),
 +                lzw_source_bytes,
 +                intermediate_limit,
++                strict_lzw,
 +            )?),
              #[cfg(feature = "zstd")]
              CompressionMethod::ZSTD => Box::new(zstd::Decoder::new(reader)?),
              CompressionMethod::PackBits => Box::new(PackBitsReader::new(reader, compressed_length)),
-@@ -921,10 +925,26 @@
+@@ -921,10 +971,27 @@
          let is_all_bits = samples == data_samples;
          let is_output_chunk_rows = layout.row_stride == chunk_row_bytes;
  
@@ -44,6 +269,7 @@
              *compressed_bytes,
 +            lzw_source_bytes,
 +            limits.intermediate_buffer_size,
++            self.strict_lzw_chunks,
              self.jpeg_tables.as_deref().map(|a| &**a),
              chunk_dims,
              self.samples,
@@ -58,6 +284,106 @@
  mod stream;
  mod tag_reader;
  
+@@ -507,6 +509,17 @@
+ /// The representation of a TIFF decoder
+ ///
+ /// Currently does not support decoding of interlaced images
++/// Explicit caller-supplied source chunk interpretation. Original IFD entries
++/// remain unchanged and available through normal tag APIs.
++#[derive(Clone, Debug)]
++pub struct ChunkLayoutOverride {
++    pub kind: ChunkType,
++    pub offsets: Vec<u64>,
++    pub byte_counts: Vec<u64>,
++    pub rows_per_strip: u32,
++    pub strict_lzw: bool,
++}
++
+ #[derive(Debug)]
+ pub struct Decoder<R>
+ where
+@@ -522,6 +535,7 @@
+     /// Map from the ifd into the `ifd_offsets` ordered list.
+     seen_ifds: cycles::IfdCycles,
+     image: Image,
++    chunk_overrides: BTreeMap<u64, ChunkLayoutOverride>,
+ }
+ 
+ /// All the information needed to read and interpret byte slices from the underlying file, i.e. to
+@@ -783,7 +797,16 @@
+ }
+ 
+ impl<R: Read + Seek> Decoder<R> {
+-    pub fn new(mut r: R) -> TiffResult<Decoder<R>> {
++    pub fn new(r: R) -> TiffResult<Decoder<R>> {
++        Self::new_with_chunk_layouts(r, BTreeMap::new())
++    }
++
++    /// Use only after independently bounding the supplied source windows.
++    /// The default constructor never supplies a chunk interpretation override.
++    pub fn new_with_chunk_layouts(
++        mut r: R,
++        chunk_overrides: BTreeMap<u64, ChunkLayoutOverride>,
++    ) -> TiffResult<Decoder<R>> {
+         let mut endianess = Vec::with_capacity(2);
+         (&mut r).take(2).read_to_end(&mut endianess)?;
+         let byte_order = match &*endianess {
+@@ -841,6 +864,7 @@
+             ifd_offsets,
+             current_ifd: None,
+             seen_ifds: cycles::IfdCycles::new(),
++            chunk_overrides,
+             image: Image {
+                 ifd: None,
+                 width: 0,
+@@ -861,6 +885,7 @@
+                 chunk_offsets: Vec::new(),
+                 chunk_bytes: Vec::new(),
+                 chroma_subsampling: (2, 2),
++                strict_lzw_chunks: false,
+             },
+         };
+         decoder.next_image()?;
+@@ -870,6 +895,11 @@
+     pub fn with_limits(mut self, limits: Limits) -> Decoder<R> {
+         self.value_reader.limits = limits;
+         self
++    }
++
++    /// Effective chunk tables; original tag APIs continue to expose the source IFD.
++    pub fn effective_chunk_tables(&self) -> (&[u64], &[u64]) {
++        (&self.image.chunk_offsets, &self.image.chunk_bytes)
+     }
+ 
+     pub fn dimensions(&mut self) -> TiffResult<(u32, u32)> {
+@@ -921,7 +951,12 @@
+             let ifd = self.value_reader.read_directory(*ifd_offset)?;
+             self.next_ifd = ifd.next();
+             self.current_ifd = Some(*ifd_offset);
+-            self.image = Image::from_reader(&mut self.value_reader, ifd)?;
++            self.image = Image::from_reader(
++                &mut self.value_reader,
++                ifd,
++                self.current_ifd
++                    .and_then(|ptr| self.chunk_overrides.get(&ptr.0)),
++            )?;
+ 
+             Ok(())
+         } else {
+@@ -959,7 +994,12 @@
+     /// To determine whether there are more images call `TIFFDecoder::more_images` instead.
+     pub fn next_image(&mut self) -> TiffResult<()> {
+         let ifd = self.next_ifd()?;
+-        self.image = Image::from_reader(&mut self.value_reader, ifd)?;
++        self.image = Image::from_reader(
++            &mut self.value_reader,
++            ifd,
++            self.current_ifd
++                .and_then(|ptr| self.chunk_overrides.get(&ptr.0)),
++        )?;
+         Ok(())
+     }
+ 
 --- a/src/decoder/stream.rs
 +++ b/src/decoder/stream.rs
 @@ -1,5 +1,5 @@
@@ -67,7 +393,7 @@
  use std::io::Cursor;
  use std::io::{self, BufRead, BufReader, Read, Seek, Take};
  
-@@ -132,52 +132,91 @@
+@@ -132,52 +132,93 @@
  
  /// Reader that decompresses LZW streams
  #[cfg(feature = "lzw")]
@@ -92,6 +418,7 @@
 +        compressed_length: usize,
 +        source_bytes: usize,
 +        limit: usize,
++        strict: bool,
 +    ) -> io::Result<Self> {
 +        let buffer_length = (32 * 1024).min(compressed_length);
 +        let mut source = reader.take(u64::try_from(compressed_length).unwrap());
@@ -100,7 +427,7 @@
 +        let mut prefix = [0; 2];
 +        source.read_exact(&mut prefix)?;
 +        let mut reader = BufReader::with_capacity(buffer_length, Cursor::new(prefix).chain(source));
-+        if super::legacy_lzw::recognized(&prefix) {
++        if strict || super::legacy_lzw::recognized(&prefix) {
 +            compressed_length
 +                .checked_mul(8)
 +                .ok_or_else(|| io::Error::other("legacy LZW bit count overflow"))?;
@@ -123,6 +450,7 @@
 +            return Ok(Self::Legacy(Cursor::new(super::legacy_lzw::decode(
 +                &encoded,
 +                source_bytes,
++                super::legacy_lzw::recognized(&prefix),
 +            )?)));
 +        }
          let configuration =
@@ -181,7 +509,7 @@
          }
 --- /dev/null
 +++ b/src/decoder/legacy_lzw.rs
-@@ -0,0 +1,110 @@
+@@ -0,0 +1,123 @@
 +//! Local bounded adapter for the pre-TIFF-6 LSB/late-change LZW dialect.
 +//! Pixel prediction, sample conversion and strip/tile placement stay upstream.
 +use std::io;
@@ -201,7 +529,7 @@
 +/// Public weezl APIs report consumed bytes, including bit-reader lookahead, but
 +/// not the exact bit where EOI ends. Track only code widths/clear resets here so
 +/// trailing bytes or nonzero padding cannot disappear inside that lookahead.
-+fn validate_end(encoded: &[u8]) -> io::Result<()> {
++fn validate_end(encoded: &[u8], legacy: bool) -> io::Result<()> {
 +    let bits = encoded
 +        .len()
 +        .checked_mul(8)
@@ -217,7 +545,9 @@
 +            .ok_or_else(|| invalid("legacy LZW lacks a complete end code"))?;
 +        let mut code = 0u16;
 +        for (shift, bit) in (position..stop).enumerate() {
-+            code |= u16::from((encoded[bit / 8] >> (bit % 8)) & 1) << shift;
++            let source_bit = if legacy { bit % 8 } else { 7 - bit % 8 };
++            let code_bit = if legacy { shift } else { width - 1 - shift };
++            code |= u16::from((encoded[bit / 8] >> source_bit) & 1) << code_bit;
 +        }
 +        position = stop;
 +        match code {
@@ -227,8 +557,13 @@
 +                previous = false;
 +            }
 +            257 => {
-+                if bits - position >= 8
-+                    || (position..bits).any(|bit| encoded[bit / 8] & (1 << (bit % 8)) != 0)
++                // The pinned imagecodecs writer flushes one zero byte when
++                // modern EOI is already byte aligned. Eight zero bits cannot
++                // contain another nine-bit code; longer/nonzero tails fail.
++                if bits - position > if legacy { 7 } else { 8 }
++                    || (position..bits).any(|bit| {
++                        encoded[bit / 8] & (1 << if legacy { bit % 8 } else { 7 - bit % 8 }) != 0
++                    })
 +                {
 +                    return Err(invalid("legacy LZW contains data after end code"));
 +                }
@@ -240,7 +575,7 @@
 +                }
 +                if previous && next < 4096 {
 +                    next += 1;
-+                    if next == 1 << width && width < 12 {
++                    if next == (1 << width) - u16::from(!legacy) && width < 12 {
 +                        width += 1;
 +                    }
 +                }
@@ -253,11 +588,13 @@
 +/// Eagerly validate the complete legacy chunk, including padded tile rows,
 +/// before upstream raster code consumes any decoded source bytes. The extra
 +/// output byte detects expansion beyond the exact admitted source byte count.
-+pub(super) fn decode(encoded: &[u8], expected: usize) -> io::Result<Vec<u8>> {
-+    if !recognized(encoded) {
++pub(super) fn decode(encoded: &[u8], expected: usize, legacy: bool) -> io::Result<Vec<u8>> {
++    if legacy && !recognized(encoded)
++        || !legacy && (encoded.len() < 2 || encoded[0] != 128 || encoded[1] & 128 != 0)
++    {
 +        return Err(invalid("missing legacy LZW initial clear code"));
 +    }
-+    validate_end(encoded)?;
++    validate_end(encoded, legacy)?;
 +    let capacity = expected
 +        .checked_add(1)
 +        .ok_or_else(|| invalid("legacy LZW output length overflow"))?;
@@ -266,7 +603,11 @@
 +        .try_reserve_exact(capacity)
 +        .map_err(|e| io::Error::other(e.to_string()))?;
 +    output.resize(capacity, 0);
-+    let mut decoder = weezl::decode::Decoder::new(weezl::BitOrder::Lsb, 8);
++    let mut decoder = if legacy {
++        weezl::decode::Decoder::new(weezl::BitOrder::Lsb, 8)
++    } else {
++        weezl::decode::Decoder::with_tiff_size_switch(weezl::BitOrder::Msb, 8)
++    };
 +    let (mut input, mut written) = (0usize, 0usize);
 +    loop {
 +        let result = decoder.decode_bytes(&encoded[input..], &mut output[written..]);

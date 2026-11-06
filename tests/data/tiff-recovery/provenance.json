@@ -1,0 +1,107 @@
+{
+  "license": "CC0-1.0",
+  "generator": "scripts/generate_tiff_recovery_fixtures.py",
+  "versions": {
+    "numpy": "2.5.4",
+    "tifffile": "2026.10.15",
+    "imagecodecs": "2026.10.10"
+  },
+  "files": {
+    "short-u16.tif": {
+      "sha256": "0592309536c4141c445b6ed576598a82b066133e273f122354e670cffbb74e80",
+      "policy": "UncompressedWindowsFromShape",
+      "shape": [
+        2,
+        5
+      ],
+      "dtype": "uint16",
+      "sample_sha256": "03b8db0f13bc7766afb108c1d95c04cb5f4146918c86a81dc2a82ba9daf0df82"
+    },
+    "missing-count-be-f32.tif": {
+      "sha256": "8d2b4bebed56fcf76519a531aaf60dcb32804a0a04da895e2057388c99ea25f7",
+      "policy": "UncompressedWindowsFromShape",
+      "shape": [
+        3,
+        3
+      ],
+      "dtype": "float32",
+      "sample_sha256": "211a60c425acdeabf10b5969de962e77b59d7e962eb4ef69fe15bd203f5dea34"
+    },
+    "mixed-modern-lzw-tiles.tif": {
+      "sha256": "bb5c3fec2a74ad911626c98dde9d4c7815220b15036049c238c269b98ded73ce",
+      "policy": "TileTablesFromStripTags",
+      "shape": [
+        17,
+        19,
+        3
+      ],
+      "dtype": "uint8",
+      "sample_sha256": "d58512774bad173b029b0343d5759b01014bba16ab49a0f15e4a6450e32ed368"
+    },
+    "short-packed4.tif": {
+      "sha256": "fbad9a6843cf289a69e9c97c3b835742457bdd8a5ee01d42af12620dc989555e",
+      "policy": "UncompressedWindowsFromShape",
+      "shape": [
+        2,
+        5
+      ],
+      "dtype": "uint8",
+      "sample_sha256": "ab93eeeaa27dd2d9c46b68e258ff64d57db55a6876b5835afc0695c5cf5cd91f"
+    },
+    "thunder-complete.tif": {
+      "sha256": "9d39319ae84521b39a18d4097004e528c37f586e1ba6466ae0011bc736f5abea",
+      "shape": [
+        5,
+        7
+      ],
+      "dtype": "uint8",
+      "sample_sha256": "f21268e8276696e62532409f95df05976a65f77f581950c7bcdd82581ba50172"
+    },
+    "thunder-partial-stack.tif": {
+      "sha256": "d4a47bf60f5e2ec381edb3bf0ee78e3e9f28d85e006d3c3df32449a6dad5b2fc",
+      "declared_shape": [
+        5,
+        7
+      ],
+      "available_rows": [
+        [
+          0,
+          3
+        ],
+        [
+          4,
+          1
+        ]
+      ],
+      "missing_rows": [
+        [
+          3,
+          1
+        ]
+      ],
+      "shape": [
+        28
+      ],
+      "dtype": "uint8",
+      "sample_sha256": "65af2fdf306fdc44795b500f8f8773cdbe0ed199e5f73ae330ff60d289d9d561"
+    },
+    "thunder-all-modes.tif": {
+      "sha256": "dfbb24f15779a1cb360e4a0bac27a41127f9afcf867b8daae581e0b573f23999",
+      "shape": [
+        1,
+        15
+      ],
+      "dtype": "uint8",
+      "sample_sha256": "33ebbc9ea9fe324248754f60c751ee9fdbf069d9182533ab31b139d967a7bd1c"
+    },
+    "thunder-run-overflow.tif": {
+      "sha256": "854597570444c1ac0829968354cd06f24e495c79e08d8ed96ec81c405a2fa776"
+    },
+    "thunder-coded-tail.tif": {
+      "sha256": "1fcb9d7b60cf9c3f997b7ad63c5eb513180e7d64eed7ae8e47304e2f45c0a815"
+    },
+    "thunder-noop-tail.tif": {
+      "sha256": "7e737d97237fec773c3162a9cb4844034964c44ad6e3a7311b2b1eba0efcd9ec"
+    }
+  }
+}

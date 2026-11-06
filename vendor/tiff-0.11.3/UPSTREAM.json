@@ -55,9 +55,9 @@
     "tests/subsubifds.rs": "408f1fe35613866e623cc822c2b6197b2e8c68519def9dd61518d8f5473be052"
   },
   "local_changes": [
-    "src/decoder/stream.rs: explicit legacy LSB/late code recognition, bounded strict legacy decode",
-    "src/decoder/image.rs: provide existing full chunk source-byte count and scratch limit",
-    "src/decoder/legacy_lzw.rs: bounded weezl legacy decode and terminal code framing",
-    "src/decoder/mod.rs: private legacy codec module"
+    "src/decoder/stream.rs: explicit legacy LSB/late signature and bounded strict decoding for explicit recovered modern LZW",
+    "src/decoder/image.rs: caller-supplied chunk layout only; original IFD retained; full source chunk byte count and scratch budget supplied to codecs",
+    "src/decoder/legacy_lzw.rs: weezl exact counts/end boundaries; unchanged legacy padding; explicit recovered modern byte-aligned zero flush",
+    "src/decoder/mod.rs: private codec module and explicit new_with_chunk_layouts hook; default constructor supplies no overrides"
   ]
 }

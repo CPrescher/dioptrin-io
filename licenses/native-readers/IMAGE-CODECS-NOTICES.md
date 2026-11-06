@@ -31,3 +31,9 @@ under `vendor/tiff-0.11.3`, with its original LICENSE, baseline file hashes and
 complete local codec patch retained. Legacy LSB/late-change TIFF LZW reuses the
 existing MIT/Apache-2.0 `weezl` 0.1.12 decoder; both exact notices are retained as
 `weezl-0.1.12-LICENSE-MIT` and `weezl-0.1.12-LICENSE-APACHE`.
+
+The optional TIFF feature compiles the unchanged permissive libtiff 4.7.2
+`tif_thunder.c` row codec with a bounded local shim. Its original copyright,
+license and exact source hash are retained under `native/tiff-thunderscan`.
+The TIFF parser/layout remains the Rust backend; no full native TIFF parser or
+automatic metadata repair is linked by this shim.

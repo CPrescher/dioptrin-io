@@ -17,7 +17,7 @@ pub(super) fn recognized(bytes: &[u8]) -> bool {
 /// Public weezl APIs report consumed bytes, including bit-reader lookahead, but
 /// not the exact bit where EOI ends. Track only code widths/clear resets here so
 /// trailing bytes or nonzero padding cannot disappear inside that lookahead.
-fn validate_end(encoded: &[u8]) -> io::Result<()> {
+fn validate_end(encoded: &[u8], legacy: bool) -> io::Result<()> {
     let bits = encoded
         .len()
         .checked_mul(8)
@@ -33,7 +33,9 @@ fn validate_end(encoded: &[u8]) -> io::Result<()> {
             .ok_or_else(|| invalid("legacy LZW lacks a complete end code"))?;
         let mut code = 0u16;
         for (shift, bit) in (position..stop).enumerate() {
-            code |= u16::from((encoded[bit / 8] >> (bit % 8)) & 1) << shift;
+            let source_bit = if legacy { bit % 8 } else { 7 - bit % 8 };
+            let code_bit = if legacy { shift } else { width - 1 - shift };
+            code |= u16::from((encoded[bit / 8] >> source_bit) & 1) << code_bit;
         }
         position = stop;
         match code {
@@ -43,8 +45,13 @@ fn validate_end(encoded: &[u8]) -> io::Result<()> {
                 previous = false;
             }
             257 => {
-                if bits - position >= 8
-                    || (position..bits).any(|bit| encoded[bit / 8] & (1 << (bit % 8)) != 0)
+                // The pinned imagecodecs writer flushes one zero byte when
+                // modern EOI is already byte aligned. Eight zero bits cannot
+                // contain another nine-bit code; longer/nonzero tails fail.
+                if bits - position > if legacy { 7 } else { 8 }
+                    || (position..bits).any(|bit| {
+                        encoded[bit / 8] & (1 << if legacy { bit % 8 } else { 7 - bit % 8 }) != 0
+                    })
                 {
                     return Err(invalid("legacy LZW contains data after end code"));
                 }
@@ -56,7 +63,7 @@ fn validate_end(encoded: &[u8]) -> io::Result<()> {
                 }
                 if previous && next < 4096 {
                     next += 1;
-                    if next == 1 << width && width < 12 {
+                    if next == (1 << width) - u16::from(!legacy) && width < 12 {
                         width += 1;
                     }
                 }
@@ -69,11 +76,13 @@ fn validate_end(encoded: &[u8]) -> io::Result<()> {
 /// Eagerly validate the complete legacy chunk, including padded tile rows,
 /// before upstream raster code consumes any decoded source bytes. The extra
 /// output byte detects expansion beyond the exact admitted source byte count.
-pub(super) fn decode(encoded: &[u8], expected: usize) -> io::Result<Vec<u8>> {
-    if !recognized(encoded) {
+pub(super) fn decode(encoded: &[u8], expected: usize, legacy: bool) -> io::Result<Vec<u8>> {
+    if legacy && !recognized(encoded)
+        || !legacy && (encoded.len() < 2 || encoded[0] != 128 || encoded[1] & 128 != 0)
+    {
         return Err(invalid("missing legacy LZW initial clear code"));
     }
-    validate_end(encoded)?;
+    validate_end(encoded, legacy)?;
     let capacity = expected
         .checked_add(1)
         .ok_or_else(|| invalid("legacy LZW output length overflow"))?;
@@ -82,7 +91,11 @@ pub(super) fn decode(encoded: &[u8], expected: usize) -> io::Result<Vec<u8>> {
         .try_reserve_exact(capacity)
         .map_err(|e| io::Error::other(e.to_string()))?;
     output.resize(capacity, 0);
-    let mut decoder = weezl::decode::Decoder::new(weezl::BitOrder::Lsb, 8);
+    let mut decoder = if legacy {
+        weezl::decode::Decoder::new(weezl::BitOrder::Lsb, 8)
+    } else {
+        weezl::decode::Decoder::with_tiff_size_switch(weezl::BitOrder::Msb, 8)
+    };
     let (mut input, mut written) = (0usize, 0usize);
     loop {
         let result = decoder.decode_bytes(&encoded[input..], &mut output[written..]);

@@ -8,12 +8,15 @@
 //! Palettes retain raw indices and ColorMap; CFA retains its scalar plane. Tags remain
 //! typed values, including private tags understood by the backend's value parser.
 use crate::{PixelBuffer, PixelType, source::Snapshot};
+pub mod compatibility;
+pub use compatibility::{Options, TileTables, UncompressedWindows};
 mod group3;
 mod ifd_view;
 #[cfg(feature = "jpeg")]
 mod jpeg_components;
 #[cfg(feature = "jpeg")]
 pub mod ojpeg;
+pub mod thunderscan;
 #[cfg(feature = "jpeg")]
 mod ycbcr_jpeg;
 use ifd_view::{Admission, ChunkWindows, FileView, OriginalPhoto};
@@ -114,6 +117,7 @@ pub struct Metadata {
     /// Typed IFD tags, keyed by original numeric tag ID.
     pub tags: BTreeMap<u16, TagValue>,
     pub opaque_tags: BTreeMap<u16, OpaqueTag>,
+    pub compatibility: Option<compatibility::Interpretation>,
 }
 
 /// Worker-owned reusable native pixels, inaccessible after a failed read.
@@ -163,6 +167,16 @@ impl Reader {
     /// # Errors
     /// Malformed/cyclic/truncated IFDs, resource bounds or unsupported encodings.
     pub fn open(path: impl AsRef<Path>, limits: Limits) -> Result<Self, Error> {
+        Self::open_with_options(path, limits, Options::default())
+    }
+    /// Explicit source-metadata interpretations; default options preserve strict admission.
+    /// # Errors
+    /// Incomplete/ambiguous source windows, malformed metadata or resource bounds.
+    pub fn open_with_options(
+        path: impl AsRef<Path>,
+        limits: Limits,
+        options: Options,
+    ) -> Result<Self, Error> {
         if [
             limits.frames,
             limits.frame_bytes,
@@ -188,8 +202,14 @@ impl Reader {
             photos,
             mut opaque,
             retained,
-        } = Admission::open(file, limits)?;
-        let mut decoder = Decoder::new(BufReader::new(file))?.with_limits(native);
+            mut interpretations,
+        } = Admission::open(file, limits, options)?;
+        let overrides = interpretations
+            .iter()
+            .map(|(&offset, value)| (offset, value.backend()))
+            .collect();
+        let mut decoder =
+            Decoder::new_with_chunk_layouts(BufReader::new(file), overrides)?.with_limits(native);
         let mut pages = Vec::new();
         #[cfg(feature = "jpeg")]
         let mut ojpeg_pages = Vec::new();
@@ -204,20 +224,28 @@ impl Reader {
                 .ok_or_else(|| Error("missing TIFF primary IFD pointer".into()))?
                 .0;
             let original = photos.get(&ifd);
-            let page = metadata(
+            let mut page = metadata(
                 &mut decoder,
                 limits,
                 &mut metadata_bytes,
                 original,
                 opaque.remove(&ifd).unwrap_or_default(),
             )?;
+            page.compatibility = interpretations.remove(&ifd);
             let (offset_tag, count_tag) = if decoder.get_chunk_type() == ChunkType::Tile {
                 (Tag::TileOffsets, Tag::TileByteCounts)
             } else {
                 (Tag::StripOffsets, Tag::StripByteCounts)
             };
-            let offsets = decoder.get_tag(offset_tag)?.into_u64_vec()?;
-            let lengths = decoder.get_tag(count_tag)?.into_u64_vec()?;
+            let (offsets, lengths) = if page.compatibility.is_some() {
+                let (a, b) = decoder.effective_chunk_tables();
+                (a.to_vec(), b.to_vec())
+            } else {
+                (
+                    decoder.get_tag(offset_tag)?.into_u64_vec()?,
+                    decoder.get_tag(count_tag)?.into_u64_vec()?,
+                )
+            };
             if matches!(page.sample_layout, SampleLayout::YCbCrComponents { .. })
                 && [1, 5].contains(&page.compression)
             {
@@ -358,6 +386,28 @@ impl Reader {
         );
         Ok(())
     }
+    /// Read only validated complete ThunderScan rows; unavailable rows have no samples.
+    /// # Errors
+    /// Wrong codec, changed source, malformed source windows or resource bounds.
+    pub fn read_thunderscan_available_into(
+        &mut self,
+        index: usize,
+        frame: &mut thunderscan::AvailableFrame,
+    ) -> Result<(), Error> {
+        frame.invalidate();
+        let page = self
+            .pages
+            .get(index)
+            .ok_or_else(|| Error("TIFF page index outside file".into()))?;
+        thunderscan::decode(
+            &self.snapshot,
+            &self.identity_handle,
+            page,
+            self.limits,
+            frame,
+        )
+    }
+
     /// Decode one stored page, retaining the allocation across same-type reads.
     /// # Errors
     /// Changed source, invalid index or malformed/truncated compressed samples.
@@ -374,6 +424,25 @@ impl Reader {
             return Err(Error(
                 "TIFF native component grids require read_ycbcr_into; no implicit expansion".into(),
             ));
+        }
+        if page.compression == 32809 {
+            let mut available = thunderscan::AvailableFrame::default();
+            thunderscan::decode(
+                &self.snapshot,
+                &self.identity_handle,
+                page,
+                self.limits,
+                &mut available,
+            )?;
+            if !available.complete() {
+                return Err(Error(
+                    "incomplete ThunderScan source; request available rows explicitly".into(),
+                ));
+            }
+            buffer.pixels = available.into_pixels();
+            buffer.shape = Some(page.shape);
+            buffer.channels = 1;
+            return Ok(());
         }
         if page.compression == 3 {
             group3::decode(
@@ -553,7 +622,7 @@ fn metadata(
     let compression = decoder
         .find_tag_unsigned::<u16>(Tag::Compression)?
         .unwrap_or(1);
-    if ![1, 3, 4, 5, 6, 7, 8, 32946, 32773].contains(&compression) {
+    if ![1, 3, 4, 5, 6, 7, 8, 32946, 32773, 32809].contains(&compression) {
         return Err(Error(format!(
             "unsupported TIFF detector compression {compression}"
         )));
@@ -566,6 +635,22 @@ fn metadata(
     if fill_order == 2 && !(compression == 3 || compression == 1 && bits < 8 && channels == 1) {
         return Err(Error(
             "LSB-first TIFF is admitted only for Group3 and uncompressed packed grayscale".into(),
+        ));
+    }
+    if compression == 32809
+        && (bits != 4
+            || channels != 1
+            || format != 1
+            || planar != 1
+            || ![0, 1].contains(&photo)
+            || decoder.get_chunk_type() != ChunkType::Strip
+            || decoder
+                .find_tag_unsigned::<u16>(Tag::Predictor)?
+                .unwrap_or(1)
+                != 1)
+    {
+        return Err(Error(
+            "ThunderScan requires unsigned four-bit single-plane strips without predictor".into(),
         ));
     }
     if compression == 3 {
@@ -708,6 +793,7 @@ fn metadata(
         compression,
         tags,
         opaque_tags,
+        compatibility: None,
     })
 }
 // BufReader::stream_position preserves its cache. This actual seek is needed

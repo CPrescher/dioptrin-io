@@ -32,3 +32,11 @@ checkouts. A future crates.io publication needs a separately published patched
 backend or another packaging design: Cargo removes a dependency's local path
 when publishing and upstream 0.11.3 does not contain this patch. No publication is
 performed as part of this change.
+
+Explicit caller-supplied chunk layouts now support bounded legacy metadata
+interpretations while retaining the original Directory and tag APIs. The
+default constructor supplies no override. Recovered modern LZW chunks use the
+same exact-count/end-code preflight; the pinned imagecodecs 2026.10.10 writer
+adds a zero flush byte when EOI is already byte aligned. This explicit path
+accepts at most eight validated zero tail bits, insufficient for another
+nine-bit code. Legacy LSB padding and ordinary modern streaming stay unchanged.

@@ -148,6 +148,7 @@ version = "0.1.0"
 dependencies = [
  "bytemuck",
  "bzip2",
+ "cc",
  "data-encoding",
  "fax",
  "flate2",

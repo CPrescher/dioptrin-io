@@ -86,6 +86,7 @@ pub(crate) struct Image {
     pub chunk_offsets: Vec<u64>,
     pub chunk_bytes: Vec<u64>,
     pub chroma_subsampling: (u16, u16),
+    pub strict_lzw_chunks: bool,
 }
 
 /// Describes how to read a tile-aligned portion of the image.
@@ -143,6 +144,7 @@ impl Image {
     pub fn from_reader<R: Read + Seek>(
         decoder: &mut ValueReader<R>,
         ifd: Directory,
+        chunk_override: Option<&super::ChunkLayoutOverride>,
     ) -> TiffResult<Image> {
         let mut tag_reader = TagReader { decoder, ifd: &ifd };
 
@@ -305,87 +307,128 @@ impl Image {
         let chunk_bytes;
         let strip_decoder;
         let tile_attributes;
-        match (
-            ifd.contains(Tag::StripByteCounts),
-            ifd.contains(Tag::StripOffsets),
-            ifd.contains(Tag::TileByteCounts),
-            ifd.contains(Tag::TileOffsets),
-        ) {
-            (true, true, false, false) => {
-                chunk_type = ChunkType::Strip;
-
-                chunk_offsets = tag_reader
-                    .find_tag(Tag::StripOffsets)?
-                    .unwrap()
-                    .into_u64_vec()?;
-                chunk_bytes = tag_reader
-                    .find_tag(Tag::StripByteCounts)?
-                    .unwrap()
-                    .into_u64_vec()?;
-                let rows_per_strip = tag_reader
-                    .find_tag(Tag::RowsPerStrip)?
-                    .map(Value::into_u32)
-                    .transpose()?
-                    .unwrap_or(height);
-                strip_decoder = Some(StripDecodeState { rows_per_strip });
-                tile_attributes = None;
-
-                if chunk_offsets.len() != chunk_bytes.len()
-                    || rows_per_strip == 0
-                    || u32::try_from(chunk_offsets.len())?
-                        != (height.saturating_sub(1) / rows_per_strip + 1) * planes as u32
+        if let Some(layout) = chunk_override {
+            chunk_type = layout.kind;
+            chunk_offsets = layout.offsets.clone();
+            chunk_bytes = layout.byte_counts.clone();
+            if chunk_type == ChunkType::Strip {
+                if layout.rows_per_strip == 0
+                    || chunk_offsets.len() != chunk_bytes.len()
+                    || chunk_offsets.len()
+                        != (height.div_ceil(layout.rows_per_strip) as usize) * usize::from(planes)
                 {
-                    return Err(TiffError::FormatError(
-                        TiffFormatError::InconsistentSizesEncountered,
-                    ));
+                    return Err(TiffFormatError::InconsistentSizesEncountered.into());
                 }
-            }
-            (false, false, true, true) => {
-                chunk_type = ChunkType::Tile;
-
+                strip_decoder = Some(StripDecodeState {
+                    rows_per_strip: layout.rows_per_strip,
+                });
+                tile_attributes = None;
+            } else {
                 let tile_width =
                     usize::try_from(tag_reader.require_tag(Tag::TileWidth)?.into_u32()?)?;
                 let tile_length =
                     usize::try_from(tag_reader.require_tag(Tag::TileLength)?.into_u32()?)?;
-
-                if tile_width == 0 {
-                    return Err(TiffFormatError::InvalidTagValueType(Tag::TileWidth).into());
-                } else if tile_length == 0 {
-                    return Err(TiffFormatError::InvalidTagValueType(Tag::TileLength).into());
+                if tile_width == 0 || tile_length == 0 {
+                    return Err(TiffFormatError::InconsistentSizesEncountered.into());
                 }
-
-                strip_decoder = None;
-                tile_attributes = Some(TileAttributes {
-                    image_width: usize::try_from(width)?,
-                    image_height: usize::try_from(height)?,
+                let tile = TileAttributes {
+                    image_width: width as usize,
+                    image_height: height as usize,
                     tile_width,
                     tile_length,
-                });
-                chunk_offsets = tag_reader
-                    .find_tag(Tag::TileOffsets)?
-                    .unwrap()
-                    .into_u64_vec()?;
-                chunk_bytes = tag_reader
-                    .find_tag(Tag::TileByteCounts)?
-                    .unwrap()
-                    .into_u64_vec()?;
-
-                let tile = tile_attributes.as_ref().unwrap();
+                };
                 if chunk_offsets.len() != chunk_bytes.len()
                     || chunk_offsets.len()
-                        != tile.tiles_down() * tile.tiles_across() * planes as usize
+                        != tile.tiles_down() * tile.tiles_across() * usize::from(planes)
                 {
-                    return Err(TiffError::FormatError(
-                        TiffFormatError::InconsistentSizesEncountered,
-                    ));
+                    return Err(TiffFormatError::InconsistentSizesEncountered.into());
                 }
+                strip_decoder = None;
+                tile_attributes = Some(tile);
             }
-            (_, _, _, _) => {
-                return Err(TiffError::FormatError(
-                    TiffFormatError::StripTileTagConflict,
-                ))
-            }
-        };
+        } else {
+            match (
+                ifd.contains(Tag::StripByteCounts),
+                ifd.contains(Tag::StripOffsets),
+                ifd.contains(Tag::TileByteCounts),
+                ifd.contains(Tag::TileOffsets),
+            ) {
+                (true, true, false, false) => {
+                    chunk_type = ChunkType::Strip;
+
+                    chunk_offsets = tag_reader
+                        .find_tag(Tag::StripOffsets)?
+                        .unwrap()
+                        .into_u64_vec()?;
+                    chunk_bytes = tag_reader
+                        .find_tag(Tag::StripByteCounts)?
+                        .unwrap()
+                        .into_u64_vec()?;
+                    let rows_per_strip = tag_reader
+                        .find_tag(Tag::RowsPerStrip)?
+                        .map(Value::into_u32)
+                        .transpose()?
+                        .unwrap_or(height);
+                    strip_decoder = Some(StripDecodeState { rows_per_strip });
+                    tile_attributes = None;
+
+                    if chunk_offsets.len() != chunk_bytes.len()
+                        || rows_per_strip == 0
+                        || u32::try_from(chunk_offsets.len())?
+                            != (height.saturating_sub(1) / rows_per_strip + 1) * planes as u32
+                    {
+                        return Err(TiffError::FormatError(
+                            TiffFormatError::InconsistentSizesEncountered,
+                        ));
+                    }
+                }
+                (false, false, true, true) => {
+                    chunk_type = ChunkType::Tile;
+
+                    let tile_width =
+                        usize::try_from(tag_reader.require_tag(Tag::TileWidth)?.into_u32()?)?;
+                    let tile_length =
+                        usize::try_from(tag_reader.require_tag(Tag::TileLength)?.into_u32()?)?;
+
+                    if tile_width == 0 {
+                        return Err(TiffFormatError::InvalidTagValueType(Tag::TileWidth).into());
+                    } else if tile_length == 0 {
+                        return Err(TiffFormatError::InvalidTagValueType(Tag::TileLength).into());
+                    }
+
+                    strip_decoder = None;
+                    tile_attributes = Some(TileAttributes {
+                        image_width: usize::try_from(width)?,
+                        image_height: usize::try_from(height)?,
+                        tile_width,
+                        tile_length,
+                    });
+                    chunk_offsets = tag_reader
+                        .find_tag(Tag::TileOffsets)?
+                        .unwrap()
+                        .into_u64_vec()?;
+                    chunk_bytes = tag_reader
+                        .find_tag(Tag::TileByteCounts)?
+                        .unwrap()
+                        .into_u64_vec()?;
+
+                    let tile = tile_attributes.as_ref().unwrap();
+                    if chunk_offsets.len() != chunk_bytes.len()
+                        || chunk_offsets.len()
+                            != tile.tiles_down() * tile.tiles_across() * planes as usize
+                    {
+                        return Err(TiffError::FormatError(
+                            TiffFormatError::InconsistentSizesEncountered,
+                        ));
+                    }
+                }
+                (_, _, _, _) => {
+                    return Err(TiffError::FormatError(
+                        TiffFormatError::StripTileTagConflict,
+                    ))
+                }
+            };
+        }
 
         Ok(Image {
             ifd: Some(ifd),
@@ -407,6 +450,7 @@ impl Image {
             chunk_offsets,
             chunk_bytes,
             chroma_subsampling,
+            strict_lzw_chunks: chunk_override.is_some_and(|layout| layout.strict_lzw),
         })
     }
 
@@ -532,6 +576,7 @@ impl Image {
         compressed_length: u64,
         #[cfg_attr(not(feature = "lzw"), allow(unused_variables))] lzw_source_bytes: usize,
         #[cfg_attr(not(feature = "lzw"), allow(unused_variables))] intermediate_limit: usize,
+        #[cfg_attr(not(feature = "lzw"), allow(unused_variables))] strict_lzw: bool,
         // FIXME: these should be `expect` attributes or we choose another way of passing them.
         #[cfg_attr(not(feature = "jpeg"), allow(unused_variables))] jpeg_tables: Option<&[u8]>,
         #[cfg_attr(not(feature = "fax"), allow(unused_variables))] dimensions: (u32, u32),
@@ -545,6 +590,7 @@ impl Image {
                 usize::try_from(compressed_length)?,
                 lzw_source_bytes,
                 intermediate_limit,
+                strict_lzw,
             )?),
             #[cfg(feature = "zstd")]
             CompressionMethod::ZSTD => Box::new(zstd::Decoder::new(reader)?),
@@ -945,6 +991,7 @@ impl Image {
             *compressed_bytes,
             lzw_source_bytes,
             limits.intermediate_buffer_size,
+            self.strict_lzw_chunks,
             self.jpeg_tables.as_deref().map(|a| &**a),
             chunk_dims,
             self.samples,
