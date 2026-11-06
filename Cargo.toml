@@ -15,7 +15,7 @@ hdf5 = ["dep:hdf5-backend", "dep:hdf5-sys", "dep:hdf5-bitshuffle", "dep:libz-sys
 tiff = ["dep:tiff-backend", "dep:tiff-jpeg-header", "dep:tiff-fax-backend", "dep:weezl", "dep:cc"]
 jpeg = ["dep:jpeg-backend", "dep:turbojpeg-backend"]
 jpeg2000 = ["dep:jpeg2000-backend"]
-cbf = ["dep:md-5"]
+cbf = ["dep:md-5", "dep:caseless", "dep:unicode-normalization"]
 edf = ["dep:bytemuck", "dep:flate2", "dep:bzip2", "dep:tempfile"]
 native = ["dep:bytemuck"]
 columnfile = ["native"]
@@ -49,6 +49,8 @@ jpeg-backend = { package = "jpeg-decoder", version = "=0.3.2", optional = true, 
 turbojpeg-backend = { package = "turbojpeg", version = "=1.5.1", optional = true, default-features = false, features = ["cmake"] }
 jpeg2000-backend = { package = "jpeg2k", version = "=0.10.1", optional = true, default-features = false, features = ["openjpeg-sys", "strict-mode"] }
 md-5 = { version = "0.10", optional = true }
+caseless = { version = "=0.2.2", optional = true }
+unicode-normalization = { version = "=0.1.24", optional = true }
 flate2 = { version = "1.1", optional = true, default-features = false, features = ["rust_backend"] }
 bzip2 = { version = "0.6", optional = true }
 tempfile = { version = "3.27", optional = true }

@@ -1,0 +1,877 @@
+{
+  "schema": 1,
+  "license": "CC0-1.0",
+  "dedication": "Independent synthetic sources and handwritten expected scope/composite/value trees by dioptrin-io authors. Source token anchors are derived from explicit literals, never from native parser output.",
+  "pinned_fabio_commit": "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece",
+  "normative_sources": [
+    "https://journals.iucr.org/j/issues/2016/01/00/aj5269/",
+    "https://www.iucr.org/__data/assets/text_file/0009/112131/CIF2-ENBF.txt"
+  ],
+  "fixtures": [
+    {
+      "file": "nested-unicode.cif",
+      "sha256": "9fab18dc63eb4ef1e6e982de8718e103f733d6afe8930a82690c296380067aac",
+      "bytes": 90,
+      "input_condition": "valid_cif2",
+      "reader_action": "read",
+      "notes": [],
+      "expected_blocks": [
+        {
+          "heading": "data_Å",
+          "items": [
+            {
+              "kind": "Scalar",
+              "name": "_Straße",
+              "value": {
+                "raw": "9007199254740993",
+                "style": "Bare"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_nested",
+              "value": {
+                "kind": "List",
+                "values": [
+                  {
+                    "kind": "List",
+                    "values": []
+                  },
+                  {
+                    "kind": "Table",
+                    "entries": []
+                  },
+                  {
+                    "kind": "Table",
+                    "entries": [
+                      {
+                        "key": {
+                          "raw": "\"κ\"",
+                          "style": "DoubleQuoted"
+                        },
+                        "value": {
+                          "kind": "List",
+                          "values": [
+                            {
+                              "raw": "1",
+                              "style": "Bare"
+                            },
+                            {
+                              "raw": "?",
+                              "style": "Bare"
+                            },
+                            {
+                              "raw": "'.'",
+                              "style": "SingleQuoted"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "raw": "\"αβ\"",
+                    "style": "DoubleQuoted"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "loops-frames.cif",
+      "sha256": "c45c0b9e7779da5b20ab9c9ba64c5a3a2f952357075fe2b85ef0498490b42c32",
+      "bytes": 170,
+      "input_condition": "valid_cif2",
+      "reader_action": "read",
+      "notes": [],
+      "expected_blocks": [
+        {
+          "heading": "data_first",
+          "items": [
+            {
+              "kind": "SaveFrame",
+              "heading": "save_empty",
+              "items": []
+            },
+            {
+              "kind": "Loop",
+              "columns": [
+                "_colour",
+                "_rgb"
+              ],
+              "values": [
+                {
+                  "raw": "red",
+                  "style": "Bare"
+                },
+                {
+                  "kind": "List",
+                  "values": [
+                    {
+                      "raw": "1",
+                      "style": "Bare"
+                    },
+                    {
+                      "raw": "0",
+                      "style": "Bare"
+                    },
+                    {
+                      "raw": "0",
+                      "style": "Bare"
+                    }
+                  ]
+                },
+                {
+                  "raw": "green",
+                  "style": "Bare"
+                },
+                {
+                  "kind": "Table",
+                  "entries": [
+                    {
+                      "key": {
+                        "raw": "\"rgb\"",
+                        "style": "DoubleQuoted"
+                      },
+                      "value": {
+                        "kind": "List",
+                        "values": [
+                          {
+                            "raw": "0",
+                            "style": "Bare"
+                          },
+                          {
+                            "raw": "1",
+                            "style": "Bare"
+                          },
+                          {
+                            "raw": "0",
+                            "style": "Bare"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "SaveFrame",
+              "heading": "save_definition",
+              "items": [
+                {
+                  "kind": "Scalar",
+                  "name": "_text",
+                  "value": {
+                    "raw": "\"separate scope\"",
+                    "style": "DoubleQuoted"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "heading": "data_second",
+          "items": [
+            {
+              "kind": "Scalar",
+              "name": "_text",
+              "value": {
+                "raw": "'second block'",
+                "style": "SingleQuoted"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "protocol-lf.cif",
+      "sha256": "3b0c48ba9260442e934adbf252595ea6c346fd2e4ac1ae79a5ba6057152010af",
+      "bytes": 262,
+      "input_condition": "valid_cif2",
+      "reader_action": "read",
+      "notes": [],
+      "expected_blocks": [
+        {
+          "heading": "data_protocol",
+          "items": [
+            {
+              "kind": "Scalar",
+              "name": "_prefix",
+              "value": {
+                "raw": ";P>\\\nP>data_example\nP>;embedded\n;",
+                "style": "TextField",
+                "logical_text": {
+                  "text": "data_example\n;embedded",
+                  "prefix": "P>",
+                  "folded": false
+                }
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_fold",
+              "value": {
+                "raw": ";\\\nfirst\\  \n second\ntrailing\\\n;",
+                "style": "TextField",
+                "logical_text": {
+                  "text": "first second\ntrailing",
+                  "prefix": null,
+                  "folded": true
+                }
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_both",
+              "value": {
+                "raw": ";P>\\\\ \nP>first\\\nP> second\n;",
+                "style": "TextField",
+                "logical_text": {
+                  "text": "first second",
+                  "prefix": "P>",
+                  "folded": true
+                }
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_false_prefix",
+              "value": {
+                "raw": ";P>\\\nP>first\nunprefixed\n;",
+                "style": "TextField",
+                "logical_text": {
+                  "text": "P>\\\nP>first\nunprefixed",
+                  "prefix": null,
+                  "folded": false
+                }
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_single_prefix",
+              "value": {
+                "raw": ";P>\\\nP>first\\\nP> second\n;",
+                "style": "TextField",
+                "logical_text": {
+                  "text": "first\\\n second",
+                  "prefix": "P>",
+                  "folded": false
+                }
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_triple",
+              "value": {
+                "raw": "'''first\n;not a delimiter\nlast'''",
+                "style": "TripleSingleQuoted"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "protocol-crlf.cif",
+      "sha256": "326501fb6ba305fdb5294a3c87db6907b2ce7cf503fa50cf15280e944aff4fa7",
+      "bytes": 292,
+      "input_condition": "valid_cif2",
+      "reader_action": "read",
+      "notes": [],
+      "expected_blocks": [
+        {
+          "heading": "data_protocol",
+          "items": [
+            {
+              "kind": "Scalar",
+              "name": "_prefix",
+              "value": {
+                "raw": ";P>\\\r\nP>data_example\r\nP>;embedded\r\n;",
+                "style": "TextField",
+                "logical_text": {
+                  "text": "data_example\n;embedded",
+                  "prefix": "P>",
+                  "folded": false
+                }
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_fold",
+              "value": {
+                "raw": ";\\\r\nfirst\\  \r\n second\r\ntrailing\\\r\n;",
+                "style": "TextField",
+                "logical_text": {
+                  "text": "first second\ntrailing",
+                  "prefix": null,
+                  "folded": true
+                }
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_both",
+              "value": {
+                "raw": ";P>\\\\ \r\nP>first\\\r\nP> second\r\n;",
+                "style": "TextField",
+                "logical_text": {
+                  "text": "first second",
+                  "prefix": "P>",
+                  "folded": true
+                }
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_false_prefix",
+              "value": {
+                "raw": ";P>\\\r\nP>first\r\nunprefixed\r\n;",
+                "style": "TextField",
+                "logical_text": {
+                  "text": "P>\\\nP>first\nunprefixed",
+                  "prefix": null,
+                  "folded": false
+                }
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_single_prefix",
+              "value": {
+                "raw": ";P>\\\r\nP>first\\\r\nP> second\r\n;",
+                "style": "TextField",
+                "logical_text": {
+                  "text": "first\\\n second",
+                  "prefix": "P>",
+                  "folded": false
+                }
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_triple",
+              "value": {
+                "raw": "'''first\r\n;not a delimiter\r\nlast'''",
+                "style": "TripleSingleQuoted"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "protocol-cr.cif",
+      "sha256": "11afce74c0f942a801592efc52ac0814a64b57a0a85879b7fcb40a42716d8cd4",
+      "bytes": 262,
+      "input_condition": "valid_cif2",
+      "reader_action": "read",
+      "notes": [],
+      "expected_blocks": [
+        {
+          "heading": "data_protocol",
+          "items": [
+            {
+              "kind": "Scalar",
+              "name": "_prefix",
+              "value": {
+                "raw": ";P>\\\rP>data_example\rP>;embedded\r;",
+                "style": "TextField",
+                "logical_text": {
+                  "text": "data_example\n;embedded",
+                  "prefix": "P>",
+                  "folded": false
+                }
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_fold",
+              "value": {
+                "raw": ";\\\rfirst\\  \r second\rtrailing\\\r;",
+                "style": "TextField",
+                "logical_text": {
+                  "text": "first second\ntrailing",
+                  "prefix": null,
+                  "folded": true
+                }
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_both",
+              "value": {
+                "raw": ";P>\\\\ \rP>first\\\rP> second\r;",
+                "style": "TextField",
+                "logical_text": {
+                  "text": "first second",
+                  "prefix": "P>",
+                  "folded": true
+                }
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_false_prefix",
+              "value": {
+                "raw": ";P>\\\rP>first\runprefixed\r;",
+                "style": "TextField",
+                "logical_text": {
+                  "text": "P>\\\nP>first\nunprefixed",
+                  "prefix": null,
+                  "folded": false
+                }
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_single_prefix",
+              "value": {
+                "raw": ";P>\\\rP>first\\\rP> second\r;",
+                "style": "TextField",
+                "logical_text": {
+                  "text": "first\\\n second",
+                  "prefix": "P>",
+                  "folded": false
+                }
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_triple",
+              "value": {
+                "raw": "'''first\r;not a delimiter\rlast'''",
+                "style": "TripleSingleQuoted"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "duplicate-table.cif",
+      "sha256": "8694d63b64cd5fff53c09657179b3a39bfc840cd4a6bec0fcdec053c10621e47",
+      "bytes": 55,
+      "input_condition": "valid_cif2",
+      "reader_action": "read",
+      "notes": [
+        "Ordered entries preserved; lookup of same is ambiguous. Normative well-formedness does not explicitly require unique table keys. PyCifRW overwrites the first entry."
+      ],
+      "expected_blocks": [
+        {
+          "heading": "data_x",
+          "items": [
+            {
+              "kind": "Scalar",
+              "name": "_table",
+              "value": {
+                "kind": "Table",
+                "entries": [
+                  {
+                    "key": {
+                      "raw": "'same'",
+                      "style": "SingleQuoted"
+                    },
+                    "value": {
+                      "raw": "1",
+                      "style": "Bare"
+                    }
+                  },
+                  {
+                    "key": {
+                      "raw": "'same'",
+                      "style": "SingleQuoted"
+                    },
+                    "value": {
+                      "raw": "2",
+                      "style": "Bare"
+                    }
+                  },
+                  {
+                    "key": {
+                      "raw": "'Other'",
+                      "style": "SingleQuoted"
+                    },
+                    "value": {
+                      "raw": "3",
+                      "style": "Bare"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "unicode-long-names.cif",
+      "sha256": "39725e61f310a28bf8e58743971e025d0e22252eacc96f8a716ddfef7e722803",
+      "bytes": 252,
+      "input_condition": "valid_cif2",
+      "reader_action": "read",
+      "notes": [],
+      "expected_blocks": [
+        {
+          "heading": "data_δ[]",
+          "items": [
+            {
+              "kind": "Scalar",
+              "name": "_αααααααααααααααααααααααααααααααααααααααααααααααααααααααααααααααααααααααααααααααααααααααααααααααααααα",
+              "value": {
+                "raw": "\"α β\"",
+                "style": "DoubleQuoted"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_[tag]",
+              "value": {
+                "raw": "value word",
+                "style": "Bare"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "punctuation.cif",
+      "sha256": "0eef63fd1679dc1745924be6e4c850c7173740189f6ac64332f9713c94294063",
+      "bytes": 77,
+      "input_condition": "valid_cif2",
+      "reader_action": "read",
+      "notes": [
+        "Comma and internal quote/colon are literal bare-string characters, not inferred list separators or numeric syntax."
+      ],
+      "expected_blocks": [
+        {
+          "heading": "data_x",
+          "items": [
+            {
+              "kind": "Scalar",
+              "name": "_list",
+              "value": {
+                "kind": "List",
+                "values": [
+                  {
+                    "raw": "1,2",
+                    "style": "Bare"
+                  },
+                  {
+                    "raw": "'quoted # text'",
+                    "style": "SingleQuoted"
+                  },
+                  {
+                    "raw": "1'b':2",
+                    "style": "Bare"
+                  }
+                ]
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_table",
+              "value": {
+                "kind": "Table",
+                "entries": [
+                  {
+                    "key": {
+                      "raw": "'colon'",
+                      "style": "SingleQuoted"
+                    },
+                    "value": {
+                      "raw": ":value",
+                      "style": "Bare"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "header-only.cif",
+      "sha256": "489581b8efee886f0c109f3e161879604196089f40cc9c01aedd06eb07111c52",
+      "bytes": 11,
+      "input_condition": "valid_cif2",
+      "reader_action": "read",
+      "notes": [],
+      "expected_blocks": []
+    },
+    {
+      "file": "duplicate-canonical-name.cif",
+      "sha256": "a4ca0c392536f5ed2b74b3700fe7a924b0e2bfcaf92fb43f5e47ba61b798b065",
+      "bytes": 30,
+      "input_condition": "malformed_cif2",
+      "reader_action": "reject",
+      "notes": [],
+      "expected_error": "duplicate case-insensitive CIF name"
+    },
+    {
+      "file": "duplicate-folded-name.cif",
+      "sha256": "5b8522738f3ecd01a856f777a3d3a9192924cee58fb256222ae1dcf3c9040d3b",
+      "bytes": 39,
+      "input_condition": "malformed_cif2",
+      "reader_action": "reject",
+      "notes": [],
+      "expected_error": "duplicate case-insensitive CIF name"
+    },
+    {
+      "file": "duplicate-canonical-block.cif",
+      "sha256": "3ccab2557bd2b5bf71a89279955b6b78a91b50a4ad4579d7cc145dd5ce904d65",
+      "bytes": 27,
+      "input_condition": "malformed_cif2",
+      "reader_action": "reject",
+      "notes": [],
+      "expected_error": "duplicate case-insensitive CIF name"
+    },
+    {
+      "file": "adjacent-values.cif",
+      "sha256": "df8fcff2d64e82ef49443fd4860d9b23b858310ad7bf9385c55b9143a7d07469",
+      "bytes": 29,
+      "input_condition": "malformed_cif2",
+      "reader_action": "reject",
+      "notes": [],
+      "expected_error": "require whitespace"
+    },
+    {
+      "file": "adjacent-lists.cif",
+      "sha256": "893bce97b38840e090691e3177d5a1fda7f97042a894d5aecdca7725cddced1e",
+      "bytes": 29,
+      "input_condition": "malformed_cif2",
+      "reader_action": "reject",
+      "notes": [],
+      "expected_error": "require whitespace"
+    },
+    {
+      "file": "key-colon-space.cif",
+      "sha256": "7d1e0f917fb6ecd258994d0df5522cd8ff64858b68fc84a27c75559a77768a1f",
+      "bytes": 29,
+      "input_condition": "malformed_cif2",
+      "reader_action": "reject",
+      "notes": [],
+      "expected_error": "immediately adjacent colon"
+    },
+    {
+      "file": "bare-key.cif",
+      "sha256": "3b21b97ba5536aeeeca6c45d111992fc04f486e711f497030952050af57aa924",
+      "bytes": 29,
+      "input_condition": "malformed_cif2",
+      "reader_action": "reject",
+      "notes": [],
+      "expected_error": "table keys require"
+    },
+    {
+      "file": "missing-table-value.cif",
+      "sha256": "8aafc846544c3120217217b56f1b1b0a2511a10b5c800b5310beb21c09d1456c",
+      "bytes": 27,
+      "input_condition": "malformed_cif2",
+      "reader_action": "reject",
+      "notes": [],
+      "expected_error": "expected a data value"
+    },
+    {
+      "file": "unclosed-list.cif",
+      "sha256": "33092bdb13ecde0ea7cf35e4de3814263be97fe8151ea92731c153dc87f320e9",
+      "bytes": 25,
+      "input_condition": "malformed_cif2",
+      "reader_action": "reject",
+      "notes": [],
+      "expected_error": "unterminated CIF2 composite"
+    },
+    {
+      "file": "wrong-closer.cif",
+      "sha256": "3e2022077f7058598d32ab42058b15d9ec92b239804be34b1ed27088cec16225",
+      "bytes": 24,
+      "input_condition": "malformed_cif2",
+      "reader_action": "reject",
+      "notes": [
+        "The mismatched closer is not the matching no-space delimiter exception; separator validation precedes value-kind validation. Source remains malformed and byte-identical."
+      ],
+      "expected_error": "CIF2 tokens require whitespace"
+    },
+    {
+      "file": "quote-embedding.cif",
+      "sha256": "a91b61c93574add8d47767b38bc6a7d2f32895bc9320dfc8866e2a6f5829dc3b",
+      "bytes": 35,
+      "input_condition": "malformed_cif2",
+      "reader_action": "reject",
+      "notes": [],
+      "expected_error": "require whitespace"
+    },
+    {
+      "file": "nested-frame.cif",
+      "sha256": "a507f247372f1de54dfb09051365207615d4034f821dd579e6a599b355d0c5c8",
+      "bytes": 48,
+      "input_condition": "malformed_cif2",
+      "reader_action": "reject",
+      "notes": [],
+      "expected_error": "reserved or unexpected CIF token"
+    },
+    {
+      "file": "bad-heading.cif",
+      "sha256": "1eaae620ba931319121bbff1c4b4515e2c537b864bbff59d4b451a9f9b571911",
+      "bytes": 23,
+      "input_condition": "malformed_cif2",
+      "reader_action": "reject",
+      "notes": [],
+      "expected_error": "version heading"
+    },
+    {
+      "file": "comment-after-colon.cif",
+      "sha256": "73f842bc9d58dfa6bb80a308dc21272348e64c88a5b2d93bf720a0b5842d9ba4",
+      "bytes": 40,
+      "input_condition": "malformed_cif2",
+      "reader_action": "reject",
+      "notes": [],
+      "expected_error": "comment requires preceding whitespace"
+    },
+    {
+      "file": "forbidden-noncharacter.cif",
+      "sha256": "5b193906161a591789a71b648119b243110829a483568ac6bd9fa2c16dc58255",
+      "bytes": 26,
+      "input_condition": "malformed_cif2",
+      "reader_action": "reject",
+      "notes": [],
+      "expected_error": "forbidden Unicode"
+    },
+    {
+      "file": "forbidden-mid-bom.cif",
+      "sha256": "c9000bae7cbaab91db8232edfd1dc20aca9313983680fa84a47bf6678c1c870f",
+      "bytes": 26,
+      "input_condition": "malformed_cif2",
+      "reader_action": "reject",
+      "notes": [],
+      "expected_error": "forbidden Unicode"
+    },
+    {
+      "file": "invalid-utf8.cif",
+      "sha256": "1a9dfaa09fd43d9590f9bd948c005e37d9f032ca90ab03724f9ef94ef6d4a52a",
+      "bytes": 24,
+      "input_condition": "malformed_cif2",
+      "reader_action": "reject",
+      "notes": [],
+      "expected_error": "well-formed UTF-8"
+    },
+    {
+      "file": "depth65.cif",
+      "sha256": "6121179027fb19b0be742a4f33d5aa4069cc29cf36b1ae2101cbc93a4f15696d",
+      "bytes": 282,
+      "input_condition": "valid_cif2_resource_limit",
+      "reader_action": "reject",
+      "notes": [
+        "CIF2 itself permits arbitrary depth; default native resource profile allows64."
+      ],
+      "expected_error": "composite nesting limit"
+    },
+    {
+      "file": "unknown-version.cif",
+      "sha256": "0dbb0a4b780b14acd2941d5a53ab80387bf5b1b58f06979d1499019291101567",
+      "bytes": 17,
+      "input_condition": "unknown_version",
+      "reader_action": "reject",
+      "notes": [],
+      "expected_error": "unsupported CIF syntax version"
+    },
+    {
+      "file": "../cif-syntax/cif2.cif",
+      "sha256": "62b6315b710b15528fbab390b6165c0283589ce1db506dae60ba470808cce3a4",
+      "bytes": 93,
+      "input_condition": "valid_cif2",
+      "reader_action": "read",
+      "notes": [
+        "Unchanged formerly unsupported source retained under original path/hash."
+      ],
+      "expected_blocks": [
+        {
+          "heading": "data_x",
+          "items": [
+            {
+              "kind": "Scalar",
+              "name": "_unicode",
+              "value": {
+                "raw": "\"αβ\"",
+                "style": "DoubleQuoted"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_list",
+              "value": {
+                "kind": "List",
+                "values": [
+                  {
+                    "raw": "1",
+                    "style": "Bare"
+                  },
+                  {
+                    "raw": "2",
+                    "style": "Bare"
+                  }
+                ]
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_table",
+              "value": {
+                "kind": "Table",
+                "entries": [
+                  {
+                    "key": {
+                      "raw": "\"key\"",
+                      "style": "DoubleQuoted"
+                    },
+                    "value": {
+                      "kind": "List",
+                      "values": [
+                        {
+                          "raw": "3",
+                          "style": "Bare"
+                        },
+                        {
+                          "raw": "4",
+                          "style": "Bare"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_triple",
+              "value": {
+                "raw": "'''line\nbreak'''",
+                "style": "TripleSingleQuoted"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "case_matching": {
+    "algorithm": "NFD -> full default case fold -> NFD",
+    "unicode_version": "16.0.0",
+    "dependencies": {
+      "caseless": "0.2.2",
+      "unicode-normalization": "0.1.24"
+    },
+    "caseless_crate_sha256": "8b6fd507454086c8edfd769ca6ada439193cdb209c7681712ef6275cccbfe5d8"
+  },
+  "primary_capture": {
+    "path": "/tmp/dioptrin-cif2-iucr-web-capture.txt",
+    "kind": "Web tool rendered primary-source article/grammar/protocol excerpts, including retrieval framing; not an HTTP-body hash. DirectHTTP403; retained outsideGit.",
+    "sha256": "f8a463b4f1dd902842936ed94da62e60b9b4f19240fdb0a22d90b4bdca6240c9"
+  }
+}

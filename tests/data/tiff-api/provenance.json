@@ -1,0 +1,42 @@
+{
+  "license": "CC0-1.0",
+  "generator": "scripts/generate_tiff_api_fixtures.py",
+  "files": {
+    "stack-nonmonotonic.tif": {
+      "bytes": 870,
+      "sha256": "28291d7b354a84e56b20092892096e3bb145c4ef47b83a434b3ca0072c4c21f7"
+    },
+    "rgb8.tif": {
+      "bytes": 292,
+      "sha256": "952a5811eac9fb2d94f35221782b280246eac5efc1bed7a9b121ca1f7ecd495a"
+    },
+    "rgb-budget.tif": {
+      "bytes": 1042,
+      "sha256": "2cb54ffa57f54c414fe6156e8df7d743efcf76506da49079e403bf1905e1c98b"
+    },
+    "palette8.tif": {
+      "bytes": 1808,
+      "sha256": "70d19eacca3c206c3d74e658f327b21a1c6d9ff68c07a751898a962a99eb2944"
+    },
+    "white.tif": {
+      "bytes": 274,
+      "sha256": "f93500e78b5c6c4dc4d7eb661177e8581a4025f9687771052d260a0833ad0650"
+    },
+    "missing-bytecounts.tif": {
+      "bytes": 274,
+      "sha256": "f8726ad4e1fd45a81aebeab9dfe117fbd940a1f303569f0dc72c909410cbf1d1"
+    },
+    "strips.tif": {
+      "bytes": 316,
+      "sha256": "dc254c59bdef27b0f07443b676db6328f0a68c1ecffdd3067a4b522ba9bcf227"
+    },
+    "packbits-one.tif": {
+      "bytes": 276,
+      "sha256": "f54dc960f25e23af1909017f65af1be6322495d104c957ab8e7607964cb86f94"
+    },
+    "empty-ifd.tif": {
+      "bytes": 8,
+      "sha256": "1ce397a187d135876fec3bfb2adeed0a66a8cc8c1ad76d36e6f0ab834f320fc6"
+    }
+  }
+}

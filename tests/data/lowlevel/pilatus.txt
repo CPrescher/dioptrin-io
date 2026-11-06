@@ -1,0 +1,20 @@
+# Detector: PILATUS 100K, S/N 01
+# Silicon sensor, thickness 0.000320 m
+# Pixel_size 0.000172 m x 0.000172 m
+# Exposure_time 0.100 s
+# Exposure_time 0.200 s
+# Exposure_period 0.210 s
+# Tau = 0.0001 s
+# Count_cutoff 1048575 counts
+# Threshold_setting: 4000 eV
+# Gain_setting: high gain (vrf = -0.200)
+# Beam_xy (12.5, 13.25) pixels
+# Wavelength 0.71073 A
+# Energy_range 1000 20000 eV
+# Detector_distance 0.2 m
+# Image_path: /original/experiment/
+# Oscillation_axis omega
+# N_oscillations 2
+# Start_angle -0.0 deg.
+# Angle_increment 0.5 deg.
+# Unknown raw units retained

@@ -1,0 +1,11 @@
+#\#CIF_2.0
+data_first
+save_empty save_
+loop_ _colour _rgb
+red [1 0 0]
+green {"rgb":[0 1 0]}
+save_definition
+_text "separate scope"
+save_
+data_second
+_text 'second block'

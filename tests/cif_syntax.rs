@@ -143,18 +143,12 @@ fn cif11_fixed_restrictions_and_unsupported_versions_are_distinct_from_resource_
                 .contains("forbidden character")
         );
     }
-    for source in [
-        b"#\\#CIF_2.0\ndata_x _a [1 2]".as_slice(),
-        b"\xef\xbb\xbf#\\#CIF_2.0\ndata_x _a 'unicode'",
-        b"#\\#CIF_9.0\ndata_x",
-    ] {
-        assert!(
-            Document::from_bytes(source, Limits::default())
-                .unwrap_err()
-                .to_string()
-                .contains("unsupported CIF syntax version")
-        );
-    }
+    assert!(
+        Document::from_bytes(b"#\\#CIF_9.0\ndata_x", Limits::default())
+            .unwrap_err()
+            .to_string()
+            .contains("unsupported CIF syntax version")
+    );
     let good = format!("data_{}\n_{} 1\n", "b".repeat(75), "x".repeat(74));
     Document::from_bytes(good.as_bytes(), Limits::default()).unwrap();
     for source in [

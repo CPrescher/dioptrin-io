@@ -1,0 +1,4 @@
+# Exposure_time not_a_number s
+# Count_cutoff nope counts
+# Unknown retained
+# Detector: terminal\

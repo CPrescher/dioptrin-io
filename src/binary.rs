@@ -1,4 +1,5 @@
 //! Shared bounded byte and scalar utilities for CBF/EDF readers.
+#[cfg(any(feature = "cbf", feature = "edf", feature = "native"))]
 use crate::{PixelBuffer, PixelType};
 use std::fmt;
 #[derive(Debug)]
@@ -49,6 +50,7 @@ impl Limits {
         }
         Ok(())
     }
+    #[cfg(any(feature = "cbf", feature = "edf", feature = "native"))]
     pub(crate) fn pixels(self, shape: [usize; 2], ty: PixelType) -> Result<usize, Error> {
         let n = shape[0]
             .checked_mul(shape[1])
@@ -63,6 +65,7 @@ impl Limits {
     }
 }
 #[derive(Debug, Default)]
+#[cfg(any(feature = "cbf", feature = "edf", feature = "native"))]
 pub struct FrameBuffer {
     pub(crate) pixels: PixelBuffer,
     pub(crate) encoded: Vec<u8>,
@@ -70,6 +73,7 @@ pub struct FrameBuffer {
     pub(crate) decoded: Vec<u8>,
     pub(crate) shape: Option<[usize; 2]>,
 }
+#[cfg(any(feature = "cbf", feature = "edf", feature = "native"))]
 impl FrameBuffer {
     #[must_use]
     pub fn pixels(&self) -> Option<&PixelBuffer> {
@@ -80,6 +84,7 @@ impl FrameBuffer {
         self.shape
     }
 }
+#[cfg(any(feature = "cbf", feature = "edf", feature = "native"))]
 pub(crate) fn resize_bytes(v: &mut Vec<u8>, len: usize) -> Result<(), Error> {
     v.try_reserve_exact(len.saturating_sub(v.len()))
         .map_err(|e| Error(e.to_string()))?;

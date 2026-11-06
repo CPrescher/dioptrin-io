@@ -78,7 +78,13 @@ impl Snapshot {
             binding,
         })
     }
-    #[cfg(any(feature = "hdf5", feature = "cbf", feature = "edf", feature = "native"))]
+    #[cfg(any(
+        feature = "hdf5",
+        feature = "cbf",
+        feature = "edf",
+        feature = "native",
+        feature = "tiff"
+    ))]
     pub fn bytes(&self) -> u64 {
         self.stamp.bytes
     }

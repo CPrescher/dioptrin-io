@@ -1,0 +1,42 @@
+{
+  "license": "CC0-1.0",
+  "generator": "scripts/generate_cbf_encoded_fixtures.py",
+  "contract": "Two byte-offset deltas 1,2 encode counts 1,3; incomplete escape deliberately has no complete count array.",
+  "files": [
+    {
+      "path": "valid.cbf",
+      "sha256": "e50b41327f3c429a436d2c89490dc01f13ce4c1d7f43bcfe629193da8b7a38ab",
+      "condition": "valid"
+    },
+    {
+      "path": "no-checksum.cbf",
+      "sha256": "f492263a7c421364216ad4d079aad976819d11c988b7e77569cce3e369c44e36",
+      "condition": "valid"
+    },
+    {
+      "path": "wrong-checksum.cbf",
+      "sha256": "5effb41ee4e7198e0a2c502c7a95b4abda35f75fb1f7369c30faa1939ee02635",
+      "condition": "integrity_mismatch"
+    },
+    {
+      "path": "incomplete-escape.cbf",
+      "sha256": "58b7a3cf4287f1d57e8fc7a744a8ffb89239b4e00ff4b556ddcbc40f592e0acf",
+      "condition": "malformed_payload"
+    },
+    {
+      "path": "big-endian-label.cbf",
+      "sha256": "f15e39ecf5a2da3cd692e3b5029aaa3cf055115f077b4bcee50dd3d1e456b969",
+      "condition": "unsupported_decoded_byte_order"
+    },
+    {
+      "path": "unsupported-conversion.cbf",
+      "sha256": "ac307ea80babc862b698f5d04cbf36ef1e681dff9b79520ce9c7c870139b244f",
+      "condition": "opaque_conversion_unvalidated_payload"
+    },
+    {
+      "path": "truncated.cbf",
+      "sha256": "a1bdc8b8e534bfc49307362b6f0f3ccdf05f39e354bebaa07ba4ab33af09f6af",
+      "condition": "malformed_payload"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+# These fixtures exercise exact source bytes, EOLs and significant whitespace.
+tests/data/cif2/*.cif -text -whitespace
+tests/data/lowlevel/*.txt -text -whitespace
+tests/data/lowlevel/*.h5 -text
+tests/data/cbf-encoded/*.cbf -text -whitespace
+tests/data/tiff-api/*.tif -text

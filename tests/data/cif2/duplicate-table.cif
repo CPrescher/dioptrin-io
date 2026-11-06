@@ -1,0 +1,3 @@
+#\#CIF_2.0
+data_x
+_table {'same':1 'same':2 'Other':3}

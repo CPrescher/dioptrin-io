@@ -1,0 +1,4 @@
+#\#CIF_2.0
+data_x
+_list [1,2 'quoted # text' 1'b':2]
+_table {'colon'::value}

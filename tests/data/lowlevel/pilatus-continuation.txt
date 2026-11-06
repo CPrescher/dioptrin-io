@@ -1,0 +1,3 @@
+# Detector: PILATUS \
+# 100K
+# Exposure_time 0.01 s

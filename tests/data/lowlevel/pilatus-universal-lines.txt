@@ -1,0 +1,3 @@
+# Exposure_time 1 s
+# Exposure_time 2 s
+# Exposure_time 3 s# Exposure_time 4 s# Exposure_time 5 s# Exposure_time 6 s# Exposure_time 7 s# Exposure_time 8 s# Exposure_time 9 s# Exposure_time 10 s # Exposure_time 11 s 

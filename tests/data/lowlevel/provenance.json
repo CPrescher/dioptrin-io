@@ -1,0 +1,73 @@
+{
+  "schema": 1,
+  "license": "CC0-1.0",
+  "origin": "independently authored text and h5py metadata/count arrays; no FabIO writer or experimental data",
+  "generator": "scripts/lowlevel_reference.py --generate-fixtures",
+  "files": [
+    {
+      "path": "master.h5",
+      "bytes": 936,
+      "sha256": "b4143157cb84a905ddfaa67a16092c350d1abc94d6a53a6dc11d8c002780eee6"
+    },
+    {
+      "path": "nexus-unicode.h5",
+      "bytes": 14455,
+      "sha256": "04e1d1f4062701a1a9e8035139410e5fd04430cecd9b39cd39810c64d4654919"
+    },
+    {
+      "path": "nexus.h5",
+      "bytes": 8311,
+      "sha256": "19a178ad472f26a4014bf55502c68d87124ce6429ab039bcecde1c55db06af8d"
+    },
+    {
+      "path": "pilatus-continuation.txt",
+      "bytes": 52,
+      "sha256": "047d2bc966dbcb3861d453ad0c8327c336bf9e7d9688677cbfd7af159c37571e"
+    },
+    {
+      "path": "pilatus-cr-continuation.txt",
+      "bytes": 68,
+      "sha256": "081521d374317b393fc673646133b4c56589f7cde8e0e7955ea15590839fd9c8"
+    },
+    {
+      "path": "pilatus-cr-only.txt",
+      "bytes": 39,
+      "sha256": "2fdf3debf5bbf7a15bab697b7defb637b18c4f2114d3f425697f78f18eeeac37"
+    },
+    {
+      "path": "pilatus-empty.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pilatus-invalid.txt",
+      "bytes": 99,
+      "sha256": "7b1cb97ab5a70d734669f3724603b68053dd0047cd8c69a787459de3e5976a23"
+    },
+    {
+      "path": "pilatus-one-token.txt",
+      "bytes": 7,
+      "sha256": "cbebbc310788aeecfe6e0f1888ba029b5d396330a6525862bfc6d2e3183b1972"
+    },
+    {
+      "path": "pilatus-trailing-spaces.txt",
+      "bytes": 17,
+      "sha256": "eeee2772b1e666f59b0cc2698590dadf55fb1c9ff073a098ab768a035cb22f81"
+    },
+    {
+      "path": "pilatus-universal-lines.txt",
+      "bytes": 228,
+      "sha256": "4b86bb589580164b7628a928474bfc1eaa6166c4fa51e89bd273757b666267e1"
+    },
+    {
+      "path": "pilatus.txt",
+      "bytes": 569,
+      "sha256": "283d20926b3e9742ac23ca39e2906f299cbd5b3aa93af0495960be0df00f21dc"
+    },
+    {
+      "path": "relay.h5",
+      "bytes": 896,
+      "sha256": "b1b087d630a4c94c4bba80f3a0e71693cd3cb76d0fcacc6ee075ca3ac086781a"
+    }
+  ]
+}

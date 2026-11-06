@@ -26,6 +26,12 @@ impl Reader {
             return Err(Error("TIFF header limits must be positive".into()));
         }
         let snapshot = Snapshot::open(path).map_err(Error)?;
+        if !std::fs::metadata(&snapshot.path)
+            .map_err(|e| Error(e.to_string()))?
+            .is_file()
+        {
+            return Err(Error("TIFF header requires a regular source file".into()));
+        }
         let file = File::open(&snapshot.path).map_err(|e| Error(e.to_string()))?;
         let identity = file.try_clone().map_err(|e| Error(e.to_string()))?;
         snapshot.check_handle(&identity).map_err(Error)?;

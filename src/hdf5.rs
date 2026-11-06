@@ -5,7 +5,9 @@
 //! bundled. Other filters must be available to HDF5 and are reported explicitly.
 //! This adapter never flips, normalizes, masks or otherwise changes counts.
 
+pub mod attributes;
 pub mod cache;
+pub mod nexus;
 pub mod raw;
 mod sources;
 #[cfg(feature = "sparse")]

@@ -20,7 +20,7 @@ pub use pixels::{PixelBuffer, PixelType};
 ))]
 mod source;
 
-#[cfg(any(feature = "cbf", feature = "edf", feature = "native"))]
+#[cfg(any(feature = "cbf", feature = "edf", feature = "native", feature = "tiff"))]
 mod binary;
 #[cfg(feature = "bruker")]
 pub mod bruker;

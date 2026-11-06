@@ -38,8 +38,38 @@ pub enum ByteOffsetMode {
     /// Admitted only for a declared signed32 image; never selected heuristically.
     Legacy32,
 }
+/// Integrity of an original encoded payload, before any count decoding.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct EncodedIntegrity {
+    pub declared_md5: Option<[u8; 16]>,
+    pub computed_md5: [u8; 16],
+}
+impl EncodedIntegrity {
+    /// `None` means that the source did not declare a checksum.
+    #[must_use]
+    pub fn matches(&self) -> Option<bool> {
+        self.declared_md5.map(|v| v == self.computed_md5)
+    }
+}
+/// Reusable original-payload capture. Failed reads hide and clear all bytes.
+#[derive(Debug, Default)]
+pub struct EncodedBuffer {
+    data: Vec<u8>,
+    integrity: Option<EncodedIntegrity>,
+}
+impl EncodedBuffer {
+    #[must_use]
+    pub fn bytes(&self) -> Option<&[u8]> {
+        self.integrity.map(|_| self.data.as_slice())
+    }
+    #[must_use]
+    pub fn integrity(&self) -> Option<EncodedIntegrity> {
+        self.integrity
+    }
+}
 pub struct Reader {
     mode: ByteOffsetMode,
+    decode_admitted: bool,
     snapshot: Snapshot,
     file: File,
     metadata: Metadata,
@@ -64,8 +94,28 @@ impl Reader {
         limits: Limits,
         mode: ByteOffsetMode,
     ) -> Result<Self, Error> {
+        Self::open_admitted(path, limits, mode, false)
+    }
+    /// Open a single binary payload without requiring its conversion codec.
+    /// Declared integer type, dimensions, byte/resource bounds and MIME metadata
+    /// remain validated. Use `read_encoded_into` for source bytes and integrity;
+    /// unsupported conversions cannot be read as decoded count arrays.
+    /// # Errors
+    /// Malformed/unsupported metadata, resource bounds or changed source.
+    pub fn open_encoded(path: impl AsRef<Path>, limits: Limits) -> Result<Self, Error> {
+        Self::open_admitted(path, limits, ByteOffsetMode::Extended64, true)
+    }
+    fn open_admitted(
+        path: impl AsRef<Path>,
+        limits: Limits,
+        mode: ByteOffsetMode,
+        encoded_only: bool,
+    ) -> Result<Self, Error> {
         limits.validate()?;
         let snapshot = Snapshot::open(path).map_err(Error)?;
+        if !std::fs::metadata(&snapshot.path)?.is_file() {
+            return Err(Error("CBF path snapshots require regular files".into()));
+        }
         let file = File::open(&snapshot.path)?;
         snapshot.check_handle(&file).map_err(Error)?;
         let mut input = BufReader::new(file.try_clone()?);
@@ -124,7 +174,8 @@ impl Reader {
             .filter_map(|p| p.trim().split_once('='))
             .find(|(k, _)| k.trim() == "conversions")
             .map(|(_, v)| v.trim().trim_matches('"'));
-        if conversion != Some("x-cbf_byte_offset") {
+        let byte_offset = conversion == Some("x-cbf_byte_offset");
+        if conversion.is_none() || (!encoded_only && !byte_offset) {
             return Err(Error(
                 "unsupported CBF conversion; only x-CBF_BYTE_OFFSET is implemented".into(),
             ));
@@ -145,7 +196,14 @@ impl Reader {
         {
             return Err(Error("unsupported CBF transfer encoding".into()));
         }
-        if !field("x-binary-element-byte-order")?.eq_ignore_ascii_case("LITTLE_ENDIAN") {
+        let little = if encoded_only {
+            fields
+                .get("x-binary-element-byte-order")
+                .is_some_and(|v| v.trim_matches('"').eq_ignore_ascii_case("LITTLE_ENDIAN"))
+        } else {
+            field("x-binary-element-byte-order")?.eq_ignore_ascii_case("LITTLE_ENDIAN")
+        };
+        if !encoded_only && !little {
             return Err(Error("unsupported CBF byte-offset byte order".into()));
         }
         let shape = [
@@ -179,7 +237,17 @@ impl Reader {
                 "Legacy32 byte-offset mode requires signed32 source metadata".into(),
             ));
         }
-        let n = limits.pixels(shape, pixel_type)?;
+        let n = if encoded_only {
+            shape[0]
+                .checked_mul(shape[1])
+                .filter(|&n| n > 0)
+                .ok_or_else(|| Error("invalid detector dimensions".into()))?
+        } else {
+            limits.pixels(shape, pixel_type)?
+        };
+        let decoded_bounds = n
+            .checked_mul(pixel_type.bytes())
+            .is_some_and(|n| n <= limits.frame_bytes);
         if number("x-binary-number-of-elements")? != n {
             return Err(Error("CBF dimensions/element count disagree".into()));
         }
@@ -245,6 +313,7 @@ impl Reader {
         snapshot.check_handle(&file).map_err(Error)?;
         Ok(Self {
             mode,
+            decode_admitted: byte_offset && little && decoded_bounds,
             snapshot,
             file,
             metadata: Metadata {
@@ -264,19 +333,50 @@ impl Reader {
     pub fn metadata(&self) -> &Metadata {
         &self.metadata
     }
+    /// Capture exactly the declared encoded payload, excluding its marker and
+    /// trailer. No byte-offset decoding or count interpretation is performed.
+    /// Checksum mismatches are returned as explicit integrity metadata alongside
+    /// the original bytes; complete image reads continue to reject them.
+    /// Admission follows the constructor: `open_encoded` also permits opaque
+    /// conversion codecs with the same bounded integer metadata/layout contract.
+    /// # Errors
+    /// Changed source, source binding, truncated payload or allocation failure.
+    pub fn read_encoded_into(&self, buffer: &mut EncodedBuffer) -> Result<(), Error> {
+        buffer.integrity = None;
+        buffer.data.clear();
+        if let Err(error) = self.capture_encoded(&mut buffer.data) {
+            buffer.data.clear();
+            return Err(error);
+        }
+        buffer.integrity = Some(EncodedIntegrity {
+            declared_md5: self.md5,
+            computed_md5: Md5::digest(&buffer.data).into(),
+        });
+        Ok(())
+    }
+    fn capture_encoded(&self, output: &mut Vec<u8>) -> Result<(), Error> {
+        self.snapshot.check_handle(&self.file).map_err(Error)?;
+        resize_bytes(output, self.bytes)?;
+        // Independent handles do not share a seek position with other reads.
+        let mut file = File::open(&self.snapshot.path)?;
+        self.snapshot.check_handle(&file).map_err(Error)?;
+        file.seek(SeekFrom::Start(self.offset))?;
+        file.read_exact(output)?;
+        self.snapshot.check_handle(&file).map_err(Error)?;
+        Ok(())
+    }
     /// Read exact original integer samples into reusable storage. Content-MD5 is
     /// verified when present. No CIF geometry/header interpretation is applied.
     /// # Errors
     /// Changed source, corrupt checksum, truncated escapes or integer overflow.
     pub fn read_frame_into(&self, buffer: &mut FrameBuffer) -> Result<(), Error> {
         buffer.shape = None;
-        self.snapshot.check_handle(&self.file).map_err(Error)?;
-        resize_bytes(&mut buffer.encoded, self.bytes)?;
-        // A fresh independent file handle avoids shared seek positions with other reads.
-        let mut file = File::open(&self.snapshot.path)?;
-        self.snapshot.check_handle(&file).map_err(Error)?;
-        file.seek(SeekFrom::Start(self.offset))?;
-        file.read_exact(&mut buffer.encoded)?;
+        if !self.decode_admitted {
+            return Err(Error(
+                "CBF layout is admitted for encoded access only".into(),
+            ));
+        }
+        self.capture_encoded(&mut buffer.encoded)?;
         if self
             .md5
             .is_some_and(|expected| Md5::digest(&buffer.encoded).as_slice() != expected)
@@ -293,7 +393,7 @@ impl Reader {
             &mut buffer.pixels,
             self.mode == ByteOffsetMode::Extended64,
         )?;
-        self.snapshot.check_handle(&file).map_err(Error)?;
+        self.snapshot.check_handle(&self.file).map_err(Error)?;
         buffer.shape = Some(meta.shape);
         Ok(())
     }

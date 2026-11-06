@@ -6,7 +6,7 @@ pub use super::{Error, Filter};
 use super::{sources::Sources, typed};
 pub use crate::binary::FrameBuffer;
 use crate::{PixelBuffer, PixelType};
-use hdf5_backend::{Dataset, Location, LocationType, types::TypeDescriptor};
+use hdf5_backend::{Dataset, LocationType, types::TypeDescriptor};
 use std::{
     collections::BTreeMap,
     path::{Path, PathBuf},
@@ -51,29 +51,7 @@ pub enum Selection<'a> {
     Default,
     Group(&'a str),
 }
-#[derive(Debug, Clone)]
-pub enum AttributeValue {
-    Numeric {
-        shape: Vec<usize>,
-        pixel_type: PixelType,
-        little_endian: bool,
-        values: PixelBuffer,
-    },
-    Text(Vec<String>),
-}
-#[derive(Debug, Clone)]
-pub struct AttributeStorage {
-    pub shape: Vec<usize>,
-    pub type_descriptor: String,
-}
-#[derive(Debug, Clone)]
-pub struct Attributes {
-    pub source_file: PathBuf,
-    pub path: String,
-    pub values: BTreeMap<String, AttributeValue>,
-    /// Original shape/character representation for text and numeric attributes.
-    pub declarations: BTreeMap<String, AttributeStorage>,
-}
+pub use super::attributes::{AttributeStorage, AttributeValue, Attributes};
 #[derive(Debug, Clone)]
 pub struct Component {
     /// Exact source group-relative name. Optional entry metadata uses entry/.

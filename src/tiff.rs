@@ -8,6 +8,7 @@
 //! Palettes retain raw indices and ColorMap; CFA retains its scalar plane. Tags remain
 //! typed values, including private tags understood by the backend's value parser.
 use crate::{PixelBuffer, PixelType, source::Snapshot};
+pub mod api;
 pub mod compatibility;
 pub use compatibility::{Options, TileTables, UncompressedWindows};
 mod group3;
@@ -157,6 +158,7 @@ pub struct Reader {
     identity_handle: File,
     snapshot: Snapshot,
     pages: Vec<Metadata>,
+    ifd_offsets: Vec<u64>,
     #[cfg(feature = "jpeg")]
     ojpeg_pages: Vec<Option<ojpeg::SourceMetadata>>,
     chunk_windows: Vec<ChunkWindows>,
@@ -189,6 +191,12 @@ impl Reader {
             return Err(Error("TIFF limits must be positive".into()));
         }
         let snapshot = Snapshot::open(path).map_err(Error)?;
+        if !std::fs::metadata(&snapshot.path)
+            .map_err(|e| Error(e.to_string()))?
+            .is_file()
+        {
+            return Err(Error("TIFF path snapshots require regular files".into()));
+        }
         let file = File::open(&snapshot.path).map_err(|e| Error(e.to_string()))?;
         let identity_handle = file.try_clone().map_err(|e| Error(e.to_string()))?;
         snapshot.check_handle(&identity_handle).map_err(Error)?;
@@ -213,6 +221,7 @@ impl Reader {
         let mut decoder =
             Decoder::new_with_chunk_layouts(BufReader::new(file), overrides)?.with_limits(native);
         let mut pages = Vec::new();
+        let mut ifd_offsets = Vec::new();
         #[cfg(feature = "jpeg")]
         let mut ojpeg_pages = Vec::new();
         let mut chunk_windows = Vec::new();
@@ -286,6 +295,14 @@ impl Reader {
                 };
                 ojpeg_pages.push(info);
             }
+            metadata_bytes = metadata_bytes
+                .checked_add(8)
+                .filter(|&n| n <= limits.metadata_bytes)
+                .ok_or_else(|| Error("TIFF IFD offsets exceed metadata budget".into()))?;
+            ifd_offsets
+                .try_reserve_exact(1)
+                .map_err(|e| Error(e.to_string()))?;
+            ifd_offsets.push(ifd);
             pages.push(page);
             if !decoder.more_images() {
                 break;
@@ -298,6 +315,7 @@ impl Reader {
             identity_handle,
             snapshot,
             pages,
+            ifd_offsets,
             #[cfg(feature = "jpeg")]
             ojpeg_pages,
             chunk_windows,

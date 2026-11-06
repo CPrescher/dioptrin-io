@@ -1,0 +1,2 @@
+#\#CIF_2.0
+data_protocol_prefix;P>\P>data_exampleP>;embedded;_fold;\first\   secondtrailing\;_both;P>\\ P>first\P> second;_false_prefix;P>\P>firstunprefixed;_single_prefix;P>\P>first\P> second;_triple '''first;not a delimiterlast'''

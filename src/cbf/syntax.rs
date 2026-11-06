@@ -1,12 +1,14 @@
-//! Strict, source-preserving CIF 1.1 syntax, separate from the detector's
+//! Strict, source-preserving versioned CIF syntax, separate from the detector's
 //! deliberately permissive header projection. No scientific values are coerced.
 use super::{Error, document::Provenance};
 use crate::source::Snapshot;
 use std::{collections::BTreeSet, fs::File, io::Read, path::Path};
+mod cif2;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Version {
     Cif11,
+    Cif20,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Span {
@@ -19,6 +21,12 @@ pub enum Style {
     SingleQuoted,
     DoubleQuoted,
     TextField,
+    TripleSingleQuoted,
+    TripleDoubleQuoted,
+    List,
+    Table,
+    /// Structural closing bracket used internally, never a parsed data value.
+    Delimiter,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Token {
@@ -35,6 +43,25 @@ pub enum Null {
 pub struct Value {
     pub token: Token,
     pub null: Option<Null>,
+    /// Index in the owning document's composite arena; scalar strings use None.
+    pub composite: Option<usize>,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct TableEntry {
+    pub key: Token,
+    pub value: Value,
+}
+#[derive(Debug)]
+pub enum Composite {
+    List(Vec<Value>),
+    Table(Vec<TableEntry>),
+}
+#[derive(Debug, PartialEq, Eq)]
+pub struct LogicalText {
+    pub text: String,
+    pub normalized_eol: bool,
+    pub prefix: Option<String>,
+    pub folded: bool,
 }
 #[derive(Debug)]
 pub struct Scalar {
@@ -85,6 +112,11 @@ pub struct Limits {
     pub items: usize,
     pub loop_columns: usize,
     pub values: usize,
+    /// Maximum composite nesting, 1..=128. The implementation cap protects the
+    /// parser stack independently of caller-supplied source/value budgets.
+    pub nesting: usize,
+    /// Per-call logical-text working/output admission; raw spans need no view.
+    pub logical_text_bytes: usize,
 }
 impl Default for Limits {
     fn default() -> Self {
@@ -96,6 +128,8 @@ impl Default for Limits {
             items: 100_000,
             loop_columns: 10_000,
             values: 1_000_000,
+            nesting: 64,
+            logical_text_bytes: 16 * 1024 * 1024,
         }
     }
 }
@@ -109,12 +143,19 @@ impl Limits {
             self.items,
             self.loop_columns,
             self.values,
+            self.nesting,
+            self.logical_text_bytes,
         ]
         .iter()
         .any(|v| *v == 0 || *v == usize::MAX)
         {
             return Err(Error(
                 "CIF syntax limits must be positive and finite".into(),
+            ));
+        }
+        if self.nesting > 128 {
+            return Err(Error(
+                "CIF composite nesting limit exceeds implementation maximum128".into(),
             ));
         }
         Ok(())
@@ -126,6 +167,8 @@ pub struct Document {
     pub version: Version,
     pub provenance: Provenance,
     pub blocks: Vec<Block>,
+    pub composites: Vec<Composite>,
+    logical_text_bytes: usize,
 }
 impl Document {
     /// # Errors
@@ -148,24 +191,29 @@ impl Document {
     }
     fn owned(original: Vec<u8>, limits: Limits, provenance: Provenance) -> Result<Self, Error> {
         admit(original.len(), limits)?;
-        validate_source(&original)?;
+        let (version, position) = validate_source(&original)?;
         let source = std::str::from_utf8(&original).map_err(|e| Error(e.to_string()))?;
         let mut parser = Parser {
             source,
-            position: 0,
+            position,
             pending: None,
             limits,
             cost: original.len() + std::mem::size_of::<Self>(),
             tokens: 0,
             items: 0,
             values: 0,
+            version,
+            composites: Vec::new(),
         };
         let blocks = parser.blocks()?;
+        let composites = parser.composites;
         Ok(Self {
             original,
-            version: Version::Cif11,
+            version,
             provenance,
             blocks,
+            composites,
+            logical_text_bytes: limits.logical_text_bytes,
         })
     }
     #[must_use]
@@ -180,21 +228,40 @@ impl Document {
             .get(token.content.start..token.content.end)
             .and_then(|s| std::str::from_utf8(s).ok())
     }
+    /// Checked arena lookup remains panic-free if callers mutate public values.
+    #[must_use]
+    pub fn composite(&self, value: Value) -> Option<&Composite> {
+        self.composites.get(value.composite?)
+    }
+    /// Explicit logical-string view. CIF2 normalizes EOLs and applies the text
+    /// prefix/folding protocols; original bytes and raw content never change.
+    /// # Errors
+    /// Invalid/mutated token ranges, composite token or logical-view budget.
+    pub fn logical_text(&self, token: Token) -> Result<LogicalText, Error> {
+        cif2::logical_text(self, token, self.logical_text_bytes)
+    }
+    fn names_equal(&self, a: &str, b: &str) -> bool {
+        if self.version == Version::Cif20 {
+            // Native names fit one 2048-character line. A finite generous
+            // query bound also protects lookups on caller-mutated public spans.
+            if a.len() > 64 * 1024 || b.len() > 64 * 1024 {
+                return false;
+            }
+            caseless::canonical_caseless_match_str(a, b)
+        } else {
+            a.eq_ignore_ascii_case(b)
+        }
+    }
     #[must_use]
     pub fn block(&self, name: &str) -> Option<&Block> {
-        self.blocks.iter().find(|b| {
-            self.text(b.name)
-                .is_some_and(|s| s.eq_ignore_ascii_case(name))
-        })
+        self.blocks
+            .iter()
+            .find(|b| self.text(b.name).is_some_and(|s| self.names_equal(s, name)))
     }
     #[must_use]
     pub fn scalar<'a>(&self, items: &'a [Item], name: &str) -> Option<&'a Scalar> {
         items.iter().find_map(|item| match item {
-            Item::Scalar(s)
-                if self
-                    .text(s.name)
-                    .is_some_and(|s| s.eq_ignore_ascii_case(name)) =>
-            {
+            Item::Scalar(s) if self.text(s.name).is_some_and(|s| self.names_equal(s, name)) => {
                 Some(s)
             }
             _ => None,
@@ -207,10 +274,7 @@ impl Document {
             Item::Loop(group) => group
                 .columns
                 .iter()
-                .position(|token| {
-                    self.text(*token)
-                        .is_some_and(|s| s.eq_ignore_ascii_case(name))
-                })
+                .position(|token| self.text(*token).is_some_and(|s| self.names_equal(s, name)))
                 .map(|index| (group, index)),
             _ => None,
         })
@@ -218,11 +282,7 @@ impl Document {
     #[must_use]
     pub fn save_frame<'a>(&self, block: &'a Block, name: &str) -> Option<&'a SaveFrame> {
         block.items.iter().find_map(|item| match item {
-            Item::SaveFrame(s)
-                if self
-                    .text(s.name)
-                    .is_some_and(|s| s.eq_ignore_ascii_case(name)) =>
-            {
+            Item::SaveFrame(s) if self.text(s.name).is_some_and(|s| self.names_equal(s, name)) => {
                 Some(s)
             }
             _ => None,
@@ -265,13 +325,16 @@ fn capture(reader: impl Read, limits: Limits) -> Result<Vec<u8>, Error> {
     }
     Ok(source)
 }
-fn validate_source(bytes: &[u8]) -> Result<(), Error> {
+fn validate_source(bytes: &[u8]) -> Result<(Version, usize), Error> {
     let magic = bytes.strip_prefix(b"\xef\xbb\xbf").unwrap_or(bytes);
     if magic.starts_with(b"#\\#CIF_") {
         let end = magic.iter().position(|v| ws(*v)).unwrap_or(magic.len());
+        if &magic[..end] == b"#\\#CIF_2.0" {
+            return cif2::validate_source(bytes);
+        }
         if &magic[..end] != b"#\\#CIF_1.1" {
             return Err(Error(
-                "unsupported CIF syntax version; only CIF 1.1 is implemented".into(),
+                "unsupported CIF syntax version; CIF1.1 and CIF2.0 are supported".into(),
             ));
         }
     }
@@ -293,7 +356,7 @@ fn validate_source(bytes: &[u8]) -> Result<(), Error> {
             }
         }
     }
-    Ok(())
+    Ok((Version::Cif11, 0))
 }
 fn ws(byte: u8) -> bool {
     matches!(byte, b' ' | b'\t' | b'\r' | b'\n')
@@ -305,6 +368,14 @@ pub(super) fn scan(
     source: &str,
     position: &mut usize,
     strict: bool,
+) -> Result<Option<Token>, &'static str> {
+    scan_core(source, position, strict, false)
+}
+fn scan_core(
+    source: &str,
+    position: &mut usize,
+    strict: bool,
+    composite_closer: bool,
 ) -> Result<Option<Token>, &'static str> {
     let bytes = source.as_bytes();
     let whitespace = |v: u8| {
@@ -357,7 +428,11 @@ pub(super) fn scan(
             end - 1
         };
         *position = end + 1;
-        if strict && bytes.get(*position).is_some_and(|v| !ws(*v)) {
+        if strict
+            && bytes
+                .get(*position)
+                .is_some_and(|v| !ws(*v) && !(composite_closer && b"]}".contains(v)))
+        {
             return Err("CIF text field closing delimiter requires whitespace");
         }
     } else if b"'\"".contains(&bytes[start]) {
@@ -413,6 +488,7 @@ enum Kind {
     Tag,
     Reserved,
     Value,
+    Delimiter,
 }
 struct Parser<'a> {
     source: &'a str,
@@ -423,12 +499,32 @@ struct Parser<'a> {
     tokens: usize,
     items: usize,
     values: usize,
+    version: Version,
+    composites: Vec<Composite>,
 }
 impl Parser<'_> {
+    fn space(&self, previous: usize, next: Token) -> Result<(), Error> {
+        if self.version == Version::Cif20
+            && !self
+                .source
+                .as_bytes()
+                .get(previous)
+                .is_some_and(|b| previous < next.span.start && ws(*b))
+        {
+            return Err(Error(format!(
+                "CIF2 tokens require whitespace at byte {}",
+                next.span.start
+            )));
+        }
+        Ok(())
+    }
     fn text(&self, t: Token) -> &str {
         &self.source[t.content.start..t.content.end]
     }
     fn kind(&self, t: Token) -> Kind {
+        if t.style == Style::Delimiter {
+            return Kind::Delimiter;
+        }
         if t.style != Style::Bare {
             return Kind::Value;
         }
@@ -461,8 +557,12 @@ impl Parser<'_> {
         if self.pending.is_some() {
             return Ok(self.pending.take());
         }
-        let token = scan(self.source, &mut self.position, true)
-            .map_err(|s| Error(format!("{s} at byte {}", self.position)))?;
+        let token = if self.version == Version::Cif20 {
+            cif2::scan(self.source, &mut self.position)
+        } else {
+            scan(self.source, &mut self.position, true)
+        }
+        .map_err(|s| Error(format!("{s} at byte {}", self.position)))?;
         if token.is_some() {
             self.tokens = self
                 .tokens
@@ -486,14 +586,45 @@ impl Parser<'_> {
         names: &mut BTreeSet<String>,
     ) -> Result<Token, Error> {
         token.content.start += prefix;
-        let name = self.text(token);
-        if name.is_empty() || name.len() > 75 || (prefix == 0 && name.len() < 2) {
+        let source = self.source;
+        let name = &source[token.content.start..token.content.end];
+        if name.is_empty()
+            || (self.version == Version::Cif11 && name.len() > 75)
+            || (prefix == 0 && name.len() < 2)
+        {
             return Err(Error(format!(
-                "CIF 1.1 invalid or overlong name at byte {}",
+                "{} invalid or overlong name at byte {}",
+                if self.version == Version::Cif11 {
+                    "CIF 1.1"
+                } else {
+                    "CIF2"
+                },
                 token.span.start
             )));
         }
-        let key = name.to_ascii_lowercase();
+        let key = if self.version == Version::Cif20 {
+            // The normalization iterators can buffer combining sequences.
+            // Admit conservative temporary workspace before invoking them,
+            // then release it once only the bounded canonical key remains.
+            let workspace = name
+                .len()
+                .checked_mul(64)
+                .and_then(|v| v.checked_add(512))
+                .ok_or_else(|| Error("CIF canonical name workspace overflow".into()))?;
+            self.charge(workspace)?;
+            let result = cif2::canonical_key(
+                name,
+                self.limits
+                    .metadata_bytes
+                    .saturating_sub(self.cost)
+                    .saturating_sub(128)
+                    / 2,
+            );
+            self.cost -= workspace;
+            result?
+        } else {
+            name.to_ascii_lowercase()
+        };
         self.charge(key.len().saturating_mul(2).saturating_add(128))?;
         if !names.insert(key) {
             return Err(Error(format!(
@@ -504,6 +635,9 @@ impl Parser<'_> {
         Ok(token)
     }
     fn value(&mut self, token: Token) -> Result<Value, Error> {
+        if self.version == Version::Cif20 {
+            return self.value2(token, 0);
+        }
         if self.kind(token) != Kind::Value {
             return Err(Error(format!(
                 "CIF item has no value at byte {}",
@@ -533,7 +667,11 @@ impl Parser<'_> {
             .filter(|n| *n <= self.limits.values)
             .ok_or_else(|| Error("CIF syntax value limit".into()))?;
         self.charge(128)?;
-        Ok(Value { token, null })
+        Ok(Value {
+            token,
+            null,
+            composite: None,
+        })
     }
     fn blocks(&mut self) -> Result<Vec<Block>, Error> {
         let mut blocks = Vec::new();
@@ -550,7 +688,7 @@ impl Parser<'_> {
             }
             self.charge(256)?;
             let name = self.name(token, 5, &mut names)?;
-            let (items, end) = self.scope(false)?;
+            let (items, end) = self.scope(false, token.span.end)?;
             blocks.try_reserve(1).map_err(|e| Error(e.to_string()))?;
             blocks.push(Block {
                 name,
@@ -563,7 +701,7 @@ impl Parser<'_> {
         }
         Ok(blocks)
     }
-    fn scope(&mut self, frame: bool) -> Result<(Vec<Item>, usize), Error> {
+    fn scope(&mut self, frame: bool, mut previous: usize) -> Result<(Vec<Item>, usize), Error> {
         let mut items = Vec::new();
         let mut tags = BTreeSet::new();
         let mut frames = BTreeSet::new();
@@ -575,6 +713,7 @@ impl Parser<'_> {
                 return Ok((items, self.source.len()));
             };
             let kind = self.kind(token);
+            self.space(previous, token)?;
             if kind == Kind::Data {
                 if frame {
                     return Err(Error(
@@ -585,7 +724,7 @@ impl Parser<'_> {
             }
             self.next()?;
             if kind == Kind::EndSave {
-                if !frame || items.is_empty() {
+                if !frame || (items.is_empty() && self.version == Version::Cif11) {
                     return Err(Error(
                         "CIF save frame terminator without a nonempty frame".into(),
                     ));
@@ -604,30 +743,34 @@ impl Parser<'_> {
                     let next = self
                         .next()?
                         .ok_or_else(|| Error("CIF item has no value at EOF".into()))?;
+                    self.space(token.span.end, next)?;
                     let value = self.value(next)?;
                     Item::Scalar(Scalar {
                         name,
                         value,
                         span: Span {
                             start: token.span.start,
-                            end: next.span.end,
+                            end: value.token.span.end,
                         },
                     })
                 }
                 Kind::Loop => {
                     let mut columns = Vec::new();
                     let mut values = Vec::new();
+                    let mut loop_previous = token.span.end;
                     while let Some(next) = self.peek()? {
                         if self.kind(next) != Kind::Tag {
                             break;
                         }
                         self.next()?;
+                        self.space(loop_previous, next)?;
                         if columns.len() >= self.limits.loop_columns {
                             return Err(Error("CIF syntax loop column limit".into()));
                         }
                         let name = self.name(next, 0, &mut tags)?;
                         columns.try_reserve(1).map_err(|e| Error(e.to_string()))?;
                         columns.push(name);
+                        loop_previous = next.span.end;
                     }
                     if columns.is_empty() {
                         return Err(Error("CIF loop has no columns".into()));
@@ -638,10 +781,12 @@ impl Parser<'_> {
                             break;
                         }
                         self.next()?;
+                        self.space(loop_previous, next)?;
                         let value = self.value(next)?;
                         values.try_reserve(1).map_err(|e| Error(e.to_string()))?;
                         values.push(value);
-                        end = next.span.end;
+                        end = value.token.span.end;
+                        loop_previous = end;
                     }
                     if values.is_empty() || values.len() % columns.len() != 0 {
                         return Err(Error("CIF loop requires nonempty complete rows".into()));
@@ -657,7 +802,7 @@ impl Parser<'_> {
                 }
                 Kind::Save if !frame => {
                     let name = self.name(token, 5, &mut frames)?;
-                    let (items, end) = self.scope(true)?;
+                    let (items, end) = self.scope(true, token.span.end)?;
                     Item::SaveFrame(SaveFrame {
                         name,
                         items,
@@ -673,6 +818,11 @@ impl Parser<'_> {
                         token.span.start
                     )));
                 }
+            };
+            previous = match &item {
+                Item::Scalar(s) => s.span.end,
+                Item::Loop(l) => l.span.end,
+                Item::SaveFrame(f) => f.span.end,
             };
             items.try_reserve(1).map_err(|e| Error(e.to_string()))?;
             items.push(item);
