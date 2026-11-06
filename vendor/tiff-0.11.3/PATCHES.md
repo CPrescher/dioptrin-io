@@ -40,3 +40,10 @@ same exact-count/end-code preflight; the pinned imagecodecs 2026.10.10 writer
 adds a zero flush byte when EOI is already byte aligned. This explicit path
 accepts at most eight validated zero tail bits, insufficient for another
 nine-bit code. Legacy LSB padding and ordinary modern streaming stay unchanged.
+
+Tile data dimensions now reduce the global chunk index to its spatial index
+within a plane before calculating edge padding. Upstream 0.11.3 used the band
+offset as an additional tile row: bottom padding vanished in subsequent planes,
+which could panic for a valid partial-edge tile or read the wrong output extent.
+This changes only geometry supplied to the same codec/predictor/raster pipeline;
+there is no alternate decoder, allocation scheme or count transformation.

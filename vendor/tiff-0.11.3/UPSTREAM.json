@@ -58,6 +58,7 @@
     "src/decoder/stream.rs: explicit legacy LSB/late signature and bounded strict decoding for explicit recovered modern LZW",
     "src/decoder/image.rs: caller-supplied chunk layout only; original IFD retained; full source chunk byte count and scratch budget supplied to codecs",
     "src/decoder/legacy_lzw.rs: weezl exact counts/end boundaries; unchanged legacy padding; explicit recovered modern byte-aligned zero flush",
-    "src/decoder/mod.rs: private codec module and explicit new_with_chunk_layouts hook; default constructor supplies no overrides"
+    "src/decoder/mod.rs: private codec module and explicit new_with_chunk_layouts hook; default constructor supplies no overrides",
+    "src/decoder/image.rs: spatial tile index is relative to each plane for correct bottom/right padding in planar images"
   ]
 }

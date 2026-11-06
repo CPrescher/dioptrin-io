@@ -851,7 +851,18 @@ impl Image {
             }
             ChunkType::Tile => {
                 let tile_attrs = self.tile_attributes.as_ref().unwrap();
-                let (padding_right, padding_down) = tile_attrs.get_padding(chunk_index as usize);
+                // Each planar band repeats the same spatial tile grid. The
+                // global chunk index includes the band and would lose bottom
+                // padding after the first plane, overrunning its output rows.
+                let tiles_per_plane = tile_attrs
+                    .tiles_across()
+                    .checked_mul(tile_attrs.tiles_down())
+                    .filter(|&count| count > 0)
+                    .ok_or(TiffError::FormatError(
+                        TiffFormatError::InconsistentSizesEncountered,
+                    ))?;
+                let (padding_right, padding_down) =
+                    tile_attrs.get_padding(chunk_index as usize % tiles_per_plane);
 
                 let tile_width = tile_attrs.tile_width - padding_right;
                 let tile_length = tile_attrs.tile_length - padding_down;

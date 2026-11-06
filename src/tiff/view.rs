@@ -11,7 +11,8 @@ use crate::{PixelBuffer, PixelType};
 pub enum Policy {
     /// Pillow 13 / FabIO's Pillow fallback: bilevel bool, packed full-range
     /// grayscale, palette RGB8, or RGB/RGBA/CMYK float32 luminance. Known
-    /// Pillow planar16 layout defects are rejected rather than reproduced.
+    /// Pillow's uncompressed planar16 layout defect is rejected rather than
+    /// reproduced. Compressed planar16 uses its correct libtiff display path.
     Pillow13,
     /// Literal ColorMap lookup retaining original 16-bit channel values.
     PaletteRgb16,
@@ -265,8 +266,11 @@ pub fn convert(
             Pixels::Scalar(pixels.clone())
         }
     } else {
-        if metadata.bits_per_sample == 16 && metadata.planar_configuration == 2 {
-            return Err(Error("reference layout defect: Pillow13 planar16 color reads alternate source bytes; stored samples retained".into()));
+        if metadata.bits_per_sample == 16
+            && metadata.planar_configuration == 2
+            && metadata.compression == 1
+        {
+            return Err(Error("reference layout defect: Pillow13 uncompressed planar16 color selects 8-bit band unpackers; stored samples retained".into()));
         }
         if ![2, 5].contains(&metadata.photometric_interpretation)
             || ![3, 4].contains(&metadata.channels)
