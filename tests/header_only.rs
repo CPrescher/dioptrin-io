@@ -123,7 +123,9 @@ fn classic_and_big_tiff_headers_are_independent_of_codec_and_sample_availability
             });
             std::fs::write(&file, cyclic).unwrap();
             // Do not depend on separate writes receiving distinct clock ticks.
-            std::fs::File::open(&file)
+            std::fs::OpenOptions::new()
+                .write(true)
+                .open(&file)
                 .unwrap()
                 .set_modified(modified + std::time::Duration::from_secs(1))
                 .unwrap();

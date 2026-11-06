@@ -102,7 +102,9 @@ fn malformed_xml_ambiguous_shapes_checksums_lengths_and_changed_sources_fail() {
     std::fs::write(&path, good.replace("AP8B", "AQIB")).unwrap();
     // Keep this a same-size edit, but make its metadata change observable even
     // when both writes fall within one Windows filesystem timestamp tick.
-    std::fs::File::open(&path)
+    std::fs::OpenOptions::new()
+        .write(true)
+        .open(&path)
         .unwrap()
         .set_modified(modified + std::time::Duration::from_secs(1))
         .unwrap();
