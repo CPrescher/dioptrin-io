@@ -46,7 +46,10 @@ A raw reader freezes dimensions and addresses. The caller asserts acquisition
 has stopped, even when the HDF5 dataset is resizable. Path/open-handle identity,
 size and modification metadata are checked before and after indexing and every
 read. Reopen after changes. These checks detect ordinary mutation/replacement,
-not adversarial writes preserving all metadata. Live/SWMR refresh, VDS source
+not byte-level immutability. Rapid same-size in-place edits can share a filesystem
+clock tick (observed on Windows), and writes can intentionally preserve metadata.
+The caller must keep sources frozen; these stamps do not validate active writers.
+Live/SWMR refresh, VDS source
 validation and master-file source manifests are not implemented. No decoded
 counts are cached by the raw reader.
 

@@ -95,10 +95,17 @@ fn malformed_xml_ambiguous_shapes_checksums_lengths_and_changed_sources_fail() {
         )
         .is_err()
     );
+    let modified = std::fs::metadata(&path).unwrap().modified().unwrap();
     let reader = Reader::open(&path, Limits::default()).unwrap();
     let mut b = FrameBuffer::default();
     reader.read_frame_into(&mut b).unwrap();
     std::fs::write(&path, good.replace("AP8B", "AQIB")).unwrap();
+    // Keep this a same-size edit, but make its metadata change observable even
+    // when both writes fall within one Windows filesystem timestamp tick.
+    std::fs::File::open(&path)
+        .unwrap()
+        .set_modified(modified + std::time::Duration::from_secs(1))
+        .unwrap();
     assert!(reader.read_frame_into(&mut b).is_err());
     assert!(b.pixels().is_none());
     let bad = good.replace(

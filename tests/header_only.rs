@@ -83,6 +83,7 @@ fn classic_and_big_tiff_headers_are_independent_of_codec_and_sample_availability
             let file = tempfile::NamedTempFile::new().unwrap().into_temp_path();
             let bytes = header_tiff(little, big);
             std::fs::write(&file, &bytes).unwrap();
+            let modified = std::fs::metadata(&file).unwrap().modified().unwrap();
             let reader = tiff::header::Reader::open(&file, Limits::default()).unwrap();
             let pages = reader.pages().unwrap();
             assert_eq!(pages.len(), 1);
@@ -121,6 +122,11 @@ fn classic_and_big_tiff_headers_are_independent_of_codec_and_sample_availability
                 &encoded[8 - size..]
             });
             std::fs::write(&file, cyclic).unwrap();
+            // Do not depend on separate writes receiving distinct clock ticks.
+            std::fs::File::open(&file)
+                .unwrap()
+                .set_modified(modified + std::time::Duration::from_secs(1))
+                .unwrap();
             assert!(reader.pages().is_err());
             assert!(tiff::header::Reader::open(&file, Limits::default()).is_err());
         }
