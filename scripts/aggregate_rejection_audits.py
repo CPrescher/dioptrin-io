@@ -77,6 +77,9 @@ def main():
                 "vendored_sources_unchanged_during_run", "build_files_unchanged_during_run",
                 "reference_component_library_unchanged_during_run"]):
             parser.error("comparison runtime dependency or native reference hashes changed")
+        if comparison.get("schema", 0) >= 5 and not all(comparison[key] for key in [
+                "explicit_policies_unchanged_during_run", "native_sources_unchanged_during_run"]):
+            parser.error("comparison explicit source policies or native sources changed")
         for row in rows:
             identity = row["baseline_sha256"]
             tested = [event for event in comparison["reads"] if event["codec"] == row["codec"]
@@ -99,10 +102,18 @@ def main():
                     event["test"] for event in events[identity]):
                 parser.error(f"comparison event/test multiplicities differ for {identity}")
             outcomes = collections.Counter(event["status"] for event in tested)
-            closed = row["reader_action"] in {"implemented", "explicit_compatibility_closed"}
-            allowed = {"counts_match", "reference_view_match", "component_view_match"} if closed else {"native_rejected"}
+            closed = row["reader_action"] in {"implemented", "explicit_compatibility_closed", "explicit_source_layout_closed"}
+            allowed = {"counts_match", "reference_view_match", "component_view_match"} if closed else (
+                {"partial_source_read"} if row["reader_action"] == "partial_source_access" else {"native_rejected"})
             if not set(outcomes) <= allowed:
                 parser.error(f"comparison contradicts classified action for {identity}: {dict(outcomes)}")
+            if row["reader_action"] == "explicit_source_layout_closed" and any(
+                    not event.get("explicit_read_policy") and not event.get("virtual_datasets") for event in tested):
+                parser.error(f"comparison has no explicit source interpretation for {identity}")
+            if row["reader_action"] == "partial_source_access" and any(
+                    not event.get("source_recovery") or not event.get("independent_recovery_check") or
+                    event["independent_recovery_check"]["differences"] for event in tested):
+                parser.error(f"comparison has no independently verified partial source read for {identity}")
             if row["reader_action"] == "explicit_compatibility_closed" and any(not any(
                     window["external_policy"] == "UpToDeclared" and
                     window["declared_bytes"] > window["effective_bytes"] > 0

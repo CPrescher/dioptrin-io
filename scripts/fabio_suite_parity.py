@@ -121,9 +121,30 @@ def main():
                         help="optional external directory retaining exact rejected inputs before upstream cleanup")
     parser.add_argument("--tiff-reference-library", type=pathlib.Path,
                         help="explicit test-only libtiff library for independent native component comparisons")
+    parser.add_argument("--read-policies", type=pathlib.Path,
+                        help="explicit source-hash or pinned-test recovery recipes; never an automatic decode retry")
+    parser.add_argument("--vds-map", type=pathlib.Path,
+                        help="explicit original-to-actual HDF5 VDS filename bindings")
     parser.add_argument("--reference-filters", choices=["bundled", "default"], default="bundled",
                         help="register the installed test-only hdf5plugin codecs explicitly (avoid host plugin ABI conflicts)")
     args = parser.parse_args()
+    policy_files = {name: {"path": str(path.resolve()), "sha256": sha_file(path)}
+                    for name, path in [("read_policies", args.read_policies), ("vds_map", args.vds_map)] if path}
+    policies = json.loads(args.read_policies.read_text())["policies"] if args.read_policies else []
+    for policy in policies:
+        if not policy.get("codec") or bool(policy.get("source_sha256")) == bool(policy.get("test_prefix")):
+            parser.error("each read policy requires a codec and exactly one source hash or pinned test prefix")
+        if not policy.get("reason") or not isinstance(policy.get("arguments"), list) or any(
+                not isinstance(value, str) for value in policy["arguments"]):
+            parser.error("each read policy requires a reason and an argument list")
+
+    def source_policy(record):
+        selected = [policy for policy in policies if policy["codec"] == record["codec"] and (
+            policy.get("source_sha256") == record.get("file_sha256") if "source_sha256" in policy else
+            (record.get("test") or "").startswith(policy["test_prefix"]))]
+        if len(selected) > 1:
+            raise ValueError("ambiguous explicit source read policies")
+        return selected[0] if selected else None
     if args.rejected_source_dir is not None:
         args.rejected_source_dir = args.rejected_source_dir.resolve()
         if args.rejected_source_dir.is_relative_to(ROOT):
@@ -163,9 +184,10 @@ def main():
         if {p.stem for p in paths} != requested:
             parser.error("unknown codec test module")
     ledger = json.loads((ROOT / "docs/fabio-2026.6.0-inventory.json").read_text())
-    report = {"schema": 4, "reference": ledger["reference"],
+    report = {"schema": 5, "reference": ledger["reference"],
               "selection": {"all_codec_modules": not bool(args.modules), "modules": []},
               "contract": "uniform count/dtype/shape and independent native component/unit comparisons, with separate explicit display views, at successful upstream .read calls; not Python API or full header parity",
+              "recovery_contract": "explicit source recipes selected before decoding; independently verified partial spans/header-only access are separate from complete count parity and expected input errors",
               "gaps": ["semantic headers not completely compared", "native content autodetection not exercised", "file-like streams materialized by test harness", "read paths bypassing .read not intercepted"],
               "out_of_scope": ["Python mutation/writing APIs and numerical statistics"],
               "reads": [], "reference_rejections": [], "source_files": {}, "reference_import_errors": [], "reference_tests": {}}
@@ -188,13 +210,17 @@ def main():
     report["probe_sha256"] = sha_file(probe_path)
     report["rejected_source_capture"] = str(args.rejected_source_dir) if args.rejected_source_dir else None
     report["runtime_capabilities"] = capabilities
+    report["explicit_policy_files"] = policy_files
     report["reference_filters"] = args.reference_filters
     report["rust_sources_sha256"] = {str(p.relative_to(ROOT)): sha_file(p) for p in sorted((ROOT/"src").rglob("*.rs"))}
     report["vendored_sources_sha256"] = {str(p.relative_to(ROOT)): sha_file(p)
         for p in sorted((ROOT/"vendor").rglob("*")) if p.is_file() and not {"target", ".git"}.intersection(p.relative_to(ROOT/"vendor").parts)}
-    report["build_files_sha256"] = {name: sha_file(ROOT/name) for name in ["Cargo.toml", "Cargo.lock"]}
+    report["native_sources_sha256"] = {str(p.relative_to(ROOT)): sha_file(p)
+        for p in sorted((ROOT/"native").rglob("*")) if p.is_file()}
+    report["build_files_sha256"] = {name: sha_file(ROOT/name) for name in ["Cargo.toml", "Cargo.lock", "build.rs"] if (ROOT/name).is_file()}
     report["bridge_sources_sha256"] = {name: sha_file(ROOT/name) for name in [
-        "scripts/fabio_suite_parity.py", "scripts/tiff_component_reference.py", "scripts/inventory_fabio.py", "examples/parity_probe.rs", "docs/fabio-2026.6.0-inventory.json"]}
+        "scripts/fabio_suite_parity.py", "scripts/tiff_component_reference.py", "scripts/edf_recovery_reference.py",
+        "scripts/thunderscan_reference.py", "scripts/inventory_fabio.py", "examples/parity_probe.rs", "docs/fabio-2026.6.0-inventory.json"]}
     active = False
     current_test = None
 
@@ -258,10 +284,6 @@ def main():
         nonlocal current_test
         record = {"test": current_test, "codec": codec, "source": str(source) if isinstance(source, (str, os.PathLike)) else type(source).__name__}
         report["reads"].append(record)
-        if getattr(image, "data", None) is None:
-            record.update(status="reference_no_pixels")
-            return
-        record["reference"] = {"dtype": image.data.dtype.name, "shape": [int(n) for n in image.data.shape], "frames": int(image.nframes)}
         # Keep file identity/provenance visible even before a codec has a native
         # adapter. A file::dataset selector still identifies one physical file.
         physical = pathlib.Path(str(source).split("::", 1)[0]) if isinstance(source, (str, os.PathLike)) else None
@@ -273,6 +295,14 @@ def main():
             file_hash = hashlib.sha256(captured).hexdigest()
             record["file_sha256"] = file_hash
             report["source_files"].setdefault(file_hash, {"name": "file-like stream", "bytes": len(captured)})
+        policy = source_policy(record)
+        if getattr(image, "data", None) is None:
+            record["reference"] = None
+            if policy is None:
+                record.update(status="reference_no_pixels")
+                return
+        else:
+            record["reference"] = {"dtype": image.data.dtype.name, "shape": [int(n) for n in image.data.shape], "frames": int(image.nframes)}
         adapter = ADAPTERS.get(codec)
         feature=capabilities["known_readers"].get(codec)
         if feature is None:
@@ -299,6 +329,12 @@ def main():
                 adapter = selected
         record["adapter"] = adapter
         extra = []
+        if policy is not None:
+            extra.extend(policy["arguments"])
+            record["explicit_read_policy"] = policy
+        if args.vds_map is not None and codec in {"lambdaimage", "hdf5image", "eigerimage", "limaimage"}:
+            extra.extend(["--vds-map", str(args.vds_map.resolve())])
+            record["vds_map_sha256"] = policy_files["vds_map"]["sha256"]
         if codec == "sparseimage":
             record["reference_reconstruction_backend"] = "native" if sys.modules["fabio.sparseimage"].cython_densify is not None else "numpy"
             if record["reference_reconstruction_backend"] != "native":
@@ -369,6 +405,32 @@ def main():
                 if manifest:
                     record["source_manifest"] = manifest
                     report["source_files"].update(manifest)
+                if any("source_recovery" in frame for frame in frames):
+                    if policy is None:
+                        raise ValueError("source recovery requires a recorded explicit read policy")
+                    if codec == "edfimage":
+                        from edf_recovery_reference import compare as compare_recovery
+                        if len(frames) != 1:
+                            raise ValueError("EDF recovery must emit one source report")
+                        check = compare_recovery(path, frames[0]["source_recovery"])
+                    elif codec == "tifimage":
+                        if args.tiff_reference_library is None:
+                            record.update(status="reference_recovery_unqualified", reason="ThunderScan recovery requires explicit independent libtiff")
+                            return
+                        from thunderscan_reference import compare as compare_recovery
+                        check = compare_recovery(path, frames, args.tiff_reference_library)
+                    else:
+                        raise ValueError("unqualified source recovery format")
+                    record["source_recovery"] = frames
+                    record["independent_recovery_check"] = check
+                    record.update(status="source_recovery_mismatch" if check["differences"] else "partial_source_read",
+                                  recovery_contract="only available source samples compared; absent counts are unavailable, never full count parity")
+                    capture_rejected_source(path, record, args.rejected_source_dir)
+                    return
+                if any("virtual_dataset" in frame for frame in frames):
+                    record["virtual_datasets"] = [{"frame":frame["frame"], **frame["virtual_dataset"]} for frame in frames if "virtual_dataset" in frame]
+                if any("tiff_compatibility" in frame for frame in frames):
+                    record["tiff_compatibility"] = [{"frame":frame["frame"], **frame["tiff_compatibility"]} for frame in frames if "tiff_compatibility" in frame]
                 if codec == "edfimage":
                     record["payload_windows"]=[{"frame":frame["frame"],**frame["payload_window"]} for frame in frames]
                 component_frames = [frame for frame in frames if "tiff_components" in frame]
@@ -622,12 +684,17 @@ def main():
     report["probe_unchanged_during_run"] = report["probe_sha256"] == sha_file(probe_path)
     report["sources_unchanged_during_run"] = all(sha_file(ROOT/p) == h for p,h in report["rust_sources_sha256"].items())
     report["vendored_sources_unchanged_during_run"] = all(sha_file(ROOT/p) == h for p,h in report["vendored_sources_sha256"].items())
+    report["native_sources_unchanged_during_run"] = all(sha_file(ROOT/p) == h for p,h in report["native_sources_sha256"].items())
     report["build_files_unchanged_during_run"] = all(sha_file(ROOT/p) == h for p,h in report["build_files_sha256"].items())
     report["reference_component_library_unchanged_during_run"] = component_reference is None or component_reference.unchanged()
     report["bridge_unchanged_during_run"] = all(sha_file(ROOT/p) == h for p,h in report["bridge_sources_sha256"].items())
+    report["explicit_policies_unchanged_during_run"] = all(sha_file(pathlib.Path(item["path"])) == item["sha256"]
+        for item in policy_files.values())
     if not all(report[key] for key in ["probe_unchanged_during_run", "sources_unchanged_during_run",
             "bridge_unchanged_during_run", "vendored_sources_unchanged_during_run",
-            "build_files_unchanged_during_run", "reference_component_library_unchanged_during_run"]):
+            "build_files_unchanged_during_run", "reference_component_library_unchanged_during_run",
+            "native_sources_unchanged_during_run",
+            "explicit_policies_unchanged_during_run"]):
         report["full_reading_parity"] = False
     args.report.parent.mkdir(parents=True, exist_ok=True)
     def json_scalar(value):

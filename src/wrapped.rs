@@ -58,6 +58,8 @@ pub enum Format {
     },
     Cbf(cbf::ByteOffsetMode),
     Tiff,
+    /// Explicit legacy TIFF metadata interpretations; original tags are retained.
+    TiffWithOptions(tiff::Options),
 }
 
 enum Backend {
@@ -302,8 +304,16 @@ impl Reader {
                 )?)
             }
             Format::Cbf(mode) => Backend::Cbf(cbf::Reader::open_with_mode(input, image, mode)?),
-            Format::Tiff => Backend::Tiff(Box::new(
-                tiff::Reader::open(input, tiff).map_err(|e| Error(e.to_string()))?,
+            Format::Tiff | Format::TiffWithOptions(_) => Backend::Tiff(Box::new(
+                tiff::Reader::open_with_options(
+                    input,
+                    tiff,
+                    match format {
+                        Format::TiffWithOptions(options) => options,
+                        _ => Default::default(),
+                    },
+                )
+                .map_err(|e| Error(e.to_string()))?,
             )),
         };
         source.check()?;
@@ -496,6 +506,34 @@ impl Reader {
         })();
         if result.is_err() {
             *buffer = tiff::ycbcr::Buffer::default();
+        }
+        result
+    }
+
+    /// Read only complete ThunderScan rows, retaining explicit missing ranges.
+    /// Original and staged sources are checked around every read.
+    /// # Errors
+    /// Non-TIFF backend, wrong codec, resource bounds or changed source.
+    pub fn read_tiff_thunderscan_available_into(
+        &mut self,
+        index: usize,
+        buffer: &mut tiff::thunderscan::AvailableFrame,
+    ) -> Result<(), Error> {
+        let result = (|| {
+            self.source.check()?;
+            let Backend::Tiff(reader) = &mut self.backend else {
+                return Err(Error(
+                    "available TIFF rows require the generic TIFF backend".into(),
+                ));
+            };
+            reader
+                .read_thunderscan_available_into(index, buffer)
+                .map_err(|error| Error(error.to_string()))?;
+            self.source.check()?;
+            Ok(())
+        })();
+        if result.is_err() {
+            *buffer = tiff::thunderscan::AvailableFrame::default();
         }
         result
     }

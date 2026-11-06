@@ -140,6 +140,54 @@ fn tiff_components_record(buffer: &tiff::ycbcr::Buffer) -> serde_json::Value {
     json!({"shape":buffer.shape(),"subsampling":buffer.subsampling(),"precision":buffer.precision(),"storage":format!("{:?}",buffer.storage().unwrap()),"chunks":chunks})
 }
 
+fn edf_window(metadata: &dioptrin_io::edf::Metadata) -> serde_json::Value {
+    json!({"declared_bytes":metadata.declared_stored_bytes,"effective_bytes":metadata.stored_bytes,
+        "external_policy":metadata.external_window_policy.map(|policy|format!("{policy:?}")),
+        "source":metadata.payload_source,"offset":metadata.payload_offset,
+        "inline_layout_policy":metadata.inline_layout_policy.map(|policy|format!("{policy:?}")),
+        "declared_header_bytes":metadata.declared_header_bytes,"parsed_header_bytes":metadata.parsed_header_bytes,
+        "legacy_size_bytes":metadata.legacy_size_bytes,"declared_compression":metadata.declared_compression,
+        "payload_interpretation":format!("{:?}",metadata.payload_interpretation)})
+}
+
+fn bytes_hex(bytes: &[u8]) -> String {
+    bytes.iter().map(|byte| format!("{byte:02x}")).collect()
+}
+
+fn edf_members(members: &[dioptrin_io::edf::recovery::MemberReport]) -> serde_json::Value {
+    json!(
+        members
+            .iter()
+            .map(|member| json!({
+                "encoded_range":[member.encoded_range.start,member.encoded_range.end],
+                "decoded_range":[member.decoded_range.start,member.decoded_range.end],
+                "integrity":format!("{:?}",member.integrity),"diagnostic":member.diagnostic
+            }))
+            .collect::<Vec<_>>()
+    )
+}
+
+#[cfg(feature = "hdf5")]
+fn vds_selection(selection: &dioptrin_io::hdf5::typed::VdsSelection) -> serde_json::Value {
+    use dioptrin_io::hdf5::typed::VdsSelection;
+    match selection {
+        VdsSelection::All {
+            shape,
+            maximum_shape,
+        } => json!({"kind":"All","shape":shape,"maximum_shape":maximum_shape}),
+        VdsSelection::Regular {
+            shape,
+            maximum_shape,
+            start,
+            stride,
+            count,
+            block,
+        } => json!({
+            "kind":"Regular","shape":shape,"maximum_shape":maximum_shape,
+            "start":start,"stride":stride,"count":count,"block":block}),
+    }
+}
+
 fn run() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = std::env::args().collect();
     if args.get(1).is_some_and(|s| s == "--capabilities") {
@@ -214,6 +262,98 @@ fn run() -> Result<(), Box<dyn Error>> {
         return Err("usage: parity_probe FORMAT PATH [WIDTH HEIGHT OFFSET DTYPE ENDIAN]".into());
     }
     let path = &args[2];
+    if args[1] == "edf" && args.iter().any(|value| value.starts_with("--edf-")) {
+        use dioptrin_io::edf::{self, InlineLayout, PayloadInterpretation};
+        let mut options = edf::Options {
+            external_payloads: edf::ExternalPayloads::FollowCompressedSnapshot,
+            external_basenames: true,
+            external_window: edf::ExternalWindow::UpToDeclared,
+            ..Default::default()
+        };
+        if args.iter().any(|value| value == "--edf-inline-size") {
+            options.inline_layout = InlineLayout::LegacySizeAtParsedBoundary;
+        }
+        if let Some(position) = args.iter().position(|value| value == "--edf-raw-label") {
+            options.payload_interpretation = PayloadInterpretation::StoredRawForLabel(
+                args.get(position + 1)
+                    .ok_or("--edf-raw-label requires exact label")?
+                    .clone(),
+            );
+        }
+        if args.iter().any(|value| value == "--edf-recovery") {
+            let reader = edf::recovery::Reader::open(
+                path,
+                native::Limits::default(),
+                edf::recovery::Options {
+                    edf: options,
+                    ..Default::default()
+                },
+            )?;
+            let mut buffer = edf::recovery::SampleBuffer::default();
+            let mut images = Vec::new();
+            for i in 0..reader.image_records() {
+                reader.read_samples_into(i, &mut buffer)?;
+                let span = buffer.report().unwrap();
+                let mut image = frame_record(
+                    i,
+                    reader.image_records(),
+                    [span.present_samples.len()],
+                    buffer.pixels().unwrap(),
+                    json!(reader.metadata(i).unwrap().fields),
+                    &[std::path::Path::new(path)],
+                );
+                image["availability"] = json!({"declared_shape":span.declared_shape,"declared_samples":span.declared_samples,
+                    "present_samples":[span.present_samples.start,span.present_samples.end],
+                    "missing_samples":span.missing_samples.as_ref().map(|range|[range.start,range.end]),
+                    "verified_samples":[span.verified_samples.start,span.verified_samples.end],
+                    "outer_integrity":format!("{:?}",span.outer_integrity),
+                    "payload_integrity":format!("{:?}",span.payload_integrity),
+                    "expected_payload_bytes":span.expected_payload_bytes,"available_payload_bytes":span.available_payload_bytes,
+                    "availability":format!("{:?}",span.availability),"payload_members":edf_members(&span.payload_members),
+                    "diagnostic":span.diagnostic,
+                    "complete_verified_frame":span.complete_verified_frame,
+                    "partial_element_bytes":bytes_hex(buffer.partial_element_bytes().unwrap())});
+                image["payload_window"] = edf_window(reader.metadata(i).unwrap());
+                images.push(image);
+            }
+            let source = reader.source_report();
+            let stop = reader.stop().map(|stop|match stop {
+                edf::recovery::Stop::TruncatedHeader{offset,bytes} => json!({"kind":"TruncatedHeader","offset":offset,"bytes_hex":bytes_hex(bytes),"sha256":format!("{:x}",Sha256::digest(bytes))}),
+                edf::recovery::Stop::TruncatedPayload{image_record,offset,expected_bytes,available_bytes} => json!({"kind":"TruncatedPayload","image_record":image_record,"offset":offset,"expected_bytes":expected_bytes,"available_bytes":available_bytes}),
+                edf::recovery::Stop::UnparsedRecord{offset,header,reason} => json!({"kind":"UnparsedRecord","offset":offset,"header_hex":bytes_hex(header),"reason":reason}),
+                edf::recovery::Stop::NoImageHeader => json!({"kind":"NoImageHeader"}),
+            });
+            println!(
+                "{}",
+                json!({"sources":[path],"source_recovery":{"format":"edf","images":images,
+                "source_report":{"path":source.path,"encoded_bytes":source.encoded_bytes,"decoded_bytes":source.decoded_bytes,
+                    "compression":format!("{:?}",source.compression),"integrity":format!("{:?}",source.integrity),
+                    "verified_decoded_bytes":source.verified_decoded_bytes,"members":edf_members(&source.members),"diagnostic":source.diagnostic},"stop":stop}})
+            );
+        } else {
+            let reader = edf::Reader::open_with_options(path, native::Limits::default(), options)?;
+            let paths: Vec<_> = reader
+                .payload_sources()
+                .iter()
+                .map(|source| source.path.as_path())
+                .collect();
+            let mut buffer = edf::FrameBuffer::default();
+            for i in 0..reader.frames() {
+                reader.read_frame_into(i, &mut buffer)?;
+                let mut row = frame_record(
+                    i,
+                    reader.frames(),
+                    buffer.shape().unwrap(),
+                    buffer.pixels().unwrap(),
+                    json!(reader.metadata(i).unwrap().fields),
+                    &paths,
+                );
+                row["payload_window"] = edf_window(reader.metadata(i).unwrap());
+                println!("{row}");
+            }
+        }
+        return Ok(());
+    }
     #[cfg(feature = "sparse")]
     if args[1] == "sparse" {
         use dioptrin_io::sparse::{
@@ -280,7 +420,10 @@ fn run() -> Result<(), Box<dyn Error>> {
     }
     #[cfg(feature = "hdf5")]
     if matches!(args[1].as_str(), "hdf5" | "eiger" | "lima" | "lambda") {
-        use dioptrin_io::hdf5::typed::{ExternalLinks, FrameBuffer, Options, Reader, Selection};
+        use dioptrin_io::hdf5::typed::{
+            ExternalLinks, FilenameBinding, FrameBuffer, Options, Reader, Selection,
+            UnmappedRegions, VdsOptions,
+        };
         let (file, selection) = match args[1].as_str() {
             "hdf5" => {
                 let (f, d) = path
@@ -292,14 +435,49 @@ fn run() -> Result<(), Box<dyn Error>> {
             "lima" => (path.as_str(), Selection::Lima),
             _ => (path.as_str(), Selection::Lambda),
         };
-        let reader = Reader::open_snapshot(
-            file,
-            selection,
-            Options {
-                external_links: ExternalLinks::FollowSnapshot,
-                ..Options::default()
-            },
-        )?;
+        let options = Options {
+            external_links: ExternalLinks::FollowSnapshot,
+            ..Options::default()
+        };
+        let reader = if let Some(position) = args.iter().position(|value| value == "--vds-map") {
+            let config: serde_json::Value = serde_json::from_slice(&std::fs::read(
+                args.get(position + 1)
+                    .ok_or("--vds-map requires a JSON file")?,
+            )?)?;
+            let bindings: Vec<_> = config["filenames"]
+                .as_array()
+                .ok_or("VDS map requires filenames array")?
+                .iter()
+                .map(|binding| {
+                    Ok(FilenameBinding {
+                        stored_filename: binding["stored_filename"]
+                            .as_str()
+                            .ok_or("binding requires stored_filename")?
+                            .into(),
+                        actual_file: binding["actual_file"]
+                            .as_str()
+                            .ok_or("binding requires actual_file")?
+                            .into(),
+                    })
+                })
+                .collect::<Result<_, Box<dyn Error>>>()?;
+            let unmapped_regions = match config["unmapped_regions"].as_str() {
+                Some("Reject") => UnmappedRegions::Reject,
+                Some("DeclaredFill") => UnmappedRegions::DeclaredFill,
+                _ => return Err("VDS map requires explicit Reject or DeclaredFill policy".into()),
+            };
+            Reader::open_snapshot_with_vds(
+                file,
+                selection,
+                options,
+                VdsOptions {
+                    filenames: &bindings,
+                    unmapped_regions,
+                },
+            )?
+        } else {
+            Reader::open_snapshot(file, selection, options)?
+        };
         let paths: Vec<_> = reader
             .sources()
             .iter()
@@ -308,7 +486,7 @@ fn run() -> Result<(), Box<dyn Error>> {
         let mut buffer = FrameBuffer::default();
         for i in 0..reader.frames() {
             reader.read_frame_into(i, &mut buffer)?;
-            report(
+            let mut row = frame_record(
                 i,
                 reader.frames(),
                 buffer.shape().unwrap(),
@@ -316,6 +494,27 @@ fn run() -> Result<(), Box<dyn Error>> {
                 json!(reader.fields()),
                 &paths,
             );
+            if let Some(vds) = &reader.metadata(i).unwrap().virtual_dataset {
+                row["virtual_dataset"] = json!({
+                    "declared_shape":vds.declared_shape,"frozen_shape":vds.frozen_shape,
+                    "master_max_shape":vds.master_max_shape,
+                    "unmapped_regions":format!("{:?}",vds.unmapped_regions),
+                    "unmapped_pixels_per_frame":vds.unmapped_pixels_per_frame,
+                    "fill_value":format!("{:?}",reader.metadata(i).unwrap().fill_value),
+                    "mappings":vds.mappings.iter().map(|mapping|json!({
+                        "stored_filename":mapping.stored_filename,"declared_dataset":mapping.declared_dataset,
+                        "source_file":mapping.source_file,"resolved_dataset":mapping.resolved_dataset,
+                        "source_shape":mapping.source_shape,"source_origin":mapping.source_origin,
+                        "virtual_origin":mapping.virtual_origin,"mapped_shape":mapping.mapped_shape,
+                        "source_selection":vds_selection(&mapping.source_selection),
+                        "virtual_selection":vds_selection(&mapping.virtual_selection),
+                        "source_pixel_type":format!("{:?}",mapping.source_pixel_type),
+                        "source_little_endian":mapping.source_little_endian,"source_layout":format!("{:?}",mapping.source_layout),
+                        "source_fill_value":format!("{:?}",mapping.source_fill_value),"source_fill_time":format!("{:?}",mapping.source_fill_time),
+                        "filters":format!("{:?}",mapping.filters),"storage_allocated":mapping.storage_allocated
+                    })).collect::<Vec<_>>()});
+            }
+            println!("{row}");
         }
         return Ok(());
     }
@@ -465,6 +664,14 @@ fn run() -> Result<(), Box<dyn Error>> {
         },
         "cbf" => wrapped::Format::Cbf(cbf::ByteOffsetMode::Legacy32),
         "cbf64" => wrapped::Format::Cbf(cbf::ByteOffsetMode::Extended64),
+        "tiff" | "tiff-pillow13" | "tiff-tiffio"
+            if args.iter().any(|value| value == "--tiff-compat") =>
+        {
+            wrapped::Format::TiffWithOptions(tiff::Options {
+                uncompressed_windows: tiff::UncompressedWindows::FromShape,
+                tile_tables: tiff::TileTables::FromStripTags,
+            })
+        }
         "tiff" | "tiff-pillow13" | "tiff-tiffio" => wrapped::Format::Tiff,
         name => wrapped::Format::Native(match name {
             "npy" => native::Format::Npy,
@@ -485,6 +692,33 @@ fn run() -> Result<(), Box<dyn Error>> {
     )?;
     let mut buffer = wrapped::FrameBuffer::default();
     for i in 0..reader.frames() {
+        if args.iter().any(|value| value == "--tiff-available")
+            && matches!(reader.metadata(i), Some(wrapped::Metadata::Tiff(metadata)) if metadata.compression == 32809)
+        {
+            let mut available = tiff::thunderscan::AvailableFrame::default();
+            reader.read_tiff_thunderscan_available_into(i, &mut available)?;
+            let pixels = available.pixels().unwrap();
+            let mut row = frame_record(
+                i,
+                reader.frames(),
+                [pixels.len()],
+                pixels,
+                json!({}),
+                &reader.source_paths(),
+            );
+            let wrapped::Metadata::Tiff(metadata) = reader.metadata(i).unwrap() else {
+                unreachable!()
+            };
+            row["source_recovery"] = json!({"format":"tiff-thunderscan","declared_shape":available.shape(),
+                "source_bits":metadata.bits_per_sample,"source_pixel_type":format!("{:?}",metadata.pixel_type),
+                "source_orientation":metadata.orientation,"source_little_endian":metadata.little_endian,"source_compression":metadata.compression,
+                "available_rows":available.available_rows().unwrap().iter().map(|span|json!({"start_row":span.start_row,"rows":span.rows,"sample_offset":span.sample_offset})).collect::<Vec<_>>(),
+                "missing_rows":available.missing_rows().unwrap().iter().map(|span|json!({"start_row":span.start_row,"rows":span.rows,"strip":span.strip,"reason":span.reason})).collect::<Vec<_>>(),
+                "strips":available.strips().unwrap().iter().map(|strip|json!({"offset":strip.offset,"declared_bytes":strip.declared_bytes,"consumed_bytes":strip.consumed_bytes,"requested_rows":strip.requested_rows,"complete_rows":strip.complete_rows,"integrity":format!("{:?}",strip.integrity)})).collect::<Vec<_>>(),
+                "complete":available.complete()});
+            println!("{row}");
+            continue;
+        }
         if let wrapped::Metadata::Tiff(metadata) = reader.metadata(i).unwrap()
             && metadata.uniform_sample_shape().is_none()
         {
@@ -563,12 +797,21 @@ fn run() -> Result<(), Box<dyn Error>> {
             fields,
             &reader.source_paths(),
         );
+        if let wrapped::Metadata::Tiff(metadata) = reader.metadata(i).unwrap()
+            && let Some(compatibility) = &metadata.compatibility
+        {
+            row["tiff_compatibility"] = json!({
+                "source_ifd_offset":compatibility.source_ifd_offset,
+                "source_entries":compatibility.source_entries.iter().map(|entry|json!({
+                    "tag":entry.tag,"field_type":entry.field_type,"count":entry.count,
+                    "entry_offset":entry.entry_offset,"ifd_entry":entry.ifd_entry,"payload_offset":entry.payload_offset
+                })).collect::<Vec<_>>(),
+                "operations":compatibility.operations.iter().map(|operation|format!("{operation:?}")).collect::<Vec<_>>(),
+                "kind":format!("{:?}",compatibility.kind),"rows_per_strip":compatibility.rows_per_strip,
+                "windows":compatibility.windows.iter().map(|window|json!({"offset":window.offset,"bytes":window.bytes})).collect::<Vec<_>>()});
+        }
         if let wrapped::Metadata::Edf(metadata) = reader.metadata(i).unwrap() {
-            row["payload_window"] = json!({
-                "declared_bytes":metadata.declared_stored_bytes,
-                "effective_bytes":metadata.stored_bytes,
-                "external_policy":metadata.external_window_policy.map(|policy|format!("{policy:?}")),
-                "source":metadata.payload_source,"offset":metadata.payload_offset});
+            row["payload_window"] = edf_window(metadata);
         }
         #[cfg(feature = "oxford")]
         if let wrapped::Metadata::Oxford(metadata) = reader.metadata(i).unwrap()

@@ -49,6 +49,13 @@ fn same_files_through_both_wrappers_keep_counts_headers_and_stacks() {
         ("edf/compressed-stack.edf", Format::Edf),
         ("cbf/int32.cbf", Format::Cbf(cbf::ByteOffsetMode::Legacy32)),
         ("tiff/le-bigtiff.tif", Format::Tiff),
+        (
+            "tiff-recovery/short-u16.tif",
+            Format::TiffWithOptions(tiff::Options {
+                uncompressed_windows: tiff::UncompressedWindows::FromShape,
+                tile_tables: tiff::TileTables::Declared,
+            }),
+        ),
         #[cfg(feature = "mar345")]
         ("mar345/field32-nonzero.mar345", Format::Mar345),
         #[cfg(feature = "bruker")]
@@ -173,5 +180,46 @@ fn corrupt_truncated_bomb_limits_and_changed_original_fail_closed() {
         std::fs::write(path.path(), b"changed original").unwrap();
         assert!(reader.read_frame_into(0, &mut buffer).is_err());
         assert!(buffer.pixels().is_none());
+    }
+}
+
+#[test]
+fn wrapped_thunderscan_preserves_holes_and_invalidates_on_original_mutation() {
+    let fixtures =
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/tiff-recovery");
+    let source = std::fs::read(fixtures.join("thunder-partial-stack.tif")).unwrap();
+    let expected = std::fs::read(fixtures.join("thunder-partial-stack.tif.raw")).unwrap();
+    let path = tempfile::NamedTempFile::new().unwrap();
+    for compression in [Compression::Gzip, Compression::Bzip2] {
+        std::fs::write(path.path(), encoded(&source, compression)).unwrap();
+        let mut reader = open(path.path(), Format::Tiff).unwrap();
+        let mut available = tiff::thunderscan::AvailableFrame::default();
+        reader
+            .read_tiff_thunderscan_available_into(0, &mut available)
+            .unwrap();
+        assert_eq!(available.shape(), Some([5, 7]));
+        assert_eq!(
+            available.pixels(),
+            Some(&dioptrin_io::PixelBuffer::U8(expected.clone()))
+        );
+        assert_eq!(available.missing_rows().unwrap()[0].start_row, 3);
+        assert_eq!(available.available_rows().unwrap()[1].start_row, 4);
+        assert!(!available.complete());
+        let mut dense = FrameBuffer::default();
+        assert!(reader.read_frame_into(0, &mut dense).is_err());
+        assert!(dense.pixels().is_none());
+        reader.read_frame_into(1, &mut dense).unwrap();
+        std::fs::write(path.path(), b"changed original").unwrap();
+        assert!(
+            reader
+                .read_tiff_thunderscan_available_into(0, &mut available)
+                .is_err()
+        );
+        assert!(available.shape().is_none());
+        assert!(available.pixels().is_none());
+        assert!(available.available_rows().is_none());
+        assert!(available.missing_rows().is_none());
+        assert!(available.strips().is_none());
+        assert!(!available.complete());
     }
 }

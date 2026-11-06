@@ -1,0 +1,178 @@
+{
+  "schema": 1,
+  "contract": "Explicit test-only recipes selected before decoding. These policies never change default reader behavior and never claim absent samples.",
+  "policies": [
+    {
+      "codec": "edfimage",
+      "source_sha256": "a162fbcc75ca97856e2adfc84ebb4b0ef093c0b5ac0cec44e66bcb87a4d7ef75",
+      "arguments": [
+        "--edf-inline-size"
+      ],
+      "reason": "Complete inline Size window at parsed boundary; preserve contradictory EDF_HeaderSize and EDF_BinarySize declarations.",
+      "source_name": "MultiFrame-Frame0.edf"
+    },
+    {
+      "codec": "edfimage",
+      "source_sha256": "223a5d373ee8e08071f7fc2ecca9a19963e94302b16e83199868deee238f0d09",
+      "arguments": [
+        "--edf-inline-size"
+      ],
+      "reason": "Complete inline Size window at parsed boundary; preserve contradictory EDF_HeaderSize and EDF_BinarySize declarations.",
+      "source_name": "MultiFrame-Frame1.edf"
+    },
+    {
+      "codec": "edfimage",
+      "source_sha256": "9e876c886c6d97f80ce5b3a58e96ae7c30cae56f643c5a04f272ca2c93f1bb98",
+      "arguments": [
+        "--edf-inline-size"
+      ],
+      "reason": "Complete inline Size window at parsed boundary; preserve contradictory EDF_HeaderSize and EDF_BinarySize declarations.",
+      "source_name": "MultiFrame-Frame0.edf.bz2"
+    },
+    {
+      "codec": "edfimage",
+      "source_sha256": "64992b70b52b78335fc12dc0e0174ef47a360ae8579be9e1d5d3e558674d700f",
+      "arguments": [
+        "--edf-inline-size",
+        "--edf-raw-label",
+        "TY1"
+      ],
+      "reason": "Explicit original TY1 label interpreted as stored raw words under independently verified acquisition convention; no failed-codec fallback.",
+      "source_name": "d80_60s.edf"
+    },
+    {
+      "codec": "tifimage",
+      "source_sha256": "8d3b8fa21d2acb13319f83c849aab2529b22ba0055dc6f24392243e08ca6cbf9",
+      "arguments": [
+        "--tiff-compat"
+      ],
+      "reason": "Explicit bounded source-window or mixed strip/tile legacy metadata interpretation; all original IFD entries retained.",
+      "source_name": "Feb09-bright-00.300s_WAXS.bz2"
+    },
+    {
+      "codec": "tifimage",
+      "source_sha256": "c3b316575ebedda401b1b189dfac68343ee1d6eef1426a817994436297a84f40",
+      "arguments": [
+        "--tiff-compat"
+      ],
+      "reason": "Explicit bounded source-window or mixed strip/tile legacy metadata interpretation; all original IFD entries retained.",
+      "source_name": "Feb09-bright-00.300s_WAXS.gz"
+    },
+    {
+      "codec": "tifimage",
+      "source_sha256": "89ed2cf5f3f3dd31442bd4eaa2516b0ed860fe88b868406ba7110bbcf72a2733",
+      "arguments": [
+        "--tiff-compat"
+      ],
+      "reason": "Explicit bounded source-window or mixed strip/tile legacy metadata interpretation; all original IFD entries retained.",
+      "source_name": "Feb09-bright-00.300s_WAXS"
+    },
+    {
+      "codec": "tifimage",
+      "source_sha256": "95b318fb8c6f3ab9edd33aba8f3feb6302d266b237f81a690fa62cc06ed7bb51",
+      "arguments": [
+        "--tiff-compat"
+      ],
+      "reason": "Explicit bounded source-window or mixed strip/tile legacy metadata interpretation; all original IFD entries retained.",
+      "source_name": "a0009.tif"
+    },
+    {
+      "codec": "tifimage",
+      "source_sha256": "0b9c03248c2e1d4acaf1437e9b16326a1e0da46342c56f38a4a1b62a51d448d7",
+      "arguments": [
+        "--tiff-available"
+      ],
+      "reason": "Read only complete ThunderScan rows; missing rows remain unavailable and are not padded.",
+      "source_name": "text.tif"
+    },
+    {
+      "codec": "tifimage",
+      "source_sha256": "ab5e5c87cd575472c6fc3e0d5824ebc818b88bf6e5e4aff3afe66f8725351a09",
+      "arguments": [
+        "--tiff-compat"
+      ],
+      "reason": "Explicit bounded source-window or mixed strip/tile legacy metadata interpretation; all original IFD entries retained.",
+      "source_name": "quad-tile.tif"
+    },
+    {
+      "codec": "edfimage",
+      "test_prefix": "fabio.test.codecs.test_edfimage.TestBadFiles.test_header_with_no_data",
+      "arguments": [
+        "--edf-recovery"
+      ],
+      "reason": "Pinned upstream intentionally truncated-file tests; expose only present original words, partial elements, incomplete headers and compression integrity. Timestamp-bearing gzip replicas are identified as test cases, not byte-identical originals."
+    },
+    {
+      "codec": "edfimage",
+      "test_prefix": "fabio.test.codecs.test_edfimage.TestBadFiles.test_header_with_half_data",
+      "arguments": [
+        "--edf-recovery"
+      ],
+      "reason": "Pinned upstream intentionally truncated-file tests; expose only present original words, partial elements, incomplete headers and compression integrity. Timestamp-bearing gzip replicas are identified as test cases, not byte-identical originals."
+    },
+    {
+      "codec": "edfimage",
+      "test_prefix": "fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_half_header",
+      "arguments": [
+        "--edf-recovery"
+      ],
+      "reason": "Pinned upstream intentionally truncated-file tests; expose only present original words, partial elements, incomplete headers and compression integrity. Timestamp-bearing gzip replicas are identified as test cases, not byte-identical originals."
+    },
+    {
+      "codec": "edfimage",
+      "test_prefix": "fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_header_with_no_data",
+      "arguments": [
+        "--edf-recovery"
+      ],
+      "reason": "Pinned upstream intentionally truncated-file tests; expose only present original words, partial elements, incomplete headers and compression integrity. Timestamp-bearing gzip replicas are identified as test cases, not byte-identical originals."
+    },
+    {
+      "codec": "edfimage",
+      "test_prefix": "fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_header_with_half_data",
+      "arguments": [
+        "--edf-recovery"
+      ],
+      "reason": "Pinned upstream intentionally truncated-file tests; expose only present original words, partial elements, incomplete headers and compression integrity. Timestamp-bearing gzip replicas are identified as test cases, not byte-identical originals."
+    },
+    {
+      "codec": "edfimage",
+      "test_prefix": "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_header_with_no_data",
+      "arguments": [
+        "--edf-recovery"
+      ],
+      "reason": "Pinned upstream intentionally truncated-file tests; expose only present original words, partial elements, incomplete headers and compression integrity. Timestamp-bearing gzip replicas are identified as test cases, not byte-identical originals."
+    },
+    {
+      "codec": "edfimage",
+      "test_prefix": "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_header_with_half_data",
+      "arguments": [
+        "--edf-recovery"
+      ],
+      "reason": "Pinned upstream intentionally truncated-file tests; expose only present original words, partial elements, incomplete headers and compression integrity. Timestamp-bearing gzip replicas are identified as test cases, not byte-identical originals."
+    },
+    {
+      "codec": "edfimage",
+      "test_prefix": "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_half_header",
+      "arguments": [
+        "--edf-recovery"
+      ],
+      "reason": "Pinned upstream intentionally truncated-file tests; expose only present original words, partial elements, incomplete headers and compression integrity. Timestamp-bearing gzip replicas are identified as test cases, not byte-identical originals."
+    },
+    {
+      "codec": "edfimage",
+      "test_prefix": "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_header_with_no_data",
+      "arguments": [
+        "--edf-recovery"
+      ],
+      "reason": "Pinned upstream intentionally truncated-file tests; expose only present original words, partial elements, incomplete headers and compression integrity. Timestamp-bearing gzip replicas are identified as test cases, not byte-identical originals."
+    },
+    {
+      "codec": "edfimage",
+      "test_prefix": "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_header_with_half_data",
+      "arguments": [
+        "--edf-recovery"
+      ],
+      "reason": "Pinned upstream intentionally truncated-file tests; expose only present original words, partial elements, incomplete headers and compression integrity. Timestamp-bearing gzip replicas are identified as test cases, not byte-identical originals."
+    }
+  ]
+}
