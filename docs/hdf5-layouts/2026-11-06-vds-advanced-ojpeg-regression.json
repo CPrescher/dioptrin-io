@@ -1,0 +1,2159 @@
+{
+  "schema": 1,
+  "contract": "native exact complex/half/bool storage and explicit raw external windows; unchanged FabIO calls separated from source/manual bit oracles; no throughput claim",
+  "reference_commit": "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece",
+  "probe": {
+    "path": "/Users/clemens/Programming/dioptrin-io/target/release/examples/api_probe",
+    "bytes": 8836880,
+    "sha256": "fb2f289085c0cbd39c7332b9745b698a0da28195df7ef1c4aaf1a4cb686ad764"
+  },
+  "sources": {
+    "/Users/clemens/Programming/dioptrin-io/scripts/hdf5_layout_reference.py": {
+      "path": "/Users/clemens/Programming/dioptrin-io/scripts/hdf5_layout_reference.py",
+      "bytes": 13512,
+      "sha256": "08189f35051655173c80edce1a9578e83367a324b2bbf6298f0b91070f198cc1"
+    },
+    "/Users/clemens/Programming/dioptrin-io/scripts/test_hdf5_layout_reference.py": {
+      "path": "/Users/clemens/Programming/dioptrin-io/scripts/test_hdf5_layout_reference.py",
+      "bytes": 2036,
+      "sha256": "f4c7b6b1cbe5b035efe764ed3d272ba5a193efd8ae8751d03951a95496d3ab90"
+    },
+    "/Users/clemens/Programming/dioptrin-io/scripts/generate_hdf5_layout_fixtures.py": {
+      "path": "/Users/clemens/Programming/dioptrin-io/scripts/generate_hdf5_layout_fixtures.py",
+      "bytes": 5791,
+      "sha256": "c8b836aaf79dfaf17378eb62bdaf9dcd9ea9fd3298539572f3f52eb886b85e6b"
+    },
+    "/Users/clemens/Programming/dioptrin-io/scripts/companion_reference.py": {
+      "path": "/Users/clemens/Programming/dioptrin-io/scripts/companion_reference.py",
+      "bytes": 11904,
+      "sha256": "e2c0fc1b8042925feebca895c782121c66269803624d67c91872273487fa6952"
+    },
+    "/Users/clemens/Programming/dioptrin-io/tests/hdf5_layouts.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/hdf5_layouts.rs",
+      "bytes": 13139,
+      "sha256": "c467808c2e0b15b1d9676680a063fbe7cf7f1f1a5e51a991255a683558fd44c6"
+    },
+    "/Users/clemens/Programming/dioptrin-io/examples/api_probe.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/examples/api_probe.rs",
+      "bytes": 60180,
+      "sha256": "b9c709007f62fcffd6615fcbedc368eae61208c423e08c1cf546258fb6b83965"
+    },
+    "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/provenance.json": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/provenance.json",
+      "bytes": 4315,
+      "sha256": "5d946e2b23b10aea9ddfeba28bdc21cbc3f07b28e31afc97f4134118446e11f8"
+    },
+    "/Users/clemens/Programming/dioptrin-io/Cargo.toml": {
+      "path": "/Users/clemens/Programming/dioptrin-io/Cargo.toml",
+      "bytes": 4300,
+      "sha256": "84db988bad445a258701ce3f26e5f9995f2b91ff8678c496bf8033a6d924c019"
+    },
+    "/Users/clemens/Programming/dioptrin-io/Cargo.lock": {
+      "path": "/Users/clemens/Programming/dioptrin-io/Cargo.lock",
+      "bytes": 27733,
+      "sha256": "761c74f57b0afcebca72c75ce625c2076daf16ecc9934cbd71f24c4678062a05"
+    },
+    "/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/fabio/hdf5image.py": {
+      "path": "/private/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/fabio/hdf5image.py",
+      "bytes": 6282,
+      "sha256": "ea40ca15d8737d305e2f1c768b303a29e2333c0bff20a2199639a3e8cf105a7c"
+    },
+    "/tmp/dioptrin-io-fabio-2026.6.0/src/fabio/hdf5image.py": {
+      "path": "/private/tmp/dioptrin-io-fabio-2026.6.0/src/fabio/hdf5image.py",
+      "bytes": 6282,
+      "sha256": "ea40ca15d8737d305e2f1c768b303a29e2333c0bff20a2199639a3e8cf105a7c"
+    },
+    "/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/h5py/h5d.cpython-313-darwin.so": {
+      "path": "/private/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/h5py/h5d.cpython-313-darwin.so",
+      "bytes": 324000,
+      "sha256": "b6b18b4f5cd5f11e55b355a55e9a5015a293bf53882b72002f8eab7a38a47db7"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/binary.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/binary.rs",
+      "bytes": 7425,
+      "sha256": "794ddd240ae8dfa3ef313b3392d46b47c8a33b8f825f2b5ad72183269c90bf88"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/bruker/common.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/bruker/common.rs",
+      "bytes": 2087,
+      "sha256": "58ebb4b8bc1e89dba4288caa1224cae78f02812bbce4d911ec3159983c7020bc"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/bruker/view.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/bruker/view.rs",
+      "bytes": 2513,
+      "sha256": "4fb7483ddf6e85120b4a08e959de7c2716ae02e5cebd98d50c2d798ce6d2e059"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/bruker.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/bruker.rs",
+      "bytes": 18441,
+      "sha256": "3b7d0ea45d1e418697b96015b38bce2f6dc2c02926b1bdb8cebb76386568d8e0"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/cbf/document.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/cbf/document.rs",
+      "bytes": 5905,
+      "sha256": "f0e6dd547ead39f785c86e7b76c7b6dc880f532c7d8bf0e0f23607624d139962"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/cbf/header.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/cbf/header.rs",
+      "bytes": 8727,
+      "sha256": "5713a8bef504b118dfd07eceff3749e170654f88ed247a4ba9fdcbfb91283766"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/cbf/syntax/cif2.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/cbf/syntax/cif2.rs",
+      "bytes": 15580,
+      "sha256": "427dcb6d2172c87e4c42163618c24425204d16a81e2f739201b4acbc2dd4955e"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/cbf/syntax.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/cbf/syntax.rs",
+      "bytes": 29570,
+      "sha256": "449cb3e9e9f4bf50134174b128a47d60449cf801b209a806897a5057128fff33"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/cbf.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/cbf.rs",
+      "bytes": 16726,
+      "sha256": "cd9249983ddc3142cd7dbaef569b8855f57d42b4a46f5c2d1eef86aa249d38f3"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/chiplot.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/chiplot.rs",
+      "bytes": 22862,
+      "sha256": "a6b39507c21a231d7579cbd65ff31ffcae73b7b162484f68278851c80236d92d"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/columnfile.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/columnfile.rs",
+      "bytes": 12979,
+      "sha256": "45bf335382c0d173a7daac9e55b3609ee91989de890df6287e8e14f61660c79b"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/detector_tiff/mar_schema.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/detector_tiff/mar_schema.rs",
+      "bytes": 4999,
+      "sha256": "0d224ae8a52443423f144a61604176be37727deec320333fdb4c947581ffb819"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/detector_tiff.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/detector_tiff.rs",
+      "bytes": 7623,
+      "sha256": "06cbc9b5a8db291196e6fa3bfab75baeb860c4948dba5dd21811a001160712fd"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/discovery.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/discovery.rs",
+      "bytes": 17364,
+      "sha256": "acfac305e21289355c6617c6d78ff0886fc79e852e1a069b0e11482fb269d7cd"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/dm3.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/dm3.rs",
+      "bytes": 23777,
+      "sha256": "a7b9ad01a2eac150156c92f2aec088587786ffa90e80c502f1628e0537747b93"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/edf/array.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/edf/array.rs",
+      "bytes": 4886,
+      "sha256": "c54af33dfaaacb08db1a31dbe4eb4cecb9fb4888b7905f8618b3484e237eed0e"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/edf/recovery.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/edf/recovery.rs",
+      "bytes": 37124,
+      "sha256": "47299dc07c1101070e1526f296d004d9896ab2309249cb4f4b64fea1e06ab078"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/edf.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/edf.rs",
+      "bytes": 37509,
+      "sha256": "1bfde91daaf7ff7152ebcc5df12cd18d36624bdacfba01c1105f0b34389ac887"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/esperanto.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/esperanto.rs",
+      "bytes": 19487,
+      "sha256": "d2bb2f34e02000e28810a62479b9f16958c9f7ebe6bc4a9400b41b1841abc8ed"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/fit2d.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/fit2d.rs",
+      "bytes": 13169,
+      "sha256": "a3dfab6f09927651c98f9561fc497788d9f4736a0795be9c6c37de52de3c2004"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/ge.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/ge.rs",
+      "bytes": 18063,
+      "sha256": "73ef7bbb055d7e90f7fb8ffcef887bd5382b5a82c818f1972558a51d522e4326"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/attributes.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/attributes.rs",
+      "bytes": 10389,
+      "sha256": "18ccefc7c401a5de9cbdd7362b5e476f6a14770e8cd16ccf34e6cf38a44146d3"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/cache.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/cache.rs",
+      "bytes": 6940,
+      "sha256": "2b2927c6cc7bcf4d8daae4add9a72c9fa2414b93dd51950cffb634beaf45c050"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/discovery.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/discovery.rs",
+      "bytes": 11509,
+      "sha256": "d3fe9f5f5c6abf10084cbc3b7562b443b17359336e0fb102ff5aa28f6f1881aa"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/external_raw.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/external_raw.rs",
+      "bytes": 10254,
+      "sha256": "fd50ca2efcffb965cef37374aec178ea37859a1ac5dff4a8c7bf52521211f265"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/nexus.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/nexus.rs",
+      "bytes": 34585,
+      "sha256": "1bef15b007fb5344cf087fa7349cf28a5b95b8beca5dc0adbceb0ac140292551"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/raw.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/raw.rs",
+      "bytes": 17858,
+      "sha256": "aa1c6fa0a31303cc769214393039fec9975bff9c1e1d54eca59808e98d3927fc"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/sources.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/sources.rs",
+      "bytes": 24981,
+      "sha256": "66ef1e5b7b70c83ee5d2bdb5fcd41cec35d434cb2791944200ac13c35d3203af"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse/numeric.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse/numeric.rs",
+      "bytes": 4551,
+      "sha256": "afb9cec3ca9a4932df277befb60df5a40e30d86395a5021bd5f37a4814defdac"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse/reconstruction.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse/reconstruction.rs",
+      "bytes": 7883,
+      "sha256": "9a3803c7557503ce1e89da2e24e2459e4fda35dd02898749460b1817c27ef22a"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse.rs",
+      "bytes": 28082,
+      "sha256": "a480afed162db9908e9910822112efe01bb722fb283dc74688edd9dea1e7ffb4"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/typed.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/typed.rs",
+      "bytes": 36180,
+      "sha256": "60e79edce894452826446c4e45fdc9e7326dd7668156e2906a5375ae9efbe28d"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/vds.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/vds.rs",
+      "bytes": 18735,
+      "sha256": "c08b95a6212c9ad48c4877be5f8e3fde03d4cf5ecd80ec97d8b12dc492664259"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/vds_finite.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/vds_finite.rs",
+      "bytes": 8708,
+      "sha256": "c6170f7d042acbd30df3840f87ef368faa2f39eeb90ad37c162f43d24161e81b"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/vds_graph.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/vds_graph.rs",
+      "bytes": 44875,
+      "sha256": "ec764b0c5b40029cd2ae38c80dc3aed09c06c0b10f7fdf4699a2d595a6c3eb78"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/vds_printf.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/vds_printf.rs",
+      "bytes": 21189,
+      "sha256": "9a01df5aeea3ca85b13f4cd8e6edf0600a4b33604a0fb0aef476c44a4eda9878"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/vds_unlimited.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/vds_unlimited.rs",
+      "bytes": 7664,
+      "sha256": "6657d5a6692acb211a31f687d978dbbdcd606961d14b3422b42e070766140568"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5.rs",
+      "bytes": 8813,
+      "sha256": "5de3fc39ff82b2e562e120aee09ca5b3e321a80ceb0d69e2701a77189d41ba5e"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/jpeg.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/jpeg.rs",
+      "bytes": 21325,
+      "sha256": "9a2e4d3e62c26636b476d7c96b9f5249721f315000cbd81fe29284ce42756aaf"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/jpeg2000.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/jpeg2000.rs",
+      "bytes": 14778,
+      "sha256": "be8ad6f74a6c161532e73aaae16dff9d37533f6c1181f66eae35fc5ff99ba7e3"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/kcd.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/kcd.rs",
+      "bytes": 7516,
+      "sha256": "fb532aa6e23648399ea52e0872edf0f57e45aacfe951c1284c1f46d3e12330e8"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/lib.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/lib.rs",
+      "bytes": 2494,
+      "sha256": "bb092d882419e4c7dd472d0bbf0173ed7cefa3bf0715012fa028f649668a99a5"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/mar345.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/mar345.rs",
+      "bytes": 22229,
+      "sha256": "06c9f9301be78383bcd3533f23ba10f51834a0dd2d99d682f7162ea2dbd1d8a2"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/mpa.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/mpa.rs",
+      "bytes": 14470,
+      "sha256": "6c81d70a3ef9b7f6a95a2f52a7add8aa14c70c15bd21c9ecb252e98b3e4cda9a"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/mrc.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/mrc.rs",
+      "bytes": 10019,
+      "sha256": "eb01640b8d6436f363b3b45531050de3ff06f42b4ecb4e3a120bce8ea16bca28"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/native.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/native.rs",
+      "bytes": 36788,
+      "sha256": "e6397c84c96e9692d965c02c36f4113607dd20fc696a7305999748fbf437bc37"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/navigation.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/navigation.rs",
+      "bytes": 7700,
+      "sha256": "6fe155d07f11fefca9d9ba09c623a235688fcf4d17e6a3083ed88adc73901f68"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/oxford/ty5.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/oxford/ty5.rs",
+      "bytes": 3518,
+      "sha256": "1ca4411422d7b4ecc6ed574bdc8a5ac592d27f0a2baae0b77ded7a7e457e5136"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/oxford.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/oxford.rs",
+      "bytes": 19856,
+      "sha256": "134d222d921b9685483a486177e50984159afa6d91bb850d55f59ee1973c9a0d"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/pilatus.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/pilatus.rs",
+      "bytes": 16299,
+      "sha256": "555a6fcdc75bef993131bf147ddd1f57d5046db089623c0ae176b69fb1784e02"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/pixels.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/pixels.rs",
+      "bytes": 6863,
+      "sha256": "cae8dd9c0d93103397e5502f44c4e68ad121de54662225f2723893f85b992487"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/pixi.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/pixi.rs",
+      "bytes": 4380,
+      "sha256": "2522bc7b5cfc0a70f4624d87193fade8075857b08c7cf34fb05ce9f0ddf5b7ee"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/raster.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/raster.rs",
+      "bytes": 2453,
+      "sha256": "f27377deff1a475984240c548cc77890d8d1f53181245ac8654333fdd7a29c1f"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/raxis.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/raxis.rs",
+      "bytes": 14260,
+      "sha256": "c0bee389a94056c437a18948996c1449351aefcae9ea9191dd228ce1d63e11db"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/series.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/series.rs",
+      "bytes": 22464,
+      "sha256": "fd197478fa7206f11411627cb58c4f2bc5952a63173e0544536a813c5c564a64"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/source.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/source.rs",
+      "bytes": 3293,
+      "sha256": "afd15eef583ecfa7cc44528cb176188d2ec57916202f05aa5f1d01a2f5fc476f"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/spe.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/spe.rs",
+      "bytes": 22313,
+      "sha256": "48849be1954fe507ed36d9eb7ae476b43b2810abe434dcf889165af7df71fb98"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/api.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/api.rs",
+      "bytes": 13674,
+      "sha256": "7729d24b21575a0df206662a47f05fff4ea277b76ab58fcfd6e43ba6f59be3ea"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/compatibility.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/compatibility.rs",
+      "bytes": 12020,
+      "sha256": "6880b60bbe8b8f172382da4cd8a3a591f1620f1b6bc691d1020f332c10f28434"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/directories.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/directories.rs",
+      "bytes": 5644,
+      "sha256": "05f769c6b45f2b3815927cbae312d1a3826ae12df54679fb70f867dd6e0f73b1"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/group3.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/group3.rs",
+      "bytes": 11989,
+      "sha256": "5b93c48ec62e2e97c6dae4742b6a9a4cc054b15509ca38d47c3b57ace85f9a23"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/header.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/header.rs",
+      "bytes": 4268,
+      "sha256": "eb73d259c05fea3b03e6d0524ba42d93abf58462db39a7831ed8f48b8113700d"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/ifd_view.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/ifd_view.rs",
+      "bytes": 21498,
+      "sha256": "214fe1454bb9e8ae874345bac82b9efec3fb8e28241ba199a27968aac897886a"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/jpeg_components.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/jpeg_components.rs",
+      "bytes": 4634,
+      "sha256": "8cc9ef27459a54f7a6e47ea6e594d5a51bdb0b0820d10c2c93a778f010014c53"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/ojpeg/advanced.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/ojpeg/advanced.rs",
+      "bytes": 24856,
+      "sha256": "f6a505d0e3ac20b61a39315b00e39fd5ca0e453fbefc4156eb765aaccd59bad2"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/ojpeg/fragments.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/ojpeg/fragments.rs",
+      "bytes": 18379,
+      "sha256": "7fd88b4f48574e52d56d9d1bf1920ff05a6e8349abd9b36c9d8ec0e3fe142674"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/ojpeg/independent.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/ojpeg/independent.rs",
+      "bytes": 9517,
+      "sha256": "2065a6081351e2a71b6f009f975788d248f7b5f3e78d4c133d6093fc68be74df"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/ojpeg.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/ojpeg.rs",
+      "bytes": 17833,
+      "sha256": "7ae618ceb4574f6d440bc5faa07c7df5cd4f2d4f6acb9d6482a48fe41e1e82c7"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/thunderscan.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/thunderscan.rs",
+      "bytes": 9250,
+      "sha256": "7d299c5032402b5af16f79ec7f66d9609a03046a058fe91b9cc13206673fff2c"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/view.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/view.rs",
+      "bytes": 16361,
+      "sha256": "c4f32a6903c98c8030047a217ef572c6f03261e37fe4d4b0724315f5f4dbc2ed"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/view_jpeg.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/view_jpeg.rs",
+      "bytes": 9501,
+      "sha256": "8f8df0d1a26d93e9f15715d9d238e47c7bd420afe8d3c7337004691c0af522e1"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/view_ycbcr.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/view_ycbcr.rs",
+      "bytes": 7331,
+      "sha256": "9fbb8713ae4739ef0433441e15412d54ad8920b297652caab687b14c57d9f583"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/ycbcr.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/ycbcr.rs",
+      "bytes": 16472,
+      "sha256": "12958c127df223a150ee186094d70126a2841d79ccccb68bd3a08d78e4cdaa19"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/ycbcr_jpeg.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/ycbcr_jpeg.rs",
+      "bytes": 5864,
+      "sha256": "3a70a695fed2fca125b2609356989c669b3020eeaeaed6d86a4c1c3f2365e679"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff.rs",
+      "bytes": 44050,
+      "sha256": "1ea3ad1a50b5f2dca789224b446f388f74fba2a73e71717c1dccfa771cb15709"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/transport.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/transport.rs",
+      "bytes": 6991,
+      "sha256": "9201e70f29c23ee027334f0db48e4965f32c7cbf04720b5d14d84087407c4aa3"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/wrapped/input.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/wrapped/input.rs",
+      "bytes": 12222,
+      "sha256": "dfa3474eaa04ad8c00733165f4f104e572f673b8630750b027b724aff88ce337"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/wrapped.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/wrapped.rs",
+      "bytes": 39623,
+      "sha256": "59f711f4773e6439ba8b4e18294d4b7eaa238b4e0f4ebfcb2c6c3f37a08a5ea1"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/xcalibur/decomposition.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/xcalibur/decomposition.rs",
+      "bytes": 6743,
+      "sha256": "b3d2d3e0decf3ae69fdfc742fc2ebe623459b98e817550a01efe774a4c886269"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/xcalibur/run.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/xcalibur/run.rs",
+      "bytes": 8792,
+      "sha256": "f0e998aa761d4cf1a6b93c1b24c13f8077baca0751ef030f3eeb914ab9fbc595"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/xcalibur.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/xcalibur.rs",
+      "bytes": 16637,
+      "sha256": "7a308e59ffd22c11f501e79f618b13bf1d4aa200cf90e23786682003352048d9"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/xsd.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/xsd.rs",
+      "bytes": 11824,
+      "sha256": "bcfe7328bc0d9d809dc6abda92d790039069e3829332abcfb300b0379e0ac601"
+    },
+    "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/complex-vds.h5": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/complex-vds.h5",
+      "bytes": 6144,
+      "sha256": "2192d5a567cb74a87e1926d8f2eaf21d558e3947c51d728a210afec88911999a"
+    },
+    "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/external-a.bin": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/external-a.bin",
+      "bytes": 31,
+      "sha256": "b0a60ac3bd605023b266e6ef8774110f584668519530d1daa4235a5ec596beb6"
+    },
+    "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/external-b.bin": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/external-b.bin",
+      "bytes": 106,
+      "sha256": "da9912922946931e521eef78583e56ba2b4477f8772b5ce6d00a60c202e78f0c"
+    },
+    "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/external.h5": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/external.h5",
+      "bytes": 1576,
+      "sha256": "860e1cd3a7a73a23e823f3700e7c3936d50c58b24dc724eeac0b2d309cb74de8"
+    },
+    "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/sparse-types.h5": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/sparse-types.h5",
+      "bytes": 9536,
+      "sha256": "2c0983bdaaa18be3ec1e405d5deafb1c19d31a6564d652aa6af41aefa40d3b05"
+    },
+    "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+      "bytes": 28840,
+      "sha256": "b89d5058b248a4e3cb3a0ac98bfb1857419a8c565c4120b59d0c4346c6a388ac"
+    },
+    "/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/h5py/h5t.cpython-313-darwin.so": {
+      "path": "/private/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/h5py/h5t.cpython-313-darwin.so",
+      "bytes": 447696,
+      "sha256": "2e7e6fe82fc710cfc090e1334998e09e409dc055ddc1351a71398636dd45ef29"
+    },
+    "/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/h5py/.dylibs/libhdf5.310.dylib": {
+      "path": "/private/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/h5py/.dylibs/libhdf5.310.dylib",
+      "bytes": 3685168,
+      "sha256": "cdd6d2e4910a9f58831836c19fceb6bac7ec9247c470bfb59a524f49858052ef"
+    },
+    "/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/h5py/.dylibs/libz.1.3.1.dylib": {
+      "path": "/private/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/h5py/.dylibs/libz.1.3.1.dylib",
+      "bytes": 140960,
+      "sha256": "c11507a588b806870e2a1f2f3d1f7becacb9bc83c1113f51de38f14dae047610"
+    },
+    "/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/h5py/.dylibs/libhdf5_hl.310.dylib": {
+      "path": "/private/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/h5py/.dylibs/libhdf5_hl.310.dylib",
+      "bytes": 172128,
+      "sha256": "7c57fb78eeacdeeb4086e79c48b48faf3a63c27f77c5bf8c0452e1b238c83cb7"
+    }
+  },
+  "environment": {
+    "fabio": "2026.6.0",
+    "h5py": "3.15.1",
+    "hdf5": "1.14.6",
+    "numpy": "2.5.4"
+  },
+  "cases": [
+    {
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+        "bytes": 28840,
+        "sha256": "b89d5058b248a4e3cb3a0ac98bfb1857419a8c565c4120b59d0c4346c6a388ac"
+      },
+      "dataset": "complex64-le",
+      "request": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+        "dataset": "complex64-le"
+      },
+      "input_condition": "well_formed_variant",
+      "reader_action": "implemented",
+      "status": "qualified",
+      "native": {
+        "status": "completed",
+        "value": {
+          "frames": 1,
+          "images": [
+            {
+              "frame": 0,
+              "pixel_type": "C32",
+              "pixels": {
+                "dtype": "complex64",
+                "sample_sha256": "2bc30ca40addc30c2b87ee12d751f6aca07c4f0728f86bd2b2e56eef08b04ef6"
+              },
+              "shape": [
+                2,
+                3
+              ],
+              "status": "ok",
+              "value_hex": "00000000000000800000807f000080ff4523c17f2143c5ff010000000000803fffff7f7f0000800000000040000040c0"
+            }
+          ],
+          "kind": "hdf5_layout",
+          "links": [],
+          "metadata": [
+            {
+              "dataset": "/complex64-le",
+              "external_raw": null,
+              "fill_time": "IfSet",
+              "fill_value": {
+                "pixels": {
+                  "dtype": "complex64",
+                  "sample_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+                },
+                "value_hex": "0000000000000000"
+              },
+              "filters": [
+                "Filter { id: 2, decode_enabled: true, parameters: [] }",
+                "Filter { id: 1, decode_enabled: true, parameters: [] }"
+              ],
+              "first_frame": 0,
+              "frames": 1,
+              "layout": "Chunked",
+              "little_endian": true,
+              "pixel_type": "C32",
+              "shape": [
+                2,
+                3
+              ],
+              "source_file": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+              "source_shape": [
+                1,
+                2,
+                3
+              ],
+              "storage_allocated": true,
+              "type_descriptor": "Compound(CompoundType { fields: [CompoundField { name: \"r\", ty: Float(U4), offset: 0, index: 0 }, CompoundField { name: \"i\", ty: Float(U4), offset: 4, index: 1 }], size: 8 })",
+              "virtual_dataset": null
+            }
+          ],
+          "native_hdf5_version": [
+            2,
+            2,
+            0
+          ],
+          "source_bindings": [
+            {
+              "requested": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+              "resolved": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5"
+            }
+          ],
+          "sources": [
+            {
+              "bytes": 28840,
+              "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5"
+            }
+          ]
+        }
+      },
+      "reference": {
+        "status": "completed",
+        "frames": [
+          {
+            "frame": 0,
+            "shape": [
+              2,
+              3
+            ],
+            "pixel_type": "C32",
+            "value_hex": "00000000000000800000807f000080ff4523c17f2143c5ff010000000000803fffff7f7f0000800000000040000040c0",
+            "sample_sha256": "2bc30ca40addc30c2b87ee12d751f6aca07c4f0728f86bd2b2e56eef08b04ef6"
+          }
+        ],
+        "reading_parity_claimed": true
+      },
+      "independent_expected": [
+        {
+          "frame": 0,
+          "shape": [
+            2,
+            3
+          ],
+          "pixel_type": "C32",
+          "value_hex": "00000000000000800000807f000080ff4523c17f2143c5ff010000000000803fffff7f7f0000800000000040000040c0",
+          "sample_sha256": "2bc30ca40addc30c2b87ee12d751f6aca07c4f0728f86bd2b2e56eef08b04ef6"
+        }
+      ],
+      "independent_source_type_hex": "030016020000080000007200000000000000000000000000000000000000000000000000000000000000000000000000000011201f000400000000002000170800177f0000006900000000000000040000000000000000000000000000000000000000000000000000000000000011201f000400000000002000170800177f000000",
+      "differences": []
+    },
+    {
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+        "bytes": 28840,
+        "sha256": "b89d5058b248a4e3cb3a0ac98bfb1857419a8c565c4120b59d0c4346c6a388ac"
+      },
+      "dataset": "complex64-be",
+      "request": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+        "dataset": "complex64-be"
+      },
+      "input_condition": "well_formed_variant",
+      "reader_action": "implemented",
+      "status": "qualified",
+      "native": {
+        "status": "completed",
+        "value": {
+          "frames": 1,
+          "images": [
+            {
+              "frame": 0,
+              "pixel_type": "C32",
+              "pixels": {
+                "dtype": "complex64",
+                "sample_sha256": "2bc30ca40addc30c2b87ee12d751f6aca07c4f0728f86bd2b2e56eef08b04ef6"
+              },
+              "shape": [
+                2,
+                3
+              ],
+              "status": "ok",
+              "value_hex": "00000000000000800000807f000080ff4523c17f2143c5ff010000000000803fffff7f7f0000800000000040000040c0"
+            }
+          ],
+          "kind": "hdf5_layout",
+          "links": [],
+          "metadata": [
+            {
+              "dataset": "/complex64-be",
+              "external_raw": null,
+              "fill_time": "IfSet",
+              "fill_value": {
+                "pixels": {
+                  "dtype": "complex64",
+                  "sample_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+                },
+                "value_hex": "0000000000000000"
+              },
+              "filters": [
+                "Filter { id: 2, decode_enabled: true, parameters: [] }",
+                "Filter { id: 1, decode_enabled: true, parameters: [] }"
+              ],
+              "first_frame": 0,
+              "frames": 1,
+              "layout": "Chunked",
+              "little_endian": false,
+              "pixel_type": "C32",
+              "shape": [
+                2,
+                3
+              ],
+              "source_file": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+              "source_shape": [
+                1,
+                2,
+                3
+              ],
+              "storage_allocated": true,
+              "type_descriptor": "Compound(CompoundType { fields: [CompoundField { name: \"r\", ty: Float(U4), offset: 0, index: 0 }, CompoundField { name: \"i\", ty: Float(U4), offset: 4, index: 1 }], size: 8 })",
+              "virtual_dataset": null
+            }
+          ],
+          "native_hdf5_version": [
+            2,
+            2,
+            0
+          ],
+          "source_bindings": [
+            {
+              "requested": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+              "resolved": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5"
+            }
+          ],
+          "sources": [
+            {
+              "bytes": 28840,
+              "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5"
+            }
+          ]
+        }
+      },
+      "reference": {
+        "status": "completed",
+        "frames": [
+          {
+            "frame": 0,
+            "shape": [
+              2,
+              3
+            ],
+            "pixel_type": "C32",
+            "value_hex": "00000000000000800000807f000080ff4523c17f2143c5ff010000000000803fffff7f7f0000800000000040000040c0",
+            "sample_sha256": "2bc30ca40addc30c2b87ee12d751f6aca07c4f0728f86bd2b2e56eef08b04ef6"
+          }
+        ],
+        "reading_parity_claimed": true
+      },
+      "independent_expected": [
+        {
+          "frame": 0,
+          "shape": [
+            2,
+            3
+          ],
+          "pixel_type": "C32",
+          "value_hex": "00000000000000800000807f000080ff4523c17f2143c5ff010000000000803fffff7f7f0000800000000040000040c0",
+          "sample_sha256": "2bc30ca40addc30c2b87ee12d751f6aca07c4f0728f86bd2b2e56eef08b04ef6"
+        }
+      ],
+      "independent_source_type_hex": "030016020000080000007200000000000000000000000000000000000000000000000000000000000000000000000000000011211f000400000000002000170800177f0000006900000000000000040000000000000000000000000000000000000000000000000000000000000011211f000400000000002000170800177f000000",
+      "differences": []
+    },
+    {
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+        "bytes": 28840,
+        "sha256": "b89d5058b248a4e3cb3a0ac98bfb1857419a8c565c4120b59d0c4346c6a388ac"
+      },
+      "dataset": "complex128-le",
+      "request": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+        "dataset": "complex128-le"
+      },
+      "input_condition": "well_formed_variant",
+      "reader_action": "implemented",
+      "status": "qualified",
+      "native": {
+        "status": "completed",
+        "value": {
+          "frames": 1,
+          "images": [
+            {
+              "frame": 0,
+              "pixel_type": "C64",
+              "pixels": {
+                "dtype": "complex128",
+                "sample_sha256": "2e68a4c9ddffd2ebf92723cfcea2aef19c39ae3a7402af72ced6736f4e9f6c53"
+              },
+              "shape": [
+                2,
+                3
+              ],
+              "status": "ok",
+              "value_hex": "00000000000000000000000000000080000000000000f07f000000000000f0ffbc9a78563412f87f3412badccdabf8ff0100000000000000000000000000f03fffffffffffffef7f0000000000001000000000000000004000000000000008c0"
+            }
+          ],
+          "kind": "hdf5_layout",
+          "links": [],
+          "metadata": [
+            {
+              "dataset": "/complex128-le",
+              "external_raw": null,
+              "fill_time": "IfSet",
+              "fill_value": {
+                "pixels": {
+                  "dtype": "complex128",
+                  "sample_sha256": "374708fff7719dd5979ec875d56cd2286f6d3cf7ec317a3b25632aab28ec37bb"
+                },
+                "value_hex": "00000000000000000000000000000000"
+              },
+              "filters": [
+                "Filter { id: 2, decode_enabled: true, parameters: [] }",
+                "Filter { id: 1, decode_enabled: true, parameters: [] }"
+              ],
+              "first_frame": 0,
+              "frames": 1,
+              "layout": "Chunked",
+              "little_endian": true,
+              "pixel_type": "C64",
+              "shape": [
+                2,
+                3
+              ],
+              "source_file": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+              "source_shape": [
+                1,
+                2,
+                3
+              ],
+              "storage_allocated": true,
+              "type_descriptor": "Compound(CompoundType { fields: [CompoundField { name: \"r\", ty: Float(U8), offset: 0, index: 0 }, CompoundField { name: \"i\", ty: Float(U8), offset: 8, index: 1 }], size: 16 })",
+              "virtual_dataset": null
+            }
+          ],
+          "native_hdf5_version": [
+            2,
+            2,
+            0
+          ],
+          "source_bindings": [
+            {
+              "requested": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+              "resolved": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5"
+            }
+          ],
+          "sources": [
+            {
+              "bytes": 28840,
+              "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5"
+            }
+          ]
+        }
+      },
+      "reference": {
+        "status": "completed",
+        "frames": [
+          {
+            "frame": 0,
+            "shape": [
+              2,
+              3
+            ],
+            "pixel_type": "C64",
+            "value_hex": "00000000000000000000000000000080000000000000f07f000000000000f0ffbc9a78563412f87f3412badccdabf8ff0100000000000000000000000000f03fffffffffffffef7f0000000000001000000000000000004000000000000008c0",
+            "sample_sha256": "2e68a4c9ddffd2ebf92723cfcea2aef19c39ae3a7402af72ced6736f4e9f6c53"
+          }
+        ],
+        "reading_parity_claimed": true
+      },
+      "independent_expected": [
+        {
+          "frame": 0,
+          "shape": [
+            2,
+            3
+          ],
+          "pixel_type": "C64",
+          "value_hex": "00000000000000000000000000000080000000000000f07f000000000000f0ffbc9a78563412f87f3412badccdabf8ff0100000000000000000000000000f03fffffffffffffef7f0000000000001000000000000000004000000000000008c0",
+          "sample_sha256": "2e68a4c9ddffd2ebf92723cfcea2aef19c39ae3a7402af72ced6736f4e9f6c53"
+        }
+      ],
+      "independent_source_type_hex": "030016020000100000007200000000000000000000000000000000000000000000000000000000000000000000000000000011203f000800000000004000340b0034ff0300006900000000000000080000000000000000000000000000000000000000000000000000000000000011203f000800000000004000340b0034ff030000",
+      "differences": []
+    },
+    {
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+        "bytes": 28840,
+        "sha256": "b89d5058b248a4e3cb3a0ac98bfb1857419a8c565c4120b59d0c4346c6a388ac"
+      },
+      "dataset": "complex128-be",
+      "request": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+        "dataset": "complex128-be"
+      },
+      "input_condition": "well_formed_variant",
+      "reader_action": "implemented",
+      "status": "qualified",
+      "native": {
+        "status": "completed",
+        "value": {
+          "frames": 1,
+          "images": [
+            {
+              "frame": 0,
+              "pixel_type": "C64",
+              "pixels": {
+                "dtype": "complex128",
+                "sample_sha256": "2e68a4c9ddffd2ebf92723cfcea2aef19c39ae3a7402af72ced6736f4e9f6c53"
+              },
+              "shape": [
+                2,
+                3
+              ],
+              "status": "ok",
+              "value_hex": "00000000000000000000000000000080000000000000f07f000000000000f0ffbc9a78563412f87f3412badccdabf8ff0100000000000000000000000000f03fffffffffffffef7f0000000000001000000000000000004000000000000008c0"
+            }
+          ],
+          "kind": "hdf5_layout",
+          "links": [],
+          "metadata": [
+            {
+              "dataset": "/complex128-be",
+              "external_raw": null,
+              "fill_time": "IfSet",
+              "fill_value": {
+                "pixels": {
+                  "dtype": "complex128",
+                  "sample_sha256": "374708fff7719dd5979ec875d56cd2286f6d3cf7ec317a3b25632aab28ec37bb"
+                },
+                "value_hex": "00000000000000000000000000000000"
+              },
+              "filters": [
+                "Filter { id: 2, decode_enabled: true, parameters: [] }",
+                "Filter { id: 1, decode_enabled: true, parameters: [] }"
+              ],
+              "first_frame": 0,
+              "frames": 1,
+              "layout": "Chunked",
+              "little_endian": false,
+              "pixel_type": "C64",
+              "shape": [
+                2,
+                3
+              ],
+              "source_file": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+              "source_shape": [
+                1,
+                2,
+                3
+              ],
+              "storage_allocated": true,
+              "type_descriptor": "Compound(CompoundType { fields: [CompoundField { name: \"r\", ty: Float(U8), offset: 0, index: 0 }, CompoundField { name: \"i\", ty: Float(U8), offset: 8, index: 1 }], size: 16 })",
+              "virtual_dataset": null
+            }
+          ],
+          "native_hdf5_version": [
+            2,
+            2,
+            0
+          ],
+          "source_bindings": [
+            {
+              "requested": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+              "resolved": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5"
+            }
+          ],
+          "sources": [
+            {
+              "bytes": 28840,
+              "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5"
+            }
+          ]
+        }
+      },
+      "reference": {
+        "status": "completed",
+        "frames": [
+          {
+            "frame": 0,
+            "shape": [
+              2,
+              3
+            ],
+            "pixel_type": "C64",
+            "value_hex": "00000000000000000000000000000080000000000000f07f000000000000f0ffbc9a78563412f87f3412badccdabf8ff0100000000000000000000000000f03fffffffffffffef7f0000000000001000000000000000004000000000000008c0",
+            "sample_sha256": "2e68a4c9ddffd2ebf92723cfcea2aef19c39ae3a7402af72ced6736f4e9f6c53"
+          }
+        ],
+        "reading_parity_claimed": true
+      },
+      "independent_expected": [
+        {
+          "frame": 0,
+          "shape": [
+            2,
+            3
+          ],
+          "pixel_type": "C64",
+          "value_hex": "00000000000000000000000000000080000000000000f07f000000000000f0ffbc9a78563412f87f3412badccdabf8ff0100000000000000000000000000f03fffffffffffffef7f0000000000001000000000000000004000000000000008c0",
+          "sample_sha256": "2e68a4c9ddffd2ebf92723cfcea2aef19c39ae3a7402af72ced6736f4e9f6c53"
+        }
+      ],
+      "independent_source_type_hex": "030016020000100000007200000000000000000000000000000000000000000000000000000000000000000000000000000011213f000800000000004000340b0034ff0300006900000000000000080000000000000000000000000000000000000000000000000000000000000011213f000800000000004000340b0034ff030000",
+      "differences": []
+    },
+    {
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+        "bytes": 28840,
+        "sha256": "b89d5058b248a4e3cb3a0ac98bfb1857419a8c565c4120b59d0c4346c6a388ac"
+      },
+      "dataset": "half-le",
+      "request": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+        "dataset": "half-le"
+      },
+      "input_condition": "well_formed_variant",
+      "reader_action": "implemented",
+      "status": "qualified",
+      "native": {
+        "status": "completed",
+        "value": {
+          "frames": 2,
+          "images": [
+            {
+              "frame": 0,
+              "pixel_type": "F16",
+              "pixels": {
+                "dtype": "float16",
+                "sample_sha256": "539811b76426d9e75e16d44035613a75501f5dac63c048a3fb92a53c3eb38211"
+              },
+              "shape": [
+                2,
+                3
+              ],
+              "status": "ok",
+              "value_hex": "00000080007c00fc557eaafe"
+            },
+            {
+              "frame": 1,
+              "pixel_type": "F16",
+              "pixels": {
+                "dtype": "float16",
+                "sample_sha256": "499534429f6c1495c85c1fe5b6144cb3ed56801f0a094f53b926d9c7806736d2"
+              },
+              "shape": [
+                2,
+                3
+              ],
+              "status": "ok",
+              "value_hex": "0100003cff7b0004004000c2"
+            }
+          ],
+          "kind": "hdf5_layout",
+          "links": [],
+          "metadata": [
+            {
+              "dataset": "/half-le",
+              "external_raw": null,
+              "fill_time": "IfSet",
+              "fill_value": {
+                "pixels": {
+                  "dtype": "float16",
+                  "sample_sha256": "96a296d224f285c67bee93c30f8a309157f0daa35dc5b87e410b78630a09cfc7"
+                },
+                "value_hex": "0000"
+              },
+              "filters": [
+                "Filter { id: 1, decode_enabled: true, parameters: [] }"
+              ],
+              "first_frame": 0,
+              "frames": 2,
+              "layout": "Chunked",
+              "little_endian": true,
+              "pixel_type": "F16",
+              "shape": [
+                2,
+                3
+              ],
+              "source_file": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+              "source_shape": [
+                2,
+                2,
+                3
+              ],
+              "storage_allocated": true,
+              "type_descriptor": "Float(U2;IEEE754-binary16)",
+              "virtual_dataset": null
+            }
+          ],
+          "native_hdf5_version": [
+            2,
+            2,
+            0
+          ],
+          "source_bindings": [
+            {
+              "requested": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+              "resolved": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5"
+            }
+          ],
+          "sources": [
+            {
+              "bytes": 28840,
+              "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5"
+            }
+          ]
+        }
+      },
+      "reference": {
+        "status": "completed",
+        "frames": [
+          {
+            "frame": 0,
+            "shape": [
+              2,
+              3
+            ],
+            "pixel_type": "F16",
+            "value_hex": "00000080007c00fc557eaafe",
+            "sample_sha256": "539811b76426d9e75e16d44035613a75501f5dac63c048a3fb92a53c3eb38211"
+          },
+          {
+            "frame": 1,
+            "shape": [
+              2,
+              3
+            ],
+            "pixel_type": "F16",
+            "value_hex": "0100003cff7b0004004000c2",
+            "sample_sha256": "499534429f6c1495c85c1fe5b6144cb3ed56801f0a094f53b926d9c7806736d2"
+          }
+        ],
+        "reading_parity_claimed": true
+      },
+      "independent_expected": [
+        {
+          "frame": 0,
+          "shape": [
+            2,
+            3
+          ],
+          "pixel_type": "F16",
+          "value_hex": "00000080007c00fc557eaafe",
+          "sample_sha256": "539811b76426d9e75e16d44035613a75501f5dac63c048a3fb92a53c3eb38211"
+        },
+        {
+          "frame": 1,
+          "shape": [
+            2,
+            3
+          ],
+          "pixel_type": "F16",
+          "value_hex": "0100003cff7b0004004000c2",
+          "sample_sha256": "499534429f6c1495c85c1fe5b6144cb3ed56801f0a094f53b926d9c7806736d2"
+        }
+      ],
+      "independent_source_type_hex": "030011200f0002000000000010000a05000a0f000000",
+      "differences": []
+    },
+    {
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+        "bytes": 28840,
+        "sha256": "b89d5058b248a4e3cb3a0ac98bfb1857419a8c565c4120b59d0c4346c6a388ac"
+      },
+      "dataset": "half-be",
+      "request": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+        "dataset": "half-be"
+      },
+      "input_condition": "well_formed_variant",
+      "reader_action": "implemented",
+      "status": "qualified",
+      "native": {
+        "status": "completed",
+        "value": {
+          "frames": 2,
+          "images": [
+            {
+              "frame": 0,
+              "pixel_type": "F16",
+              "pixels": {
+                "dtype": "float16",
+                "sample_sha256": "539811b76426d9e75e16d44035613a75501f5dac63c048a3fb92a53c3eb38211"
+              },
+              "shape": [
+                2,
+                3
+              ],
+              "status": "ok",
+              "value_hex": "00000080007c00fc557eaafe"
+            },
+            {
+              "frame": 1,
+              "pixel_type": "F16",
+              "pixels": {
+                "dtype": "float16",
+                "sample_sha256": "499534429f6c1495c85c1fe5b6144cb3ed56801f0a094f53b926d9c7806736d2"
+              },
+              "shape": [
+                2,
+                3
+              ],
+              "status": "ok",
+              "value_hex": "0100003cff7b0004004000c2"
+            }
+          ],
+          "kind": "hdf5_layout",
+          "links": [],
+          "metadata": [
+            {
+              "dataset": "/half-be",
+              "external_raw": null,
+              "fill_time": "IfSet",
+              "fill_value": {
+                "pixels": {
+                  "dtype": "float16",
+                  "sample_sha256": "96a296d224f285c67bee93c30f8a309157f0daa35dc5b87e410b78630a09cfc7"
+                },
+                "value_hex": "0000"
+              },
+              "filters": [
+                "Filter { id: 1, decode_enabled: true, parameters: [] }"
+              ],
+              "first_frame": 0,
+              "frames": 2,
+              "layout": "Chunked",
+              "little_endian": false,
+              "pixel_type": "F16",
+              "shape": [
+                2,
+                3
+              ],
+              "source_file": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+              "source_shape": [
+                2,
+                2,
+                3
+              ],
+              "storage_allocated": true,
+              "type_descriptor": "Float(U2;IEEE754-binary16)",
+              "virtual_dataset": null
+            }
+          ],
+          "native_hdf5_version": [
+            2,
+            2,
+            0
+          ],
+          "source_bindings": [
+            {
+              "requested": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+              "resolved": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5"
+            }
+          ],
+          "sources": [
+            {
+              "bytes": 28840,
+              "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5"
+            }
+          ]
+        }
+      },
+      "reference": {
+        "status": "completed",
+        "frames": [
+          {
+            "frame": 0,
+            "shape": [
+              2,
+              3
+            ],
+            "pixel_type": "F16",
+            "value_hex": "00000080007c00fc557eaafe",
+            "sample_sha256": "539811b76426d9e75e16d44035613a75501f5dac63c048a3fb92a53c3eb38211"
+          },
+          {
+            "frame": 1,
+            "shape": [
+              2,
+              3
+            ],
+            "pixel_type": "F16",
+            "value_hex": "0100003cff7b0004004000c2",
+            "sample_sha256": "499534429f6c1495c85c1fe5b6144cb3ed56801f0a094f53b926d9c7806736d2"
+          }
+        ],
+        "reading_parity_claimed": true
+      },
+      "independent_expected": [
+        {
+          "frame": 0,
+          "shape": [
+            2,
+            3
+          ],
+          "pixel_type": "F16",
+          "value_hex": "00000080007c00fc557eaafe",
+          "sample_sha256": "539811b76426d9e75e16d44035613a75501f5dac63c048a3fb92a53c3eb38211"
+        },
+        {
+          "frame": 1,
+          "shape": [
+            2,
+            3
+          ],
+          "pixel_type": "F16",
+          "value_hex": "0100003cff7b0004004000c2",
+          "sample_sha256": "499534429f6c1495c85c1fe5b6144cb3ed56801f0a094f53b926d9c7806736d2"
+        }
+      ],
+      "independent_source_type_hex": "030011210f0002000000000010000a05000a0f000000",
+      "differences": []
+    },
+    {
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+        "bytes": 28840,
+        "sha256": "b89d5058b248a4e3cb3a0ac98bfb1857419a8c565c4120b59d0c4346c6a388ac"
+      },
+      "dataset": "bool",
+      "request": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+        "dataset": "bool"
+      },
+      "input_condition": "well_formed_variant",
+      "reader_action": "implemented",
+      "status": "qualified",
+      "native": {
+        "status": "completed",
+        "value": {
+          "frames": 1,
+          "images": [
+            {
+              "frame": 0,
+              "pixel_type": "Bool",
+              "pixels": {
+                "dtype": "bool",
+                "sample_sha256": "da2cb6ad175bc966de5e79c6e16777f8a98b610c2424a894132df2815be50677"
+              },
+              "shape": [
+                2,
+                3
+              ],
+              "status": "ok",
+              "value_hex": "0001027f80ff"
+            }
+          ],
+          "kind": "hdf5_layout",
+          "links": [],
+          "metadata": [
+            {
+              "dataset": "/bool",
+              "external_raw": null,
+              "fill_time": "IfSet",
+              "fill_value": {
+                "pixels": {
+                  "dtype": "bool",
+                  "sample_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+                },
+                "value_hex": "00"
+              },
+              "filters": [],
+              "first_frame": 0,
+              "frames": 1,
+              "layout": "Contiguous",
+              "little_endian": true,
+              "pixel_type": "Bool",
+              "shape": [
+                2,
+                3
+              ],
+              "source_file": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+              "source_shape": [
+                2,
+                3
+              ],
+              "storage_allocated": true,
+              "type_descriptor": "Boolean",
+              "virtual_dataset": null
+            }
+          ],
+          "native_hdf5_version": [
+            2,
+            2,
+            0
+          ],
+          "source_bindings": [
+            {
+              "requested": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+              "resolved": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5"
+            }
+          ],
+          "sources": [
+            {
+              "bytes": 28840,
+              "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5"
+            }
+          ]
+        }
+      },
+      "reference": {
+        "status": "completed",
+        "frames": [
+          {
+            "frame": 0,
+            "shape": [
+              2,
+              3
+            ],
+            "pixel_type": "Bool",
+            "value_hex": "0001027f80ff",
+            "sample_sha256": "da2cb6ad175bc966de5e79c6e16777f8a98b610c2424a894132df2815be50677"
+          }
+        ],
+        "reading_parity_claimed": true
+      },
+      "independent_expected": [
+        {
+          "frame": 0,
+          "shape": [
+            2,
+            3
+          ],
+          "pixel_type": "Bool",
+          "value_hex": "0001027f80ff",
+          "sample_sha256": "da2cb6ad175bc966de5e79c6e16777f8a98b610c2424a894132df2815be50677"
+        }
+      ],
+      "independent_source_type_hex": "0300180200000100000010080000010000000000080046414c534500000054525545000000000001",
+      "differences": []
+    },
+    {
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+        "bytes": 28840,
+        "sha256": "b89d5058b248a4e3cb3a0ac98bfb1857419a8c565c4120b59d0c4346c6a388ac"
+      },
+      "dataset": "complex-fill",
+      "request": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+        "dataset": "complex-fill"
+      },
+      "input_condition": "well_formed_variant",
+      "reader_action": "implemented",
+      "status": "qualified",
+      "native": {
+        "status": "completed",
+        "value": {
+          "frames": 1,
+          "images": [
+            {
+              "frame": 0,
+              "pixel_type": "C32",
+              "pixels": {
+                "dtype": "complex64",
+                "sample_sha256": "c9efb7fbbbf7e0f35b996794a53ba3aa615414fc392daf69fa9c16b882eb26ce"
+              },
+              "shape": [
+                2,
+                2
+              ],
+              "status": "ok",
+              "value_hex": "000000804523c17f000000804523c17f000000804523c17f000000804523c17f"
+            }
+          ],
+          "kind": "hdf5_layout",
+          "links": [],
+          "metadata": [
+            {
+              "dataset": "/complex-fill",
+              "external_raw": null,
+              "fill_time": "IfSet",
+              "fill_value": {
+                "pixels": {
+                  "dtype": "complex64",
+                  "sample_sha256": "9ee41ae0d60fc014da41e159e7ecb475d1eebfe448e3e4a23e3fd2f915889db2"
+                },
+                "value_hex": "000000804523c17f"
+              },
+              "filters": [],
+              "first_frame": 0,
+              "frames": 1,
+              "layout": "Contiguous",
+              "little_endian": false,
+              "pixel_type": "C32",
+              "shape": [
+                2,
+                2
+              ],
+              "source_file": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+              "source_shape": [
+                2,
+                2
+              ],
+              "storage_allocated": false,
+              "type_descriptor": "Compound(CompoundType { fields: [CompoundField { name: \"r\", ty: Float(U4), offset: 0, index: 0 }, CompoundField { name: \"i\", ty: Float(U4), offset: 4, index: 1 }], size: 8 })",
+              "virtual_dataset": null
+            }
+          ],
+          "native_hdf5_version": [
+            2,
+            2,
+            0
+          ],
+          "source_bindings": [
+            {
+              "requested": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5",
+              "resolved": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5"
+            }
+          ],
+          "sources": [
+            {
+              "bytes": 28840,
+              "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5"
+            }
+          ]
+        }
+      },
+      "reference": {
+        "status": "completed",
+        "frames": [
+          {
+            "frame": 0,
+            "shape": [
+              2,
+              2
+            ],
+            "pixel_type": "C32",
+            "value_hex": "000000804523c17f000000804523c17f000000804523c17f000000804523c17f",
+            "sample_sha256": "c9efb7fbbbf7e0f35b996794a53ba3aa615414fc392daf69fa9c16b882eb26ce"
+          }
+        ],
+        "reading_parity_claimed": true
+      },
+      "independent_expected": [
+        {
+          "frame": 0,
+          "shape": [
+            2,
+            2
+          ],
+          "pixel_type": "C32",
+          "value_hex": "000000804523c17f000000804523c17f000000804523c17f000000804523c17f",
+          "sample_sha256": "c9efb7fbbbf7e0f35b996794a53ba3aa615414fc392daf69fa9c16b882eb26ce"
+        }
+      ],
+      "independent_source_type_hex": "030016020000080000007200000000000000000000000000000000000000000000000000000000000000000000000000000011211f000400000000002000170800177f0000006900000000000000040000000000000000000000000000000000000000000000000000000000000011211f000400000000002000170800177f000000",
+      "differences": []
+    },
+    {
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/external.h5",
+        "bytes": 1576,
+        "sha256": "860e1cd3a7a73a23e823f3700e7c3936d50c58b24dc724eeac0b2d309cb74de8"
+      },
+      "dataset": "data",
+      "request": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/external.h5",
+        "dataset": "data",
+        "raw_filenames": [
+          {
+            "stored_filename": "external-a.bin",
+            "actual_file": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/external-a.bin"
+          },
+          {
+            "stored_filename": "external-b.bin",
+            "actual_file": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/external-b.bin"
+          }
+        ]
+      },
+      "input_condition": "well_formed_variant",
+      "reader_action": "implemented",
+      "status": "qualified",
+      "native": {
+        "status": "completed",
+        "value": {
+          "frames": 2,
+          "images": [
+            {
+              "frame": 0,
+              "pixel_type": "C32",
+              "pixels": {
+                "dtype": "complex64",
+                "sample_sha256": "1ee7d41932af669a74a78a46b688bf8e67a4ab96f51c574c315437c218f0ac4d"
+              },
+              "shape": [
+                2,
+                3
+              ],
+              "status": "ok",
+              "value_hex": "00000000000000804523c17f2143c5ff010000000000803f00000040000040c00000807f000080ffffff7f7f00008000"
+            },
+            {
+              "frame": 1,
+              "pixel_type": "C32",
+              "pixels": {
+                "dtype": "complex64",
+                "sample_sha256": "99f620f93da673de6c765fd1e4f4abcea3d430924faaa88febc9ded24f7d0ed4"
+              },
+              "shape": [
+                2,
+                3
+              ],
+              "status": "ok",
+              "value_hex": "0000003f000000bf00000000010000000200000003000000040000000500000006000000070000000800000009000000"
+            }
+          ],
+          "kind": "hdf5_layout",
+          "links": [],
+          "metadata": [
+            {
+              "dataset": "/data",
+              "external_raw": {
+                "frozen_bytes": 96,
+                "windows": [
+                  {
+                    "declared_bytes": 13,
+                    "effective_bytes": 13,
+                    "file_offset": 7,
+                    "logical_offset": 0,
+                    "source_file": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/external-a.bin",
+                    "stored_filename": "external-a.bin"
+                  },
+                  {
+                    "declared_bytes": null,
+                    "effective_bytes": 83,
+                    "file_offset": 12,
+                    "logical_offset": 13,
+                    "source_file": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/external-b.bin",
+                    "stored_filename": "external-b.bin"
+                  }
+                ]
+              },
+              "fill_time": "IfSet",
+              "fill_value": {
+                "pixels": {
+                  "dtype": "complex64",
+                  "sample_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+                },
+                "value_hex": "0000000000000000"
+              },
+              "filters": [],
+              "first_frame": 0,
+              "frames": 2,
+              "layout": "Contiguous",
+              "little_endian": false,
+              "pixel_type": "C32",
+              "shape": [
+                2,
+                3
+              ],
+              "source_file": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/external.h5",
+              "source_shape": [
+                2,
+                2,
+                3
+              ],
+              "storage_allocated": true,
+              "type_descriptor": "Compound(CompoundType { fields: [CompoundField { name: \"r\", ty: Float(U4), offset: 0, index: 0 }, CompoundField { name: \"i\", ty: Float(U4), offset: 4, index: 1 }], size: 8 })",
+              "virtual_dataset": null
+            }
+          ],
+          "native_hdf5_version": [
+            2,
+            2,
+            0
+          ],
+          "source_bindings": [
+            {
+              "requested": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/external.h5",
+              "resolved": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/external.h5"
+            },
+            {
+              "requested": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/external-a.bin",
+              "resolved": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/external-a.bin"
+            },
+            {
+              "requested": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/external-b.bin",
+              "resolved": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/external-b.bin"
+            }
+          ],
+          "sources": [
+            {
+              "bytes": 1576,
+              "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/external.h5"
+            },
+            {
+              "bytes": 31,
+              "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/external-a.bin"
+            },
+            {
+              "bytes": 106,
+              "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/external-b.bin"
+            }
+          ]
+        }
+      },
+      "reference": {
+        "status": "completed",
+        "frames": [
+          {
+            "frame": 0,
+            "shape": [
+              2,
+              3
+            ],
+            "pixel_type": "C32",
+            "value_hex": "00000000000000804523c17f2143c5ff010000000000803f00000040000040c00000807f000080ffffff7f7f00008000",
+            "sample_sha256": "1ee7d41932af669a74a78a46b688bf8e67a4ab96f51c574c315437c218f0ac4d"
+          },
+          {
+            "frame": 1,
+            "shape": [
+              2,
+              3
+            ],
+            "pixel_type": "C32",
+            "value_hex": "0000003f000000bf00000000010000000200000003000000040000000500000006000000070000000800000009000000",
+            "sample_sha256": "99f620f93da673de6c765fd1e4f4abcea3d430924faaa88febc9ded24f7d0ed4"
+          }
+        ],
+        "reading_parity_claimed": true
+      },
+      "independent_expected": [
+        {
+          "frame": 0,
+          "shape": [
+            2,
+            3
+          ],
+          "pixel_type": "C32",
+          "value_hex": "00000000000000804523c17f2143c5ff010000000000803f00000040000040c00000807f000080ffffff7f7f00008000",
+          "sample_sha256": "1ee7d41932af669a74a78a46b688bf8e67a4ab96f51c574c315437c218f0ac4d"
+        },
+        {
+          "frame": 1,
+          "shape": [
+            2,
+            3
+          ],
+          "pixel_type": "C32",
+          "value_hex": "0000003f000000bf00000000010000000200000003000000040000000500000006000000070000000800000009000000",
+          "sample_sha256": "99f620f93da673de6c765fd1e4f4abcea3d430924faaa88febc9ded24f7d0ed4"
+        }
+      ],
+      "independent_source_type_hex": "030016020000080000007200000000000000000000000000000000000000000000000000000000000000000000000000000011211f000400000000002000170800177f0000006900000000000000040000000000000000000000000000000000000000000000000000000000000011211f000400000000002000170800177f000000",
+      "reference_external_contract": {
+        "cwd": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts",
+        "HDF5_EXT_PREFIX": "unset for reference call",
+        "native": "explicit exact filename bindings; no implicit HDF5 lookup"
+      },
+      "differences": []
+    }
+  ],
+  "attributes": {
+    "status": "qualified",
+    "count": 7,
+    "differences": [],
+    "native": {
+      "status": "completed",
+      "value": {
+        "actions": [
+          {
+            "command": {
+              "name": "original",
+              "op": "attr",
+              "path": "/complex64-le"
+            },
+            "result": {
+              "kind": "Numeric",
+              "little_endian": true,
+              "pixel_type": "C32",
+              "pixels": {
+                "dtype": "complex64",
+                "sample_sha256": "2bc30ca40addc30c2b87ee12d751f6aca07c4f0728f86bd2b2e56eef08b04ef6"
+              },
+              "shape": [
+                1,
+                2,
+                3
+              ],
+              "value_hex": "00000000000000800000807f000080ff4523c17f2143c5ff010000000000803fffff7f7f0000800000000040000040c0"
+            },
+            "status": "ok"
+          },
+          {
+            "command": {
+              "name": "original",
+              "op": "attr",
+              "path": "/complex64-be"
+            },
+            "result": {
+              "kind": "Numeric",
+              "little_endian": false,
+              "pixel_type": "C32",
+              "pixels": {
+                "dtype": "complex64",
+                "sample_sha256": "2bc30ca40addc30c2b87ee12d751f6aca07c4f0728f86bd2b2e56eef08b04ef6"
+              },
+              "shape": [
+                1,
+                2,
+                3
+              ],
+              "value_hex": "00000000000000800000807f000080ff4523c17f2143c5ff010000000000803fffff7f7f0000800000000040000040c0"
+            },
+            "status": "ok"
+          },
+          {
+            "command": {
+              "name": "original",
+              "op": "attr",
+              "path": "/complex128-le"
+            },
+            "result": {
+              "kind": "Numeric",
+              "little_endian": true,
+              "pixel_type": "C64",
+              "pixels": {
+                "dtype": "complex128",
+                "sample_sha256": "2e68a4c9ddffd2ebf92723cfcea2aef19c39ae3a7402af72ced6736f4e9f6c53"
+              },
+              "shape": [
+                1,
+                2,
+                3
+              ],
+              "value_hex": "00000000000000000000000000000080000000000000f07f000000000000f0ffbc9a78563412f87f3412badccdabf8ff0100000000000000000000000000f03fffffffffffffef7f0000000000001000000000000000004000000000000008c0"
+            },
+            "status": "ok"
+          },
+          {
+            "command": {
+              "name": "original",
+              "op": "attr",
+              "path": "/complex128-be"
+            },
+            "result": {
+              "kind": "Numeric",
+              "little_endian": false,
+              "pixel_type": "C64",
+              "pixels": {
+                "dtype": "complex128",
+                "sample_sha256": "2e68a4c9ddffd2ebf92723cfcea2aef19c39ae3a7402af72ced6736f4e9f6c53"
+              },
+              "shape": [
+                1,
+                2,
+                3
+              ],
+              "value_hex": "00000000000000000000000000000080000000000000f07f000000000000f0ffbc9a78563412f87f3412badccdabf8ff0100000000000000000000000000f03fffffffffffffef7f0000000000001000000000000000004000000000000008c0"
+            },
+            "status": "ok"
+          },
+          {
+            "command": {
+              "name": "original",
+              "op": "attr",
+              "path": "/half-le"
+            },
+            "result": {
+              "kind": "Numeric",
+              "little_endian": true,
+              "pixel_type": "F16",
+              "pixels": {
+                "dtype": "float16",
+                "sample_sha256": "646d04e27f6a6739fc4ea3cd3ba97665da95d1cd72fb309e0ab511473bf88375"
+              },
+              "shape": [
+                2,
+                2,
+                3
+              ],
+              "value_hex": "00000080007c00fc557eaafe0100003cff7b0004004000c2"
+            },
+            "status": "ok"
+          },
+          {
+            "command": {
+              "name": "original",
+              "op": "attr",
+              "path": "/half-be"
+            },
+            "result": {
+              "kind": "Numeric",
+              "little_endian": false,
+              "pixel_type": "F16",
+              "pixels": {
+                "dtype": "float16",
+                "sample_sha256": "646d04e27f6a6739fc4ea3cd3ba97665da95d1cd72fb309e0ab511473bf88375"
+              },
+              "shape": [
+                2,
+                2,
+                3
+              ],
+              "value_hex": "00000080007c00fc557eaafe0100003cff7b0004004000c2"
+            },
+            "status": "ok"
+          },
+          {
+            "command": {
+              "name": "original",
+              "op": "attr",
+              "path": "/bool"
+            },
+            "result": {
+              "kind": "Numeric",
+              "little_endian": true,
+              "pixel_type": "Bool",
+              "pixels": {
+                "dtype": "bool",
+                "sample_sha256": "da2cb6ad175bc966de5e79c6e16777f8a98b610c2424a894132df2815be50677"
+              },
+              "shape": [
+                2,
+                3
+              ],
+              "value_hex": "0001027f80ff"
+            },
+            "status": "ok"
+          }
+        ],
+        "kind": "nexus_api",
+        "links": [],
+        "sources": [
+          {
+            "bytes": 28840,
+            "path": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-layouts/types.h5"
+          }
+        ]
+      }
+    }
+  },
+  "unsupported": [
+    {
+      "dataset": "enum",
+      "input_condition": "well_formed_variant",
+      "reader_action": "unsupported",
+      "source_declaration": {
+        "numpy_dtype": "uint8",
+        "numpy_descr": [
+          [
+            "",
+            "|u1"
+          ]
+        ],
+        "hdf5_type_hex": "030018020000010000001000000001000000000008004f464600000000004f4e0000000000000001",
+        "enum": {
+          "OFF": 0,
+          "ON": 1
+        }
+      },
+      "native": {
+        "status": "error",
+        "exit_code": 1,
+        "error": "Error: Error(\"HDF5 samples require exact standard integers/IEEE floats or packed r/i IEEE complex pairs; custom precision, enums and other compounds are unsupported\")\n"
+      },
+      "reference": {
+        "status": "completed",
+        "shape": [
+          1,
+          3
+        ],
+        "dtype": "uint8",
+        "source_bytes_sha256": "26a66b061e8f48f39927c312f25293959729eee95978e2892d49d3512a5cc092"
+      },
+      "reason": "requires a separate exact dtype contract",
+      "status": "qualified_rejection"
+    },
+    {
+      "dataset": "renamed",
+      "input_condition": "well_formed_variant",
+      "reader_action": "unsupported",
+      "source_declaration": {
+        "numpy_dtype": "[('real', '<f4'), ('imag', '<f4')]",
+        "numpy_descr": [
+          [
+            "real",
+            "<f4"
+          ],
+          [
+            "imag",
+            "<f4"
+          ]
+        ],
+        "hdf5_type_hex": "030016020000080000007265616c00000000000000000000000000000000000000000000000000000000000000000000000011201f000400000000002000170800177f000000696d616700000000040000000000000000000000000000000000000000000000000000000000000011201f000400000000002000170800177f000000",
+        "enum": null
+      },
+      "native": {
+        "status": "error",
+        "exit_code": 1,
+        "error": "Error: Error(\"HDF5 samples require exact standard integers/IEEE floats or packed r/i IEEE complex pairs; custom precision, enums and other compounds are unsupported\")\n"
+      },
+      "reference": {
+        "status": "completed",
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "[('real', '<f4'), ('imag', '<f4')]",
+        "source_bytes_sha256": "17b0761f87b081d5cf10757ccc89f12be355c70e2e29df288b65b30710dcbcd1"
+      },
+      "reason": "requires a separate exact dtype contract",
+      "status": "qualified_rejection"
+    },
+    {
+      "dataset": "mixed-order",
+      "input_condition": "well_formed_variant",
+      "reader_action": "unsupported",
+      "source_declaration": {
+        "numpy_dtype": "[('r', '<f4'), ('i', '>f4')]",
+        "numpy_descr": [
+          [
+            "r",
+            "<f4"
+          ],
+          [
+            "i",
+            ">f4"
+          ]
+        ],
+        "hdf5_type_hex": "030016020000080000007200000000000000000000000000000000000000000000000000000000000000000000000000000011201f000400000000002000170800177f0000006900000000000000040000000000000000000000000000000000000000000000000000000000000011211f000400000000002000170800177f000000",
+        "enum": null
+      },
+      "native": {
+        "status": "error",
+        "exit_code": 1,
+        "error": "Error: Error(\"HDF5 samples require exact standard integers/IEEE floats or packed r/i IEEE complex pairs; custom precision, enums and other compounds are unsupported\")\n"
+      },
+      "reference": {
+        "status": "completed",
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "[('r', '<f4'), ('i', '>f4')]",
+        "source_bytes_sha256": "17b0761f87b081d5cf10757ccc89f12be355c70e2e29df288b65b30710dcbcd1"
+      },
+      "reason": "requires a separate exact dtype contract",
+      "status": "qualified_rejection"
+    },
+    {
+      "dataset": "padded",
+      "input_condition": "well_formed_variant",
+      "reader_action": "unsupported",
+      "source_declaration": {
+        "numpy_dtype": "complex64",
+        "numpy_descr": [
+          [
+            "",
+            "<c8"
+          ]
+        ],
+        "hdf5_type_hex": "030016020000100000007200000000000000000000000000000000000000000000000000000000000000000000000000000011201f000400000000002000170800177f0000006900000000000000080000000000000000000000000000000000000000000000000000000000000011201f000400000000002000170800177f000000",
+        "enum": null
+      },
+      "native": {
+        "status": "error",
+        "exit_code": 1,
+        "error": "Error: Error(\"HDF5 samples require exact standard integers/IEEE floats or packed r/i IEEE complex pairs; custom precision, enums and other compounds are unsupported\")\n"
+      },
+      "reference": {
+        "status": "completed",
+        "shape": [
+          2,
+          3
+        ],
+        "dtype": "complex64",
+        "source_bytes_sha256": "17b0761f87b081d5cf10757ccc89f12be355c70e2e29df288b65b30710dcbcd1"
+      },
+      "reason": "requires a separate exact dtype contract",
+      "status": "qualified_rejection"
+    },
+    {
+      "dataset": "rank1",
+      "input_condition": "well_formed_variant",
+      "reader_action": "unsupported",
+      "source_declaration": {
+        "numpy_dtype": "int16",
+        "numpy_descr": [
+          [
+            "",
+            "<i2"
+          ]
+        ],
+        "hdf5_type_hex": "0300100800000200000000001000",
+        "enum": null
+      },
+      "native": {
+        "status": "error",
+        "exit_code": 1,
+        "error": "Error: Error(\"typed HDF5 expects a 2D image or 3D stack\")\n"
+      },
+      "reference": {
+        "status": "not_completed",
+        "error_type": "RuntimeError",
+        "error": "Only 2D and 3D datasets are supported by FabIO, here 1D"
+      },
+      "reason": "outside native and pinned Hdf5Image 2D/3D image selection contract",
+      "status": "qualified_rejection"
+    },
+    {
+      "dataset": "rank4",
+      "input_condition": "well_formed_variant",
+      "reader_action": "unsupported",
+      "source_declaration": {
+        "numpy_dtype": "int16",
+        "numpy_descr": [
+          [
+            "",
+            "<i2"
+          ]
+        ],
+        "hdf5_type_hex": "0300100800000200000000001000",
+        "enum": null
+      },
+      "native": {
+        "status": "error",
+        "exit_code": 1,
+        "error": "Error: Error(\"typed HDF5 expects a 2D image or 3D stack\")\n"
+      },
+      "reference": {
+        "status": "not_completed",
+        "error_type": "RuntimeError",
+        "error": "Only 2D and 3D datasets are supported by FabIO, here 4D"
+      },
+      "reason": "outside native and pinned Hdf5Image 2D/3D image selection contract",
+      "status": "qualified_rejection"
+    }
+  ],
+  "reference_sources_match": true,
+  "sources_unchanged": true,
+  "probe_unchanged": true,
+  "qualified": true
+}

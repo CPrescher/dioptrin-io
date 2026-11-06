@@ -1,6 +1,28 @@
-# MAR345 V2, irregular VDS and fragmented OJPEG, 2026-11-06
+# Advanced VDS and OJPEG, 2026-11-06
 
-The [current continuation](2026-11-06-marv2-vds-ojpeg.json) retains 237 unchanged
+The [current continuation](2026-11-06-vds-advanced-ojpeg.json) retains all 237
+unchanged FabIO reference tests (zero failures/errors and one existing slow skip)
+and 626 qualified input outcomes. Previous pixel/reference, metadata, attribute,
+stream and header summaries remain unchanged.
+
+Four new proofs qualify nested VDS (10 views / 24 frames), explicit printf VDS
+(14 cases / 60 frames), frame-axis unlimited mappings (six cases / 27 frames)
+and OJPEG (17 profiles / 81 component planes). Native source-word correctness,
+a separately controlled HDF5 cache defect, stock decoder failures, explicit
+reset-tile policy and missing mapped counts retain separate gates. See the
+[combined audit](../VDS_ADVANCED_OJPEG_PARITY.md).
+
+The [native checks](2026-11-06-vds-advanced-ojpeg-native-checks.json) record
+**404 Rust tests**, **164 Python controls**, required/no-default checks,
+**23 isolated optional features** and the Rust 1.89 CBF build. All seventeen
+prior standalone proofs and four new scoped proofs use the same final probes.
+Full reading parity remains unestablished for the documented remaining
+layouts/processes and source/reference differences. Historical reports remain
+unchanged.
+
+## Previous MAR345 V2, irregular VDS and fragmented OJPEG, retained
+
+The [previous continuation](2026-11-06-marv2-vds-ojpeg.json) retains 237 unchanged
 reference tests (zero failures/errors, one existing slow skip) and all 626
 qualified input outcomes. Prior pixel/reference outcomes, metadata, attributes
 and input/header summaries remain unchanged.

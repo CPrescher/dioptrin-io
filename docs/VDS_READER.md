@@ -21,13 +21,17 @@ let reader = Reader::open_snapshot_with_vds(
     VdsOptions {
         filenames: &files,
         unmapped_regions: UnmappedRegions::DeclaredFill,
+        ..Default::default()
     },
 )?;
 ```
 
 Each binding names the exact original UTF8 filename string and one caller-approved
-actual file. There is no basename inference, environment-prefix lookup, printf
-expansion, neighboring-file substitution or retry. The mapping states which
+actual file. There is no basename inference, environment-prefix lookup,
+neighboring-file substitution or retry. Printf declarations require separate
+explicit owner-qualified block-count plans; they never scan for available files.
+The original filename `.` means the current VDS owner file, including nested
+owners and captured inputs; it never means an unrelated top-level file. The mapping states which
 actual file the caller intends; validation cannot infer that a different file
 with identical shape/type contains the intended experiment. Canonical bound
 paths and original names remain visible together. Duplicate/unused VDS bindings
@@ -43,12 +47,34 @@ is never used as a substitute for that pairing. Fixed declared dimensions and
 every selected source/virtual coordinate are validated. Overlapping mappings
 fail explicitly rather than selecting an implicit precedence.
 
-The original unlimited Lambda contract remains separate: contiguous,
-frame-preserving selections start at frame0 and derive their frozen extent only
-from complete explicitly bound modules. General unlimited irregular/strided
-selections, point selections, nested/cyclic VDS, spatial growth and printf
-mappings remain unsupported. Finite masters may contain additional fill-only
-frames only under the explicit defined-fill policy.
+Nested virtual sources are composed in native selection iteration order down to
+concrete datasets, without reading intermediate virtual images. A physical-node
+DAG is indexed once by file/object identity; every original hard alias still has
+its own freshness guard. Cycles fail explicitly, and recursion is bounded at 32
+nodes along a path. Ancestors may select different shapes or only measured parts
+of a child whose other regions have undefined fill.
+
+Non-printf unlimited mappings support a frame-axis unlimited count on both sides,
+with finite spatial strides and temporal offsets, strides and blocks. Their
+frozen domain derives only from complete explicitly bound source selections.
+Every original mapping is then checked against the complete global output domain:
+a shorter source cannot become declared fill merely because another mapping
+extends farther. Staggered interleaves remain admissible when the shorter mapping
+has no further selected coordinate inside that domain. Cross-axis non-printf
+unlimited mappings and point selections remain unsupported. Native HDF5 itself
+rejects unions of distinct infinite hyperslabs; those are producer restrictions,
+not silently flattened finite measurements.
+
+Printf `%b`/`%%` mappings use explicit `PrintfMapping` plans keyed by actual owner
+(or `None` for the root input), resolved owner dataset, DCPL mapping ordinal and
+both exact original patterns. Each plan states a finite block count. Expansion
+admits only those exact bound files/datasets, preserves original declarations and
+block provenance, and checks that the final global domain does not expose any
+unplanned selected block. This also applies to spatial-axis printf patterns.
+See [printf contracts](HDF5_PRINTF_VDS.md) and
+[unlimited contracts](HDF5_UNLIMITED_VDS.md) for their independent qualifications.
+Finite masters may contain additional fill-only frames under the explicit
+original defined-fill policy.
 
 The reader queries original mapping property lists and their owned dataspaces;
 it never reads the virtual dataset or queries an unlimited mapping's native
@@ -56,7 +82,9 @@ conditional frame extent. Finite mappings retain/check their fixed master
 extent, which does not depend on source availability. Source files/datasets are
 opened through the existing bounded `Sources` graph. Standard native dtype equality, concrete source shape, filters, chunk
 bounds, raw-external rejection and storage allocation are admitted before output.
-Mapped sources must have fully allocated storage. Missing files, missing datasets,
+Concrete leaf sources must have fully allocated storage. Virtual-node
+`storage_allocated=false` describes a logical mapping, not an absent concrete
+measurement; its concrete leaves are admitted independently. Missing files, missing datasets,
 partial module chunks or unallocated module regions cannot turn into fill,
 even when that concrete dataset declares zero fill. Source soft/external links
 require the existing explicit `ExternalLinks::FollowSnapshot` policy; intermediate
@@ -73,12 +101,13 @@ through float conversion, a per-pixel mapping array or an intermediate detector
 image. Standard integers, f32/f64, admitted complex pairs, original bool bytes and
 binary16 words preserve their existing type/endian/reserved-bit contracts.
 
-`UnmappedRegions::Reject` requires complete spatial coverage. `DeclaredFill`
-permits only genuinely unmapped raster regions with an original defined VDS fill
-and compatible fill-time declaration. These logical regions remain distinct
-from module measurements. The exact typed fill scalar initializes the output,
-then exact module samples overlay their original selected coordinates. Undefined
-fill or FillTime::Never fails for uncovered pixels. No source-derived mask, correction,
+`UnmappedRegions::Reject` requires measured coverage of the effective root
+selection. `DeclaredFill` permits only genuinely unmapped logical regions with
+an original defined fill and compatible fill-time declaration at their originating
+VDS node. Nested fills remain distinct from root fills and concrete measurements.
+Each exact typed scalar is written only to its projected root-visible selection.
+Undefined fill or FillTime::Never fails only when that fill is actually selected
+by the root. The complete referenced graph is nevertheless required and checked. No source-derived mask, correction,
 normalization, flip or geometry transform is applied.
 
 `typed::Metadata.virtual_dataset` records `VdsMetadata`: original mapping shape
@@ -99,7 +128,12 @@ number; variable JSON is null alongside the complete per-frame vector.
 `sources()` and `links()` retain the complete immutable graph. Original selection records preserve
 HDF5 UNLIMITED as u64::MAX. Master `fill_value` stays typed; its
 `storage_allocated=false` describes the virtual master, while mapped source
-allocation is reported separately.
+allocation is reported separately. `frozen_source_selection` and
+`frozen_virtual_selection` retain the actual finite selections used to compose
+the view, alongside the untouched original declarations. `nested_nodes` is a flat
+unique physical-node table. `effective_fill_regions` retains the original node,
+source selection, exact scalar and projected root selection for every selected
+fill origin.
 
 Every source and original path alias is checked before/after indexing and each
 frame read. Every concrete module shape and file/object identity is checked,
@@ -109,18 +143,25 @@ introduced external link cannot cause implicit file search. Recorded original
 soft/external link kinds and exact raw values are revalidated even before file
 timestamps change. Master object/mapping-property identities and finite master
 extents are also checked, detecting unflushed replacement, retargeting and extent
-changes. Returned creation property lists are copies; editing a copy does not
+changes. For dynamic/unlimited nodes, native conditional extents are deliberately
+outside the frozen source-derived domain: querying them could trigger ambient
+filename lookup. An unflushed edit to that native conditional extent is therefore
+not a shape guard; original DCPL/object identities and every concrete extent
+remain guarded, and flushed file changes invalidate the source snapshot.
+Returned creation property lists are copies; editing a copy does not
 mutate a created dataset. Multi-part scans retain their complete-graph checks.
 Changes invalidate output and require reopening; no live refresh or decoded
 sample cache is introduced.
 
 Dataset, mapping, link traversal, source, text, metadata, frame and chunk limits
 remain separate. Irregular block arrays and per-frame coverage vectors are
-charged before Rust allocation. Finite selections additionally cap block
-complexity at 16,384 and aggregate frame/selection operations at 1,000,000.
-Contiguous repeated blocks count as one compact interval for that admission.
-Finite coverage uses native hyperslab set operations, with no detector-sized
-point scratch; the unlimited rectangle path retains its sorted sweep. These
+charged before Rust allocation. Selections cap native block complexity and expanded concrete/fill leaves at
+16,384, recursive depth at 32, and aggregate planning work plus frame/leaf
+operations at 1,000,000. Native combination/projection complexity is checked
+before those operations; retained selections and coverage vectors are charged
+before Rust allocation. Contiguous repeated blocks count as compact intervals
+for admission. Coverage and nested composition use bounded native hyperslab set
+operations and fixed iterator scratch, with no detector-sized point array. These
 bounds qualify admitted operations and retained Rust metadata, not total RSS.
 Native HDF5 dataspace/property deserialization, selection bookkeeping, caches and
 codec allocations are separate, including allocations before wrapper admission.
@@ -181,3 +222,35 @@ recorded external-link retargeting, output invalidation and resource limits.
 Three Python controls ensure source words, source dtype and variable-coverage
 provenance cannot pass after mutation. Generators and proof helpers are test-only;
 all reference and executable/source fingerprints are retained in the report.
+
+
+## Nested and unlimited selection proof
+
+The [nested graph proof](vds/2026-11-06-vds-advanced-ojpeg-nested.json)
+compares ten independent CC0 views and all 24 frames with manual source-word
+assembly, cold h5py reads and unchanged pinned FabIO `Hdf5Image` reads. All 20
+reference calls agree. Three-level irregular selections retain exact U64 values
+above 2^63, big-endian complex NaN components, binary16 payloads and noncanonical
+bool bytes. Child, intermediate and root fill scalars remain separately identified
+and projected to their original selected coordinates. A measured-only view of a
+child with undefined gaps succeeds under `Reject`; an effective undefined fill
+fails. A physical hard-alias DAG retains one logical node and both alias guards.
+Six separate rejection calls cover effective fill policy, undefined fill, a cycle,
+a depth cap and an expanding DAG resource cap. Four Python negative controls
+reject changed source words/types/shapes, fill provenance, declarations, coverage
+and weakened result gates.
+
+Four focused Rust tests additionally check reversed/repeated reads, invalid frame
+output clearing, inactive nested-source growth, unflushed hard-alias unlink and
+source/frame/metadata/dataset budgets. The authored generator derives expected
+words by mathematical source/destination iteration order, independently of all
+virtual dataset reads. Reference processes are unchanged and isolated; cyclic or
+resource-exhausting graphs are never passed to an unbounded reference read.
+
+The [non-printf unlimited proof](vds/2026-11-06-vds-advanced-ojpeg-unlimited.json)
+adds six exact cases / 27 frames plus an explicit exhausted-source rejection. The
+[printf proof](vds/2026-11-06-vds-advanced-ojpeg-printf.json) qualifies explicit
+owner-scoped block plans separately, including its independently diagnosed pinned
+HDF5 cold-cache discrepancy. These reports retain source, helper, native backend
+and executable fingerprints and distinguish reader policies from unchanged
+reference behavior.

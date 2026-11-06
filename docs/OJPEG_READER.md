@@ -1,6 +1,6 @@
 # Original TIFF JPEG component reader
 
-With `tiff` and `jpeg`, original TIFF Compression6 pages use the existing bundled
+With `tiff` and `jpeg`, qualified original TIFF Compression6 pages use the existing bundled
 libjpeg-turbo codec and expose native Y, Cb and Cr grids through
 `tiff::Reader::read_ycbcr_into`. Scalar reads reject these nonuniform grids. The
 component buffer identifies `Storage::JpegDecodedComponents`; decoded JPEG is
@@ -58,9 +58,10 @@ of complete semantic entropy validation. Partial frames, unsupported fragments,
 contradictory geometry/sampling, unknown larger tails and bytes after EOI fail.
 
 Qualified multi-chunk fragmented profiles and restart reconstruction are now
-implemented as described below. Planar separate, nonbaseline/higher precision,
-ambiguous table-only multi-across tile stacks, arbitrary intra-fragment restart
-sequences and header splitting beyond the first fragment remain explicit gaps.
+implemented as described below. The advanced profiles later in this document
+also cover qualified planar scans, SOF1, source-internal restart streams and
+headers extending beyond the first source part. Remaining coding/layout limits
+are listed explicitly in that section.
 These matched component proofs do not claim arbitrary legacy OJPEG coverage.
 Explicit consumer RGB/Pillow views retain separate conversion/rounding provenance.
 No performance claim follows from this work.
@@ -83,8 +84,9 @@ in a full fragment. Nonzero tag515/header DRI declarations must agree with this
 geometry. An absent DRI may be assembled from that bounded interpretation;
 cycling RST0..RST7 markers are inserted only at declared fragment boundaries,
 following libtiff's `OJPEGReadHeaderInfo`, `OJPEGWriteStreamDri` and
-`OJPEGWriteStreamRst`. Internal source restarts/headers are rejected rather than
-retried under a second interpretation. A terminal source EOI is retained in the
+`OJPEGWriteStreamRst`. This initial raster-aligned path rejects internal source
+restarts/headers; the separate recognized literal-stream profiles below retain
+qualified source markers without inserting markers or retrying a failed decode. A terminal source EOI is retained in the
 original window but excluded from its entropy contribution; absent EOI is the
 same explicit old-TIFF container assembly as the initial table-defined reader.
 No compressed sample bytes or unavailable rows are fabricated.
@@ -108,7 +110,8 @@ those windows never enter the codec.
 Multi-across tiles are admitted when an explicit source SOF proves the entire
 vertically stacked encoded tile frame. The source `encoded_shape` can therefore
 differ from the logical TIFF raster. Table-only tile grids without that evidence
-are rejected. `Fragment.origin` is the logical tile origin, while
+are rejected by the default declared-stream policy; the explicit independent-reset
+interpretation below uses each declared tile's own geometry instead. `Fragment.origin` is the logical tile origin, while
 `Fragment.stream_origin` is its position in the encoded JPEG stack; these are
 separate when a tile row has multiple columns. Native decoding uses the proved
 stream extent, then splits complete original component grids into logical
@@ -136,9 +139,9 @@ caller-retained results. Fragment/window/header retention obeys the metadata
 budget. Source checks and the existing adapted-metadata alias guard apply around
 indexing and reads; failures invalidate every component-buffer accessor.
 
-The fragmented continuation requires at least two declared chunks. A single
-strip whose header-only interchange window lies outside that strip remains an
-explicit unsupported source layout.
+The initial14-fixture fragmented continuation required at least two declared
+chunks. The advanced continuation below removes that restriction for qualified
+single-strip/header-only interchange and original restart profiles.
 
 Fourteen small independent CC0 fixtures, their encoder/decoder binary hashes,
 source-word goldens and generator receipt are retained in
@@ -166,4 +169,115 @@ Reproduce the component proof with:
 cargo test --no-default-features --features tiff,jpeg --test tiff_ojpeg --test tiff_ojpeg_fragments
 /tmp/dioptrin-io-fabio-suite-env/bin/python -m unittest discover -s scripts -p test_ojpeg_fragment_reference.py
 /tmp/dioptrin-io-fabio-suite-env/bin/python scripts/compare_ojpeg_fragments.py --probe target/release/examples/ojpeg_probe --reference-library /opt/homebrew/opt/libtiff/lib/libtiff.6.dylib --output /tmp/ojpeg-fragments.json
+```
+
+
+## Advanced source profiles and explicit reset policy
+
+The next continuation preserves the same native sample decoder, optional
+features and source dtype/orientation contract. It recognizes additional source
+profiles from declarations and literal JPEG framing. It never retries a failed
+sample decode under a different source interpretation. The old two corpus files,
+four initial fixtures and14 earlier fragmented fixtures retain their prior
+behavior and separate historical evidence.
+
+| Profile | Current reader action | Independent evidence |
+| --- | --- | --- |
+| One chunk with a separate header-only interchange prefix, including odd dimensions | Default `GlobalStream` read | Native libtiff and original JPEG source words |
+| Header across interchange and several source parts, with earlier parts header-only | Default `GlobalStream` read; one unambiguous entropy-contributing part required after a multi-part header | Native libtiff and original JPEG source words |
+| Source-internal restart markers | Default read for exact complete-interchange partitions or a literal source stream containing every required marker, in sequence/count | Original JPEG source words; stock libtiff separately qualified |
+| Planar444 sequential scans | Default `PlanarScans` read; one complete strip per component | Native libtiff and original JPEG source words |
+| Subsampled planar420 scans | Default read only with a complete original interchange stream and exact component scan windows | Original JPEG native YUV source grids; stock reader failure recorded separately |
+|8-bit sequential SOF1 source headers | Default qualified legacy read | Source-preserving SOF0-toSOF1 fixture subset, native libtiff and original JPEG words |
+| Table-only multi-across tiles | Default rejection; explicit `IndependentResetTiles` interpretation | Original reset-segment JPEG source words, with all tile padding |
+|12-bit/higher precision, lossless or other unsupported coding processes | Explicit rejection; no downcast or guessed predictor | Native component API remains explicitly8-bit DCT |
+
+Header-only source windows are not presented as local row entropy.
+`SourceMetadata.partition` separates `RasterAligned`, `GlobalStream`,
+`PlanarScans` and `IndependentChunks`. `Fragment.header_bytes` records literal
+header contribution; a source window may have `entropy_bytes=0` while its
+logical TIFF slot still has a decoded image extent. The logical chunks in a
+`GlobalStream` come from the independently validated full JPEG frame, not from
+a claim that each physical window holds that slot's pixels. Source/stream
+origins, original offsets/counts and complete header bytes remain visible.
+
+Literal source streams retain original RST markers, with exact global numbering
+and the marker count required by the full source MCU geometry and declared DRI.
+They insert no restart markers. A complete interchange still requires exact
+ordered declared entropy partitions and the appropriate original boundary
+markers, including when each TIFF chunk contains internal restarts. A source
+header extending beyond the first part remains constrained to header-only
+parts before one complete entropy contributor. Other ambiguous multi-part
+header/entropy arrangements remain unsupported.
+
+Planar source scans preserve original component IDs/order and complete SOS/
+entropy windows in `SourceMetadata.scan_sources`. Each `ScanSource` has a
+component, `header_windows` and `entropy_windows`. Exactly three sequential
+Y/Cb/Cr scans are required; duplicate/shifted/missing scans and unsupported
+restart arrangements fail. Planar444 is independently qualified for a header
+prefix or complete interchange. Subsampled planar420 is qualified only when
+the complete source JPEG proves the grids and every declared component window
+matches its exact scan extent. Chroma is neither expanded nor interpreted as
+full-size gray pixels. Output remains the existing three component planes;
+scalar image reads still reject nonuniform component layouts.
+
+Table-only tile stacks have no uniquely established universal reset convention:
+[Technical Note2](https://libtiff.gitlab.io/libtiff/specification/technote2.html)
+explicitly records the incompatible historical choices. The default therefore
+continues rejecting a multi-across table-only stack. A caller may explicitly
+select its known source interpretation:
+
+```rust,ignore
+let options = tiff::Options {
+    ojpeg_tiles: tiff::OjpegTiles::IndependentResetTiles,
+    ..Default::default()
+};
+let mut reader = tiff::Reader::open_with_options(path, limits, options)?;
+reader.read_ycbcr_into(0, &mut components)?;
+```
+
+This policy constructs each source-declared tile's JPEG frame separately with
+the existing table builder, then uses the existing native decoder. It assumes
+DC reset at each tile boundary as an explicit caller assertion; it never
+guesses a larger global SOF. Source interchange/restart declarations outside
+this policy's profile fail. `tile_policy`, `IndependentChunks` and
+`TableDefinedIndependentChunks` provenance identify the selected interpretation.
+Every original tile window and padded/valid extent remains distinct. The policy
+is not silently selected because a default decode failed.
+
+The new [proof](ojpeg/2026-11-06-vds-advanced-ojpeg.json) covers17 small CC0
+profiles,27 chunks and81 component planes against native raw YUV decoding of
+the complete independently encoded original JPEG. Original JPEG/fixture hashes,
+native header admission, all source words and padding, and before/after runtime,
+probe, reference-library, fixture and pinned FabIO source fingerprints are
+recorded. Fourteen profiles additionally require exact independent native
+libtiff source-word equality. The explicit reset policy has a separate gate
+requiring default rejection and exact policy-selected words.
+
+Stock-reader behavior is a separate observation, not a substitute source-word
+oracle. For the fixed17 sources, pinned unchanged FabIO completes16 display
+reads and returns a no-pixels object for planar420 after logging Pillow's
+failure. Returning an image object after all backends failed is a failure
+propagation defect; it is not a successful image read. Stock libtiff fails the
+literal restart-prefix profile and planar420 chroma reconstruction. Its table-only
+tile-grid output differs on six plane signatures under the explicitly selected
+reset interpretation and reports too many scanlines. The ambiguous historical
+reset convention prevents labeling that tile outcome universally incorrect;
+its limitation and the caller's interpretation remain explicit.
+
+Higher precision/lossless processes, planar multiple strips or source restarts,
+noncomplete subsampled planar streams, and ambiguous multi-contributor headers
+remain explicit limits. The mature JPEG decoder's previously documented
+entropy-lookahead limitation also remains; these checks do not assert a full
+semantic entropy proof or an RSS bound.
+
+Seven advanced Rust tests verify all original JPEG goldens, strict source
+windows/scans/restart ordering, explicit-policy/default separation, budgets,
+mutation and stale-output invalidation. The previous nine OJPEG tests still
+pass. Reproduce with:
+
+```sh
+cargo test --no-default-features --features tiff,jpeg --test tiff_ojpeg --test tiff_ojpeg_fragments --test tiff_ojpeg_advanced
+/tmp/dioptrin-io-fabio-suite-env/bin/python -m unittest discover -s scripts -p test_ojpeg_advanced_reference.py
+/tmp/dioptrin-io-fabio-suite-env/bin/python scripts/compare_ojpeg_advanced.py --probe target/release/examples/ojpeg_probe --reference-library /opt/homebrew/opt/libtiff/lib/libtiff.6.dylib --output /tmp/ojpeg-advanced.json
 ```

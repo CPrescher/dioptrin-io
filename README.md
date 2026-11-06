@@ -16,8 +16,8 @@ Every format dependency is optional; default features are empty.
 
 | Feature | Implemented scope | Important remaining gaps |
 |---|---|---|
-| `hdf5` | Typed 2D/3D images/stacks with standard scalar, binary16, Boolean and exact packed complex types, both byte orders, Eiger/LImA/Lambda discovery, explicit external-file/raw-window snapshots and bound regular/unlimited mosaics and finite strided/irregular VDS selections; original u32 compatibility reader; opt-in indexed raw u16/u32 chunks and bounded parallel consumers | Nested/printf/unlimited irregular VDS, arbitrary enums/compounds/custom types, other image ranks and live refresh; raw fast path retains its narrower contract |
-| `tiff` | Scalar/packed/WhiteIsZero/palette/CFA/color/planar TIFF and BigTIFF; primary pages and explicit SubIFD selection, strips/tiles, lossless codecs, CCITT RLE/Group3 1D/2D/Group4, legacy LZW, native YCbCr grids/units, modern JPEG and bounded OJPEG interchange/table fragments and explicit stacked tile streams; explicit legacy metadata policies; ThunderScan complete/available-row reads; Pilatus/MAR headers | OJPEG/JPEG component reads need `jpeg`; ambiguous legacy OJPEG profiles and other sampled layouts remain gaps; F16 widening and reference views qualified |
+| `hdf5` | Typed 2D/3D images/stacks with standard scalar, binary16, Boolean and exact packed complex types, both byte orders, Eiger/LImA/Lambda discovery, explicit external-file/raw-window snapshots and bound finite/nested VDS, frame-axis unlimited patterns and explicitly bounded printf mappings; original u32 compatibility reader; opt-in indexed raw u16/u32 chunks and bounded parallel consumers | Cyclic/cross-axis unlimited VDS and unqualified layouts, arbitrary enums/compounds/custom types, other image ranks and live refresh; raw fast path retains its narrower contract |
+| `tiff` | Scalar/packed/WhiteIsZero/palette/CFA/color/planar TIFF and BigTIFF; primary pages and explicit SubIFD selection, strips/tiles, lossless codecs, CCITT RLE/Group3 1D/2D/Group4, legacy LZW, native YCbCr grids/units, modern JPEG and bounded OJPEG interchange/table fragments, global streams, planar scans and explicit reset tiles; explicit legacy metadata policies; ThunderScan complete/available-row reads; Pilatus/MAR headers | OJPEG/JPEG component reads need `jpeg`; ambiguous legacy OJPEG profiles and other sampled layouts remain gaps; F16 widening and reference views qualified |
 | `jpeg`, `jpeg2000` | Mature libjpeg-turbo/OpenJPEG backends; lossless high-precision JPEG; original channels, precision, lossy provenance and headers | Unsupported precision/component layouts fail explicitly; see image contracts |
 | `cbf` | Eight integer types, explicit byte-offset dialects, original encoded payload/integrity access, raw CIF headers and separate source-preserving CIF 1.1/2.0 syntax trees | Dictionary semantics, other decoded codecs and multiple binary sections |
 | `edf` | Ten scalar types, full-rank source arrays/explicit planes and concatenated records/general headers, internal/outer compression and bounded padding, explicit external-source snapshots, explicit legacy layout/label policies and typed-prefix recovery | ABI-dependent float128, obsolete byte-offset; complete-image APIs stay strict; recovery exposes missing spans and member integrity separately |
@@ -111,13 +111,17 @@ search, neighboring-file substitution and live refresh are not performed.
 Datasets with undefined unwritten regions are rejected; defined HDF5 fill values
 remain part of the source array's documented storage semantics.
 
-`typed::Reader::open_snapshot_with_vds` admits regular, nonoverlapping,
-frame-preserving 3D mosaics using caller-provided exact `FilenameBinding`s.
-It freezes the frame extent from concrete modules, tracks the complete source
-graph and reads those modules directly. `UnmappedRegions::DeclaredFill` explicitly
-permits defined original detector-gap fill; absent/unallocated mapped sources
-remain errors. Ordinary opens continue to reject VDS. See [source contracts and
-recovery](docs/source-recovery/README.md).
+`typed::Reader::open_snapshot_with_vds` admits bounded, nonoverlapping 3D
+mappings using caller-provided exact `FilenameBinding`s. Finite selections can
+be strided or irregular and compose through nested VDS nodes. Frame-axis
+unlimited patterns freeze from complete bound sources; `%b` mappings require
+an explicit owner-qualified `PrintfMapping` block count. The reader tracks the
+complete source graph and reads concrete leaves directly. Original and frozen
+selections, nested fill origins and printf declarations remain metadata.
+`UnmappedRegions::DeclaredFill` permits defined fill visible in the selected
+output; absent/unallocated mapped sources remain errors. Ordinary opens continue
+to reject VDS. See [VDS contracts](docs/VDS_READER.md) and
+[source recovery](docs/source-recovery/README.md).
 
 ## TIFF, CBF and EDF
 
@@ -263,3 +267,8 @@ valid unsupported variants are recorded separately.
 The [MAR345 V2, VDS and OJPEG continuation](docs/MARV2_VDS_OJPEG_PARITY.md)
 records the added source contracts, independent original-word comparisons and
 separate unchanged FabIO failures or display behavior.
+
+The [nested/printf VDS and OJPEG continuation](docs/VDS_ADVANCED_OJPEG_PARITY.md)
+records bounded source expansion, nested selection composition and additional
+legacy JPEG profiles, with independent counts and reference limitations kept
+separate.

@@ -341,3 +341,15 @@ framing; failed reference interpretations remain separate from source success.
 New HDF5 source-identity/link checks reject unflushed retargeting, and OJPEG raw
 component checks remain distinct from display conversion. Full parity stays
 false for the explicitly remaining versions/layouts and reference differences.
+
+## Nested/printf VDS and additional OJPEG profiles
+
+The [advanced VDS/OJPEG audit](VDS_ADVANCED_OJPEG_PARITY.md) adds bounded nested
+selection composition, explicit printf block expansion, source-bound frame-axis
+unlimited patterns and additional original-JPEG stream/planar profiles. Original
+and frozen selections, intermediate fill origins, declared source windows and
+caller-selected tile-reset interpretations remain visible. Independent count
+checks and unchanged reference behavior retain separate gates; cache-dependent
+reference results and returned objects without pixels are not successful read
+parity. Full reading parity remains unestablished for the documented remaining
+capabilities and source/reference differences.
