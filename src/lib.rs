@@ -90,3 +90,6 @@ pub use hdf5::sparse;
 
 #[cfg(any(feature = "cbf", feature = "tiff"))]
 pub mod pilatus;
+
+#[cfg(feature = "xcalibur")]
+pub mod xcalibur;
