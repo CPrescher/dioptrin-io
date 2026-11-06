@@ -122,9 +122,9 @@ assert no value and supply no coverage evidence.
 `metadata_fields_accounted_for_pixel_reads` are **true**. Exact `metadata_parity`
 and `full_reading_parity` remain **false**: the measured FIT2D/MRC metadata defects,
 GE legacy presentation differences and these TIFF probe differences stay explicit,
-as do the qualified shape/frame/padding conventions and earlier pixel/reference differences. Discovery, direct streams,
-neighboring-file operations and variants outside the corpus remain distinct
-qualification work. Xcalibur's separate mask API was subsequently qualified in
+as do the qualified shape/frame/padding conventions and earlier pixel/reference differences. Discovery and direct streams are subsequently qualified in
+[INPUT_APIS.md](../INPUT_APIS.md); neighboring-file operations and variants outside
+the corpus remain distinct qualification work. Xcalibur's separate mask API was subsequently qualified in
 [XCALIBUR_MASKS.md](../XCALIBUR_MASKS.md). This closes the tested metadata gaps;
 it does not claim a Python API shim or readable complete counts from missing data.
 

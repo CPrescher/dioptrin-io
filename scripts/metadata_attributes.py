@@ -88,7 +88,12 @@ def compare_attributes(read,frames,prefix=None,source_bits=None):
         if read['status']=='reference_decoder_defect' and proofs and all(p['proof'].get('qualified') for p in proofs):
             selected=proofs[0]['proof']['corrected_luminance']
         if read['status']=='reference_no_pixels':
-            if codec=='dtrekimage':put('shape',first.get('declared_shape'),'native declared source array shape')
+            if codec=='edfimage' and first.get('header_only') is True and first.get('pixels_available') is False:
+                if 'declared_shape' in first:
+                    put('shape',first['declared_shape'],'native EDF header declared_shape; metadata only, no decoded samples')
+                if 'declared_dtype' in first:
+                    put('dtype',{'kind':'dtype','value':first['declared_dtype']},'native EDF header declared_dtype; metadata only, no decoded samples')
+            elif codec=='dtrekimage':put('shape',first.get('declared_shape'),'native declared source array shape')
             elif codec=='tifimage':
                 tags=first['fields']['tags'];put('shape',[tags.get('257'),tags.get('256')],'native original TIFF rows/columns')
             put('nframes',len(frames),'native primary image/header count')

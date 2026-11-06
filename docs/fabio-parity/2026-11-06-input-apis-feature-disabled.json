@@ -1,0 +1,413 @@
+{
+  "scope": "Disabled decoder availability remains separate from content recognition; real stdin reads work for available core format",
+  "build_command": "cargo build --release --locked --no-default-features --features wrappers --example parity_probe --target-dir /tmp/dioptrin-input-api-disabled-target",
+  "probe_sha256": "e9dec2c7b8239bd4d60fc670de51e167f76c21f9ba9ad78bc37f56022c2735d0",
+  "capabilities": {
+    "adapters": [
+      "npy",
+      "dtrek",
+      "dtrek-header",
+      "edf-header",
+      "tiff-header",
+      "adsc",
+      "mask",
+      "hipic",
+      "pnm",
+      "spreadsheet",
+      "raw",
+      "edf",
+      "cbf",
+      "cbf64",
+      "tiff",
+      "tiff-pillow13",
+      "tiff-tiffio",
+      "marccd",
+      "pilatus"
+    ],
+    "features": [
+      "native",
+      "edf",
+      "cbf",
+      "tiff",
+      "wrappers"
+    ],
+    "input_apis": [
+      "content_discovery",
+      "nonseekable_stream",
+      "buffer_snapshot"
+    ],
+    "known_readers": {
+      "GEimage": "fixed",
+      "HiPiCimage": "native",
+      "OXDimage": "oxford",
+      "adscimage": "native",
+      "binaryimage": "native",
+      "bruker100image": "bruker",
+      "brukerimage": "bruker",
+      "cbfimage": "cbf",
+      "dm3image": "containers",
+      "dtrekimage": "native",
+      "edfimage": "edf",
+      "eigerimage": "hdf5",
+      "esperantoimage": "esperanto",
+      "fit2dimage": "fit2d",
+      "fit2dmaskimage": "native",
+      "fit2dspreadsheetimage": "native",
+      "hdf5image": "hdf5",
+      "jpeg2kimage": "jpeg2000",
+      "jpegimage": "jpeg",
+      "kcdimage": "kcd",
+      "lambdaimage": "hdf5",
+      "limaimage": "hdf5",
+      "mar345image": "mar345",
+      "marccdimage": "tiff",
+      "mpaimage": "mpa",
+      "mrcimage": "containers",
+      "numpyimage": "native",
+      "pilatusimage": "tiff",
+      "pixiimage": "fixed",
+      "pnmimage": "native",
+      "raxisimage": "raxis",
+      "sparseimage": "sparse",
+      "speimage": "containers",
+      "tifimage": "tiff",
+      "xsdimage": "xsd"
+    }
+  },
+  "checks": [
+    {
+      "source": "tests/data/images/rgb.jpg",
+      "sha256": "52530dce38bb3a5a6eb1b859211675b16d9f7435d3575d925d94b3d040da0811",
+      "expected_codec": "Jpeg",
+      "expected_available": false,
+      "result": {
+        "candidates": [
+          {
+            "available": false,
+            "codec": "Jpeg",
+            "evidence": "Signature",
+            "feature": "jpeg",
+            "reason": "format signature"
+          }
+        ],
+        "provenance": {
+          "compression": "None",
+          "decoded_bytes": 918,
+          "encoded_bytes": 918,
+          "origin_directory": "/Users/clemens/Programming/dioptrin-io/tests/data/images",
+          "stream": false
+        },
+        "resolution_error": "format Jpeg requires disabled feature jpeg",
+        "selected": null
+      },
+      "status": "match"
+    },
+    {
+      "source": "tests/data/images/uint16.jp2",
+      "sha256": "a272ed816788f8d51afe864d70d379caf44d230fe58a18731db69baa3e8dfc48",
+      "expected_codec": "Jpeg2000",
+      "expected_available": false,
+      "result": {
+        "candidates": [
+          {
+            "available": false,
+            "codec": "Jpeg2000",
+            "evidence": "Signature",
+            "feature": "jpeg2000",
+            "reason": "format signature"
+          }
+        ],
+        "provenance": {
+          "compression": "None",
+          "decoded_bytes": 236,
+          "encoded_bytes": 236,
+          "origin_directory": "/Users/clemens/Programming/dioptrin-io/tests/data/images",
+          "stream": false
+        },
+        "resolution_error": "format Jpeg2000 requires disabled feature jpeg2000",
+        "selected": null
+      },
+      "status": "match"
+    },
+    {
+      "source": "tests/data/hdf5-native/scalars.h5",
+      "sha256": "da17f1e5a8e67bb3c266db801014f9e7c5417a883561a84b363ff51d5b732a94",
+      "expected_codec": "Hdf5",
+      "expected_available": false,
+      "result": {
+        "candidates": [
+          {
+            "available": false,
+            "codec": "Hdf5",
+            "evidence": "Signature",
+            "feature": "hdf5",
+            "reason": "format signature"
+          }
+        ],
+        "provenance": {
+          "compression": "None",
+          "decoded_bytes": 146144,
+          "encoded_bytes": 146144,
+          "origin_directory": "/Users/clemens/Programming/dioptrin-io/tests/data/hdf5-native",
+          "stream": false
+        },
+        "resolution_error": "format Hdf5 requires disabled feature hdf5",
+        "selected": null
+      },
+      "status": "match"
+    },
+    {
+      "source": "tests/data/containers/mrc-mode1-le.mrc",
+      "sha256": "f25317d8160536bce2c7c8f5b99ef7b495e5549a9d219d94c71cbccb26dfa165",
+      "expected_codec": "Mrc",
+      "expected_available": false,
+      "result": {
+        "candidates": [
+          {
+            "available": false,
+            "codec": "Mrc",
+            "evidence": "Signature",
+            "feature": "containers",
+            "reason": "MRC MAP marker at offset 208"
+          }
+        ],
+        "provenance": {
+          "compression": "None",
+          "decoded_bytes": 1064,
+          "encoded_bytes": 1064,
+          "origin_directory": "/Users/clemens/Programming/dioptrin-io/tests/data/containers",
+          "stream": false
+        },
+        "resolution_error": "format Mrc requires disabled feature containers",
+        "selected": null
+      },
+      "status": "match"
+    },
+    {
+      "source": "tests/data/native/npy-v1.npy",
+      "sha256": "f255f05212cc122d2eefdaf583034d2af53462f45ccab50b7f3bba691698d493",
+      "expected_codec": "Npy",
+      "expected_available": true,
+      "result": {
+        "candidates": [
+          {
+            "available": true,
+            "codec": "Npy",
+            "evidence": "Signature",
+            "feature": "native",
+            "reason": "format signature"
+          }
+        ],
+        "provenance": {
+          "compression": "None",
+          "decoded_bytes": 152,
+          "encoded_bytes": 152,
+          "origin_directory": "/Users/clemens/Programming/dioptrin-io/tests/data/native",
+          "stream": false
+        },
+        "resolution_error": null,
+        "selected": "Npy"
+      },
+      "status": "match"
+    }
+  ],
+  "native_stream": {
+    "status": "qualified",
+    "adapter": "npy",
+    "source": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/native/npy-v1.npy",
+      "bytes": 152,
+      "sha256": "f255f05212cc122d2eefdaf583034d2af53462f45ccab50b7f3bba691698d493"
+    },
+    "stream_contract": "real subprocess stdin file handle; explicit origin; identical adapter/arguments; complete JSON record comparison",
+    "reference_explicit_codec": "numpyimage",
+    "qualification_scope": "complete_native_records",
+    "native_stream": {
+      "exit_code": 0,
+      "arguments": [
+        "npy",
+        "tests/data/native/npy-v1.npy",
+        "--stream",
+        "--stream-origin",
+        "/Users/clemens/Programming/dioptrin-io/tests/data/native"
+      ],
+      "origin_directory": "/Users/clemens/Programming/dioptrin-io/tests/data/native",
+      "status": "match",
+      "transport": {
+        "captured_root": "/private/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/.tmp0Vamz4",
+        "captured_roots": [
+          "/private/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/.tmp0Vamz4"
+        ],
+        "original_argument": "tests/data/native/npy-v1.npy"
+      },
+      "path_replacements": [
+        {
+          "field": "$[0].sources[0]",
+          "captured_root": "/private/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/.tmp0Vamz4",
+          "original_root": "/Users/clemens/Programming/dioptrin-io/tests/data/native/npy-v1.npy"
+        }
+      ],
+      "record_count": 1,
+      "differences": [],
+      "stdout_sha256": "7239188f138045f41e81e011ad02dc7f196d51e34db84bc7039164ee0d4b26e0",
+      "original_stdout_sha256": "2af6d9e497c07ecd2a0e6781bf3f3d166c9d000ea9049112586dd2fabeb8f1e3"
+    },
+    "discovery": {
+      "path": {
+        "exit_code": 0,
+        "result": {
+          "candidates": [
+            {
+              "available": true,
+              "codec": "Npy",
+              "evidence": "Signature",
+              "feature": "native",
+              "reason": "format signature"
+            }
+          ],
+          "provenance": {
+            "compression": "None",
+            "decoded_bytes": 152,
+            "encoded_bytes": 152,
+            "origin_directory": "/Users/clemens/Programming/dioptrin-io/tests/data/native",
+            "stream": false
+          },
+          "resolution_error": null,
+          "selected": "Npy"
+        }
+      },
+      "stream": {
+        "exit_code": 0,
+        "result": {
+          "candidates": [
+            {
+              "available": true,
+              "codec": "Npy",
+              "evidence": "Signature",
+              "feature": "native",
+              "reason": "format signature"
+            }
+          ],
+          "provenance": {
+            "compression": "None",
+            "decoded_bytes": 152,
+            "encoded_bytes": 152,
+            "origin_directory": "/Users/clemens/Programming/dioptrin-io/tests/data/native",
+            "stream": true
+          },
+          "resolution_error": null,
+          "selected": "Npy"
+        }
+      },
+      "reference": {
+        "path": {
+          "status": "selected",
+          "codec": "numpyimage",
+          "class": "NumpyImage"
+        },
+        "bytes_io": {
+          "status": "selected",
+          "codec": "numpyimage",
+          "class": "NumpyImage"
+        },
+        "unwrapped_prefix_hex": "934e554d5059010076007b27646573637227",
+        "magic_without_filename": {
+          "status": "selected",
+          "format": "numpy"
+        },
+        "magic_with_filename": {
+          "status": "selected",
+          "format": "numpy"
+        }
+      },
+      "status": "match",
+      "content_differences": [],
+      "provenance_differences": [],
+      "reference_alignment": {
+        "path": {
+          "status": "same_codec_family",
+          "native_content_codec": "Npy",
+          "explicit_reader_codec": "Npy",
+          "reference_routed_codec": "Npy"
+        },
+        "bytes_io": {
+          "status": "same_codec_family",
+          "native_content_codec": "Npy",
+          "explicit_reader_codec": "Npy",
+          "reference_routed_codec": "Npy"
+        }
+      }
+    },
+    "source_after": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/native/npy-v1.npy",
+      "bytes": 152,
+      "sha256": "f255f05212cc122d2eefdaf583034d2af53462f45ccab50b7f3bba691698d493"
+    },
+    "source_unchanged": true
+  },
+  "all_checks_passed": true,
+  "rust_sources_sha256": {
+    "src/binary.rs": "b2464ed8ac2a848116f44faa2280f25ac40c2f15b3d25720a2d3eb4cfd83e50d",
+    "src/bruker/common.rs": "58ebb4b8bc1e89dba4288caa1224cae78f02812bbce4d911ec3159983c7020bc",
+    "src/bruker/view.rs": "4fb7483ddf6e85120b4a08e959de7c2716ae02e5cebd98d50c2d798ce6d2e059",
+    "src/bruker.rs": "3b7d0ea45d1e418697b96015b38bce2f6dc2c02926b1bdb8cebb76386568d8e0",
+    "src/cbf/header.rs": "77a4b385e60b3ca6dfc0b284506c33d9b7eda8cf65910574c9eaa0ae9312b5b8",
+    "src/cbf.rs": "4eadacdfc2277cf1000d579331abe0483c9fc82e393298e0a6a1525a84de39a4",
+    "src/detector_tiff/mar_schema.rs": "0d224ae8a52443423f144a61604176be37727deec320333fdb4c947581ffb819",
+    "src/detector_tiff.rs": "06cbc9b5a8db291196e6fa3bfab75baeb860c4948dba5dd21811a001160712fd",
+    "src/discovery.rs": "acfac305e21289355c6617c6d78ff0886fc79e852e1a069b0e11482fb269d7cd",
+    "src/dm3.rs": "a7b9ad01a2eac150156c92f2aec088587786ffa90e80c502f1628e0537747b93",
+    "src/edf/recovery.rs": "b8206c62dc3ca88c715f173803aec8c30af85a1f67f4ec39c1a3c1d27eab8cdb",
+    "src/edf.rs": "625a552a6cc415eea291a32bdf99d798c43761bcc57bf23ba71303353f5f50c3",
+    "src/esperanto.rs": "d2bb2f34e02000e28810a62479b9f16958c9f7ebe6bc4a9400b41b1841abc8ed",
+    "src/fit2d.rs": "a3dfab6f09927651c98f9561fc497788d9f4736a0795be9c6c37de52de3c2004",
+    "src/ge.rs": "73ef7bbb055d7e90f7fb8ffcef887bd5382b5a82c818f1972558a51d522e4326",
+    "src/hdf5/cache.rs": "2b2927c6cc7bcf4d8daae4add9a72c9fa2414b93dd51950cffb634beaf45c050",
+    "src/hdf5/discovery.rs": "d3fe9f5f5c6abf10084cbc3b7562b443b17359336e0fb102ff5aa28f6f1881aa",
+    "src/hdf5/raw.rs": "aa1c6fa0a31303cc769214393039fec9975bff9c1e1d54eca59808e98d3927fc",
+    "src/hdf5/sources.rs": "28f3d467a8093f547de8eca71dffb60813d2d7ab9c2bf3bbb00885e068367cba",
+    "src/hdf5/sparse/numeric.rs": "9e842fc99100d24a6913d506dd86e7f63b0213eee695cea2a82515712be78433",
+    "src/hdf5/sparse/reconstruction.rs": "801f9c866a9e5796e7de966cad42f50e5c128183cf895660d155265cd99df364",
+    "src/hdf5/sparse.rs": "719105844e3a817f29d0e852e5ce3bc461f4a228f20d7ebf98a4b925a5fe8799",
+    "src/hdf5/typed.rs": "4d9ca43528d170f8148c4bba29ce4f9106dcc2de960722099b01bd66282be7b1",
+    "src/hdf5/vds.rs": "e8e82c3152e40d589e196a31a5165723f056ed7f2875deb235dc8f587dd68207",
+    "src/hdf5.rs": "49be9fa8a2f36cdac7f1fcb9d7737b173b5c9074b1d820acbfd264028a33dddc",
+    "src/jpeg.rs": "ab2e7dbea38cf2c876e4ad2a73ce74e4e2ee19c28a193365054b33082522f445",
+    "src/jpeg2000.rs": "be8ad6f74a6c161532e73aaae16dff9d37533f6c1181f66eae35fc5ff99ba7e3",
+    "src/kcd.rs": "fb532aa6e23648399ea52e0872edf0f57e45aacfe951c1284c1f46d3e12330e8",
+    "src/lib.rs": "39b628ac4efba0abd48422eab4e9a56be708830ed831f659df30f40fab132246",
+    "src/mar345.rs": "cf527509342046e1725b12ebe5ffbc4ad2f21f6c63b9d820e9c168c9818e16aa",
+    "src/mpa.rs": "6c81d70a3ef9b7f6a95a2f52a7add8aa14c70c15bd21c9ecb252e98b3e4cda9a",
+    "src/mrc.rs": "eb01640b8d6436f363b3b45531050de3ff06f42b4ecb4e3a120bce8ea16bca28",
+    "src/native.rs": "b526d517a3e35d9e020bfa26944b41f4198d5aa6347289d44710402d406f28c2",
+    "src/oxford/ty5.rs": "1ca4411422d7b4ecc6ed574bdc8a5ac592d27f0a2baae0b77ded7a7e457e5136",
+    "src/oxford.rs": "134d222d921b9685483a486177e50984159afa6d91bb850d55f59ee1973c9a0d",
+    "src/pilatus.rs": "f87ab50599b638171c46f8ac16df4b0f1efaec4dfba580cefcd45071dbc9a436",
+    "src/pixels.rs": "89f9b646e2970e79c77c625529f367f5fe96bd35c9ecf73cad67bbb59dde3c12",
+    "src/pixi.rs": "2522bc7b5cfc0a70f4624d87193fade8075857b08c7cf34fb05ce9f0ddf5b7ee",
+    "src/raster.rs": "f27377deff1a475984240c548cc77890d8d1f53181245ac8654333fdd7a29c1f",
+    "src/raxis.rs": "c0bee389a94056c437a18948996c1449351aefcae9ea9191dd228ce1d63e11db",
+    "src/source.rs": "956a62bf69093aa2f9544bc1476b1f03cd28548320353db96ae9987eb0853a02",
+    "src/spe.rs": "48849be1954fe507ed36d9eb7ae476b43b2810abe434dcf889165af7df71fb98",
+    "src/tiff/compatibility.rs": "ee3dc5bdd237f58bde81538c46ee6a393793b0632e9c921e867479f3c7a4e541",
+    "src/tiff/group3.rs": "ede0d60ba03fc62e6e707bd2a4f7a06d8fc272f83ba9d0bd1ab62943cb49f1da",
+    "src/tiff/header.rs": "d0c018ff4ed229641c7e12c60bdf49681b0f4e10c4cd872123cc1b7dc917871d",
+    "src/tiff/ifd_view.rs": "75d7ac11299d65d1780a5f8bf1a43649a17f5fe17f95d52f9c00e48d0d21a77b",
+    "src/tiff/jpeg_components.rs": "8cc9ef27459a54f7a6e47ea6e594d5a51bdb0b0820d10c2c93a778f010014c53",
+    "src/tiff/ojpeg.rs": "27ea210bfa75c251d75a396fb949b1d466fe68c67b5e8201cb25f7a81296176a",
+    "src/tiff/thunderscan.rs": "7d299c5032402b5af16f79ec7f66d9609a03046a058fe91b9cc13206673fff2c",
+    "src/tiff/view.rs": "c4f32a6903c98c8030047a217ef572c6f03261e37fe4d4b0724315f5f4dbc2ed",
+    "src/tiff/view_jpeg.rs": "8f8df0d1a26d93e9f15715d9d238e47c7bd420afe8d3c7337004691c0af522e1",
+    "src/tiff/view_ycbcr.rs": "9fbb8713ae4739ef0433441e15412d54ad8920b297652caab687b14c57d9f583",
+    "src/tiff/ycbcr.rs": "12958c127df223a150ee186094d70126a2841d79ccccb68bd3a08d78e4cdaa19",
+    "src/tiff/ycbcr_jpeg.rs": "3a70a695fed2fca125b2609356989c669b3020eeaeaed6d86a4c1c3f2365e679",
+    "src/tiff.rs": "e3090d8f9315ae9e95869f41730bdc0f7eb2e5499de1e8b37df1e46bd38eef56",
+    "src/transport.rs": "5fa5394886adbf5b840ea378102a77f988e098823bbb840cdf743be6ffa6fcc3",
+    "src/wrapped/input.rs": "dfa3474eaa04ad8c00733165f4f104e572f673b8630750b027b724aff88ce337",
+    "src/wrapped.rs": "44a731065ff80c18b40eef6b61ec28ed5a5e758a43279bf943d81e20e6edf171",
+    "src/xcalibur/decomposition.rs": "b3d2d3e0decf3ae69fdfc742fc2ebe623459b98e817550a01efe774a4c886269",
+    "src/xcalibur.rs": "69f995c39143e1872604948b2498fb79957ec7e6503f3b969cb624ef83c98d8d",
+    "src/xsd.rs": "bcfe7328bc0d9d809dc6abda92d790039069e3829332abcfb300b0379e0ac601"
+  },
+  "probe_source_sha256": "33783be1a34371a633997bec651a8a31f74d68a585f44cac52844d139ff9250d"
+}

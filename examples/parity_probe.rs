@@ -4,6 +4,23 @@ use serde_json::json;
 use sha2::{Digest, Sha256};
 use std::error::Error;
 
+fn declared_dtype(ty: PixelType) -> &'static str {
+    match ty {
+        PixelType::U8 => "uint8",
+        PixelType::U16 => "uint16",
+        PixelType::U32 => "uint32",
+        PixelType::U64 => "uint64",
+        PixelType::I8 => "int8",
+        PixelType::I16 => "int16",
+        PixelType::I32 => "int32",
+        PixelType::I64 => "int64",
+        PixelType::F32 => "float32",
+        PixelType::F64 => "float64",
+        PixelType::C32 => "complex64",
+        PixelType::C64 => "complex128",
+        PixelType::CI16 => "complex_int16",
+    }
+}
 fn sample_dtype_and_hash(pixels: &PixelBuffer, hash: &mut Sha256) -> &'static str {
     macro_rules! digest { ($($variant:ident,$name:literal);*) => {
         match pixels { $(PixelBuffer::$variant(values) => {
@@ -473,6 +490,7 @@ fn run() -> Result<(), Box<dyn Error>> {
             "npy",
             "dtrek",
             "dtrek-header",
+            "edf-header",
             "tiff-header",
             "adsc",
             "mask",
@@ -529,7 +547,7 @@ fn run() -> Result<(), Box<dyn Error>> {
         }
         println!(
             "{}",
-            json!({"features":features,"adapters":adapters,"known_readers":{
+            json!({"features":features,"adapters":adapters,"input_apis":["content_discovery","nonseekable_stream","buffer_snapshot"],"known_readers":{
                 "numpyimage":"native","dtrekimage":"native","adscimage":"native","fit2dmaskimage":"native",
                 "HiPiCimage":"native","pnmimage":"native","binaryimage":"native","fit2dspreadsheetimage":"native",
                 "edfimage":"edf","cbfimage":"cbf","tifimage":"tiff","marccdimage":"tiff","pilatusimage":"tiff","hdf5image":"hdf5",
@@ -546,6 +564,73 @@ fn run() -> Result<(), Box<dyn Error>> {
         return Err("usage: parity_probe FORMAT PATH [WIDTH HEIGHT OFFSET DTYPE ENDIAN]".into());
     }
     let path = &args[2];
+    let stream_origin = args
+        .iter()
+        .position(|s| s == "--stream-origin")
+        .map(|i| {
+            args.get(i + 1)
+                .map(std::path::Path::new)
+                .ok_or("stream origin requires a directory")
+        })
+        .transpose()?;
+    let streaming = args.iter().any(|s| s == "--stream");
+    let stream_input = if streaming && !args.iter().any(|s| s == "--edf-recovery") {
+        Some(wrapped::Input::from_reader(
+            std::io::stdin().lock(),
+            stream_origin,
+            wrapped::Limits::default(),
+        )?)
+    } else {
+        None
+    };
+    if let Some(input) = &stream_input {
+        let mut roots = input
+            .transport_paths()?
+            .iter()
+            .map(|p| p.to_path_buf())
+            .collect::<Vec<_>>();
+        for root in roots.clone() {
+            let canonical = std::fs::canonicalize(root)?;
+            if !roots.contains(&canonical) {
+                roots.push(canonical);
+            }
+        }
+        eprintln!(
+            "{}",
+            json!({"input_transport":{"captured_root":input.source_path()?,"captured_roots":roots,"original_argument":path}})
+        );
+    }
+    let open_image = |path: &str,
+                      format: wrapped::Format,
+                      transport: wrapped::Limits,
+                      image: native::Limits,
+                      tiff: tiff::Limits| {
+        if let Some(input) = &stream_input {
+            input.clone().read(format, image, tiff)
+        } else {
+            wrapped::Reader::open(path, format, transport, image, tiff)
+        }
+    };
+    if args[1] == "discover" {
+        let input = match &stream_input {
+            Some(input) => input.clone(),
+            None => wrapped::Input::open(path, wrapped::Limits::default())?,
+        };
+        let detection = input.discover()?;
+        let resolution = detection.require_unique();
+        let p = input.provenance()?;
+        println!(
+            "{}",
+            json!({"candidates":detection.candidates.iter().map(|c|json!({"codec":format!("{:?}",c.codec),"evidence":format!("{:?}",c.evidence),"reason":c.reason,"feature":c.codec.feature(),"available":c.codec.available()})).collect::<Vec<_>>(),"selected":resolution.as_ref().ok().map(|c|format!("{c:?}")),"resolution_error":resolution.err().map(|e|e.to_string()),"provenance":{"stream":p.stream,"origin_directory":p.origin_directory,"encoded_bytes":p.encoded_bytes,"decoded_bytes":p.decoded_bytes,"compression":format!("{:?}",p.compression)}})
+        );
+        return Ok(());
+    }
+    let staged_path = stream_input
+        .as_ref()
+        .map(|input| input.source_path())
+        .transpose()?;
+    let source_path = staged_path.unwrap_or_else(|| std::path::Path::new(path));
+
     #[cfg(feature = "xcalibur")]
     if args[1] == "xcalibur-ccd" || args[1] == "xcalibur-bytes" {
         use dioptrin_io::xcalibur::{Projection, ReadPolicy, Reader};
@@ -554,7 +639,7 @@ fn run() -> Result<(), Box<dyn Error>> {
         } else {
             ReadPolicy::Strict
         };
-        let reader = Reader::open_with_policy(path, native::Limits::default(), policy)?;
+        let reader = Reader::open_with_policy(source_path, native::Limits::default(), policy)?;
         let parsed;
         let m = if args[1] == "xcalibur-bytes" {
             parsed = dioptrin_io::xcalibur::Characteristics::from_bytes_with_policy(
@@ -618,9 +703,33 @@ fn run() -> Result<(), Box<dyn Error>> {
         return Ok(());
     }
 
+    if args[1] == "edf-header" {
+        let reader = wrapped::HeaderReader::open(
+            source_path,
+            wrapped::HeaderFormat::Edf,
+            wrapped::Limits::default(),
+            native::Limits::default(),
+            tiff::Limits::default(),
+        )?;
+        let wrapped::HeaderMetadata::Edf(headers) = reader.metadata()? else {
+            unreachable!()
+        };
+        let general = headers
+            .general_headers()
+            .iter()
+            .map(|m| json!(m.fields))
+            .collect::<Vec<_>>();
+        for (index, m) in headers.images().enumerate() {
+            println!(
+                "{}",
+                json!({"header_only":true,"pixels_available":false,"frame":index,"fields":m.fields,"declared_shape":m.shape,"declared_dtype":declared_dtype(m.pixel_type),"general_headers":general,"source_prefix_hex":bytes_hex(&reader.source_prefix()?)})
+            );
+        }
+        return Ok(());
+    }
     if args[1] == "dtrek-header" {
         let reader = wrapped::HeaderReader::open(
-            path,
+            source_path,
             wrapped::HeaderFormat::Dtrek,
             wrapped::Limits::default(),
             native::Limits::default(),
@@ -637,7 +746,7 @@ fn run() -> Result<(), Box<dyn Error>> {
     }
     if args[1] == "tiff-header" {
         let reader = wrapped::HeaderReader::open(
-            path,
+            source_path,
             wrapped::HeaderFormat::Tiff,
             wrapped::Limits::default(),
             native::Limits::default(),
@@ -665,6 +774,12 @@ fn run() -> Result<(), Box<dyn Error>> {
             external_window: edf::ExternalWindow::UpToDeclared,
             ..Default::default()
         };
+        if stream_input.is_some() {
+            options.source_directory = stream_origin.map(std::path::Path::to_path_buf);
+            if stream_origin.is_none() {
+                return Err("external EDF stream policy requires origin".into());
+            }
+        }
         if args.iter().any(|value| value == "--edf-inline-size") {
             options.inline_layout = InlineLayout::LegacySizeAtParsedBoundary;
         }
@@ -676,14 +791,30 @@ fn run() -> Result<(), Box<dyn Error>> {
             );
         }
         if args.iter().any(|value| value == "--edf-recovery") {
-            let reader = edf::recovery::Reader::open(
-                path,
-                native::Limits::default(),
-                edf::recovery::Options {
-                    edf: options,
-                    ..Default::default()
-                },
-            )?;
+            let recovery_options = edf::recovery::Options {
+                edf: options,
+                ..Default::default()
+            };
+            let reader = if streaming {
+                edf::recovery::Reader::from_reader(
+                    std::io::stdin().lock(),
+                    stream_origin,
+                    native::Limits::default(),
+                    recovery_options,
+                )?
+            } else {
+                edf::recovery::Reader::open(
+                    source_path,
+                    native::Limits::default(),
+                    recovery_options,
+                )?
+            };
+            if streaming {
+                eprintln!(
+                    "{}",
+                    json!({"input_transport":{"captured_root":reader.source_report().path,"captured_roots":[reader.source_report().path],"original_argument":path}})
+                );
+            }
             let mut buffer = edf::recovery::SampleBuffer::default();
             let mut images = Vec::new();
             for i in 0..reader.image_records() {
@@ -726,7 +857,8 @@ fn run() -> Result<(), Box<dyn Error>> {
                     "verified_decoded_bytes":source.verified_decoded_bytes,"members":edf_members(&source.members),"diagnostic":source.diagnostic},"stop":stop}})
             );
         } else {
-            let reader = edf::Reader::open_with_options(path, native::Limits::default(), options)?;
+            let reader =
+                edf::Reader::open_with_options(source_path, native::Limits::default(), options)?;
             let paths: Vec<_> = reader
                 .payload_sources()
                 .iter()
@@ -753,17 +885,21 @@ fn run() -> Result<(), Box<dyn Error>> {
     #[cfg(feature = "sparse")]
     if args[1] == "sparse" {
         use dioptrin_io::sparse::{
-            ArrayBuffer, ExternalLinks, FrameBuffer, Options, Reader, Reconstruction,
-            SparseFrameBuffer,
+            ArrayBuffer, ExternalLinks, FrameBuffer, Options, Reconstruction, SparseFrameBuffer,
         };
-        let reader = Reader::open(
-            path,
+        let input = stream_input.clone().map_or_else(
+            || wrapped::Input::open(path, wrapped::Limits::default()),
+            Ok,
+        )?;
+        let owner = input.read_sparse(
+            Default::default(),
             Options {
                 external_links: ExternalLinks::FollowSnapshot,
                 reconstruction: Reconstruction::DeterministicBackground,
-                ..Default::default()
+                ..Options::default()
             },
         )?;
+        let reader = owner.sparse_reader().unwrap();
         let paths: Vec<_> = reader
             .sources()
             .iter()
@@ -830,8 +966,8 @@ fn run() -> Result<(), Box<dyn Error>> {
     #[cfg(feature = "hdf5")]
     if matches!(args[1].as_str(), "hdf5" | "eiger" | "lima" | "lambda") {
         use dioptrin_io::hdf5::typed::{
-            ExternalLinks, FilenameBinding, FrameBuffer, Options, Reader, Selection,
-            UnmappedRegions, VdsOptions,
+            ExternalLinks, FilenameBinding, FrameBuffer, Options, Selection, UnmappedRegions,
+            VdsOptions,
         };
         let (file, selection) = match args[1].as_str() {
             "hdf5" => {
@@ -848,7 +984,11 @@ fn run() -> Result<(), Box<dyn Error>> {
             external_links: ExternalLinks::FollowSnapshot,
             ..Options::default()
         };
-        let reader = if let Some(position) = args.iter().position(|value| value == "--vds-map") {
+        let input = stream_input.clone().map_or_else(
+            || wrapped::Input::open(file, wrapped::Limits::default()),
+            Ok,
+        )?;
+        let owner = if let Some(position) = args.iter().position(|value| value == "--vds-map") {
             let config: serde_json::Value = serde_json::from_slice(&std::fs::read(
                 args.get(position + 1)
                     .ok_or("--vds-map requires a JSON file")?,
@@ -875,18 +1015,18 @@ fn run() -> Result<(), Box<dyn Error>> {
                 Some("DeclaredFill") => UnmappedRegions::DeclaredFill,
                 _ => return Err("VDS map requires explicit Reject or DeclaredFill policy".into()),
             };
-            Reader::open_snapshot_with_vds(
-                file,
+            input.read_hdf5(
                 selection,
                 options,
-                VdsOptions {
+                Some(VdsOptions {
                     filenames: &bindings,
                     unmapped_regions,
-                },
+                }),
             )?
         } else {
-            Reader::open_snapshot(file, selection, options)?
+            input.read_hdf5(selection, options, None)?
         };
+        let reader = owner.hdf5_reader().unwrap();
         let paths: Vec<_> = reader
             .sources()
             .iter()
@@ -932,7 +1072,7 @@ fn run() -> Result<(), Box<dyn Error>> {
     let limits = native::Limits::default();
     #[cfg(feature = "bruker")]
     if args[1] == "bruker86-view" {
-        let mut reader = wrapped::Reader::open(
+        let mut reader = open_image(
             path,
             wrapped::Format::Bruker,
             wrapped::Limits::default(),
@@ -957,7 +1097,7 @@ fn run() -> Result<(), Box<dyn Error>> {
             .linear
             .is_some_and(|[slope, offset]| slope != 1.0 || offset != 0.0)
         {
-            let mut decoded_reader = wrapped::Reader::open(
+            let mut decoded_reader = open_image(
                 path,
                 wrapped::Format::BrukerLinear,
                 wrapped::Limits::default(),
@@ -980,7 +1120,7 @@ fn run() -> Result<(), Box<dyn Error>> {
         return Ok(());
     }
     if args[1] == "raw" {
-        if args.len() != 8 {
+        if args.len() < 8 {
             return Err("raw input needs WIDTH HEIGHT OFFSET DTYPE ENDIAN".into());
         }
         let ty = match args[6].as_str() {
@@ -1010,17 +1150,19 @@ fn run() -> Result<(), Box<dyn Error>> {
             "=" => cfg!(target_endian = "little"),
             _ => return Err("invalid raw byte order".into()),
         };
-        let reader = native::Reader::open_raw(
+        let mut reader = open_image(
             path,
-            native::RawLayout {
+            wrapped::Format::Raw(native::RawLayout {
                 shape: [args[4].parse()?, args[3].parse()?],
                 pixel_type: ty,
                 little_endian,
                 offset,
-            },
+            }),
+            wrapped::Limits::default(),
             limits,
+            tiff::Limits::default(),
         )?;
-        let mut buffer = native::FrameBuffer::default();
+        let mut buffer = wrapped::FrameBuffer::default();
         reader.read_frame_into(0, &mut buffer)?;
         report(
             0,
@@ -1095,7 +1237,7 @@ fn run() -> Result<(), Box<dyn Error>> {
             _ => return Err(format!("reader not implemented: {name}").into()),
         }),
     };
-    let mut reader = wrapped::Reader::open(
+    let mut reader = open_image(
         path,
         format,
         wrapped::Limits::default(),
@@ -1170,6 +1312,10 @@ fn run() -> Result<(), Box<dyn Error>> {
         }
         reader.read_frame_into(i, &mut buffer)?;
         let fields = match reader.metadata(i).unwrap() {
+            #[cfg(feature = "hdf5")]
+            wrapped::Metadata::Hdf5(_) => json!(reader.hdf5_reader().unwrap().fields()),
+            #[cfg(feature = "sparse")]
+            wrapped::Metadata::Sparse(_) => json!({}),
             #[cfg(feature = "mar345")]
             wrapped::Metadata::Mar345(m) => json!(m.fields),
             #[cfg(feature = "esperanto")]

@@ -1,4 +1,17 @@
-# Xcalibur API coverage, 2026-11-06
+# Content discovery and streams, 2026-11-06
+
+The [schema 10 report](2026-11-06-input-apis.json) qualifies **626 native stdin
+comparisons**, every content-discovery decision and three separate EDF header
+calls. It runs all 237 unchanged reference tests (213 codecs +24 input/header),
+with no failures/errors and one existing skip. The original 580 codec outcomes
+are unchanged. Validation passes 240 Rust tests, 36 Python controls, all required
+checks and 21 isolated features. See [input contracts and evidence](../INPUT_APIS.md),
+[native checks](2026-11-06-input-apis-native-checks.json) and
+[disabled-feature checks](2026-11-06-input-apis-feature-disabled.json). Full
+reading parity remains false; series, companions and outside-corpus variants
+remain separate.
+
+## Previous Xcalibur API coverage, retained
 
 The [current schema 9 report](2026-11-06-xcalibur.json) adds **11 matching Xcalibur
 CCD/mask API events**, retaining every prior image-reading outcome. The

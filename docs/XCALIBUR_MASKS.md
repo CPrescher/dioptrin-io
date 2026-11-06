@@ -92,7 +92,8 @@ own count. No experimental CCD files are copied into Git.
 ## Remaining reading/API qualification
 
 This closes the tested CCD characteristics and mask APIs. Full FabIO reading
-parity remains false. The next separate contracts are:
+parity remains false. The remaining contracts at that snapshot were (content discovery and stream input
+are subsequently addressed in [INPUT_APIS.md](INPUT_APIS.md)):
 
 1. Content-based format discovery, including ambiguity and feature availability.
 2. Direct stream/buffer input for the general reader, with bounded staging and

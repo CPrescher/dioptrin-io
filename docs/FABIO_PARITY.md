@@ -122,11 +122,13 @@ explicit reference views and modeled reconstruction:
 
 The executable publishes its compiled features, known readers and adapter
 capabilities. Full-feature runs use all native entry points, including explicit
-container/legacy/image readers and detector TIFF acquisition headers. A separate
+container/legacy/image readers and detector TIFF acquisition headers. With
+`--input-apis`, the same native entry points are also called on genuine stdin
+captures, with separate content-discovery and EDF header ledgers. A separate
 feature-disabled run distinguishes unavailable compilation features from missing
 readers. Every original registry entry remains in the ledger.
 
-Current evidence is recorded in `fabio-parity/2026-11-06-xcalibur.json`;
+Current evidence is recorded in `fabio-parity/2026-11-06-input-apis.json`;
 the earlier baseline and typed-HDF5 reports are retained. The current report is
 a failing full-parity gate, with exact native successes, unsupported layouts,
 reference differences and remaining readers kept separate.
@@ -217,9 +219,10 @@ deliberately disabled reference-backend tests. A monkeypatched missing Python
 JPEG backend is an environment difference, not a native input rejection.
 Header-only and observed source-attribute comparisons are qualified separately
 in `metadata-parity/HEADER_ATTRIBUTES.md`. Xcalibur CCD masks now have 11 separately
-instrumented API events; see [XCALIBUR_MASKS.md](XCALIBUR_MASKS.md). Direct streams,
-autodetection, neighboring-file series, companion readers and unsupported variants
-remain in the full-parity gate.
+instrumented API events; see [XCALIBUR_MASKS.md](XCALIBUR_MASKS.md). Content
+discovery and direct stream input are subsequently qualified in
+[INPUT_APIS.md](INPUT_APIS.md). Neighboring-file series, companion readers and
+unsupported variants remain separate full-parity work.
 
 ## Rejection audit and captured test inputs
 
@@ -275,3 +278,13 @@ production readers do not call Python, imagecodecs or system libtiff.
 The full report fingerprints Cargo inputs and every vendored dependency file
 before/after the run, in addition to native Rust, bridge and executable hashes.
 The exact old-LZW backend patch retains its archive/file provenance and licenses.
+
+## Content discovery and direct stream API continuation
+
+Add `--input-apis` to the full command above to execute the 24 unchanged upstream
+opening/header tests as well as the original 213 codec tests. Schema 10 records
+626 matching native stdin comparisons, all content decisions with explicit
+qualifications, and three separately compared EDF `readheader` events. The
+[new API audit](INPUT_APIS.md) describes capture/origin/resource contracts and
+remaining series/companion work. Full reading parity remains false for measured
+reference differences and separate unsupported contracts.

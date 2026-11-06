@@ -4,7 +4,7 @@ Test/reference Python only. Large upstream files remain in --data outside Git.
 The default is ALL codec test modules, including unimplemented readers. A
 filtered run is explicitly recorded and cannot establish full-suite parity.
 Reference unittest results and Rust count/dtype/shape comparisons are separate.
-Header/stream/discovery/API gaps remain explicit; this is not a Python API shim.
+Optional same-source stream/discovery qualification is not a Python API shim.
 """
 import argparse
 import collections
@@ -125,6 +125,8 @@ def main():
                         help="explicit source-hash or pinned-test recovery recipes; never an automatic decode retry")
     parser.add_argument("--vds-map", type=pathlib.Path,
                         help="explicit original-to-actual HDF5 VDS filename bindings")
+    parser.add_argument("--input-apis", action="store_true",
+                        help="qualify content discovery and genuine native stdin against every successful image/header read (additional subprocesses)")
     parser.add_argument("--metadata", action="store_true", help="compare every reference header field separately from pixels")
     parser.add_argument("--reference-filters", choices=["bundled", "default"], default="bundled",
                         help="register the installed test-only hdf5plugin codecs explicitly (avoid host plugin ABI conflicts)")
@@ -185,13 +187,23 @@ def main():
         if {p.stem for p in paths} != requested:
             parser.error("unknown codec test module")
     ledger = json.loads((ROOT / "docs/fabio-2026.6.0-inventory.json").read_text())
-    report = {"schema": 9, "reference": ledger["reference"],
+    report = {"schema": 10 if args.input_apis else 9, "reference": ledger["reference"],
               "selection": {"all_codec_modules": not bool(args.modules), "modules": []},
               "contract": "uniform count/dtype/shape and independent native component/unit comparisons, with separate explicit display views, at successful upstream .read calls; not Python API or full header parity",
               "recovery_contract": "explicit source recipes selected before decoding; independently verified partial spans/header-only access are separate from complete count parity and expected input errors",
               "gaps": ["exact reference metadata differs in qualified reference defects/presentation conventions", "native content autodetection not exercised", "file-like streams materialized by test harness", "reading APIs beyond .read and the explicitly instrumented CCD mask API remain unqualified"],
               "out_of_scope": ["Python mutation/writing APIs and numerical statistics"],
               "reads": [], "reference_rejections": [], "source_files": {}, "reference_import_errors": [], "reference_tests": {}}
+    report["input_apis_enabled"] = args.input_apis
+    if args.input_apis:
+        from input_reference import reference_sources
+        report["reference_input_sources"] = reference_sources(args.fabio_source)
+        report["selection"]["input_modules"] = []
+        report["gaps"].remove("native content autodetection not exercised")
+        report["gaps"].remove("file-like streams materialized by test harness")
+        report["gaps"].remove("reading APIs beyond .read and the explicitly instrumented CCD mask API remain unqualified")
+        report["gaps"].append("reading APIs beyond .read, EDF .readheader, content discovery, captured stdin and the explicitly instrumented CCD mask API remain unqualified")
+        report["input_api_contract"] = "same encoded source; explicit native stdin/origin, full JSON image/header/component/view/integrity equality after recorded exact capture-root mapping; native discovery and actual pinned FabIO path/BytesIO routing reported separately; ambiguity/recovery is not autodetected count parity"
     report["environment"] = {"python": sys.version, "packages": {}}
     for name in ["fabio", "numpy", "h5py", "hdf5plugin", "Pillow", "glymur", "imagecodecs", "tifffile"]:
         try:
@@ -225,7 +237,7 @@ def main():
         for p in sorted((ROOT/"native").rglob("*")) if p.is_file()}
     report["build_files_sha256"] = {name: sha_file(ROOT/name) for name in ["Cargo.toml", "Cargo.lock", "build.rs"] if (ROOT/name).is_file()}
     report["bridge_sources_sha256"] = {name: sha_file(ROOT/name) for name in [
-        "scripts/fabio_suite_parity.py", "scripts/tiff_component_reference.py", "scripts/edf_recovery_reference.py",
+        "scripts/fabio_suite_parity.py", "scripts/input_reference.py", "scripts/test_input_reference.py", "scripts/tiff_component_reference.py", "scripts/edf_recovery_reference.py",
         "scripts/thunderscan_reference.py", "scripts/pillow_planar16_reference.py", "scripts/metadata_parity.py", "scripts/test_metadata_parity.py", "scripts/metadata_attributes.py", "scripts/test_metadata_attributes.py", "scripts/header_reference.py", "scripts/xcalibur_reference.py", "scripts/test_xcalibur_reference.py", "scripts/generate_xcalibur_fixtures.py", "scripts/inventory_fabio.py", "examples/parity_probe.rs", "docs/fabio-2026.6.0-inventory.json"]}
     active = False
     current_test = None
@@ -307,17 +319,31 @@ def main():
             record["file_sha256"] = file_hash
             report["source_files"].setdefault(file_hash, {"name": "file-like stream", "bytes": len(captured)})
         policy = source_policy(record)
-        if getattr(image, "data", None) is None:
+        if args.input_apis:
+            try:
+                reference_data = image.data
+            except Exception as error:
+                # A successful lazy .read can still have an unusable data
+                # getter (notably pinned EDF BytesIO without .lock). Never
+                # turn that event into count proof or repair the object.
+                reference_data = None
+                record["reference_data_getter_error"] = {"kind":"referenceDataGetterError",
+                    "error_type":type(error).__name__, "error":str(error),
+                    "qualification":"only available metadata is compared at this event; no reference count proof"}
+        else:
+            reference_data = getattr(image, "data", None)
+        if reference_data is None:
             record["reference"] = None
             if policy is None:
                 record.update(status="reference_no_pixels")
-                if args.metadata:
+                if args.metadata or args.input_apis:
+                    from metadata_parity import compare as compare_metadata, encode
                     with tempfile.TemporaryDirectory(prefix="dioptrin-header-only-") as directory:
                         header_path = physical
                         if captured is not None:
                             header_path = pathlib.Path(directory)/"header.bin"
                             header_path.write_bytes(captured)
-                        command = {"dtrekimage":"dtrek-header","tifimage":"tiff-header"}.get(codec)
+                        command = {"dtrekimage":"dtrek-header","tifimage":"tiff-header", **({"edfimage":"edf-header"} if args.input_apis else {})}.get(codec)
                         if command is None or header_path is None:
                             record["header_only"] = {"status":"unsupported_header_adapter"}
                         else:
@@ -325,9 +351,12 @@ def main():
                             if result.returncode:
                                 record["header_only"] = {"status":"native_rejected","error":result.stderr[:2000]}
                             else:
+                                if args.input_apis:
+                                    from input_reference import qualify
+                                    record["input_apis"] = qualify(probe_path, codec, command, header_path, str(header_path), [], result.stdout, args.probe_timeout)
                                 header_frames = [json.loads(line) for line in result.stdout.splitlines()]
                                 from metadata_parity import compare as compare_metadata
-                                if codec=="dtrekimage":
+                                if codec in {"dtrekimage", "edfimage"}:
                                     record["metadata"] = [{"frame":0,**compare_metadata(encode(dict(image.header)),header_frames[0],codec)}]
                                     record["header_only"] = {"status":record["metadata"][0]["status"],"declared_shape":header_frames[0]["declared_shape"],"pixels_available":False}
                                 else:
@@ -435,6 +464,9 @@ def main():
                 capture_rejected_source(path, record, args.rejected_source_dir)
                 return
             try:
+                if args.input_apis:
+                    from input_reference import qualify
+                    record["input_apis"] = qualify(probe_path, codec, adapter, path, argument, extra, native.stdout, args.probe_timeout)
                 frames = [json.loads(line) for line in native.stdout.splitlines()]
                 if args.metadata:
                     record["_attribute_frames"] = frames
@@ -754,6 +786,11 @@ def main():
     xcalibur_bridge = XcaliburBridge(probe_path, capabilities, args.probe_timeout, report, lambda: current_test)
     xcalibur_bridge.install()
 
+    if args.input_apis:
+        from input_reference import HeaderBridge
+        header_bridge = HeaderBridge(probe_path, args.probe_timeout, report, lambda: current_test)
+        header_bridge.install()
+
     class Result(unittest.TextTestResult):
         def startTest(self, test):
             nonlocal current_test
@@ -771,6 +808,21 @@ def main():
             suite.addTests(tests)
         except Exception as error:
             report["reference_import_errors"].append({"module": path.stem, "error": f"{type(error).__name__}: {error}"})
+    if args.input_apis:
+        # Run this exact pinned upstream module unchanged, after the codec suite.
+        # Its actual path/BytesIO .read calls use the same bridge hooks above.
+        fabio.test.__path__.insert(0, str((args.fabio_source / "src/fabio/test").resolve()))
+        for input_name in ("test_open_image", "test_open_header"):
+            input_path = args.fabio_source / "src/fabio/test" / (input_name + ".py")
+            input_module = importlib.import_module("fabio.test." + input_name)
+            actual_input_path = pathlib.Path(inspect.getfile(input_module))
+            input_tests = input_module.suite() if hasattr(input_module, "suite") else unittest.defaultTestLoader.loadTestsFromModule(input_module)
+            report["selection"]["input_modules"].append({"name": input_name,
+                "source_sha256": sha_file(input_path), "source_path": str(input_path.resolve()),
+                "imported_source_sha256": sha_file(actual_input_path), "imported_path": str(actual_input_path.resolve()),
+                "matches_pinned_source": sha_file(input_path) == sha_file(actual_input_path),
+                "tests": [test.id() for test in flatten(input_tests)]})
+            suite.addTests(input_tests)
     np.random.seed(20261105)
     result = unittest.TextTestRunner(verbosity=1, resultclass=Result).run(suite)
     report["reference_tests"] = {"run": result.testsRun, "failures": [(t.id(),e) for t,e in result.failures],
@@ -822,6 +874,26 @@ def main():
     else:
         report["metadata_parity"] = False
         report["full_reading_parity"] = False
+    if args.input_apis:
+        from input_reference import summarize as summarize_inputs
+        report["input_api_summary"] = summarize_inputs(report["reads"])
+        input_test_ids = {test for module in report["selection"]["input_modules"] for test in module["tests"]}
+        report["reference_tests"]["input_module_tests"] = len(input_test_ids)
+        report["reference_tests"]["codec_module_tests"] = result.testsRun - len(input_test_ids)
+        report["input_header_api_summary"] = {"events":len(report["input_header_apis"]),
+            "status":dict(collections.Counter(item["status"] for item in report["input_header_apis"]))}
+        report["input_header_api_parity"] = bool(report["input_header_apis"]) and all(item["status"] == "qualified" for item in report["input_header_apis"])
+        report["input_api_parity"] = report["input_header_api_parity"] and report["input_api_summary"]["all_events_qualified"] and report["reference_input_sources"]["matches_pinned_source"] and all(module["matches_pinned_source"] for module in report["selection"]["input_modules"])
+        report["full_reading_parity"] &= report["input_api_parity"]
+    if args.input_apis:
+        report["reference_input_sources_unchanged_during_run"] = all(
+            sha_file(pathlib.Path(item[which]["path"])) == item[which]["sha256"]
+            for item in report["reference_input_sources"]["modules"].values() for which in ("actual", "pinned")) and all(
+            sha_file(pathlib.Path(module["source_path"])) == module["source_sha256"] and
+            sha_file(pathlib.Path(module["imported_path"])) == module["imported_source_sha256"]
+            for module in report["selection"]["input_modules"])
+        report["input_api_parity"] &= report["reference_input_sources_unchanged_during_run"]
+        report["full_reading_parity"] &= report["input_api_parity"]
     report["download_base"] = args.download_base
     report["download_hashes"] = UtilsTest.resources.all_data
     report["probe_unchanged_during_run"] = report["probe_sha256"] == sha_file(probe_path)

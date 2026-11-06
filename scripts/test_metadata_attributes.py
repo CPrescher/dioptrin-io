@@ -65,6 +65,30 @@ class AttributeControls(unittest.TestCase):
         frame['source_recovery']['images'][0]['availability']['present_samples']=[0,5]
         self.assertEqual(compare_attributes(read,[frame])['unresolved_attributes'],1)
 
+    def test_edf_header_only_shape_dtype_are_source_declarations(self):
+        read=self.read('edfimage',{'shape':[2,3], 'dtype':{'kind':'dtype','value':'uint16'}},'reference_no_pixels')
+        frame={'header_only':True,'pixels_available':False,'declared_shape':[2,3],'declared_dtype':'uint16'}
+        result=compare_attributes(read,[frame])
+        self.assertEqual(result['status'],'accounted')
+        self.assertTrue(all('metadata only, no decoded samples' in item['source'] for item in result['comparisons']))
+        self.assertEqual(read['status'],'reference_no_pixels')
+        for key,wrong in [('declared_shape',[3,2]),('declared_dtype','int16')]:
+            changed=copy.deepcopy(frame);changed[key]=wrong
+            self.assertEqual(compare_attributes(read,[changed])['unresolved_attributes'],1)
+        # Decoded-looking fields cannot replace absent header declarations.
+        for key in ['declared_shape','declared_dtype']:
+            changed=copy.deepcopy(frame);del changed[key]
+            changed.update(shape=[2,3],dtype='uint16')
+            missing=compare_attributes(read,[changed])
+            self.assertEqual(missing['unresolved_attributes'],1)
+            self.assertIn('missing',[item['status'] for item in missing['comparisons']])
+        for flag,wrong in [('header_only',False),('pixels_available',True),('pixels_available',0)]:
+            changed=copy.deepcopy(frame);changed[flag]=wrong
+            self.assertEqual(compare_attributes(read,[changed])['unresolved_attributes'],2)
+        for flag in ['header_only','pixels_available']:
+            changed=copy.deepcopy(frame);del changed[flag]
+            self.assertEqual(compare_attributes(read,[changed])['unresolved_attributes'],2)
+
     def test_tiff_probe_qualification_requires_independently_correct_source_bits(self):
         raw=np.zeros(32,dtype=np.uint16);raw[21]=12345
         read=self.read('tifimage',{'nbits':12345})
