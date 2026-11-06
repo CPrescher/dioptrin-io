@@ -165,7 +165,7 @@ def main():
     ledger = json.loads((ROOT / "docs/fabio-2026.6.0-inventory.json").read_text())
     report = {"schema": 4, "reference": ledger["reference"],
               "selection": {"all_codec_modules": not bool(args.modules), "modules": []},
-              "contract": "read-count/dtype/shape comparison at successful upstream .read calls; not Python API or full header parity",
+              "contract": "uniform count/dtype/shape and independent native component/unit comparisons, with separate explicit display views, at successful upstream .read calls; not Python API or full header parity",
               "gaps": ["semantic headers not completely compared", "native content autodetection not exercised", "file-like streams materialized by test harness", "read paths bypassing .read not intercepted"],
               "out_of_scope": ["Python mutation/writing APIs and numerical statistics"],
               "reads": [], "reference_rejections": [], "source_files": {}, "reference_import_errors": [], "reference_tests": {}}
