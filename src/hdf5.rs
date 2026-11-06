@@ -254,3 +254,5 @@ fn register_filters() -> Result<(), Error> {
 pub fn library_version() -> (u8, u8, u8) {
     hdf5_backend::library_version()
 }
+
+pub mod discovery;

@@ -309,6 +309,9 @@ fn compressed_header_only_indexing_keeps_metadata_without_requiring_pixels() {
             assert_eq!(reader.compression(), compression);
             assert_eq!(reader.source_prefix().unwrap(), bytes[..64]);
             match reader.metadata().unwrap() {
+                dioptrin_io::wrapped::HeaderMetadata::Edf(_) => {
+                    unreachable!("this fixture uses TIFF or dTREK")
+                }
                 HeaderMetadata::Dtrek(m) => assert_eq!(m.shape, [0, 0]),
                 HeaderMetadata::Tiff(pages) => assert_eq!(pages.len(), 1),
             }

@@ -5,6 +5,8 @@ pub use crate::binary::Error;
 pub use crate::transport::{Compression, Limits};
 use crate::{PixelBuffer, cbf, edf, native, tiff, transport::PreparedSource};
 use std::path::Path;
+mod input;
+pub use input::{Input, Provenance};
 
 #[derive(Debug, Clone, Copy)]
 pub enum Format {
@@ -44,6 +46,7 @@ pub enum Format {
     #[cfg(feature = "xsd")]
     Xsd,
     Native(native::Format),
+    Raw(native::RawLayout),
     Edf,
     /// Explicit external EDF source convention, including optional relocation.
     EdfExternal {
@@ -63,6 +66,10 @@ pub enum Format {
 }
 
 enum Backend {
+    #[cfg(feature = "hdf5")]
+    Hdf5(crate::hdf5::typed::Reader),
+    #[cfg(feature = "sparse")]
+    Sparse(Box<crate::sparse::Reader>),
     #[cfg(feature = "mar345")]
     Mar345(crate::mar345::Reader),
     #[cfg(feature = "esperanto")]
@@ -105,6 +112,8 @@ enum Backend {
 }
 #[derive(Default)]
 enum Buffer {
+    #[cfg(feature = "hdf5")]
+    Hdf5(crate::hdf5::typed::FrameBuffer),
     #[default]
     Empty,
     #[cfg(any(feature = "jpeg", feature = "jpeg2000"))]
@@ -125,6 +134,8 @@ impl FrameBuffer {
         }
         match &self.buffer {
             Buffer::Empty => None,
+            #[cfg(feature = "hdf5")]
+            Buffer::Hdf5(b) => b.shape().map(|s| s.to_vec()),
             Buffer::Native(b) => b.shape().map(|s| s.to_vec()),
             Buffer::Tiff(b) => b.sample_shape(),
             #[cfg(any(feature = "jpeg", feature = "jpeg2000"))]
@@ -138,6 +149,8 @@ impl FrameBuffer {
         }
         match &self.buffer {
             Buffer::Empty => None,
+            #[cfg(feature = "hdf5")]
+            Buffer::Hdf5(b) => b.pixels(),
             #[cfg(any(feature = "jpeg", feature = "jpeg2000"))]
             Buffer::Raster(b) => b.pixels(),
             Buffer::Native(b) => b.pixels(),
@@ -151,6 +164,8 @@ impl FrameBuffer {
         }
         match &self.buffer {
             Buffer::Empty => None,
+            #[cfg(feature = "hdf5")]
+            Buffer::Hdf5(b) => b.shape(),
             #[cfg(any(feature = "jpeg", feature = "jpeg2000"))]
             Buffer::Raster(b) => b.shape(),
             Buffer::Native(b) => b.shape(),
@@ -160,6 +175,10 @@ impl FrameBuffer {
 }
 
 pub enum Metadata<'a> {
+    #[cfg(feature = "hdf5")]
+    Hdf5(&'a crate::hdf5::typed::Metadata),
+    #[cfg(feature = "sparse")]
+    Sparse(&'a crate::sparse::Metadata),
     #[cfg(feature = "mar345")]
     Mar345(&'a crate::mar345::Metadata),
     #[cfg(feature = "esperanto")]
@@ -201,7 +220,7 @@ pub enum Metadata<'a> {
 pub struct Reader {
     // Drop the backend before deleting its open staging file (Windows).
     backend: Backend,
-    source: PreparedSource,
+    source: std::sync::Arc<PreparedSource>,
 }
 impl Reader {
     /// Open one explicit backend, detecting only the outer file wrapper by its
@@ -215,7 +234,42 @@ impl Reader {
         image: native::Limits,
         tiff: tiff::Limits,
     ) -> Result<Self, Error> {
-        let source = PreparedSource::open(path, transport)?;
+        Self::from_prepared(
+            std::sync::Arc::new(PreparedSource::open(path, transport)?),
+            format,
+            transport,
+            image,
+            tiff,
+        )
+    }
+    /// Capture from the current stream position to EOF. No seek or filename is
+    /// required. The origin directory only authorizes relative-link resolution;
+    /// it is not a claim that the stream has a backing file.
+    /// # Errors
+    /// Input I/O, encoded/decoded bounds, source/link contracts or decoder errors.
+    pub fn from_reader(
+        input: impl std::io::Read,
+        origin: Option<&Path>,
+        format: Format,
+        transport: Limits,
+        image: native::Limits,
+        tiff: tiff::Limits,
+    ) -> Result<Self, Error> {
+        Self::from_prepared(
+            std::sync::Arc::new(PreparedSource::from_reader(input, origin, transport)?),
+            format,
+            transport,
+            image,
+            tiff,
+        )
+    }
+    pub(crate) fn from_prepared(
+        source: std::sync::Arc<PreparedSource>,
+        format: Format,
+        transport: Limits,
+        image: native::Limits,
+        tiff: tiff::Limits,
+    ) -> Result<Self, Error> {
         let input = source.path();
         let backend = match format {
             #[cfg(feature = "mar345")]
@@ -274,6 +328,7 @@ impl Reader {
             #[cfg(feature = "xsd")]
             Format::Xsd => Backend::Xsd(crate::xsd::Reader::open(input, image)?),
             Format::Native(format) => Backend::Native(native::Reader::open(input, format, image)?),
+            Format::Raw(layout) => Backend::Native(native::Reader::open_raw(input, layout, image)?),
             Format::Edf | Format::EdfExternal { .. } | Format::EdfExternalWindow { .. } => {
                 let (external_payloads, external_basenames, external_window) = match format {
                     Format::EdfExternal { policy, basenames } => {
@@ -290,6 +345,14 @@ impl Reader {
                         edf::ExternalWindow::Exact,
                     ),
                 };
+                if source.is_stream()
+                    && source.source_directory().is_none()
+                    && external_payloads != edf::ExternalPayloads::Reject
+                {
+                    return Err(Error(
+                        "external EDF stream policy requires an explicit origin directory".into(),
+                    ));
+                }
                 Backend::Edf(edf::Reader::open_with_options(
                     input,
                     image,
@@ -297,7 +360,7 @@ impl Reader {
                         external_payloads,
                         external_basenames,
                         external_window,
-                        source_directory: source.original_path().parent().map(Path::to_path_buf),
+                        source_directory: source.source_directory().map(Path::to_path_buf),
                         transport,
                         ..edf::Options::default()
                     },
@@ -333,7 +396,46 @@ impl Reader {
                     .map(|s| s.path.as_path()),
             );
         }
+        #[cfg(feature = "hdf5")]
+        if let Backend::Hdf5(reader) = &self.backend {
+            paths.extend(reader.sources().iter().skip(1).map(|s| s.path.as_path()));
+        }
+        #[cfg(feature = "sparse")]
+        if let Backend::Sparse(reader) = &self.backend {
+            paths.extend(reader.sources().iter().skip(1).map(|s| s.path.as_path()));
+        }
         paths
+    }
+    /// Captured bytes stay distinct from a caller-claimed origin directory.
+    /// # Errors
+    /// Original or staged source changed.
+    pub fn provenance(&self) -> Result<Provenance, Error> {
+        self.source.check()?;
+        Ok(Provenance {
+            stream: self.source.is_stream(),
+            origin_directory: self.source.source_directory().map(Path::to_path_buf),
+            encoded_bytes: self.source.encoded_bytes(),
+            decoded_bytes: self.source.bytes(),
+            compression: self.source.compression(),
+        })
+    }
+    #[cfg(feature = "hdf5")]
+    #[must_use]
+    pub fn hdf5_reader(&self) -> Option<&crate::hdf5::typed::Reader> {
+        if let Backend::Hdf5(r) = &self.backend {
+            Some(r)
+        } else {
+            None
+        }
+    }
+    #[cfg(feature = "sparse")]
+    #[must_use]
+    pub fn sparse_reader(&self) -> Option<&crate::sparse::Reader> {
+        if let Backend::Sparse(r) = &self.backend {
+            Some(r)
+        } else {
+            None
+        }
     }
     #[must_use]
     pub fn compression(&self) -> Compression {
@@ -342,6 +444,10 @@ impl Reader {
     #[must_use]
     pub fn frames(&self) -> usize {
         match &self.backend {
+            #[cfg(feature = "hdf5")]
+            Backend::Hdf5(r) => r.frames(),
+            #[cfg(feature = "sparse")]
+            Backend::Sparse(r) => r.frames(),
             #[cfg(feature = "mar345")]
             Backend::Mar345(r) => r.frames(),
             #[cfg(feature = "esperanto")]
@@ -387,6 +493,10 @@ impl Reader {
             return None;
         }
         match &self.backend {
+            #[cfg(feature = "hdf5")]
+            Backend::Hdf5(r) => r.metadata(index).map(Metadata::Hdf5),
+            #[cfg(feature = "sparse")]
+            Backend::Sparse(r) => Some(Metadata::Sparse(r.metadata())),
             #[cfg(feature = "mar345")]
             Backend::Mar345(r) => Some(Metadata::Mar345(r.metadata())),
             #[cfg(feature = "esperanto")]
@@ -562,6 +672,17 @@ impl Reader {
             return Err(Error("wrapped frame index outside source".into()));
         }
         match &mut self.backend {
+            #[cfg(feature = "hdf5")]
+            Backend::Hdf5(r) => {
+                if !matches!(buffer.buffer, Buffer::Hdf5(_)) {
+                    buffer.buffer = Buffer::Hdf5(crate::hdf5::typed::FrameBuffer::default());
+                }
+                let Buffer::Hdf5(b) = &mut buffer.buffer else {
+                    unreachable!()
+                };
+                r.read_frame_into(index, b)
+                    .map_err(|e| Error(e.to_string()))?;
+            }
             #[cfg(feature = "jpeg")]
             Backend::Jpeg(r) => {
                 if !matches!(buffer.buffer, Buffer::Raster(_)) {
@@ -610,6 +731,12 @@ impl Reader {
                     unreachable!()
                 };
                 match backend {
+                    #[cfg(feature = "hdf5")]
+                    Backend::Hdf5(_) => unreachable!(),
+                    #[cfg(feature = "sparse")]
+                    Backend::Sparse(r) => r
+                        .read_frame_into(index, b)
+                        .map_err(|e| Error(e.to_string()))?,
                     #[cfg(feature = "mar345")]
                     Backend::Mar345(r) => r.read_frame_into(index, b)?,
                     #[cfg(feature = "esperanto")]
@@ -704,22 +831,40 @@ impl Reader {
 /// Metadata indexing independent of image availability, including outer wrappers.
 #[derive(Clone, Copy, Debug)]
 pub enum HeaderFormat {
+    Edf,
     Dtrek,
     Tiff,
 }
 pub enum HeaderMetadata<'a> {
+    Edf(EdfHeaders<'a>),
     Dtrek(&'a native::Metadata),
     Tiff(&'a [tiff::header::Page]),
 }
 enum HeaderBackend {
+    Edf(Box<edf::recovery::Reader>),
     Dtrek(native::DtrekHeader),
     Tiff(tiff::header::Reader),
+}
+/// Borrowed source headers only. The underlying recovery index and its sample
+/// methods remain private; dimensions describe declarations, not available counts.
+pub struct EdfHeaders<'a> {
+    reader: &'a edf::recovery::Reader,
+}
+impl EdfHeaders<'_> {
+    pub fn images(&self) -> impl ExactSizeIterator<Item = &edf::Metadata> {
+        (0..self.reader.image_records())
+            .map(|i| self.reader.metadata(i).expect("indexed EDF metadata"))
+    }
+    #[must_use]
+    pub fn general_headers(&self) -> &[edf::GeneralHeader] {
+        self.reader.general_headers()
+    }
 }
 /// No frame/pixel API is provided: these are original declarations, not evidence
 /// that a codec can decode the payload or that all declared counts exist.
 pub struct HeaderReader {
     backend: HeaderBackend,
-    source: PreparedSource,
+    source: std::sync::Arc<PreparedSource>,
 }
 impl HeaderReader {
     /// Index headers with the existing bounded transport and format parsers.
@@ -732,8 +877,44 @@ impl HeaderReader {
         image: native::Limits,
         tiff: tiff::Limits,
     ) -> Result<Self, Error> {
-        let source = PreparedSource::open(path, transport)?;
+        Self::from_prepared(
+            std::sync::Arc::new(PreparedSource::open(path, transport)?),
+            format,
+            image,
+            tiff,
+        )
+    }
+    /// Capture a nonseekable stream for header-only access without pixel decoding.
+    /// # Errors
+    /// Transport I/O/bounds, malformed header or changed capture.
+    pub fn from_reader(
+        input: impl std::io::Read,
+        format: HeaderFormat,
+        transport: Limits,
+        image: native::Limits,
+        tiff: tiff::Limits,
+    ) -> Result<Self, Error> {
+        Self::from_prepared(
+            std::sync::Arc::new(PreparedSource::from_reader(input, None, transport)?),
+            format,
+            image,
+            tiff,
+        )
+    }
+    fn from_prepared(
+        source: std::sync::Arc<PreparedSource>,
+        format: HeaderFormat,
+        image: native::Limits,
+        tiff: tiff::Limits,
+    ) -> Result<Self, Error> {
         let backend = match format {
+            HeaderFormat::Edf => {
+                let reader = edf::recovery::Reader::open(source.path(), image, Default::default())?;
+                if reader.image_records() == 0 && reader.general_headers().is_empty() {
+                    return Err(Error("source has no admitted EDF header".into()));
+                }
+                HeaderBackend::Edf(Box::new(reader))
+            }
             HeaderFormat::Dtrek => {
                 HeaderBackend::Dtrek(native::DtrekHeader::open(source.path(), image)?)
             }
@@ -750,6 +931,7 @@ impl HeaderReader {
     pub fn metadata(&self) -> Result<HeaderMetadata<'_>, Error> {
         self.source.check()?;
         match &self.backend {
+            HeaderBackend::Edf(r) => Ok(HeaderMetadata::Edf(EdfHeaders { reader: r })),
             HeaderBackend::Dtrek(r) => Ok(HeaderMetadata::Dtrek(r.metadata()?)),
             HeaderBackend::Tiff(r) => Ok(HeaderMetadata::Tiff(
                 r.pages().map_err(|e| Error(e.to_string()))?,

@@ -4,6 +4,8 @@
 //! detector samples. Native buffers retain integer/floating types and stored
 //! orientation. Geometry, masks, corrections and normalization belong to consumers.
 
+pub mod discovery;
+
 mod pixels;
 pub use pixels::{PixelBuffer, PixelType};
 

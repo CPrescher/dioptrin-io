@@ -31,10 +31,18 @@ pub(crate) struct PreparedSource {
     staged_snapshot: Option<Snapshot>,
     bytes: u64,
     compression: Compression,
+    // Keep original encoded stream bytes alive until after decoder/staging drop.
+    #[cfg(feature = "wrappers")]
+    captured: Option<tempfile::NamedTempFile>,
+    #[cfg(feature = "wrappers")]
+    origin: Option<std::path::PathBuf>,
 }
 impl PreparedSource {
     pub fn open(path: impl AsRef<Path>, limits: Limits) -> Result<Self, Error> {
-        if limits.encoded_bytes == 0 || limits.source_bytes == 0 || limits.source_bytes == u64::MAX
+        if limits.encoded_bytes == 0
+            || limits.encoded_bytes == u64::MAX
+            || limits.source_bytes == 0
+            || limits.source_bytes == u64::MAX
         {
             return Err(Error("transport limits must be positive and finite".into()));
         }
@@ -93,7 +101,39 @@ impl PreparedSource {
             staged_snapshot,
             bytes,
             compression,
+            #[cfg(feature = "wrappers")]
+            captured: None,
+            #[cfg(feature = "wrappers")]
+            origin: None,
         })
+    }
+    #[cfg(feature = "wrappers")]
+    pub fn from_reader(
+        mut input: impl Read,
+        origin: Option<&Path>,
+        limits: Limits,
+    ) -> Result<Self, Error> {
+        let (captured, origin) = capture_reader(&mut input, origin, limits)?;
+        let mut source = Self::open(captured.path(), limits)?;
+        source.captured = Some(captured);
+        source.origin = origin;
+        Ok(source)
+    }
+    #[cfg(feature = "wrappers")]
+    pub fn source_directory(&self) -> Option<&Path> {
+        if self.captured.is_some() {
+            self.origin.as_deref()
+        } else {
+            self.original_path().parent()
+        }
+    }
+    #[cfg(feature = "wrappers")]
+    pub fn is_stream(&self) -> bool {
+        self.captured.is_some()
+    }
+    #[cfg(feature = "wrappers")]
+    pub fn encoded_bytes(&self) -> u64 {
+        self.snapshot.bytes()
     }
     pub fn path(&self) -> &Path {
         self.staged
@@ -124,4 +164,35 @@ impl PreparedSource {
         }
         Ok(())
     }
+}
+
+/// Own only current-position-through-EOF bytes. The origin is explicit link
+/// context rather than an inferred input filename; it is validated before reads.
+/// A failing read/limit drops its private tempfile, and consumed input is never
+/// rewound. One extra encoded byte is sufficient to reject oversize input.
+pub(crate) fn capture_reader(
+    mut input: impl Read,
+    origin: Option<&Path>,
+    limits: Limits,
+) -> Result<(tempfile::NamedTempFile, Option<std::path::PathBuf>), Error> {
+    if limits.encoded_bytes == 0
+        || limits.encoded_bytes == u64::MAX
+        || limits.source_bytes == 0
+        || limits.source_bytes == u64::MAX
+    {
+        return Err(Error("transport limits must be positive and finite".into()));
+    }
+    let origin = origin.map(std::fs::canonicalize).transpose()?;
+    if origin.as_ref().is_some_and(|p| !p.is_dir()) {
+        return Err(Error("stream origin must be a directory".into()));
+    }
+    let mut captured = tempfile::NamedTempFile::new()?;
+    let copied = std::io::copy(
+        &mut input.by_ref().take(limits.encoded_bytes + 1),
+        captured.as_file_mut(),
+    )?;
+    if copied > limits.encoded_bytes {
+        return Err(Error("stream exceeds encoded input limit".into()));
+    }
+    Ok((captured, origin))
 }

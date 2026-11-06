@@ -42,13 +42,19 @@ pub(super) struct Sources {
     limits: Limits,
     policy: ExternalLinks,
     metadata: usize,
+    root_origin: Option<PathBuf>,
 }
 impl Sources {
-    pub fn new(
+    pub fn new_with_origin(
         path: impl AsRef<Path>,
         limits: Limits,
         policy: ExternalLinks,
+        origin: Option<&Path>,
     ) -> Result<Self, Error> {
+        let origin = origin.map(std::fs::canonicalize).transpose()?;
+        if origin.as_ref().is_some_and(|p| !p.is_dir()) {
+            return Err(Error("HDF5 root origin must be a directory".into()));
+        }
         let mut sources = Self {
             tracked: Vec::new(),
             records: Vec::new(),
@@ -56,6 +62,7 @@ impl Sources {
             limits,
             policy,
             metadata: 0,
+            root_origin: origin,
         };
         sources.add(path)?;
         Ok(sources)
@@ -258,7 +265,14 @@ impl Sources {
                     let file_path = if file_path.is_absolute() {
                         file_path.to_path_buf()
                     } else {
-                        self.path(source).parent().unwrap().join(file_path)
+                        let base = if source == 0 {
+                            self.root_origin
+                                .as_deref()
+                                .unwrap_or_else(|| self.path(source).parent().unwrap())
+                        } else {
+                            self.path(source).parent().unwrap()
+                        };
+                        base.join(file_path)
                     };
                     source = self.add(file_path)?;
                     target

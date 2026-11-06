@@ -177,10 +177,22 @@ impl Reader {
         selection: Selection<'_>,
         options: Options,
     ) -> Result<Self, Error> {
+        Self::open_snapshot_with_origin(path, selection, options, None)
+    }
+    /// Capture/relocate the root with an explicitly supplied relative-link directory.
+    /// # Errors
+    /// Same immutable storage, bounds and source validation as open_snapshot.
+    pub fn open_snapshot_with_origin(
+        path: impl AsRef<Path>,
+        selection: Selection<'_>,
+        options: Options,
+        origin: Option<&Path>,
+    ) -> Result<Self, Error> {
         let limits = options.limits;
         numeric::validate_limits(limits)?;
         super::register_filters()?;
-        let mut sources = Sources::new(path, limits.hdf5, options.external_links)?;
+        let mut sources =
+            Sources::new_with_origin(path, limits.hdf5, options.external_links, origin)?;
         let mut attributes = Vec::new();
         let mut entry = None;
         let (source, group_path, group) = match selection {

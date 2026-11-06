@@ -126,7 +126,7 @@ impl Reader {
         selection: Selection<'_>,
         options: Options,
     ) -> Result<Self, Error> {
-        Self::open_inner(path, selection, options, None)
+        Self::open_inner(path, selection, options, None, None)
     }
     /// Explicit immutable VDS mosaics with caller-approved filename bindings.
     /// Regular datasets keep their existing interpretation and ignore unused
@@ -140,13 +140,27 @@ impl Reader {
         options: Options,
         vds: VdsOptions<'_>,
     ) -> Result<Self, Error> {
-        Self::open_inner(path, selection, options, Some(vds))
+        Self::open_inner(path, selection, options, Some(vds), None)
+    }
+    /// Open captured/relocated source bytes with an explicit directory for root
+    /// relative links. Intermediate files retain their own original directories.
+    /// # Errors
+    /// Same immutable storage/source admission as open_snapshot_with_vds.
+    pub fn open_snapshot_with_origin(
+        path: impl AsRef<Path>,
+        selection: Selection<'_>,
+        options: Options,
+        vds: Option<VdsOptions<'_>>,
+        origin: Option<&Path>,
+    ) -> Result<Self, Error> {
+        Self::open_inner(path, selection, options, vds, origin)
     }
     fn open_inner(
         path: impl AsRef<Path>,
         selection: Selection<'_>,
         options: Options,
         vds_options: Option<VdsOptions<'_>>,
+        origin: Option<&Path>,
     ) -> Result<Self, Error> {
         let limits = options.limits;
         if [
@@ -168,7 +182,7 @@ impl Reader {
             ));
         }
         super::register_filters()?;
-        let mut sources = Sources::new(path, limits, options.external_links)?;
+        let mut sources = Sources::new_with_origin(path, limits, options.external_links, origin)?;
         let mut bindings = None;
         let mut indexed_datasets = 0usize;
         let mut fields = BTreeMap::new();
@@ -604,7 +618,11 @@ pub(super) fn fill(dataset: &Dataset, ty: PixelType) -> Result<Option<PixelBuffe
     macro_rules! types {($($v:ident,$t:ty);*)=>{match ty {$(PixelType::$v=>plist.get_fill_value_as::<$t>()?.map(|v|PixelBuffer::$v(vec![v]))),*,_=>return Err(Error("complex HDF5 fill needs a separate dtype contract".into()))}};}
     Ok(types!(U8,u8;I8,i8;U16,u16;I16,i16;U32,u32;I32,i32;U64,u64;I64,i64;F32,f32;F64,f64))
 }
-fn read_text(container: &Container, limit: usize, attribute: bool) -> Result<String, Error> {
+pub(super) fn read_text(
+    container: &Container,
+    limit: usize,
+    attribute: bool,
+) -> Result<String, Error> {
     if !attribute {
         let dataset = container.as_dataset()?;
         if dataset.layout() == hdf5_backend::dataset::Layout::Virtual

@@ -257,13 +257,46 @@ pub struct Reader {
     limits: Limits,
     options: Options,
     metadata_bytes: usize,
+    captured: Option<tempfile::NamedTempFile>,
 }
 impl Reader {
-    /// Open original bytes under an explicit prefix-recovery contract. Valid
-    /// compressed members are independently verified; failed member output stays
-    /// visibly unverified even if every declared image sample was decoded.
+    /// Capture the current position through EOF without seeking or retaining the
+    /// caller's stream. The owned encoded snapshot keeps member integrity and
+    /// byte provenance; source_report().path identifies that private capture.
+    /// The caller must supply an origin explicitly for any external-file policy;
+    /// recovery still rejects external payloads under its existing span contract.
+    /// Missing samples remain absent; dropping the reader removes its capture.
     /// # Errors
-    /// Resource admission, source changes, I/O or unsupported external payloads.
+    /// Input/transport limits, invalid origin or malformed recovery metadata.
+    pub fn from_reader(
+        input: impl Read,
+        origin: Option<&Path>,
+        limits: Limits,
+        mut options: Options,
+    ) -> Result<Self, Error> {
+        limits.validate()?;
+        if options.members == 0 {
+            return Err(Error(
+                "EDF recovery compression-member limit must be positive".into(),
+            ));
+        }
+        if origin.is_none() && options.edf.external_payloads != super::ExternalPayloads::Reject {
+            return Err(Error(
+                "external EDF recovery stream policy requires an explicit origin directory".into(),
+            ));
+        }
+        let (captured, origin) =
+            crate::transport::capture_reader(input, origin, options.edf.transport)?;
+        options.edf.source_directory = origin;
+        let mut reader = Self::open(captured.path(), limits, options)?;
+        reader.captured = Some(captured);
+        Ok(reader)
+    }
+    /// Index original path bytes under explicit immutable recovery policies.
+    /// Valid compressed members are verified independently; failed member output
+    /// stays unverified even if every declared image sample was decoded.
+    /// # Errors
+    /// Malformed headers, limits or source/codec admission errors.
     pub fn open(path: impl AsRef<Path>, limits: Limits, options: Options) -> Result<Self, Error> {
         limits.validate()?;
         let source = Source::open(path, limits, &options)?;
@@ -442,6 +475,7 @@ impl Reader {
             limits,
             options,
             metadata_bytes,
+            captured: None,
         })
     }
     /// Number of complete image headers, including records with no samples.

@@ -467,3 +467,173 @@ fn immutable_recovery_rejects_fifo_before_opening_a_blocking_read_handle() {
         .expect("FIFO must be rejected");
     assert!(error.contains("regular immutable source"));
 }
+
+#[test]
+fn encoded_stream_recovery_retains_truncated_and_corrupt_member_provenance_and_cleanup() {
+    struct OneByte<'a>(&'a [u8]);
+    impl std::io::Read for OneByte<'_> {
+        fn read(&mut self, out: &mut [u8]) -> std::io::Result<usize> {
+            let n = out.len().min(1).min(self.0.len());
+            out[..n].copy_from_slice(&self.0[..n]);
+            self.0 = &self.0[n..];
+            Ok(n)
+        }
+    }
+    let h = header("UnsignedShort", "HighByteFirst", [1, 3], 6, 6, "NONE");
+    let raw = [0, 0, 255, 255, 128, 1];
+    for compressed in [false, true] {
+        let complete = if compressed {
+            [gzip(&h), gzip(&raw)].concat()
+        } else {
+            [h.clone(), raw.to_vec()].concat()
+        };
+        let variants = if compressed {
+            let mut crc = complete.clone();
+            let n = crc.len();
+            crc[n - 8] ^= 1;
+            vec![
+                (complete.clone(), Integrity::ContainerComplete),
+                (
+                    complete[..complete.len() - 1].to_vec(),
+                    Integrity::UnverifiedTruncated,
+                ),
+                (crc, Integrity::ChecksumFailure),
+            ]
+        } else {
+            vec![
+                (complete.clone(), Integrity::ContainerComplete),
+                (
+                    complete[..complete.len() - 1].to_vec(),
+                    Integrity::ContainerComplete,
+                ),
+            ]
+        };
+        for (bytes, integrity) in variants {
+            let reader = recovery::Reader::from_reader(
+                OneByte(&bytes),
+                None,
+                Limits::default(),
+                recovery::Options::default(),
+            )
+            .unwrap();
+            let captured = reader.source_report().path.clone();
+            assert_eq!(fs::read(&captured).unwrap(), bytes);
+            assert_eq!(reader.source_report().encoded_bytes, bytes.len() as u64);
+            assert_eq!(reader.source_report().integrity, integrity);
+            let mut buffer = SampleBuffer::default();
+            reader.read_samples_into(0, &mut buffer).unwrap();
+            if compressed || bytes.len() == complete.len() {
+                assert_eq!(
+                    buffer.pixels(),
+                    Some(&PixelBuffer::U16(vec![0, 65535, 32769]))
+                );
+            } else {
+                assert_eq!(buffer.pixels(), Some(&PixelBuffer::U16(vec![0, 65535])));
+                assert_eq!(buffer.partial_element_bytes(), Some(&[128][..]));
+            }
+            assert_eq!(
+                buffer.report().unwrap().complete_verified_frame,
+                integrity == Integrity::ContainerComplete && bytes.len() == complete.len()
+            );
+            // The encoded capture remains tracked even after private expansion.
+            fs::write(&captured, b"replaced capture").unwrap();
+            assert!(reader.read_samples_into(0, &mut buffer).is_err());
+            assert!(buffer.pixels().is_none());
+            assert!(buffer.report().is_none());
+            assert!(buffer.partial_element_bytes().is_none());
+            drop(reader);
+            assert!(!captured.exists());
+        }
+    }
+}
+
+#[test]
+fn recovery_stream_current_position_byte_limits_and_external_origin_are_explicit() {
+    let h = header("UnsignedShort", "LowByteFirst", [1, 3], 6, 6, "NONE");
+    let bytes = [h, [0, 0, 255, 255, 1, 128].to_vec()].concat();
+    let mut prefixed = b"not part of input".to_vec();
+    let start = prefixed.len();
+    prefixed.extend(&bytes);
+    let mut input = std::io::Cursor::new(prefixed);
+    input.set_position(start as u64);
+    let reader = recovery::Reader::from_reader(
+        &mut input,
+        None,
+        Limits::default(),
+        recovery::Options::default(),
+    )
+    .unwrap();
+    assert_eq!(input.position(), input.get_ref().len() as u64);
+    assert_eq!(reader.source_report().encoded_bytes, bytes.len() as u64);
+    let mut output = SampleBuffer::default();
+    reader.read_samples_into(0, &mut output).unwrap();
+    assert_eq!(
+        output.pixels(),
+        Some(&PixelBuffer::U16(vec![0, 65535, 32769]))
+    );
+    for options in [
+        recovery::Options {
+            members: 0,
+            ..Default::default()
+        },
+        recovery::Options {
+            edf: Options {
+                external_payloads: edf::ExternalPayloads::FollowSnapshot,
+                ..Default::default()
+            },
+            ..Default::default()
+        },
+    ] {
+        let mut input = std::io::Cursor::new(&bytes);
+        assert!(
+            recovery::Reader::from_reader(&mut input, None, Limits::default(), options).is_err()
+        );
+        assert_eq!(input.position(), 0);
+    }
+    let mut input = std::io::Cursor::new(&bytes);
+    assert!(
+        recovery::Reader::from_reader(
+            &mut input,
+            None,
+            Limits {
+                frame_bytes: 0,
+                ..Limits::default()
+            },
+            recovery::Options::default()
+        )
+        .is_err()
+    );
+    assert_eq!(input.position(), 0);
+    let mut input = std::io::Cursor::new(&bytes);
+    let options = recovery::Options {
+        edf: Options {
+            transport: edf::TransportLimits {
+                encoded_bytes: 4,
+                ..Default::default()
+            },
+            ..Default::default()
+        },
+        ..Default::default()
+    };
+    assert!(recovery::Reader::from_reader(&mut input, None, Limits::default(), options).is_err());
+    assert_eq!(input.position(), 5);
+    // An origin never turns unsupported external recovery into an implicit file read.
+    let dir = tempfile::tempdir().unwrap();
+    fs::write(dir.path().join("data.bin"), [0u8; 6]).unwrap();
+    let external=b"{EDF_BinarySize=0;EDF_BinaryFileName=data.bin;EDF_BinaryFileSize=6;Dim_1=3;Dim_2=1;DataType=UnsignedShort;ByteOrder=LowByteFirst;}\n";
+    assert!(
+        recovery::Reader::from_reader(
+            &external[..],
+            Some(dir.path()),
+            Limits::default(),
+            recovery::Options {
+                edf: Options {
+                    external_payloads: edf::ExternalPayloads::FollowSnapshot,
+                    ..Default::default()
+                },
+                ..Default::default()
+            }
+        )
+        .is_err()
+    );
+}
