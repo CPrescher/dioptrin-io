@@ -186,6 +186,7 @@ pub fn read_pillow13(
     let mut rendered = page.clone();
     rendered.channels = channels;
     rendered.planar_configuration = 1;
+    rendered.sample_layout = super::SampleLayout::Uniform;
     rendered.photometric_interpretation = if channels == 1 {
         page.photometric_interpretation
     } else {
@@ -206,6 +207,11 @@ pub fn read_pillow13(
     image.provenance.source_type = page.pixel_type;
     image.provenance.source_photometric = page.photometric_interpretation;
     image.provenance.source_planar_configuration = page.planar_configuration;
+    if page.sample_layout != super::SampleLayout::Uniform {
+        let mut components = super::ycbcr::Buffer::default();
+        reader.read_ycbcr_into(index, &mut components)?;
+        image.provenance.source_components = view::component_geometry(&components)?;
+    }
     image
         .provenance
         .operations

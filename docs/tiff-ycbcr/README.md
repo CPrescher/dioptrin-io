@@ -53,7 +53,8 @@ unit's chroma rather than interpolating centered/cosited grids. Positioning stay
 visible as metadata, and orientation is never applied. This is an explicitly
 versioned reference display interpretation, not a measured full-resolution
 three-channel array. Provenance carries source layout/sampling, raster shape,
-original dtype/bit width/photometric/compression/orientation/lossiness and the
+original dtype/bit width/photometric/compression/orientation/lossiness, exact
+per-chunk component origins, stored/valid shapes and sampling, and the
 chroma expansion, RGB conversion and optional luminance operations. Source
 component/padding grids remain available unchanged in the buffer.
 
@@ -78,6 +79,12 @@ admitted under `intermediate_bytes`. TIFF metadata/index and source ranges keep
 their existing separate budgets. These are payload bounds, not RSS limits;
 codec dictionary/allocation bookkeeping is additional. There is no parallel fast
 path or throughput claim.
+
+Legacy OJPEG sources can declare ReferenceBlackWhite as LONG[6] rather than
+RATIONAL[6]. The explicit view interprets those exact integer levels, retains
+the original LONG words, exposes `Colorimetry.legacy_integer_reference`, and
+records `Operation::LegacyIntegerReferenceBlackWhite`. Native components are
+never rescaled. An independent nondefault-level fixture proves this distinction.
 
 The libtiff color adaptation's permissive copyright/permission notice is retained
 in `licenses/native-readers/libtiff-4.7.2-LICENSE.txt`. weezl retains MIT/Apache-2.0
@@ -105,6 +112,27 @@ storage. The actual extra words are zero; an independent fixture also verifies
 nonzero full-strip padding. All RGB8 and F32 luminance bytes match Pillow 13.0.0
 with libtiff 4.7.2 exactly. This display equality is separate from raw source
 component equality.
+
+[Modern JPEG proof](2026-11-06-modern-jpeg-proof.json) verifies all 24 original
+`quad-jpeg.tif` chunks and 72 native planes, plus its full explicit F32 Pillow
+view. JPEG-derived components do not claim lossless source sampling units.
+The independent modern oracle uses imagecodecs with explicit YCbCr input/output,
+no fancy upsampling and an aligned physical-width/height gate; exact nearest
+replication is decimated to native chroma grids. This is necessary because, on
+this actual source, the current libtiff RAW-strip path supplies zero tails absent
+from complete independent JPEG decoding (also reproduced in a separate C
+program). Those zeros are not emulated. Other unproven odd sampled reference
+layouts remain explicit oracle gaps; the native reader still retains its own
+physical component grids under bounds.
+
+[Zack](2026-11-06-zack-view-proof.json) and
+[Liz](2026-11-06-liz-view-proof.json) each additionally verify all three actual
+OJPEG planes against independent libtiff, and exact RGB8/F32 views against
+Pillow. Their legacy integer ReferenceBlackWhite interpretation is visible in
+provenance. Small independent modern JPEG strip/tile fixtures retain full
+edge-tile planes with imagecodecs signatures. A tight cumulative budget test
+rejects four padded tiles whose individual allocations fit but whose total does
+not; admission occurs before decoding the next chunk.
 
 Reproduce without writing the external corpus:
 

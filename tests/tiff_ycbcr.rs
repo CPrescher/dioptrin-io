@@ -34,6 +34,17 @@ fn fixture(
     lzw: bool,
     units: &[Vec<u8>],
 ) -> Vec<u8> {
+    fixture_with_fields(width, height, rows, tiled, lzw, units, &[])
+}
+fn fixture_with_fields(
+    width: u32,
+    height: u32,
+    rows: u32,
+    tiled: bool,
+    lzw: bool,
+    units: &[Vec<u8>],
+    extra: &[(u16, u16, Vec<u32>)],
+) -> Vec<u8> {
     let mut file = b"II*\0\0\0\0\0".to_vec();
     let mut offsets = Vec::new();
     let mut lengths = Vec::new();
@@ -65,15 +76,19 @@ fn fixture(
     } else {
         tags.extend([(273, 4, offsets), (278, 4, vec![rows]), (279, 4, lengths)]);
     }
+    tags.extend(extra.iter().cloned());
     tags.sort_by_key(|v| v.0);
+    if !file.len().is_multiple_of(2) {
+        file.push(0);
+    }
     let ifd = file.len();
     file[4..8].copy_from_slice(&(ifd as u32).to_le_bytes());
     file.extend((tags.len() as u16).to_le_bytes());
     file.resize(ifd + 2 + tags.len() * 12 + 4, 0);
     for (i, (tag, ty, values)) in tags.into_iter().enumerate() {
         let pos = ifd + 2 + i * 12;
-        file[pos..pos + 2].copy_from_slice(&(tag as u16).to_le_bytes());
-        file[pos + 2..pos + 4].copy_from_slice(&(ty as u16).to_le_bytes());
+        file[pos..pos + 2].copy_from_slice(&tag.to_le_bytes());
+        file[pos + 2..pos + 4].copy_from_slice(&ty.to_le_bytes());
         file[pos + 4..pos + 8].copy_from_slice(&(values.len() as u32).to_le_bytes());
         let bytes: Vec<u8> = values
             .into_iter()
@@ -273,6 +288,56 @@ fn explicit_neutral_chroma_rgb_view_has_known_counts_without_orientation_changes
         Some(&units[0])
     );
 }
+
+#[test]
+fn legacy_integer_reference_levels_stay_typed_and_only_explicit_view_uses_them() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("legacy-reference.tif");
+    let units = vec![vec![16, 235, 0, 255, 128, 128, 128, 77, 128, 66, 128, 128]];
+    let levels = vec![16, 235, 128, 240, 128, 240];
+    fs::write(
+        &path,
+        fixture_with_fields(3, 2, 2, false, true, &units, &[(532, 4, levels.clone())]),
+    )
+    .unwrap();
+    let mut reader = Reader::open(&path, Limits::default()).unwrap();
+    let mut out = ycbcr::Buffer::default();
+    reader.read_ycbcr_into(0, &mut out).unwrap();
+    let metadata = reader.metadata(0).unwrap();
+    assert_eq!(
+        metadata.tags[&532],
+        tiff::TagValue::List(levels.into_iter().map(tiff::TagValue::Unsigned).collect())
+    );
+    assert!(
+        ycbcr::colorimetry(metadata)
+            .unwrap()
+            .legacy_integer_reference
+    );
+    assert_eq!(
+        out.chunks().unwrap()[0].sampling_units.as_ref(),
+        Some(&units[0])
+    );
+    let image = tiff::view::render_ycbcr_rgb472(metadata, &out, 100).unwrap();
+    assert!(
+        image
+            .provenance
+            .operations
+            .contains(&tiff::view::Operation::LegacyIntegerReferenceBlackWhite)
+    );
+    let tiff::view::Pixels::Scalar(PixelBuffer::U8(rgb)) = image.pixels else {
+        panic!("RGB8 required")
+    };
+    assert_eq!(
+        rgb,
+        [
+            0, 0, 0, 255, 255, 255, 130, 130, 130, 0, 0, 0, 255, 255, 255, 130, 130, 130
+        ]
+    );
+    assert_eq!(
+        out.chunks().unwrap()[0].planes[0].samples,
+        [16, 235, 128, 77, 0, 255, 128, 66]
+    );
+}
 #[test]
 fn bounded_layouts_and_corrupt_lzw_never_expose_partial_components() {
     let dir = tempfile::tempdir().unwrap();
@@ -355,4 +420,113 @@ fn lzw_requires_real_end_marker_exact_output_and_no_ignored_bytes() {
         assert!(reader.read_ycbcr_into(0, &mut out).is_err());
         assert!(out.chunks().is_none());
     }
+}
+
+#[cfg(feature = "jpeg")]
+#[test]
+fn modern_jpeg_native_planes_include_full_edge_tiles_and_obey_total_frame_budget() {
+    use sha2::{Digest, Sha256};
+    let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/tiff-view");
+    let expected: serde_json::Value =
+        serde_json::from_slice(&fs::read(dir.join("native-components.json")).unwrap()).unwrap();
+    for (name, case) in expected["files"].as_object().unwrap() {
+        let bytes = fs::read(dir.join(name)).unwrap();
+        assert_eq!(
+            format!("{:x}", Sha256::digest(&bytes)),
+            case["source_sha256"].as_str().unwrap()
+        );
+        let mut reader = Reader::open(dir.join(name), Limits::default()).unwrap();
+        let mut out = ycbcr::Buffer::default();
+        reader.read_ycbcr_into(0, &mut out).unwrap();
+        assert_eq!(out.storage(), Some(ycbcr::Storage::JpegDecodedComponents));
+        assert_eq!(
+            out.chunks().unwrap().len(),
+            case["chunks"].as_array().unwrap().len()
+        );
+        for (chunk, reference) in out
+            .chunks()
+            .unwrap()
+            .iter()
+            .zip(case["chunks"].as_array().unwrap())
+        {
+            assert_eq!(serde_json::json!(chunk.origin), reference["origin"]);
+            assert_eq!(
+                serde_json::json!(chunk.image_shape),
+                reference["image_shape"]
+            );
+            assert!(chunk.sampling_units.is_none());
+            for (plane, reference) in chunk
+                .planes
+                .iter()
+                .zip(reference["planes"].as_array().unwrap())
+            {
+                assert_eq!(serde_json::json!(plane.shape), reference["shape"]);
+                assert_eq!(
+                    format!("{:x}", Sha256::digest(&plane.samples)),
+                    reference["sample_sha256"].as_str().unwrap()
+                );
+            }
+        }
+        let image = tiff::view::read_pillow13(&mut reader, 0, 4096).unwrap();
+        assert_eq!(image.provenance.source_shape, [17, 19]);
+        assert_eq!(
+            image.provenance.source_layout,
+            reader.metadata(0).unwrap().sample_layout
+        );
+    }
+    // Four padded16x16x3 tiles total3072 bytes, despite logical19x17x3=969.
+    // Every individual tile fits2000: only cumulative admission catches this.
+    let mut reader = Reader::open(
+        dir.join("jpeg-ycbcr-tiles.tif"),
+        Limits {
+            frame_bytes: 2000,
+            ..Limits::default()
+        },
+    )
+    .unwrap();
+    let mut out = ycbcr::Buffer::default();
+    assert!(
+        reader
+            .read_ycbcr_into(0, &mut out)
+            .unwrap_err()
+            .to_string()
+            .contains("frame budget")
+    );
+    assert!(out.chunks().is_none());
+    let mut reader = Reader::open(
+        dir.join("jpeg-ycbcr-tiles.tif"),
+        Limits {
+            frame_bytes: 3072,
+            ..Limits::default()
+        },
+    )
+    .unwrap();
+    reader.read_ycbcr_into(0, &mut out).unwrap();
+    assert_eq!(
+        out.chunks()
+            .unwrap()
+            .iter()
+            .flat_map(|c| &c.planes)
+            .map(|p| p.samples.len())
+            .sum::<usize>(),
+        3072
+    );
+}
+
+#[cfg(not(feature = "jpeg"))]
+#[test]
+fn jpeg_component_metadata_indexes_without_implicit_decoder_or_expansion() {
+    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("tests/data/tiff-view/jpeg-ycbcr-strips.tif");
+    let mut reader = Reader::open(path, Limits::default()).unwrap();
+    let mut out = ycbcr::Buffer::default();
+    assert!(reader.metadata(0).unwrap().uniform_sample_shape().is_none());
+    assert!(
+        reader
+            .read_ycbcr_into(0, &mut out)
+            .unwrap_err()
+            .to_string()
+            .contains("jpeg feature")
+    );
+    assert!(out.chunks().is_none());
 }

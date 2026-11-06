@@ -44,8 +44,13 @@ result = subprocess.run(
     [str(a.probe.resolve()), str(a.source)], check=True, capture_output=True, text=True
 )
 native = json.loads(result.stdout)
+unit_storage = native["storage"] == "TiffSamplingUnits"
+comparable_reference = json.loads(json.dumps(original))
+if not unit_storage:
+    for chunk in comparable_reference["chunks"]:
+        chunk["sampling_units"] = None
 for key in ["shape", "subsampling", "precision", "compression", "chunks"]:
-    if native[key] != original[key]:
+    if native[key] != comparable_reference[key]:
         raise RuntimeError(f"complete independent component mismatch: {key}")
 with Image.open(a.source) as image:
     rgb = np.asarray(image)
@@ -65,10 +70,12 @@ luminance = (
 ).astype(np.float32) / np.float32(1000)
 rgb_sha = digest(rgb.tobytes())
 luminance_sha = digest(luminance.astype("<f4", copy=False).tobytes())
-if (
-    native["display"]["rgb_sha256"] != rgb_sha
-    or native["display"]["luminance_f32_sha256"] != luminance_sha
-):
+rgb_match = (
+    None
+    if "rgb_sha256" not in native["display"]
+    else native["display"]["rgb_sha256"] == rgb_sha
+)
+if rgb_match is False or native["display"]["luminance_f32_sha256"] != luminance_sha:
     raise RuntimeError("explicit Pillow RGB/luminance view mismatch")
 if digest(a.source.read_bytes()) != before:
     raise RuntimeError("source changed during proof")
@@ -95,8 +102,8 @@ report = dict(
         chunk_count=len(original["chunks"]),
         all_planes_match=True,
         plane_count=3 * len(original["chunks"]),
-        all_stored_units_match=True,
-        rgb_match=True,
+        all_stored_units_match=True if unit_storage else None,
+        rgb_match=rgb_match,
         luminance_f32_match=True,
         raw_components_are_not_rgb=True,
     ),

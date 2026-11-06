@@ -39,6 +39,31 @@ pub enum Operation {
     JpegRgbDecode,
     YcbcrNearestChromaExpansion,
     YcbcrLibTiff472Rgb8,
+    LegacyIntegerReferenceBlackWhite,
+}
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ComponentGeometry {
+    pub origin: [usize; 2],
+    pub image_shape: [usize; 2],
+    pub shapes: [[usize; 2]; 3],
+    pub valid_shapes: [[usize; 2]; 3],
+    pub sampling: [[usize; 2]; 3],
+}
+pub(super) fn component_geometry(
+    buffer: &super::ycbcr::Buffer,
+) -> Result<Vec<ComponentGeometry>, Error> {
+    Ok(buffer
+        .chunks()
+        .ok_or_else(|| Error("component provenance requires a valid native buffer".into()))?
+        .iter()
+        .map(|c| ComponentGeometry {
+            origin: c.origin,
+            image_shape: c.image_shape,
+            shapes: std::array::from_fn(|i| c.planes[i].shape),
+            valid_shapes: std::array::from_fn(|i| c.planes[i].valid_shape),
+            sampling: std::array::from_fn(|i| c.planes[i].sampling),
+        })
+        .collect())
 }
 #[derive(Clone, Debug)]
 pub struct Provenance {
@@ -46,6 +71,7 @@ pub struct Provenance {
     /// Logical source raster; native component geometry is identified separately.
     pub source_shape: Vec<usize>,
     pub source_layout: SampleLayout,
+    pub source_components: Vec<ComponentGeometry>,
     pub source_type: PixelType,
     pub source_bits_per_sample: u8,
     pub source_photometric: u16,
@@ -79,6 +105,11 @@ pub fn convert(
     policy: Policy,
     max_output_bytes: usize,
 ) -> Result<Image, Error> {
+    if metadata.sample_layout != SampleLayout::Uniform {
+        return Err(Error(
+            "TIFF component layouts require explicit YCbCr component conversion".into(),
+        ));
+    }
     let pixels = frame
         .pixels()
         .ok_or_else(|| Error("display conversion requires a valid stored frame".into()))?;
@@ -333,6 +364,7 @@ pub fn convert(
             policy,
             source_shape: metadata.sample_shape(),
             source_layout: metadata.sample_layout,
+            source_components: Vec::new(),
             source_type: metadata.pixel_type,
             source_bits_per_sample: metadata.bits_per_sample,
             source_photometric: metadata.photometric_interpretation,

@@ -1,0 +1,251 @@
+{
+  "license": "CC0-1.0",
+  "reference": {
+    "imagecodecs": "2026.10.10",
+    "jpeg": "libjpeg_turbo 3.2.0/8.0",
+    "policy": "native YCbCr, no fancy upsampling, explicit 1x1 fixture sampling"
+  },
+  "files": {
+    "jpeg-ycbcr-strips.tif": {
+      "source_sha256": "ec56858f6394cd472298620f10c5efc628cad44fbc6fe311b39552a3afe6cb8b",
+      "chunks": [
+        {
+          "origin": [
+            0,
+            0
+          ],
+          "image_shape": [
+            8,
+            19
+          ],
+          "planes": [
+            {
+              "shape": [
+                8,
+                19
+              ],
+              "sample_sha256": "2711a8d45346866fc67d47ad5b71bb158217b83c2c6a1fc9bfb377a5f425077e"
+            },
+            {
+              "shape": [
+                8,
+                19
+              ],
+              "sample_sha256": "0edc398f83b267e08edfef9da10495bdbe0e3bc52da886fd8d8e12b7697dc060"
+            },
+            {
+              "shape": [
+                8,
+                19
+              ],
+              "sample_sha256": "55cd38ce8217e5a2edfc1b881f9a717f29b9f257d4af225b7fbf49e4e70fa1c7"
+            }
+          ]
+        },
+        {
+          "origin": [
+            8,
+            0
+          ],
+          "image_shape": [
+            8,
+            19
+          ],
+          "planes": [
+            {
+              "shape": [
+                8,
+                19
+              ],
+              "sample_sha256": "d04ef9dd045f61a7cde6efe1e1cbb0bc000002b246cb6acb7151a0c068eb3f18"
+            },
+            {
+              "shape": [
+                8,
+                19
+              ],
+              "sample_sha256": "107a81eb17496ca7e42ad088b48dec53c72fe30ab5e580cc859f6b44e8ca5cb9"
+            },
+            {
+              "shape": [
+                8,
+                19
+              ],
+              "sample_sha256": "fc15eaa7f0db17688b1f4cdee403eb679341444da9d66eeafaabeda3e20ed94f"
+            }
+          ]
+        },
+        {
+          "origin": [
+            16,
+            0
+          ],
+          "image_shape": [
+            1,
+            19
+          ],
+          "planes": [
+            {
+              "shape": [
+                1,
+                19
+              ],
+              "sample_sha256": "07316b09b94cf54be41b542bc2bd74b11c49d8047cd6768331bc7f10b4c85bd6"
+            },
+            {
+              "shape": [
+                1,
+                19
+              ],
+              "sample_sha256": "df9ee79a8f2fe9b434edda5dd103f51ca61ee86eb67d1634428a4dcb1a939db7"
+            },
+            {
+              "shape": [
+                1,
+                19
+              ],
+              "sample_sha256": "3e6efeba6eeecdc02e41d6bbb9228f6b405bb7da502d855f86c1081f0135e968"
+            }
+          ]
+        }
+      ]
+    },
+    "jpeg-ycbcr-tiles.tif": {
+      "source_sha256": "0bf87b944c08c0310a557d9bd830d955ff69e3169add0654301ad0dc4f741240",
+      "chunks": [
+        {
+          "origin": [
+            0,
+            0
+          ],
+          "image_shape": [
+            16,
+            16
+          ],
+          "planes": [
+            {
+              "shape": [
+                16,
+                16
+              ],
+              "sample_sha256": "f5a3b38fef9a55bd6b139ca0839f29b79083bbe34a0d8d32aad9ca9726e9bbdf"
+            },
+            {
+              "shape": [
+                16,
+                16
+              ],
+              "sample_sha256": "709468f5f1b1a40d49ed9f96ba9cb8c3333effd1c50fdddcca33474bfb8f26f0"
+            },
+            {
+              "shape": [
+                16,
+                16
+              ],
+              "sample_sha256": "978b01bd9d8256d0b5e2fa8fdb599129caacbb052717c6f0687db04b881ea31f"
+            }
+          ]
+        },
+        {
+          "origin": [
+            0,
+            16
+          ],
+          "image_shape": [
+            16,
+            3
+          ],
+          "planes": [
+            {
+              "shape": [
+                16,
+                16
+              ],
+              "sample_sha256": "24c79ff7c3f6859aacf9745cee884153a97e893fe90c6e2cdf55d84ac889b52a"
+            },
+            {
+              "shape": [
+                16,
+                16
+              ],
+              "sample_sha256": "d8c52c8d3c7450574f03190f9c863d63588910daa3274b0138bee98a51053dc8"
+            },
+            {
+              "shape": [
+                16,
+                16
+              ],
+              "sample_sha256": "dd94c27e41c1fd8feed6ffe04d5977f5f655346010d7e71964b740f8ffb2ebc5"
+            }
+          ]
+        },
+        {
+          "origin": [
+            16,
+            0
+          ],
+          "image_shape": [
+            1,
+            16
+          ],
+          "planes": [
+            {
+              "shape": [
+                16,
+                16
+              ],
+              "sample_sha256": "e525a4c23fa0dc794c21058cf3b160f3dfd26919271f65bbdde586bf07cb33c1"
+            },
+            {
+              "shape": [
+                16,
+                16
+              ],
+              "sample_sha256": "00c3e6ef4d704d76dc6464db86d44797fa7ec40ee6f729a16186f64253313139"
+            },
+            {
+              "shape": [
+                16,
+                16
+              ],
+              "sample_sha256": "c08dceb00ac7e4bd41252aa89c146d92f8a955e80d60cabe2624122f00555724"
+            }
+          ]
+        },
+        {
+          "origin": [
+            16,
+            16
+          ],
+          "image_shape": [
+            1,
+            3
+          ],
+          "planes": [
+            {
+              "shape": [
+                16,
+                16
+              ],
+              "sample_sha256": "b3394d40c75f0f44d7e46862d9b3fbf241335b606a720bb251f41de53fa2f954"
+            },
+            {
+              "shape": [
+                16,
+                16
+              ],
+              "sample_sha256": "9a9b9b9f50cc9caac67b8c4d1d7e69cb6c38a48fa5f883ac74d41797b5ca0f63"
+            },
+            {
+              "shape": [
+                16,
+                16
+              ],
+              "sample_sha256": "e9abb7387895783ccb9bcc4b58f7d6313147840e6c2c1e78f752effacd9877e7"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

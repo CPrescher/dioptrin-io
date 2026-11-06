@@ -19,7 +19,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     let [h, v] = buffer.subsampling().unwrap();
     let chunks:Vec<_>=buffer.chunks().unwrap().iter().map(|chunk|{let planes:Vec<_>=chunk.planes.iter().map(|p|serde_json::json!({"component":format!("{:?}",p.component),"shape":p.shape,"valid_shape":p.valid_shape,"sampling":p.sampling,"dtype":"uint8","sample_sha256":hash(&p.samples)})).collect();let units=chunk.sampling_units.as_ref().map(|u|serde_json::json!({"dtype":"uint8","shape":[chunk.planes[0].shape[0]/v,chunk.planes[0].shape[1]/h,h*v+2],"sample_sha256":hash(u)}));serde_json::json!({"origin":chunk.origin,"image_shape":chunk.image_shape,"sampling_units":units,"planes":planes})}).collect();
     let mut out = serde_json::json!({"shape":buffer.shape(),"subsampling":buffer.subsampling(),"storage":format!("{:?}",buffer.storage().unwrap()),"precision":buffer.precision(),"compression":meta.compression,"orientation":meta.orientation,"sample_layout":format!("{:?}",meta.sample_layout),"uniform_sample_shape":meta.uniform_sample_shape(),"tags":format!("{:?}",meta.tags),"chunks":chunks});
-    if buffer.storage() == Some(ycbcr::Storage::TiffSamplingUnits) {
+    if buffer.storage() == Some(ycbcr::Storage::TiffSamplingUnits) || meta.compression == 6 {
         let rgb = tiff::view::render_ycbcr_rgb472(meta, &buffer, 16 * 1024 * 1024)?;
         let tiff::view::Pixels::Scalar(PixelBuffer::U8(rgb)) = rgb.pixels else {
             unreachable!()
@@ -34,7 +34,16 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             unreachable!()
         };
         let bytes: Vec<_> = values.iter().flat_map(|x| x.to_le_bytes()).collect();
-        out["display"] = serde_json::json!({"rgb_sha256":hash(&rgb),"luminance_f32_sha256":hash(&bytes),"policy":format!("{:?}",view.provenance.policy),"source_layout":format!("{:?}",view.provenance.source_layout),"source_shape":view.provenance.source_shape,"operations":format!("{:?}",view.provenance.operations)});
+        out["display"] = serde_json::json!({"rgb_sha256":hash(&rgb),"luminance_f32_sha256":hash(&bytes),"policy":format!("{:?}",view.provenance.policy),"source_layout":format!("{:?}",view.provenance.source_layout),"source_shape":view.provenance.source_shape,"source_components":format!("{:?}",view.provenance.source_components),"operations":format!("{:?}",view.provenance.operations)});
+    }
+    #[cfg(feature = "jpeg")]
+    if meta.compression == 7 {
+        let image = tiff::view::read_pillow13(&mut reader, 0, 16 * 1024 * 1024)?;
+        let tiff::view::Pixels::Scalar(PixelBuffer::F32(values)) = image.pixels else {
+            unreachable!()
+        };
+        let bytes: Vec<_> = values.iter().flat_map(|v| v.to_le_bytes()).collect();
+        out["display"] = serde_json::json!({"luminance_f32_sha256":hash(&bytes),"policy":format!("{:?}",image.provenance.policy),"source_layout":format!("{:?}",image.provenance.source_layout),"source_shape":image.provenance.source_shape,"source_components":format!("{:?}",image.provenance.source_components),"operations":format!("{:?}",image.provenance.operations)});
     }
     println!("{}", out);
     Ok(())

@@ -112,12 +112,21 @@ pub fn render_ycbcr_rgb472(
             }
         }
     }
+    let mut operations = Vec::new();
+    if color.legacy_integer_reference {
+        operations.push(Operation::LegacyIntegerReferenceBlackWhite);
+    }
+    operations.extend([
+        Operation::YcbcrNearestChromaExpansion,
+        Operation::YcbcrLibTiff472Rgb8,
+    ]);
     Ok(Image {
         pixels: Pixels::Scalar(PixelBuffer::U8(samples)),
         provenance: Provenance {
             policy: Policy::Pillow13,
             source_shape: metadata.shape.to_vec(),
             source_layout: metadata.sample_layout,
+            source_components: view::component_geometry(source)?,
             source_type: metadata.pixel_type,
             source_bits_per_sample: metadata.bits_per_sample,
             source_photometric: metadata.photometric_interpretation,
@@ -127,10 +136,7 @@ pub fn render_ycbcr_rgb472(
             source_lossy: metadata.lossy,
             shape: vec![metadata.shape[0], metadata.shape[1], 3],
             output_type: OutputType::Scalar(PixelType::U8),
-            operations: vec![
-                Operation::YcbcrNearestChromaExpansion,
-                Operation::YcbcrLibTiff472Rgb8,
-            ],
+            operations,
         },
     })
 }
@@ -169,6 +175,7 @@ pub fn convert_ycbcr(
     image.provenance.source_shape = metadata.shape.to_vec();
     image.provenance.source_layout = metadata.sample_layout;
     image.provenance.source_photometric = 6;
+    image.provenance.source_components = rgb.provenance.source_components;
     image
         .provenance
         .operations

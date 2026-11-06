@@ -1,0 +1,256 @@
+{
+  "schema": 1,
+  "source": {
+    "path": "/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/zackthecat.tif",
+    "sha256": "0d31f2acb25bfbde4d79975572369c3e4bea8e978fc1935075a545e3f8321b6e",
+    "bytes": 8258,
+    "unchanged_after_proof": true,
+    "tags": {
+      "258": [
+        8,
+        8,
+        8
+      ],
+      "259": 6,
+      "262": 6,
+      "529": [
+        0.299,
+        0.587,
+        0.114
+      ],
+      "530": [
+        2,
+        2
+      ],
+      "532": [
+        16,
+        235,
+        128,
+        240,
+        128,
+        240
+      ],
+      "277": 3,
+      "284": 1
+    }
+  },
+  "reference": {
+    "libtiff": {
+      "path": "/opt/homebrew/Cellar/libtiff/4.7.2/lib/libtiff.6.dylib",
+      "sha256": "ed5a54e3e8a621ba58f51ce632debb3f8d0ef068faf5bee887672581698e4cc1",
+      "version": "LIBTIFF, Version 4.7.2\nCopyright (c) 1988-1996 Sam Leffler\nCopyright (c) 1991-1996 Silicon Graphics, Inc.",
+      "lzw_reference": {
+        "package": "imagecodecs",
+        "version": "2026.10.10",
+        "codec": "imcd 2026.10.10",
+        "path": "/private/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/imagecodecs/_imcd.abi3.so",
+        "sha256": "26d2f4e4dd4de711e8800ab4f90922aee045881a8689a0d2cc026f54a9bd076b",
+        "policy": "decode complete raw LZW payload, retaining full final-strip padding rather than libtiff logical-row clipping"
+      },
+      "modern_jpeg_reference": {
+        "package": "imagecodecs",
+        "version": "2026.10.10",
+        "codec": "libjpeg_turbo 3.2.0/8.0",
+        "path": "/private/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/imagecodecs/_jpeg8.abi3.so",
+        "sha256": "5941cf2d329d25beb440bc263a4b0f20e59c614c2506be9e3deb32bd4ff3c41a",
+        "policy": "aligned original JPEG chunks, explicit YCbCr output with nearest replication; exact inverse decimation recovers source chroma grids. LibTIFF RAW can return partially zero-filled modern JPEG units and is not used for compression7."
+      }
+    },
+    "helper_sha256": "87653faa59f7cb2827b362355cf54900b02f5cf7d449e45fa9db5fe1f156ba16",
+    "pillow_version": "13.0.0",
+    "pillow_libtiff_version": "4.7.2"
+  },
+  "native_probe_sha256": "885690409692cf2d6c1b2b695da917176634993faadb51b910f9ec37978536e7",
+  "native": {
+    "chunks": [
+      {
+        "image_shape": [
+          213,
+          234
+        ],
+        "origin": [
+          0,
+          0
+        ],
+        "planes": [
+          {
+            "component": "Y",
+            "dtype": "uint8",
+            "sample_sha256": "fc33ecfd3c999a9a22685b48683d45f4cd0909dfc513208c5901d096b7e59dbf",
+            "sampling": [
+              1,
+              1
+            ],
+            "shape": [
+              224,
+              240
+            ],
+            "valid_shape": [
+              213,
+              234
+            ]
+          },
+          {
+            "component": "Cb",
+            "dtype": "uint8",
+            "sample_sha256": "7338a75a3cfa9ce129b2383aaba4ed3d80b3b7392143eba54631bcc976d9ee82",
+            "sampling": [
+              2,
+              2
+            ],
+            "shape": [
+              112,
+              120
+            ],
+            "valid_shape": [
+              107,
+              117
+            ]
+          },
+          {
+            "component": "Cr",
+            "dtype": "uint8",
+            "sample_sha256": "fbea610b3308c04abae33a121175973932c2ac81b6eac120d2c578319b577197",
+            "sampling": [
+              2,
+              2
+            ],
+            "shape": [
+              112,
+              120
+            ],
+            "valid_shape": [
+              107,
+              117
+            ]
+          }
+        ],
+        "sampling_units": null
+      }
+    ],
+    "compression": 6,
+    "display": {
+      "luminance_f32_sha256": "a0005af2cc3924f94c7c23f16aec6b4cb4f945a74bcc1d9d4b2c4e3d8bc00120",
+      "operations": "[LegacyIntegerReferenceBlackWhite, YcbcrNearestChromaExpansion, YcbcrLibTiff472Rgb8, RgbLuminanceF32]",
+      "policy": "Pillow13",
+      "rgb_sha256": "07e14337293205b2aea2a4ae0b38ac5e52afeb88707e4678b4085eb8ec708d62",
+      "source_components": "[ComponentGeometry { origin: [0, 0], image_shape: [213, 234], shapes: [[224, 240], [112, 120], [112, 120]], valid_shapes: [[213, 234], [107, 117], [107, 117]], sampling: [[1, 1], [2, 2], [2, 2]] }]",
+      "source_layout": "YCbCrComponents { horizontal: 2, vertical: 2 }",
+      "source_shape": [
+        213,
+        234
+      ]
+    },
+    "orientation": 1,
+    "precision": 8,
+    "sample_layout": "YCbCrComponents { horizontal: 2, vertical: 2 }",
+    "shape": [
+      213,
+      234
+    ],
+    "storage": "JpegDecodedComponents",
+    "subsampling": [
+      2,
+      2
+    ],
+    "tags": "{256: Short(234), 257: Short(213), 258: List([Short(8), Short(8), Short(8)]), 259: Short(6), 262: Short(6), 277: Short(3), 282: Rational(750000, 10000), 283: Rational(750000, 10000), 284: Short(1), 296: Short(2), 322: Short(240), 323: Short(224), 324: Unsigned(8), 325: Unsigned(7076), 512: Short(1), 519: List([Unsigned(7364), Unsigned(7428), Unsigned(7492)]), 520: List([Unsigned(7568), Unsigned(7596), Unsigned(7624)]), 521: List([Unsigned(7664), Unsigned(7842), Unsigned(8020)]), 529: List([Rational(2990, 10000), Rational(5870, 10000), Rational(1140, 10000)]), 530: List([Short(2), Short(2)]), 532: List([Unsigned(16), Unsigned(235), Unsigned(128), Unsigned(240), Unsigned(128), Unsigned(240)])}",
+    "uniform_sample_shape": null
+  },
+  "independent_reference": {
+    "shape": [
+      213,
+      234
+    ],
+    "subsampling": [
+      2,
+      2
+    ],
+    "precision": 8,
+    "compression": 6,
+    "storage": "JpegDecodedComponents",
+    "chunks": [
+      {
+        "origin": [
+          0,
+          0
+        ],
+        "image_shape": [
+          213,
+          234
+        ],
+        "sampling_units": {
+          "dtype": "uint8",
+          "shape": [
+            112,
+            120,
+            6
+          ],
+          "sample_sha256": "db82c661ea10a29afd6566b7fe78e74fbcbe26004900a703b412561b8300c154"
+        },
+        "planes": [
+          {
+            "component": "Y",
+            "sampling": [
+              1,
+              1
+            ],
+            "valid_shape": [
+              213,
+              234
+            ],
+            "dtype": "uint8",
+            "shape": [
+              224,
+              240
+            ],
+            "sample_sha256": "fc33ecfd3c999a9a22685b48683d45f4cd0909dfc513208c5901d096b7e59dbf"
+          },
+          {
+            "component": "Cb",
+            "sampling": [
+              2,
+              2
+            ],
+            "valid_shape": [
+              107,
+              117
+            ],
+            "dtype": "uint8",
+            "shape": [
+              112,
+              120
+            ],
+            "sample_sha256": "7338a75a3cfa9ce129b2383aaba4ed3d80b3b7392143eba54631bcc976d9ee82"
+          },
+          {
+            "component": "Cr",
+            "sampling": [
+              2,
+              2
+            ],
+            "valid_shape": [
+              107,
+              117
+            ],
+            "dtype": "uint8",
+            "shape": [
+              112,
+              120
+            ],
+            "sample_sha256": "fbea610b3308c04abae33a121175973932c2ac81b6eac120d2c578319b577197"
+          }
+        ]
+      }
+    ]
+  },
+  "proof": {
+    "all_chunks_match": true,
+    "chunk_count": 1,
+    "all_planes_match": true,
+    "plane_count": 3,
+    "all_stored_units_match": null,
+    "rgb_match": true,
+    "luminance_f32_match": true,
+    "raw_components_are_not_rgb": true
+  }
+}

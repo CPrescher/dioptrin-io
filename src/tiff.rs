@@ -2,7 +2,8 @@
 //!
 //! Stored row order, scalar sample bits and Orientation are retained. Supported
 //! WhiteIsZero samples bypass the backend display inversion, packed gray samples are
-//! unpacked without intensity scaling, and color planes are interleaved.
+//! unpacked without intensity scaling, and uniform color planes are interleaved.
+//! YCbCr exposes explicit native component grids and sampling units.
 //! Float16 source values widen exactly to f32, with the source bit width retained.
 //! Palettes retain raw indices and ColorMap; CFA retains its scalar plane. Tags remain
 //! typed values, including private tags understood by the backend's value parser.
@@ -13,6 +14,8 @@ mod ifd_view;
 mod jpeg_components;
 #[cfg(feature = "jpeg")]
 pub mod ojpeg;
+#[cfg(feature = "jpeg")]
+mod ycbcr_jpeg;
 use ifd_view::{Admission, ChunkWindows, FileView, OriginalPhoto};
 pub mod view;
 #[cfg(feature = "jpeg")]
@@ -79,7 +82,8 @@ pub struct OpaqueTag {
     pub reason: String,
 }
 
-/// Native source layout. Component grids cannot be represented by one HWC buffer.
+/// Native source layout. Component grids are exposed independently, without
+/// requiring a shared full-resolution HWC array.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SampleLayout {
     Uniform,
@@ -324,15 +328,17 @@ impl Reader {
         } else {
             #[cfg(feature = "jpeg")]
             {
-                if page.compression != 6 {
-                    return Err(Error(
-                        "native modern TIFF JPEG components require component decoder".into(),
-                    ));
-                }
-                (
-                    ojpeg::decode(&self.snapshot, &self.identity_handle, page, self.limits)?,
-                    ycbcr::Storage::JpegDecodedComponents,
-                )
+                let chunks = match page.compression {
+                    6 => ojpeg::decode(&self.snapshot, &self.identity_handle, page, self.limits)?,
+                    7 => ycbcr_jpeg::decode(
+                        &self.snapshot,
+                        &self.identity_handle,
+                        page,
+                        self.limits,
+                    )?,
+                    _ => return Err(Error("unsupported TIFF component compression".into())),
+                };
+                (chunks, ycbcr::Storage::JpegDecodedComponents)
             }
             #[cfg(not(feature = "jpeg"))]
             {

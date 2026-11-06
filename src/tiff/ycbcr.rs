@@ -244,9 +244,6 @@ pub(super) fn validate(page: &Metadata, limits: Limits) -> Result<(), Error> {
                     .and_then(|n| n.checked_add(g.max_samples))
                     .and_then(|n| n.checked_add(1))
                     .is_none_or(|n| n > limits.intermediate_bytes)
-            || g.samples
-                .checked_add(1)
-                .is_none_or(|n| n > limits.intermediate_bytes)
             || page.compression == 1 && bytes != g.samples as u64 && bytes != g.max_samples as u64
         {
             return Err(Error(
@@ -257,19 +254,24 @@ pub(super) fn validate(page: &Metadata, limits: Limits) -> Result<(), Error> {
     Ok(())
 }
 
-/// Effective colorimetry; exact original rational words remain in Metadata.tags.
+/// Effective colorimetry; exact original typed source words remain in Metadata.tags.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Colorimetry {
     pub coefficients: [f64; 3],
     pub reference_black_white: [f64; 6],
     pub positioning: u16,
+    /// Legacy TIFF LONG ReferenceBlackWhite is retained as LONG in source tags.
+    pub legacy_integer_reference: bool,
 }
 pub fn colorimetry(page: &Metadata) -> Result<Colorimetry, Error> {
     fn rational<const N: usize>(
         tag: Option<&TagValue>,
         default: [f64; N],
-    ) -> Result<[f64; N], Error> {
-        let Some(tag) = tag else { return Ok(default) };
+        allow_integer: bool,
+    ) -> Result<([f64; N], bool), Error> {
+        let Some(tag) = tag else {
+            return Ok((default, false));
+        };
         let items = match tag {
             TagValue::List(values) => values.as_slice(),
             value => std::slice::from_ref(value),
@@ -278,23 +280,21 @@ pub fn colorimetry(page: &Metadata) -> Result<Colorimetry, Error> {
             return Err(Error("YCbCr rational tag count mismatch".into()));
         }
         let mut out = [0.0; N];
+        let mut legacy = false;
         for (dst, src) in out.iter_mut().zip(items) {
-            let TagValue::Rational(n, d) = src else {
-                return Err(Error(
-                    "YCbCr colorimetry requires source unsigned rationals".into(),
-                ));
-            };
-            if *d == 0 {
-                return Err(Error("YCbCr rational denominator is zero".into()));
-            }
-            *dst = f64::from(*n) / f64::from(*d);
+            match src{
+            TagValue::Rational(n,d) if *d!=0=>*dst=f64::from(*n)/f64::from(*d),
+            TagValue::Unsigned(n) if allow_integer=>{*dst=f64::from(*n);legacy=true;},
+            _=>return Err(Error("YCbCr colorimetry requires unsigned rationals, or explicit legacy LONG reference levels".into())),
         }
-        Ok(out)
+        }
+        Ok((out, legacy))
     }
-    let coefficients = rational(page.tags.get(&529), [0.299, 0.587, 0.114])?;
-    let reference_black_white = rational(
+    let (coefficients, _) = rational(page.tags.get(&529), [0.299, 0.587, 0.114], false)?;
+    let (reference_black_white, legacy_integer_reference) = rational(
         page.tags.get(&532),
         [0.0, 255.0, 128.0, 255.0, 128.0, 255.0],
+        true,
     )?;
     let positioning = u16::try_from(number(page, 531, 1)?)
         .map_err(|_| Error("YCbCr positioning exceeds u16".into()))?;
@@ -314,6 +314,7 @@ pub fn colorimetry(page: &Metadata) -> Result<Colorimetry, Error> {
         coefficients,
         reference_black_white,
         positioning,
+        legacy_integer_reference,
     })
 }
 
