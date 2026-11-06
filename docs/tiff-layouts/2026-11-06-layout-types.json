@@ -1,0 +1,1760 @@
+{
+  "schema": 1,
+  "gate": true,
+  "scope": "Group3 mixed 1D/2D, CCITT RLE, explicit classic/BigTIFF SubIFD catalog and raw selected directories; no implicit display or primary promotion",
+  "probe_sha256": "6b8eb57a2de3b61f6b7f2d2b54441319a2a08497a5457c75255441f799afd33b",
+  "helper_sha256": "37790203c5e07700e3ce9bb99a1ee433953a404b8434655cd0107c18a1e4e982",
+  "python": "3.13.5 (main, Jun 12 2025, 12:22:43) [Clang 20.1.4 ]",
+  "numpy_version": "2.5.4",
+  "tifffile_version": "2026.10.15",
+  "fabio_version": "2026.6.0",
+  "unit_test_evidence": {
+    "vendor": {
+      "command": "CARGO_TARGET_DIR=/tmp/dioptrin-fax-strict-target cargo test --manifest-path vendor/fax-0.2.7/Cargo.toml --lib --offline",
+      "passed": 19,
+      "original": 14,
+      "new": 5
+    },
+    "native": {
+      "command": "cargo test --no-default-features --features wrappers --test tiff_layouts --test tiff_rejections",
+      "passed": 15
+    }
+  },
+  "qualification": {
+    "reference_source_differences": "six fax cases: native raw stored bits and shape differ intentionally from Pillow orientation6 plus WhiteIsZero bool display; exact independent libtiff source equality and explicit test-only display equality are separate",
+    "reference_unsupported": [
+      "FabIO openimage BigTIFF recognition",
+      "no pinned FabIO public SubIFD offset selection API"
+    ],
+    "remaining_native_scope": [
+      "Group3 uncompressed extension",
+      "CCITT RLE word-aligned32771",
+      "Group3/RLE tiled layouts",
+      "semantic interpretation of arbitrary SubIFD tag namespaces"
+    ]
+  },
+  "fabio_source": {
+    "commit": "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece",
+    "TiffIO_sha256": "761e09edb72380be24fb313a60f456b8e2f3d73c26acbe2ccbd02b5c88bdbb50"
+  },
+  "libtiff": {
+    "path": "/opt/homebrew/Cellar/libtiff/4.7.2/lib/libtiff.6.dylib",
+    "sha256": "ed5a54e3e8a621ba58f51ce632debb3f8d0ef068faf5bee887672581698e4cc1",
+    "version": "LIBTIFF, Version 4.7.2\nCopyright (c) 1988-1996 Sam Leffler\nCopyright (c) 1991-1996 Silicon Graphics, Inc."
+  },
+  "runtime_sources_before": {
+    "src/tiff.rs": "bc571d1d201ad5aab311bfb192c301f475fd5439e202149b90361cd1a68dbbca",
+    "src/tiff/api.rs": "7729d24b21575a0df206662a47f05fff4ea277b76ab58fcfd6e43ba6f59be3ea",
+    "src/tiff/compatibility.rs": "ee3dc5bdd237f58bde81538c46ee6a393793b0632e9c921e867479f3c7a4e541",
+    "src/tiff/directories.rs": "05f769c6b45f2b3815927cbae312d1a3826ae12df54679fb70f867dd6e0f73b1",
+    "src/tiff/group3.rs": "5b93c48ec62e2e97c6dae4742b6a9a4cc054b15509ca38d47c3b57ace85f9a23",
+    "src/tiff/header.rs": "eb73d259c05fea3b03e6d0524ba42d93abf58462db39a7831ed8f48b8113700d",
+    "src/tiff/ifd_view.rs": "214fe1454bb9e8ae874345bac82b9efec3fb8e28241ba199a27968aac897886a",
+    "src/tiff/jpeg_components.rs": "8cc9ef27459a54f7a6e47ea6e594d5a51bdb0b0820d10c2c93a778f010014c53",
+    "src/tiff/ojpeg.rs": "27ea210bfa75c251d75a396fb949b1d466fe68c67b5e8201cb25f7a81296176a",
+    "src/tiff/thunderscan.rs": "7d299c5032402b5af16f79ec7f66d9609a03046a058fe91b9cc13206673fff2c",
+    "src/tiff/view.rs": "c4f32a6903c98c8030047a217ef572c6f03261e37fe4d4b0724315f5f4dbc2ed",
+    "src/tiff/view_jpeg.rs": "8f8df0d1a26d93e9f15715d9d238e47c7bd420afe8d3c7337004691c0af522e1",
+    "src/tiff/view_ycbcr.rs": "9fbb8713ae4739ef0433441e15412d54ad8920b297652caab687b14c57d9f583",
+    "src/tiff/ycbcr.rs": "12958c127df223a150ee186094d70126a2841d79ccccb68bd3a08d78e4cdaa19",
+    "src/tiff/ycbcr_jpeg.rs": "3a70a695fed2fca125b2609356989c669b3020eeaeaed6d86a4c1c3f2365e679",
+    "vendor/tiff-0.11.3/.cargo_vcs_info.json": "0438c9ded8721b16dce59dea888c802c46339c38a04048503fccd36871e4c22d",
+    "vendor/tiff-0.11.3/CHANGES.md": "a06baccbb8aaea0dd276ffcc85c92d71557bc611cb07cf6cd92163ad172da78e",
+    "vendor/tiff-0.11.3/Cargo.toml": "23e41bed42487a7cf94160b99e7e40fe572a06c5e7702366bcf9bf3421f91c96",
+    "vendor/tiff-0.11.3/Cargo.toml.orig": "2e7c6218c3c8cb21de4dcf3fa1f44349c7992e71b2b69bdb8dd2cf4c8c246af9",
+    "vendor/tiff-0.11.3/LICENSE": "20c097d0de27e2adc179140a3d542091951a030699c7e1c78655f2a2d08d4e3e",
+    "vendor/tiff-0.11.3/PATCHES.md": "1cc2fc58076ca1c673009c22e8f012c048de30c01f3ad496178cc9305b1f8d0d",
+    "vendor/tiff-0.11.3/README.md": "c6ab90cfdcb820df38599e943d9bfb847832dcfc4ad8c935e5b5a801f846e26d",
+    "vendor/tiff-0.11.3/UPSTREAM.json": "4f2a8369ad0afa7b9ccfea3f857680e26c762f925fc7c145d2f15cc619953add",
+    "vendor/tiff-0.11.3/benches/lzw.rs": "ae9bd8a35ad6826ac204bb03bc6c07fc6070eb69c8f1baf20ed3222e515ca0a5",
+    "vendor/tiff-0.11.3/dioptrin-legacy-lzw.patch": "79753633a4a9e453ac451733beacaef722a4e5d047c0ae44b7f59402a29047e3",
+    "vendor/tiff-0.11.3/examples/decode.rs": "afb02be7273f32865994960f55572c372ccede0c81b2f8d48254f938e19323cd",
+    "vendor/tiff-0.11.3/examples/tiff-ls.rs": "fcd5d6bbce607efe71c3feadc3663641951573484893f042bf3686208f377238",
+    "vendor/tiff-0.11.3/src/bytecast.rs": "de78962c9c8c08bd91e5cc5ce313712b174803e83bab0199ad2281536aa81251",
+    "vendor/tiff-0.11.3/src/decoder/cycles.rs": "c3195487f2bd7f1ffca002d1d26d8d02a50764b6b48807003ea2de5ea1fc4e39",
+    "vendor/tiff-0.11.3/src/decoder/ifd.rs": "6b5dc67aa975e0b5238677495ef9369d576e85c10f66a2808866ab3c8e4e31bc",
+    "vendor/tiff-0.11.3/src/decoder/image.rs": "78471b9cd0e9dc948eea77a5b321d0b38dea920a8b37b3766008e30c9f9ceb50",
+    "vendor/tiff-0.11.3/src/decoder/legacy_lzw.rs": "75315fe308d6ddd3e484418b4c4f57673835ed0e7d942584233b4fdb1b348260",
+    "vendor/tiff-0.11.3/src/decoder/mod.rs": "929e3bc74a8cdc049428723709109ca8d12e3ee322139de9f8434f3e6534f632",
+    "vendor/tiff-0.11.3/src/decoder/stream.rs": "301e64b0d35e9f801912711374b2df04c6bb2901b41d83c50d851e77726bac1d",
+    "vendor/tiff-0.11.3/src/decoder/tag_reader.rs": "aff635b58ba2e3ec81a81e8e274c5425093ce360cbabef16281b527581f2d648",
+    "vendor/tiff-0.11.3/src/directory.rs": "f879c562b1658648e7515521d3f8977ee3103e93a68240caad2eda71b5d2c0a6",
+    "vendor/tiff-0.11.3/src/encoder/colortype.rs": "b3568e750bccf3694677f1b52ece8f52c51e55e2182cc8a861e5a9607b6707ed",
+    "vendor/tiff-0.11.3/src/encoder/compression/deflate.rs": "d96e91ea01fddd5d060fcd3a53f55360163d2cd49a5dea32b1b6db3ccb5f14ba",
+    "vendor/tiff-0.11.3/src/encoder/compression/lzw.rs": "f2f8b279eb23521f9b7e0e87ddb04ce1773c1b8a9a9379dbf81a446311ae4b0c",
+    "vendor/tiff-0.11.3/src/encoder/compression/mod.rs": "c7384129421482cbd3400e12ce92756f674b12fa1fa35eaf56fb04d1cbef54cd",
+    "vendor/tiff-0.11.3/src/encoder/compression/packbits.rs": "2971d61100afe2772f52ac434be9bddcdc3103e82330dfd47cdbc7a808681f98",
+    "vendor/tiff-0.11.3/src/encoder/compression/uncompressed.rs": "c4d6e31db7db28c849b5a606788f42f934af19ebd7a6c92925b6f09f8b30bfb0",
+    "vendor/tiff-0.11.3/src/encoder/mod.rs": "9e997c39c2c89e03bdf73a0da80fa5436f45db3ff8f168f6b6b1ccb8a5803cab",
+    "vendor/tiff-0.11.3/src/encoder/tiff_value.rs": "2b77a2d7db1334c8175e439c097f701d6fa4b95b6d7c51a2e275f8d4197af710",
+    "vendor/tiff-0.11.3/src/encoder/writer.rs": "f2618cfa7df23c952149491fba30f4ec9301c3868e66e89e5236c8ecba5eaf6f",
+    "vendor/tiff-0.11.3/src/error.rs": "5eb3faf83dc8695896fa98ebb19a1a0cff8def04f06ce8e25085cb9b77092565",
+    "vendor/tiff-0.11.3/src/lib.rs": "e0ae3165f1e935f7180ec6789271974a6bb8ea45ba7626586659e226a2135377",
+    "vendor/tiff-0.11.3/src/tags.rs": "c95500037f237d9d0e4b09fd9bea777fb3f648d4c10e007a678ee7c9e32acdb4",
+    "vendor/tiff-0.11.3/tests/COPYRIGHT": "c6d1d56bb6e2fe4f0aed4aa8553261dd65247db6db50c87c9e9f3fbe095e2202",
+    "vendor/tiff-0.11.3/tests/benches/README.md": "61c5580a4c667cfe0cb2e63597f84b84e34a3424202d6e3e53954d4c273189f7",
+    "vendor/tiff-0.11.3/tests/decode_bigtiff_images.rs": "5460b4c0be1588a6281c00a23ec1cb2a9b4cf3a5df5434da464ec30b888f6cd2",
+    "vendor/tiff-0.11.3/tests/decode_fp16_images.rs": "81bf11bb30fea7d3f45c8c4edb684f8ae5db22e5c6e9643bb6cfb22b28d7df09",
+    "vendor/tiff-0.11.3/tests/decode_geotiff_images.rs": "79967e04943b86d4c9d9beca4fe2edf83f0ad592d68d5d2a124151ecaea6620b",
+    "vendor/tiff-0.11.3/tests/decode_images.rs": "70e65040f648ee13782bf9300e5952efda9afdd133ca1908f5c345607bec360f",
+    "vendor/tiff-0.11.3/tests/decode_planes.rs": "38e56c821defa193a01120712c76332d60e9b5bcacb4711d2ba36676b0786783",
+    "vendor/tiff-0.11.3/tests/decodedata-rgb-3c-8b.tiff": "88fb7908c4562ad3f3a1180c02115da71efc34a6d3b4f0573360113385cef33c",
+    "vendor/tiff-0.11.3/tests/encode_images.rs": "02887fda130bed681232bf3f4da93401eb82a2430ad2ff5095b733cd191d1a1b",
+    "vendor/tiff-0.11.3/tests/encode_images_with_compression.rs": "72ab30b93ef520f39f45d0ff510be9f7432fc653064f65146767ac57b6c2a1bb",
+    "vendor/tiff-0.11.3/tests/fuzz_tests.rs": "742f4283cdc6c3f5d1ccf320ea6c0eb7f3f517cc831de801206c077a0518ec99",
+    "vendor/tiff-0.11.3/tests/predict.rs": "dbf8a5a8c301cdaa4282abd8ecf405a5d4ecf22dcbe343527e7fb293405bac92",
+    "vendor/tiff-0.11.3/tests/subsubifds.rs": "408f1fe35613866e623cc822c2b6197b2e8c68519def9dd61518d8f5473be052",
+    "vendor/fax-0.2.7/.cargo_vcs_info.json": "6425a187e7ee9f8c0f53d81851cbe49003f454a1c10d47d081712d767c8f5aa8",
+    "vendor/fax-0.2.7/Cargo.toml": "3e3a68e321f1285396fcab5383278219b2e1e9f495b7b3dc4ab7e8965340e538",
+    "vendor/fax-0.2.7/Cargo.toml.orig": "1a093a8cbffe84785115f203ab7c1455e39b8ec0a9c86943a0c23d6e24a8567c",
+    "vendor/fax-0.2.7/LICENSE": "7101390b4c8edd752f4c0de47f35d61b44d9cf0ee8dd032115e25644e277cfff",
+    "vendor/fax-0.2.7/PATCHES.md": "0138e5264e07dcabd1569f4d7290323ef991628bb11972994e34279d75f7315b",
+    "vendor/fax-0.2.7/README.md": "c79f0c2a08d8b13daaaf45be481e80b12d1818c3feb91ba89e8967fe9e3a2d84",
+    "vendor/fax-0.2.7/UPSTREAM.json": "6bfd4e5668dc0922c8099cdd8e25d4e00465cd7ae99db418f4bf5bba96ceb701",
+    "vendor/fax-0.2.7/dioptrin-strict-rows.patch": "76335df9d1a22f595fa5c214636e6702a5b02f4e5e422e0df631c9870cff15df",
+    "vendor/fax-0.2.7/src/bitmaps.rs": "1a5e39b709669865ffffc3587942b01011fdc2634ce420c74daa3791982d206d",
+    "vendor/fax-0.2.7/src/decoder.rs": "61a695a4a119c065bb4eaff6ed0b523a1b0db6826599a2a22883673f90f152ba",
+    "vendor/fax-0.2.7/src/encoder.rs": "e56b33ec18f7200627f2832c255aac829792ea00f5dad82d86b10d48a8be69d4",
+    "vendor/fax-0.2.7/src/lib.rs": "72c4b9743723c351e8d819517d9faaada66f3c2422e11517e5d798bd4208b834",
+    "vendor/fax-0.2.7/src/maps.rs": "ec54d7a995572ec9bcb6bea5699286e15b424204a95a13fb5b283b3afc1da04c",
+    "vendor/fax-0.2.7/src/strict_tests.rs": "c1c5c509237507c3292cdb7fac217516a7eaa8c13ebe9ae1fef3ed169e469fcf",
+    "vendor/fax-0.2.7/src/tiff.rs": "9a764b0c665faa564924433dc3b39d1c2ac6e10628df1b26ed56878ff1a3c2c3"
+  },
+  "runtime_sources_after": {
+    "src/tiff.rs": "bc571d1d201ad5aab311bfb192c301f475fd5439e202149b90361cd1a68dbbca",
+    "src/tiff/api.rs": "7729d24b21575a0df206662a47f05fff4ea277b76ab58fcfd6e43ba6f59be3ea",
+    "src/tiff/compatibility.rs": "ee3dc5bdd237f58bde81538c46ee6a393793b0632e9c921e867479f3c7a4e541",
+    "src/tiff/directories.rs": "05f769c6b45f2b3815927cbae312d1a3826ae12df54679fb70f867dd6e0f73b1",
+    "src/tiff/group3.rs": "5b93c48ec62e2e97c6dae4742b6a9a4cc054b15509ca38d47c3b57ace85f9a23",
+    "src/tiff/header.rs": "eb73d259c05fea3b03e6d0524ba42d93abf58462db39a7831ed8f48b8113700d",
+    "src/tiff/ifd_view.rs": "214fe1454bb9e8ae874345bac82b9efec3fb8e28241ba199a27968aac897886a",
+    "src/tiff/jpeg_components.rs": "8cc9ef27459a54f7a6e47ea6e594d5a51bdb0b0820d10c2c93a778f010014c53",
+    "src/tiff/ojpeg.rs": "27ea210bfa75c251d75a396fb949b1d466fe68c67b5e8201cb25f7a81296176a",
+    "src/tiff/thunderscan.rs": "7d299c5032402b5af16f79ec7f66d9609a03046a058fe91b9cc13206673fff2c",
+    "src/tiff/view.rs": "c4f32a6903c98c8030047a217ef572c6f03261e37fe4d4b0724315f5f4dbc2ed",
+    "src/tiff/view_jpeg.rs": "8f8df0d1a26d93e9f15715d9d238e47c7bd420afe8d3c7337004691c0af522e1",
+    "src/tiff/view_ycbcr.rs": "9fbb8713ae4739ef0433441e15412d54ad8920b297652caab687b14c57d9f583",
+    "src/tiff/ycbcr.rs": "12958c127df223a150ee186094d70126a2841d79ccccb68bd3a08d78e4cdaa19",
+    "src/tiff/ycbcr_jpeg.rs": "3a70a695fed2fca125b2609356989c669b3020eeaeaed6d86a4c1c3f2365e679",
+    "vendor/tiff-0.11.3/.cargo_vcs_info.json": "0438c9ded8721b16dce59dea888c802c46339c38a04048503fccd36871e4c22d",
+    "vendor/tiff-0.11.3/CHANGES.md": "a06baccbb8aaea0dd276ffcc85c92d71557bc611cb07cf6cd92163ad172da78e",
+    "vendor/tiff-0.11.3/Cargo.toml": "23e41bed42487a7cf94160b99e7e40fe572a06c5e7702366bcf9bf3421f91c96",
+    "vendor/tiff-0.11.3/Cargo.toml.orig": "2e7c6218c3c8cb21de4dcf3fa1f44349c7992e71b2b69bdb8dd2cf4c8c246af9",
+    "vendor/tiff-0.11.3/LICENSE": "20c097d0de27e2adc179140a3d542091951a030699c7e1c78655f2a2d08d4e3e",
+    "vendor/tiff-0.11.3/PATCHES.md": "1cc2fc58076ca1c673009c22e8f012c048de30c01f3ad496178cc9305b1f8d0d",
+    "vendor/tiff-0.11.3/README.md": "c6ab90cfdcb820df38599e943d9bfb847832dcfc4ad8c935e5b5a801f846e26d",
+    "vendor/tiff-0.11.3/UPSTREAM.json": "4f2a8369ad0afa7b9ccfea3f857680e26c762f925fc7c145d2f15cc619953add",
+    "vendor/tiff-0.11.3/benches/lzw.rs": "ae9bd8a35ad6826ac204bb03bc6c07fc6070eb69c8f1baf20ed3222e515ca0a5",
+    "vendor/tiff-0.11.3/dioptrin-legacy-lzw.patch": "79753633a4a9e453ac451733beacaef722a4e5d047c0ae44b7f59402a29047e3",
+    "vendor/tiff-0.11.3/examples/decode.rs": "afb02be7273f32865994960f55572c372ccede0c81b2f8d48254f938e19323cd",
+    "vendor/tiff-0.11.3/examples/tiff-ls.rs": "fcd5d6bbce607efe71c3feadc3663641951573484893f042bf3686208f377238",
+    "vendor/tiff-0.11.3/src/bytecast.rs": "de78962c9c8c08bd91e5cc5ce313712b174803e83bab0199ad2281536aa81251",
+    "vendor/tiff-0.11.3/src/decoder/cycles.rs": "c3195487f2bd7f1ffca002d1d26d8d02a50764b6b48807003ea2de5ea1fc4e39",
+    "vendor/tiff-0.11.3/src/decoder/ifd.rs": "6b5dc67aa975e0b5238677495ef9369d576e85c10f66a2808866ab3c8e4e31bc",
+    "vendor/tiff-0.11.3/src/decoder/image.rs": "78471b9cd0e9dc948eea77a5b321d0b38dea920a8b37b3766008e30c9f9ceb50",
+    "vendor/tiff-0.11.3/src/decoder/legacy_lzw.rs": "75315fe308d6ddd3e484418b4c4f57673835ed0e7d942584233b4fdb1b348260",
+    "vendor/tiff-0.11.3/src/decoder/mod.rs": "929e3bc74a8cdc049428723709109ca8d12e3ee322139de9f8434f3e6534f632",
+    "vendor/tiff-0.11.3/src/decoder/stream.rs": "301e64b0d35e9f801912711374b2df04c6bb2901b41d83c50d851e77726bac1d",
+    "vendor/tiff-0.11.3/src/decoder/tag_reader.rs": "aff635b58ba2e3ec81a81e8e274c5425093ce360cbabef16281b527581f2d648",
+    "vendor/tiff-0.11.3/src/directory.rs": "f879c562b1658648e7515521d3f8977ee3103e93a68240caad2eda71b5d2c0a6",
+    "vendor/tiff-0.11.3/src/encoder/colortype.rs": "b3568e750bccf3694677f1b52ece8f52c51e55e2182cc8a861e5a9607b6707ed",
+    "vendor/tiff-0.11.3/src/encoder/compression/deflate.rs": "d96e91ea01fddd5d060fcd3a53f55360163d2cd49a5dea32b1b6db3ccb5f14ba",
+    "vendor/tiff-0.11.3/src/encoder/compression/lzw.rs": "f2f8b279eb23521f9b7e0e87ddb04ce1773c1b8a9a9379dbf81a446311ae4b0c",
+    "vendor/tiff-0.11.3/src/encoder/compression/mod.rs": "c7384129421482cbd3400e12ce92756f674b12fa1fa35eaf56fb04d1cbef54cd",
+    "vendor/tiff-0.11.3/src/encoder/compression/packbits.rs": "2971d61100afe2772f52ac434be9bddcdc3103e82330dfd47cdbc7a808681f98",
+    "vendor/tiff-0.11.3/src/encoder/compression/uncompressed.rs": "c4d6e31db7db28c849b5a606788f42f934af19ebd7a6c92925b6f09f8b30bfb0",
+    "vendor/tiff-0.11.3/src/encoder/mod.rs": "9e997c39c2c89e03bdf73a0da80fa5436f45db3ff8f168f6b6b1ccb8a5803cab",
+    "vendor/tiff-0.11.3/src/encoder/tiff_value.rs": "2b77a2d7db1334c8175e439c097f701d6fa4b95b6d7c51a2e275f8d4197af710",
+    "vendor/tiff-0.11.3/src/encoder/writer.rs": "f2618cfa7df23c952149491fba30f4ec9301c3868e66e89e5236c8ecba5eaf6f",
+    "vendor/tiff-0.11.3/src/error.rs": "5eb3faf83dc8695896fa98ebb19a1a0cff8def04f06ce8e25085cb9b77092565",
+    "vendor/tiff-0.11.3/src/lib.rs": "e0ae3165f1e935f7180ec6789271974a6bb8ea45ba7626586659e226a2135377",
+    "vendor/tiff-0.11.3/src/tags.rs": "c95500037f237d9d0e4b09fd9bea777fb3f648d4c10e007a678ee7c9e32acdb4",
+    "vendor/tiff-0.11.3/tests/COPYRIGHT": "c6d1d56bb6e2fe4f0aed4aa8553261dd65247db6db50c87c9e9f3fbe095e2202",
+    "vendor/tiff-0.11.3/tests/benches/README.md": "61c5580a4c667cfe0cb2e63597f84b84e34a3424202d6e3e53954d4c273189f7",
+    "vendor/tiff-0.11.3/tests/decode_bigtiff_images.rs": "5460b4c0be1588a6281c00a23ec1cb2a9b4cf3a5df5434da464ec30b888f6cd2",
+    "vendor/tiff-0.11.3/tests/decode_fp16_images.rs": "81bf11bb30fea7d3f45c8c4edb684f8ae5db22e5c6e9643bb6cfb22b28d7df09",
+    "vendor/tiff-0.11.3/tests/decode_geotiff_images.rs": "79967e04943b86d4c9d9beca4fe2edf83f0ad592d68d5d2a124151ecaea6620b",
+    "vendor/tiff-0.11.3/tests/decode_images.rs": "70e65040f648ee13782bf9300e5952efda9afdd133ca1908f5c345607bec360f",
+    "vendor/tiff-0.11.3/tests/decode_planes.rs": "38e56c821defa193a01120712c76332d60e9b5bcacb4711d2ba36676b0786783",
+    "vendor/tiff-0.11.3/tests/decodedata-rgb-3c-8b.tiff": "88fb7908c4562ad3f3a1180c02115da71efc34a6d3b4f0573360113385cef33c",
+    "vendor/tiff-0.11.3/tests/encode_images.rs": "02887fda130bed681232bf3f4da93401eb82a2430ad2ff5095b733cd191d1a1b",
+    "vendor/tiff-0.11.3/tests/encode_images_with_compression.rs": "72ab30b93ef520f39f45d0ff510be9f7432fc653064f65146767ac57b6c2a1bb",
+    "vendor/tiff-0.11.3/tests/fuzz_tests.rs": "742f4283cdc6c3f5d1ccf320ea6c0eb7f3f517cc831de801206c077a0518ec99",
+    "vendor/tiff-0.11.3/tests/predict.rs": "dbf8a5a8c301cdaa4282abd8ecf405a5d4ecf22dcbe343527e7fb293405bac92",
+    "vendor/tiff-0.11.3/tests/subsubifds.rs": "408f1fe35613866e623cc822c2b6197b2e8c68519def9dd61518d8f5473be052",
+    "vendor/fax-0.2.7/.cargo_vcs_info.json": "6425a187e7ee9f8c0f53d81851cbe49003f454a1c10d47d081712d767c8f5aa8",
+    "vendor/fax-0.2.7/Cargo.toml": "3e3a68e321f1285396fcab5383278219b2e1e9f495b7b3dc4ab7e8965340e538",
+    "vendor/fax-0.2.7/Cargo.toml.orig": "1a093a8cbffe84785115f203ab7c1455e39b8ec0a9c86943a0c23d6e24a8567c",
+    "vendor/fax-0.2.7/LICENSE": "7101390b4c8edd752f4c0de47f35d61b44d9cf0ee8dd032115e25644e277cfff",
+    "vendor/fax-0.2.7/PATCHES.md": "0138e5264e07dcabd1569f4d7290323ef991628bb11972994e34279d75f7315b",
+    "vendor/fax-0.2.7/README.md": "c79f0c2a08d8b13daaaf45be481e80b12d1818c3feb91ba89e8967fe9e3a2d84",
+    "vendor/fax-0.2.7/UPSTREAM.json": "6bfd4e5668dc0922c8099cdd8e25d4e00465cd7ae99db418f4bf5bba96ceb701",
+    "vendor/fax-0.2.7/dioptrin-strict-rows.patch": "76335df9d1a22f595fa5c214636e6702a5b02f4e5e422e0df631c9870cff15df",
+    "vendor/fax-0.2.7/src/bitmaps.rs": "1a5e39b709669865ffffc3587942b01011fdc2634ce420c74daa3791982d206d",
+    "vendor/fax-0.2.7/src/decoder.rs": "61a695a4a119c065bb4eaff6ed0b523a1b0db6826599a2a22883673f90f152ba",
+    "vendor/fax-0.2.7/src/encoder.rs": "e56b33ec18f7200627f2832c255aac829792ea00f5dad82d86b10d48a8be69d4",
+    "vendor/fax-0.2.7/src/lib.rs": "72c4b9743723c351e8d819517d9faaada66f3c2422e11517e5d798bd4208b834",
+    "vendor/fax-0.2.7/src/maps.rs": "ec54d7a995572ec9bcb6bea5699286e15b424204a95a13fb5b283b3afc1da04c",
+    "vendor/fax-0.2.7/src/strict_tests.rs": "c1c5c509237507c3292cdb7fac217516a7eaa8c13ebe9ae1fef3ed169e469fcf",
+    "vendor/fax-0.2.7/src/tiff.rs": "9a764b0c665faa564924433dc3b39d1c2ac6e10628df1b26ed56878ff1a3c2c3"
+  },
+  "runtime_sources_unchanged": true,
+  "files": 8,
+  "selected_directories": 14,
+  "exact_raw_sample_matches": 14,
+  "records": [
+    {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/tiff-layouts/fax-2-options0-fill1.tif",
+      "source_sha256": "fa8662d9d27d97bfeb9fb7418205276dae955f37b25962dc0db7b7ef6982665e",
+      "source_bytes": 354,
+      "source_unchanged": true,
+      "catalog": {
+        "directories": [
+          {
+            "ifd_offset": 180,
+            "next_ifd": 0,
+            "opaque_tags": {},
+            "primary_index": 0,
+            "subifd_entry": null,
+            "subifd_offsets": [],
+            "tags": {
+              "256": 93,
+              "257": 17,
+              "258": 1,
+              "259": 2,
+              "262": 0,
+              "266": 1,
+              "273": [
+                8,
+                68,
+                129
+              ],
+              "274": 6,
+              "277": 1,
+              "278": 6,
+              "279": [
+                60,
+                61,
+                50
+              ],
+              "284": 1
+            }
+          }
+        ],
+        "primary_offsets": [
+          180
+        ]
+      },
+      "directories": [
+        {
+          "ifd_offset": 180,
+          "primary_index": 0,
+          "source_bits": 1,
+          "orientation": 6,
+          "source": {
+            "dtype": "uint8",
+            "shape": [
+              17,
+              93
+            ],
+            "sample_sha256": "d698d8aecf1a892701fb54207496626ef1bfd9e1dbab75a6feab9cda9e61ceb7"
+          },
+          "native": {
+            "frames": 1,
+            "ifd_offset": 180,
+            "metadata": {
+              "little_endian": true,
+              "source_pixel_type": "U8",
+              "tags": {
+                "256": 93,
+                "257": 17,
+                "258": 1,
+                "259": 2,
+                "262": 0,
+                "266": 1,
+                "273": [
+                  8,
+                  68,
+                  129
+                ],
+                "274": 6,
+                "277": 1,
+                "278": 6,
+                "279": [
+                  60,
+                  61,
+                  50
+                ],
+                "284": 1
+              }
+            },
+            "pixel_type": "U8",
+            "pixels": {
+              "dtype": "uint8",
+              "sample_sha256": "d698d8aecf1a892701fb54207496626ef1bfd9e1dbab75a6feab9cda9e61ceb7"
+            },
+            "shape": [
+              17,
+              93
+            ],
+            "value_hex": "010101010100000000000000000000010101010100000000000000000000010101010100000001000000000000010101010100000000000000010000010101010100000000000000000000010101010100000000000000000000010101000000000000000000000101010101000000010000000000000101010101000000000000000100000101010101000000000000000000000101010101000000000000000000000101010101010000000000000000000101010101000000000000000001010101010000000000000001000001010101010000000000000000000001010101010000000000000000000001010101010100000000000000000001010101010000000001000000000001010101010000000000000000010101010100000000000000000000010101010100000000000000000000010101010101000000000000000000010101010100000000010000000000010101010100000000000000000100010101010100000000000000000000010101000000000000000000000101010101010000000000000000000101010101000000000100000000000101010101000000000000000001000101010101000000000000000000000101010101000000000000000000000101010101000100000000000001010101010000000001000000000001010101010000000000000000010001010101010000000000000000000001010101010000000000000000000001010101010001000000000000000001010101010000000000010000010101010100000000000000000100010101010100000000000000000000010101010100000000000000000000010101010100010000000000000000010101010100000000000100000000010101010100000000000000000001010101000000000000000000000101010101000000000000000000000101010101000100000000000000000101010101000000000001000000000101010101000000000000000000010101010101000000000000000000000101010101000000000000000001010101010001000000000000000001010101010000000000010000000001010101010000000000000000000101010101010000000000000000000001010101010000000000000000000001010101010000010000000000010101010100000000000100000000010101010100000000000000000001010101010100000000000000000000010101010100000000000000000000010101010100000100000000000000010101010100000000000001000000010101000000000000000000010101010101000000000000000000000101010101000000000000000000000101010101000001000000000000000101010101000000000000010000000101010101000000000000000000000101010101000000000000000001010101010000000000000000000001010101010000010000000000000001010101010000000000000100000001010101010000000000000000000001010101010000000000000000000001010101010000000000000000010101010100000100000000000000010101010100000000000001000000010101010100000000000000000000010101010100000000000000000000010101010100000000000000000000010101010100000001000000000000010101000000000000010000000101010101000000000000000000000101010101000000000000000000000101010101000000000000000000000101010101000000010000000000000101010101000000000000000100000101010101000000000000000001010101010000000000000000000001010101010000000000000000000001010101010000000100000000000001010101010000000000000001000001010101010000000000000000000001010101010000000000000000010101010100000000000000000000010101010100000001000000000000010101010100000000000000010000010101010100000000000000000000010101010100000000000000000000010101010101000000000000000000010101000000010000000000000101010101000000000000000100000101010101000000000000000000000101010101000000000000000000000101010101010000000000000000000101010101000000000100000000000101010101000000"
+          },
+          "exact_raw_samples": true
+        }
+      ],
+      "fabio": {
+        "status": "ok",
+        "lib": "PIL",
+        "nframes": 1,
+        "primary": {
+          "dtype": "bool",
+          "shape": [
+            93,
+            17
+          ],
+          "sample_sha256": "bd962b634494cbe263b5a7f75a2b78b8b6aa9189b48385d6c3873de1962d0637"
+        },
+        "explicit_consumer": {
+          "dtype": "bool",
+          "shape": [
+            93,
+            17
+          ],
+          "sample_sha256": "de8063ce9c5ccacc67bcb9ff6fd30cbf9efc4955c658b97d411127769a8dd32e"
+        },
+        "matches_explicit_consumer": true,
+        "classification": "intentional source-vs-display orientation/photometric distinction"
+      },
+      "differences": []
+    },
+    {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/tiff-layouts/fax-2-options0-fill2.tif",
+      "source_sha256": "23e714983723f4d86306b25507686060de0e0432515cda5966cb6eb5bcd33e47",
+      "source_bytes": 354,
+      "source_unchanged": true,
+      "catalog": {
+        "directories": [
+          {
+            "ifd_offset": 180,
+            "next_ifd": 0,
+            "opaque_tags": {},
+            "primary_index": 0,
+            "subifd_entry": null,
+            "subifd_offsets": [],
+            "tags": {
+              "256": 93,
+              "257": 17,
+              "258": 1,
+              "259": 2,
+              "262": 0,
+              "266": 2,
+              "273": [
+                8,
+                68,
+                129
+              ],
+              "274": 6,
+              "277": 1,
+              "278": 6,
+              "279": [
+                60,
+                61,
+                50
+              ],
+              "284": 1
+            }
+          }
+        ],
+        "primary_offsets": [
+          180
+        ]
+      },
+      "directories": [
+        {
+          "ifd_offset": 180,
+          "primary_index": 0,
+          "source_bits": 1,
+          "orientation": 6,
+          "source": {
+            "dtype": "uint8",
+            "shape": [
+              17,
+              93
+            ],
+            "sample_sha256": "d698d8aecf1a892701fb54207496626ef1bfd9e1dbab75a6feab9cda9e61ceb7"
+          },
+          "native": {
+            "frames": 1,
+            "ifd_offset": 180,
+            "metadata": {
+              "little_endian": true,
+              "source_pixel_type": "U8",
+              "tags": {
+                "256": 93,
+                "257": 17,
+                "258": 1,
+                "259": 2,
+                "262": 0,
+                "266": 2,
+                "273": [
+                  8,
+                  68,
+                  129
+                ],
+                "274": 6,
+                "277": 1,
+                "278": 6,
+                "279": [
+                  60,
+                  61,
+                  50
+                ],
+                "284": 1
+              }
+            },
+            "pixel_type": "U8",
+            "pixels": {
+              "dtype": "uint8",
+              "sample_sha256": "d698d8aecf1a892701fb54207496626ef1bfd9e1dbab75a6feab9cda9e61ceb7"
+            },
+            "shape": [
+              17,
+              93
+            ],
+            "value_hex": "010101010100000000000000000000010101010100000000000000000000010101010100000001000000000000010101010100000000000000010000010101010100000000000000000000010101010100000000000000000000010101000000000000000000000101010101000000010000000000000101010101000000000000000100000101010101000000000000000000000101010101000000000000000000000101010101010000000000000000000101010101000000000000000001010101010000000000000001000001010101010000000000000000000001010101010000000000000000000001010101010100000000000000000001010101010000000001000000000001010101010000000000000000010101010100000000000000000000010101010100000000000000000000010101010101000000000000000000010101010100000000010000000000010101010100000000000000000100010101010100000000000000000000010101000000000000000000000101010101010000000000000000000101010101000000000100000000000101010101000000000000000001000101010101000000000000000000000101010101000000000000000000000101010101000100000000000001010101010000000001000000000001010101010000000000000000010001010101010000000000000000000001010101010000000000000000000001010101010001000000000000000001010101010000000000010000010101010100000000000000000100010101010100000000000000000000010101010100000000000000000000010101010100010000000000000000010101010100000000000100000000010101010100000000000000000001010101000000000000000000000101010101000000000000000000000101010101000100000000000000000101010101000000000001000000000101010101000000000000000000010101010101000000000000000000000101010101000000000000000001010101010001000000000000000001010101010000000000010000000001010101010000000000000000000101010101010000000000000000000001010101010000000000000000000001010101010000010000000000010101010100000000000100000000010101010100000000000000000001010101010100000000000000000000010101010100000000000000000000010101010100000100000000000000010101010100000000000001000000010101000000000000000000010101010101000000000000000000000101010101000000000000000000000101010101000001000000000000000101010101000000000000010000000101010101000000000000000000000101010101000000000000000001010101010000000000000000000001010101010000010000000000000001010101010000000000000100000001010101010000000000000000000001010101010000000000000000000001010101010000000000000000010101010100000100000000000000010101010100000000000001000000010101010100000000000000000000010101010100000000000000000000010101010100000000000000000000010101010100000001000000000000010101000000000000010000000101010101000000000000000000000101010101000000000000000000000101010101000000000000000000000101010101000000010000000000000101010101000000000000000100000101010101000000000000000001010101010000000000000000000001010101010000000000000000000001010101010000000100000000000001010101010000000000000001000001010101010000000000000000000001010101010000000000000000010101010100000000000000000000010101010100000001000000000000010101010100000000000000010000010101010100000000000000000000010101010100000000000000000000010101010101000000000000000000010101000000010000000000000101010101000000000000000100000101010101000000000000000000000101010101000000000000000000000101010101010000000000000000000101010101000000000100000000000101010101000000"
+          },
+          "exact_raw_samples": true
+        }
+      ],
+      "fabio": {
+        "status": "ok",
+        "lib": "PIL",
+        "nframes": 1,
+        "primary": {
+          "dtype": "bool",
+          "shape": [
+            93,
+            17
+          ],
+          "sample_sha256": "bd962b634494cbe263b5a7f75a2b78b8b6aa9189b48385d6c3873de1962d0637"
+        },
+        "explicit_consumer": {
+          "dtype": "bool",
+          "shape": [
+            93,
+            17
+          ],
+          "sample_sha256": "de8063ce9c5ccacc67bcb9ff6fd30cbf9efc4955c658b97d411127769a8dd32e"
+        },
+        "matches_explicit_consumer": true,
+        "classification": "intentional source-vs-display orientation/photometric distinction"
+      },
+      "differences": []
+    },
+    {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/tiff-layouts/fax-3-options1-fill1.tif",
+      "source_sha256": "07005fdb0ba895d3bd2db95908e3d2f395bb93e0a26e547cd7e10bc2d923ba3e",
+      "source_bytes": 406,
+      "source_unchanged": true,
+      "catalog": {
+        "directories": [
+          {
+            "ifd_offset": 220,
+            "next_ifd": 0,
+            "opaque_tags": {},
+            "primary_index": 0,
+            "subifd_entry": null,
+            "subifd_offsets": [],
+            "tags": {
+              "256": 93,
+              "257": 17,
+              "258": 1,
+              "259": 3,
+              "262": 0,
+              "266": 1,
+              "273": [
+                8,
+                84,
+                158
+              ],
+              "274": 6,
+              "277": 1,
+              "278": 6,
+              "279": [
+                76,
+                74,
+                61
+              ],
+              "284": 1,
+              "292": 1
+            }
+          }
+        ],
+        "primary_offsets": [
+          220
+        ]
+      },
+      "directories": [
+        {
+          "ifd_offset": 220,
+          "primary_index": 0,
+          "source_bits": 1,
+          "orientation": 6,
+          "source": {
+            "dtype": "uint8",
+            "shape": [
+              17,
+              93
+            ],
+            "sample_sha256": "d698d8aecf1a892701fb54207496626ef1bfd9e1dbab75a6feab9cda9e61ceb7"
+          },
+          "native": {
+            "frames": 1,
+            "ifd_offset": 220,
+            "metadata": {
+              "little_endian": true,
+              "source_pixel_type": "U8",
+              "tags": {
+                "256": 93,
+                "257": 17,
+                "258": 1,
+                "259": 3,
+                "262": 0,
+                "266": 1,
+                "273": [
+                  8,
+                  84,
+                  158
+                ],
+                "274": 6,
+                "277": 1,
+                "278": 6,
+                "279": [
+                  76,
+                  74,
+                  61
+                ],
+                "284": 1,
+                "292": 1
+              }
+            },
+            "pixel_type": "U8",
+            "pixels": {
+              "dtype": "uint8",
+              "sample_sha256": "d698d8aecf1a892701fb54207496626ef1bfd9e1dbab75a6feab9cda9e61ceb7"
+            },
+            "shape": [
+              17,
+              93
+            ],
+            "value_hex": "010101010100000000000000000000010101010100000000000000000000010101010100000001000000000000010101010100000000000000010000010101010100000000000000000000010101010100000000000000000000010101000000000000000000000101010101000000010000000000000101010101000000000000000100000101010101000000000000000000000101010101000000000000000000000101010101010000000000000000000101010101000000000000000001010101010000000000000001000001010101010000000000000000000001010101010000000000000000000001010101010100000000000000000001010101010000000001000000000001010101010000000000000000010101010100000000000000000000010101010100000000000000000000010101010101000000000000000000010101010100000000010000000000010101010100000000000000000100010101010100000000000000000000010101000000000000000000000101010101010000000000000000000101010101000000000100000000000101010101000000000000000001000101010101000000000000000000000101010101000000000000000000000101010101000100000000000001010101010000000001000000000001010101010000000000000000010001010101010000000000000000000001010101010000000000000000000001010101010001000000000000000001010101010000000000010000010101010100000000000000000100010101010100000000000000000000010101010100000000000000000000010101010100010000000000000000010101010100000000000100000000010101010100000000000000000001010101000000000000000000000101010101000000000000000000000101010101000100000000000000000101010101000000000001000000000101010101000000000000000000010101010101000000000000000000000101010101000000000000000001010101010001000000000000000001010101010000000000010000000001010101010000000000000000000101010101010000000000000000000001010101010000000000000000000001010101010000010000000000010101010100000000000100000000010101010100000000000000000001010101010100000000000000000000010101010100000000000000000000010101010100000100000000000000010101010100000000000001000000010101000000000000000000010101010101000000000000000000000101010101000000000000000000000101010101000001000000000000000101010101000000000000010000000101010101000000000000000000000101010101000000000000000001010101010000000000000000000001010101010000010000000000000001010101010000000000000100000001010101010000000000000000000001010101010000000000000000000001010101010000000000000000010101010100000100000000000000010101010100000000000001000000010101010100000000000000000000010101010100000000000000000000010101010100000000000000000000010101010100000001000000000000010101000000000000010000000101010101000000000000000000000101010101000000000000000000000101010101000000000000000000000101010101000000010000000000000101010101000000000000000100000101010101000000000000000001010101010000000000000000000001010101010000000000000000000001010101010000000100000000000001010101010000000000000001000001010101010000000000000000000001010101010000000000000000010101010100000000000000000000010101010100000001000000000000010101010100000000000000010000010101010100000000000000000000010101010100000000000000000000010101010101000000000000000000010101000000010000000000000101010101000000000000000100000101010101000000000000000000000101010101000000000000000000000101010101010000000000000000000101010101000000000100000000000101010101000000"
+          },
+          "exact_raw_samples": true
+        }
+      ],
+      "fabio": {
+        "status": "ok",
+        "lib": "PIL",
+        "nframes": 1,
+        "primary": {
+          "dtype": "bool",
+          "shape": [
+            93,
+            17
+          ],
+          "sample_sha256": "bd962b634494cbe263b5a7f75a2b78b8b6aa9189b48385d6c3873de1962d0637"
+        },
+        "explicit_consumer": {
+          "dtype": "bool",
+          "shape": [
+            93,
+            17
+          ],
+          "sample_sha256": "de8063ce9c5ccacc67bcb9ff6fd30cbf9efc4955c658b97d411127769a8dd32e"
+        },
+        "matches_explicit_consumer": true,
+        "classification": "intentional source-vs-display orientation/photometric distinction"
+      },
+      "differences": []
+    },
+    {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/tiff-layouts/fax-3-options1-fill2.tif",
+      "source_sha256": "6b8c9872f4d1f5657165582138cd6262be2e386e93b2aaf85a7b557361eb315f",
+      "source_bytes": 406,
+      "source_unchanged": true,
+      "catalog": {
+        "directories": [
+          {
+            "ifd_offset": 220,
+            "next_ifd": 0,
+            "opaque_tags": {},
+            "primary_index": 0,
+            "subifd_entry": null,
+            "subifd_offsets": [],
+            "tags": {
+              "256": 93,
+              "257": 17,
+              "258": 1,
+              "259": 3,
+              "262": 0,
+              "266": 2,
+              "273": [
+                8,
+                84,
+                158
+              ],
+              "274": 6,
+              "277": 1,
+              "278": 6,
+              "279": [
+                76,
+                74,
+                61
+              ],
+              "284": 1,
+              "292": 1
+            }
+          }
+        ],
+        "primary_offsets": [
+          220
+        ]
+      },
+      "directories": [
+        {
+          "ifd_offset": 220,
+          "primary_index": 0,
+          "source_bits": 1,
+          "orientation": 6,
+          "source": {
+            "dtype": "uint8",
+            "shape": [
+              17,
+              93
+            ],
+            "sample_sha256": "d698d8aecf1a892701fb54207496626ef1bfd9e1dbab75a6feab9cda9e61ceb7"
+          },
+          "native": {
+            "frames": 1,
+            "ifd_offset": 220,
+            "metadata": {
+              "little_endian": true,
+              "source_pixel_type": "U8",
+              "tags": {
+                "256": 93,
+                "257": 17,
+                "258": 1,
+                "259": 3,
+                "262": 0,
+                "266": 2,
+                "273": [
+                  8,
+                  84,
+                  158
+                ],
+                "274": 6,
+                "277": 1,
+                "278": 6,
+                "279": [
+                  76,
+                  74,
+                  61
+                ],
+                "284": 1,
+                "292": 1
+              }
+            },
+            "pixel_type": "U8",
+            "pixels": {
+              "dtype": "uint8",
+              "sample_sha256": "d698d8aecf1a892701fb54207496626ef1bfd9e1dbab75a6feab9cda9e61ceb7"
+            },
+            "shape": [
+              17,
+              93
+            ],
+            "value_hex": "010101010100000000000000000000010101010100000000000000000000010101010100000001000000000000010101010100000000000000010000010101010100000000000000000000010101010100000000000000000000010101000000000000000000000101010101000000010000000000000101010101000000000000000100000101010101000000000000000000000101010101000000000000000000000101010101010000000000000000000101010101000000000000000001010101010000000000000001000001010101010000000000000000000001010101010000000000000000000001010101010100000000000000000001010101010000000001000000000001010101010000000000000000010101010100000000000000000000010101010100000000000000000000010101010101000000000000000000010101010100000000010000000000010101010100000000000000000100010101010100000000000000000000010101000000000000000000000101010101010000000000000000000101010101000000000100000000000101010101000000000000000001000101010101000000000000000000000101010101000000000000000000000101010101000100000000000001010101010000000001000000000001010101010000000000000000010001010101010000000000000000000001010101010000000000000000000001010101010001000000000000000001010101010000000000010000010101010100000000000000000100010101010100000000000000000000010101010100000000000000000000010101010100010000000000000000010101010100000000000100000000010101010100000000000000000001010101000000000000000000000101010101000000000000000000000101010101000100000000000000000101010101000000000001000000000101010101000000000000000000010101010101000000000000000000000101010101000000000000000001010101010001000000000000000001010101010000000000010000000001010101010000000000000000000101010101010000000000000000000001010101010000000000000000000001010101010000010000000000010101010100000000000100000000010101010100000000000000000001010101010100000000000000000000010101010100000000000000000000010101010100000100000000000000010101010100000000000001000000010101000000000000000000010101010101000000000000000000000101010101000000000000000000000101010101000001000000000000000101010101000000000000010000000101010101000000000000000000000101010101000000000000000001010101010000000000000000000001010101010000010000000000000001010101010000000000000100000001010101010000000000000000000001010101010000000000000000000001010101010000000000000000010101010100000100000000000000010101010100000000000001000000010101010100000000000000000000010101010100000000000000000000010101010100000000000000000000010101010100000001000000000000010101000000000000010000000101010101000000000000000000000101010101000000000000000000000101010101000000000000000000000101010101000000010000000000000101010101000000000000000100000101010101000000000000000001010101010000000000000000000001010101010000000000000000000001010101010000000100000000000001010101010000000000000001000001010101010000000000000000000001010101010000000000000000010101010100000000000000000000010101010100000001000000000000010101010100000000000000010000010101010100000000000000000000010101010100000000000000000000010101010101000000000000000000010101000000010000000000000101010101000000000000000100000101010101000000000000000000000101010101000000000000000000000101010101010000000000000000000101010101000000000100000000000101010101000000"
+          },
+          "exact_raw_samples": true
+        }
+      ],
+      "fabio": {
+        "status": "ok",
+        "lib": "PIL",
+        "nframes": 1,
+        "primary": {
+          "dtype": "bool",
+          "shape": [
+            93,
+            17
+          ],
+          "sample_sha256": "bd962b634494cbe263b5a7f75a2b78b8b6aa9189b48385d6c3873de1962d0637"
+        },
+        "explicit_consumer": {
+          "dtype": "bool",
+          "shape": [
+            93,
+            17
+          ],
+          "sample_sha256": "de8063ce9c5ccacc67bcb9ff6fd30cbf9efc4955c658b97d411127769a8dd32e"
+        },
+        "matches_explicit_consumer": true,
+        "classification": "intentional source-vs-display orientation/photometric distinction"
+      },
+      "differences": []
+    },
+    {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/tiff-layouts/fax-3-options5-fill1.tif",
+      "source_sha256": "de6635ba6530189ff77f44a49028e483f6b79b04fa40076abc73c3688b892cf3",
+      "source_bytes": 414,
+      "source_unchanged": true,
+      "catalog": {
+        "directories": [
+          {
+            "ifd_offset": 228,
+            "next_ifd": 0,
+            "opaque_tags": {},
+            "primary_index": 0,
+            "subifd_entry": null,
+            "subifd_offsets": [],
+            "tags": {
+              "256": 93,
+              "257": 17,
+              "258": 1,
+              "259": 3,
+              "262": 0,
+              "266": 1,
+              "273": [
+                8,
+                87,
+                164
+              ],
+              "274": 6,
+              "277": 1,
+              "278": 6,
+              "279": [
+                79,
+                77,
+                63
+              ],
+              "284": 1,
+              "292": 5
+            }
+          }
+        ],
+        "primary_offsets": [
+          228
+        ]
+      },
+      "directories": [
+        {
+          "ifd_offset": 228,
+          "primary_index": 0,
+          "source_bits": 1,
+          "orientation": 6,
+          "source": {
+            "dtype": "uint8",
+            "shape": [
+              17,
+              93
+            ],
+            "sample_sha256": "d698d8aecf1a892701fb54207496626ef1bfd9e1dbab75a6feab9cda9e61ceb7"
+          },
+          "native": {
+            "frames": 1,
+            "ifd_offset": 228,
+            "metadata": {
+              "little_endian": true,
+              "source_pixel_type": "U8",
+              "tags": {
+                "256": 93,
+                "257": 17,
+                "258": 1,
+                "259": 3,
+                "262": 0,
+                "266": 1,
+                "273": [
+                  8,
+                  87,
+                  164
+                ],
+                "274": 6,
+                "277": 1,
+                "278": 6,
+                "279": [
+                  79,
+                  77,
+                  63
+                ],
+                "284": 1,
+                "292": 5
+              }
+            },
+            "pixel_type": "U8",
+            "pixels": {
+              "dtype": "uint8",
+              "sample_sha256": "d698d8aecf1a892701fb54207496626ef1bfd9e1dbab75a6feab9cda9e61ceb7"
+            },
+            "shape": [
+              17,
+              93
+            ],
+            "value_hex": "010101010100000000000000000000010101010100000000000000000000010101010100000001000000000000010101010100000000000000010000010101010100000000000000000000010101010100000000000000000000010101000000000000000000000101010101000000010000000000000101010101000000000000000100000101010101000000000000000000000101010101000000000000000000000101010101010000000000000000000101010101000000000000000001010101010000000000000001000001010101010000000000000000000001010101010000000000000000000001010101010100000000000000000001010101010000000001000000000001010101010000000000000000010101010100000000000000000000010101010100000000000000000000010101010101000000000000000000010101010100000000010000000000010101010100000000000000000100010101010100000000000000000000010101000000000000000000000101010101010000000000000000000101010101000000000100000000000101010101000000000000000001000101010101000000000000000000000101010101000000000000000000000101010101000100000000000001010101010000000001000000000001010101010000000000000000010001010101010000000000000000000001010101010000000000000000000001010101010001000000000000000001010101010000000000010000010101010100000000000000000100010101010100000000000000000000010101010100000000000000000000010101010100010000000000000000010101010100000000000100000000010101010100000000000000000001010101000000000000000000000101010101000000000000000000000101010101000100000000000000000101010101000000000001000000000101010101000000000000000000010101010101000000000000000000000101010101000000000000000001010101010001000000000000000001010101010000000000010000000001010101010000000000000000000101010101010000000000000000000001010101010000000000000000000001010101010000010000000000010101010100000000000100000000010101010100000000000000000001010101010100000000000000000000010101010100000000000000000000010101010100000100000000000000010101010100000000000001000000010101000000000000000000010101010101000000000000000000000101010101000000000000000000000101010101000001000000000000000101010101000000000000010000000101010101000000000000000000000101010101000000000000000001010101010000000000000000000001010101010000010000000000000001010101010000000000000100000001010101010000000000000000000001010101010000000000000000000001010101010000000000000000010101010100000100000000000000010101010100000000000001000000010101010100000000000000000000010101010100000000000000000000010101010100000000000000000000010101010100000001000000000000010101000000000000010000000101010101000000000000000000000101010101000000000000000000000101010101000000000000000000000101010101000000010000000000000101010101000000000000000100000101010101000000000000000001010101010000000000000000000001010101010000000000000000000001010101010000000100000000000001010101010000000000000001000001010101010000000000000000000001010101010000000000000000010101010100000000000000000000010101010100000001000000000000010101010100000000000000010000010101010100000000000000000000010101010100000000000000000000010101010101000000000000000000010101000000010000000000000101010101000000000000000100000101010101000000000000000000000101010101000000000000000000000101010101010000000000000000000101010101000000000100000000000101010101000000"
+          },
+          "exact_raw_samples": true
+        }
+      ],
+      "fabio": {
+        "status": "ok",
+        "lib": "PIL",
+        "nframes": 1,
+        "primary": {
+          "dtype": "bool",
+          "shape": [
+            93,
+            17
+          ],
+          "sample_sha256": "bd962b634494cbe263b5a7f75a2b78b8b6aa9189b48385d6c3873de1962d0637"
+        },
+        "explicit_consumer": {
+          "dtype": "bool",
+          "shape": [
+            93,
+            17
+          ],
+          "sample_sha256": "de8063ce9c5ccacc67bcb9ff6fd30cbf9efc4955c658b97d411127769a8dd32e"
+        },
+        "matches_explicit_consumer": true,
+        "classification": "intentional source-vs-display orientation/photometric distinction"
+      },
+      "differences": []
+    },
+    {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/tiff-layouts/fax-3-options5-fill2.tif",
+      "source_sha256": "aeb4ea95411aba4887620899f5f00c8245f95cbbb52cf8988f92712e51667b05",
+      "source_bytes": 414,
+      "source_unchanged": true,
+      "catalog": {
+        "directories": [
+          {
+            "ifd_offset": 228,
+            "next_ifd": 0,
+            "opaque_tags": {},
+            "primary_index": 0,
+            "subifd_entry": null,
+            "subifd_offsets": [],
+            "tags": {
+              "256": 93,
+              "257": 17,
+              "258": 1,
+              "259": 3,
+              "262": 0,
+              "266": 2,
+              "273": [
+                8,
+                87,
+                164
+              ],
+              "274": 6,
+              "277": 1,
+              "278": 6,
+              "279": [
+                79,
+                77,
+                63
+              ],
+              "284": 1,
+              "292": 5
+            }
+          }
+        ],
+        "primary_offsets": [
+          228
+        ]
+      },
+      "directories": [
+        {
+          "ifd_offset": 228,
+          "primary_index": 0,
+          "source_bits": 1,
+          "orientation": 6,
+          "source": {
+            "dtype": "uint8",
+            "shape": [
+              17,
+              93
+            ],
+            "sample_sha256": "d698d8aecf1a892701fb54207496626ef1bfd9e1dbab75a6feab9cda9e61ceb7"
+          },
+          "native": {
+            "frames": 1,
+            "ifd_offset": 228,
+            "metadata": {
+              "little_endian": true,
+              "source_pixel_type": "U8",
+              "tags": {
+                "256": 93,
+                "257": 17,
+                "258": 1,
+                "259": 3,
+                "262": 0,
+                "266": 2,
+                "273": [
+                  8,
+                  87,
+                  164
+                ],
+                "274": 6,
+                "277": 1,
+                "278": 6,
+                "279": [
+                  79,
+                  77,
+                  63
+                ],
+                "284": 1,
+                "292": 5
+              }
+            },
+            "pixel_type": "U8",
+            "pixels": {
+              "dtype": "uint8",
+              "sample_sha256": "d698d8aecf1a892701fb54207496626ef1bfd9e1dbab75a6feab9cda9e61ceb7"
+            },
+            "shape": [
+              17,
+              93
+            ],
+            "value_hex": "010101010100000000000000000000010101010100000000000000000000010101010100000001000000000000010101010100000000000000010000010101010100000000000000000000010101010100000000000000000000010101000000000000000000000101010101000000010000000000000101010101000000000000000100000101010101000000000000000000000101010101000000000000000000000101010101010000000000000000000101010101000000000000000001010101010000000000000001000001010101010000000000000000000001010101010000000000000000000001010101010100000000000000000001010101010000000001000000000001010101010000000000000000010101010100000000000000000000010101010100000000000000000000010101010101000000000000000000010101010100000000010000000000010101010100000000000000000100010101010100000000000000000000010101000000000000000000000101010101010000000000000000000101010101000000000100000000000101010101000000000000000001000101010101000000000000000000000101010101000000000000000000000101010101000100000000000001010101010000000001000000000001010101010000000000000000010001010101010000000000000000000001010101010000000000000000000001010101010001000000000000000001010101010000000000010000010101010100000000000000000100010101010100000000000000000000010101010100000000000000000000010101010100010000000000000000010101010100000000000100000000010101010100000000000000000001010101000000000000000000000101010101000000000000000000000101010101000100000000000000000101010101000000000001000000000101010101000000000000000000010101010101000000000000000000000101010101000000000000000001010101010001000000000000000001010101010000000000010000000001010101010000000000000000000101010101010000000000000000000001010101010000000000000000000001010101010000010000000000010101010100000000000100000000010101010100000000000000000001010101010100000000000000000000010101010100000000000000000000010101010100000100000000000000010101010100000000000001000000010101000000000000000000010101010101000000000000000000000101010101000000000000000000000101010101000001000000000000000101010101000000000000010000000101010101000000000000000000000101010101000000000000000001010101010000000000000000000001010101010000010000000000000001010101010000000000000100000001010101010000000000000000000001010101010000000000000000000001010101010000000000000000010101010100000100000000000000010101010100000000000001000000010101010100000000000000000000010101010100000000000000000000010101010100000000000000000000010101010100000001000000000000010101000000000000010000000101010101000000000000000000000101010101000000000000000000000101010101000000000000000000000101010101000000010000000000000101010101000000000000000100000101010101000000000000000001010101010000000000000000000001010101010000000000000000000001010101010000000100000000000001010101010000000000000001000001010101010000000000000000000001010101010000000000000000010101010100000000000000000000010101010100000001000000000000010101010100000000000000010000010101010100000000000000000000010101010100000000000000000000010101010101000000000000000000010101000000010000000000000101010101000000000000000100000101010101000000000000000000000101010101000000000000000000000101010101010000000000000000000101010101000000000100000000000101010101000000"
+          },
+          "exact_raw_samples": true
+        }
+      ],
+      "fabio": {
+        "status": "ok",
+        "lib": "PIL",
+        "nframes": 1,
+        "primary": {
+          "dtype": "bool",
+          "shape": [
+            93,
+            17
+          ],
+          "sample_sha256": "bd962b634494cbe263b5a7f75a2b78b8b6aa9189b48385d6c3873de1962d0637"
+        },
+        "explicit_consumer": {
+          "dtype": "bool",
+          "shape": [
+            93,
+            17
+          ],
+          "sample_sha256": "de8063ce9c5ccacc67bcb9ff6fd30cbf9efc4955c658b97d411127769a8dd32e"
+        },
+        "matches_explicit_consumer": true,
+        "classification": "intentional source-vs-display orientation/photometric distinction"
+      },
+      "differences": []
+    },
+    {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/tiff-layouts/subifds-big-be.tif",
+      "source_sha256": "d16391174540e3ef5395cede162e8f7588ae3c1f8744709d849e5200d4362bdc",
+      "source_bytes": 1388,
+      "source_unchanged": true,
+      "catalog": {
+        "directories": [
+          {
+            "ifd_offset": 16,
+            "next_ifd": 1056,
+            "opaque_tags": {},
+            "primary_index": 0,
+            "subifd_entry": {
+              "count": 2,
+              "entry_offset": 284,
+              "field_type": 18,
+              "ifd_entry_hex": "014a001200000000000000020000000000000144",
+              "payload_offset": 324,
+              "tag": 330
+            },
+            "subifd_offsets": [
+              372,
+              700
+            ],
+            "tags": {
+              "256": 5,
+              "257": 4,
+              "258": 8,
+              "259": 1,
+              "262": 1,
+              "273": 352,
+              "277": 1,
+              "278": 4,
+              "279": 20,
+              "282": {
+                "denominator": 1,
+                "kind": "rational",
+                "numerator": 1
+              },
+              "283": {
+                "denominator": 1,
+                "kind": "rational",
+                "numerator": 1
+              },
+              "296": 1,
+              "305": "tifffile.py",
+              "330": [
+                372,
+                700
+              ]
+            }
+          },
+          {
+            "ifd_offset": 372,
+            "next_ifd": 0,
+            "opaque_tags": {},
+            "primary_index": null,
+            "subifd_entry": null,
+            "subifd_offsets": [],
+            "tags": {
+              "254": 1,
+              "256": 3,
+              "257": 2,
+              "258": 16,
+              "259": 1,
+              "262": 1,
+              "273": 688,
+              "277": 1,
+              "278": 2,
+              "279": 12,
+              "282": {
+                "denominator": 1,
+                "kind": "rational",
+                "numerator": 1
+              },
+              "283": {
+                "denominator": 1,
+                "kind": "rational",
+                "numerator": 1
+              },
+              "296": 1,
+              "305": "tifffile.py"
+            }
+          },
+          {
+            "ifd_offset": 700,
+            "next_ifd": 0,
+            "opaque_tags": {},
+            "primary_index": null,
+            "subifd_entry": null,
+            "subifd_offsets": [],
+            "tags": {
+              "254": 1,
+              "256": 4,
+              "257": 1,
+              "258": 32,
+              "259": 1,
+              "262": 1,
+              "273": 1040,
+              "277": 1,
+              "278": 1,
+              "279": 16,
+              "282": {
+                "denominator": 1,
+                "kind": "rational",
+                "numerator": 1
+              },
+              "283": {
+                "denominator": 1,
+                "kind": "rational",
+                "numerator": 1
+              },
+              "296": 1,
+              "305": "tifffile.py",
+              "339": 3
+            }
+          },
+          {
+            "ifd_offset": 1056,
+            "next_ifd": 0,
+            "opaque_tags": {},
+            "primary_index": 1,
+            "subifd_entry": null,
+            "subifd_offsets": [],
+            "tags": {
+              "256": 2,
+              "257": 3,
+              "258": 16,
+              "259": 1,
+              "262": 1,
+              "273": 1376,
+              "277": 1,
+              "278": 3,
+              "279": 12,
+              "282": {
+                "denominator": 1,
+                "kind": "rational",
+                "numerator": 1
+              },
+              "283": {
+                "denominator": 1,
+                "kind": "rational",
+                "numerator": 1
+              },
+              "296": 1,
+              "305": "tifffile.py",
+              "339": 2
+            }
+          }
+        ],
+        "primary_offsets": [
+          16,
+          1056
+        ]
+      },
+      "directories": [
+        {
+          "ifd_offset": 16,
+          "primary_index": 0,
+          "source_bits": 8,
+          "orientation": 1,
+          "source": {
+            "dtype": "uint8",
+            "shape": [
+              4,
+              5
+            ],
+            "sample_sha256": "e7aebf577f60412f0312d442c70a1fa6148c090bf5bab404caec29482ae779e8"
+          },
+          "native": {
+            "frames": 1,
+            "ifd_offset": 16,
+            "metadata": {
+              "little_endian": false,
+              "source_pixel_type": "U8",
+              "tags": {
+                "256": 5,
+                "257": 4,
+                "258": 8,
+                "259": 1,
+                "262": 1,
+                "273": 352,
+                "277": 1,
+                "278": 4,
+                "279": 20,
+                "282": {
+                  "denominator": 1,
+                  "kind": "rational",
+                  "numerator": 1
+                },
+                "283": {
+                  "denominator": 1,
+                  "kind": "rational",
+                  "numerator": 1
+                },
+                "296": 1,
+                "305": "tifffile.py",
+                "330": [
+                  372,
+                  700
+                ]
+              }
+            },
+            "pixel_type": "U8",
+            "pixels": {
+              "dtype": "uint8",
+              "sample_sha256": "e7aebf577f60412f0312d442c70a1fa6148c090bf5bab404caec29482ae779e8"
+            },
+            "shape": [
+              4,
+              5
+            ],
+            "value_hex": "000102030405060708090a0b0c0d0e0f10111213"
+          },
+          "exact_raw_samples": true
+        },
+        {
+          "ifd_offset": 372,
+          "primary_index": null,
+          "source_bits": 16,
+          "orientation": 1,
+          "source": {
+            "dtype": "uint16",
+            "shape": [
+              2,
+              3
+            ],
+            "sample_sha256": "b60e618d3c1db797337ff73a30df27377ce276728f85f33b663a240726507e34"
+          },
+          "native": {
+            "frames": 1,
+            "ifd_offset": 372,
+            "metadata": {
+              "little_endian": false,
+              "source_pixel_type": "U16",
+              "tags": {
+                "254": 1,
+                "256": 3,
+                "257": 2,
+                "258": 16,
+                "259": 1,
+                "262": 1,
+                "273": 688,
+                "277": 1,
+                "278": 2,
+                "279": 12,
+                "282": {
+                  "denominator": 1,
+                  "kind": "rational",
+                  "numerator": 1
+                },
+                "283": {
+                  "denominator": 1,
+                  "kind": "rational",
+                  "numerator": 1
+                },
+                "296": 1,
+                "305": "tifffile.py"
+              }
+            },
+            "pixel_type": "U16",
+            "pixels": {
+              "dtype": "uint16",
+              "sample_sha256": "b60e618d3c1db797337ff73a30df27377ce276728f85f33b663a240726507e34"
+            },
+            "shape": [
+              2,
+              3
+            ],
+            "value_hex": "00001127224e3375449c55c3"
+          },
+          "exact_raw_samples": true
+        },
+        {
+          "ifd_offset": 700,
+          "primary_index": null,
+          "source_bits": 32,
+          "orientation": 1,
+          "source": {
+            "dtype": "float32",
+            "shape": [
+              1,
+              4
+            ],
+            "sample_sha256": "f8a65c2a065a78f008428c5179fba93fcbf9b5bd88ad94b74e3c5cf8f93d05aa"
+          },
+          "native": {
+            "frames": 1,
+            "ifd_offset": 700,
+            "metadata": {
+              "little_endian": false,
+              "source_pixel_type": "F32",
+              "tags": {
+                "254": 1,
+                "256": 4,
+                "257": 1,
+                "258": 32,
+                "259": 1,
+                "262": 1,
+                "273": 1040,
+                "277": 1,
+                "278": 1,
+                "279": 16,
+                "282": {
+                  "denominator": 1,
+                  "kind": "rational",
+                  "numerator": 1
+                },
+                "283": {
+                  "denominator": 1,
+                  "kind": "rational",
+                  "numerator": 1
+                },
+                "296": 1,
+                "305": "tifffile.py",
+                "339": 3
+              }
+            },
+            "pixel_type": "F32",
+            "pixels": {
+              "dtype": "float32",
+              "sample_sha256": "f8a65c2a065a78f008428c5179fba93fcbf9b5bd88ad94b74e3c5cf8f93d05aa"
+            },
+            "shape": [
+              1,
+              4
+            ],
+            "value_hex": "0000003f0000c0bf0000e84000000000"
+          },
+          "exact_raw_samples": true
+        },
+        {
+          "ifd_offset": 1056,
+          "primary_index": 1,
+          "source_bits": 16,
+          "orientation": 1,
+          "source": {
+            "dtype": "int16",
+            "shape": [
+              3,
+              2
+            ],
+            "sample_sha256": "075333d8dac8f0d1651c87d837361dab2772ebff470cb41bfaaaf4c839525ccb"
+          },
+          "native": {
+            "frames": 1,
+            "ifd_offset": 1056,
+            "metadata": {
+              "little_endian": false,
+              "source_pixel_type": "I16",
+              "tags": {
+                "256": 2,
+                "257": 3,
+                "258": 16,
+                "259": 1,
+                "262": 1,
+                "273": 1376,
+                "277": 1,
+                "278": 3,
+                "279": 12,
+                "282": {
+                  "denominator": 1,
+                  "kind": "rational",
+                  "numerator": 1
+                },
+                "283": {
+                  "denominator": 1,
+                  "kind": "rational",
+                  "numerator": 1
+                },
+                "296": 1,
+                "305": "tifffile.py",
+                "339": 2
+              }
+            },
+            "pixel_type": "I16",
+            "pixels": {
+              "dtype": "int16",
+              "sample_sha256": "075333d8dac8f0d1651c87d837361dab2772ebff470cb41bfaaaf4c839525ccb"
+            },
+            "shape": [
+              3,
+              2
+            ],
+            "value_hex": "fdfffeffffff000001000200"
+          },
+          "exact_raw_samples": true
+        }
+      ],
+      "fabio": {
+        "status": "error",
+        "error": "OSError: Fabio could not identify /Users/clemens/Programming/dioptrin-io/tests/data/tiff-layouts/subifds-big-be.tif",
+        "classification": "reference limitation; independent native libtiff remains source authority"
+      },
+      "differences": []
+    },
+    {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/tiff-layouts/subifds-classic.tif",
+      "source_sha256": "e632ce17ef85e43625e034b08d9f5ccf4a51b79fb460a2afaea5640731100543",
+      "source_bytes": 924,
+      "source_unchanged": true,
+      "catalog": {
+        "directories": [
+          {
+            "ifd_offset": 8,
+            "next_ifd": 704,
+            "opaque_tags": {},
+            "primary_index": 0,
+            "subifd_entry": {
+              "count": 2,
+              "entry_offset": 166,
+              "field_type": 13,
+              "ifd_entry_hex": "4a010d0002000000d2000000",
+              "payload_offset": 210,
+              "tag": 330
+            },
+            "subifd_offsets": [
+              244,
+              460
+            ],
+            "tags": {
+              "256": 5,
+              "257": 4,
+              "258": 8,
+              "259": 1,
+              "262": 1,
+              "273": 224,
+              "277": 1,
+              "278": 4,
+              "279": 20,
+              "282": {
+                "denominator": 1,
+                "kind": "rational",
+                "numerator": 1
+              },
+              "283": {
+                "denominator": 1,
+                "kind": "rational",
+                "numerator": 1
+              },
+              "296": 1,
+              "305": "tifffile.py",
+              "330": [
+                244,
+                460
+              ]
+            }
+          },
+          {
+            "ifd_offset": 244,
+            "next_ifd": 0,
+            "opaque_tags": {},
+            "primary_index": null,
+            "subifd_entry": null,
+            "subifd_offsets": [],
+            "tags": {
+              "254": 1,
+              "256": 3,
+              "257": 2,
+              "258": 16,
+              "259": 1,
+              "262": 1,
+              "273": 448,
+              "277": 1,
+              "278": 2,
+              "279": 12,
+              "282": {
+                "denominator": 1,
+                "kind": "rational",
+                "numerator": 1
+              },
+              "283": {
+                "denominator": 1,
+                "kind": "rational",
+                "numerator": 1
+              },
+              "296": 1,
+              "305": "tifffile.py"
+            }
+          },
+          {
+            "ifd_offset": 460,
+            "next_ifd": 0,
+            "opaque_tags": {},
+            "primary_index": null,
+            "subifd_entry": null,
+            "subifd_offsets": [],
+            "tags": {
+              "254": 1,
+              "256": 4,
+              "257": 1,
+              "258": 32,
+              "259": 1,
+              "262": 1,
+              "273": 688,
+              "277": 1,
+              "278": 1,
+              "279": 16,
+              "282": {
+                "denominator": 1,
+                "kind": "rational",
+                "numerator": 1
+              },
+              "283": {
+                "denominator": 1,
+                "kind": "rational",
+                "numerator": 1
+              },
+              "296": 1,
+              "305": "tifffile.py",
+              "339": 3
+            }
+          },
+          {
+            "ifd_offset": 704,
+            "next_ifd": 0,
+            "opaque_tags": {},
+            "primary_index": 1,
+            "subifd_entry": null,
+            "subifd_offsets": [],
+            "tags": {
+              "256": 2,
+              "257": 3,
+              "258": 16,
+              "259": 1,
+              "262": 1,
+              "273": 912,
+              "277": 1,
+              "278": 3,
+              "279": 12,
+              "282": {
+                "denominator": 1,
+                "kind": "rational",
+                "numerator": 1
+              },
+              "283": {
+                "denominator": 1,
+                "kind": "rational",
+                "numerator": 1
+              },
+              "296": 1,
+              "305": "tifffile.py",
+              "339": 2
+            }
+          }
+        ],
+        "primary_offsets": [
+          8,
+          704
+        ]
+      },
+      "directories": [
+        {
+          "ifd_offset": 8,
+          "primary_index": 0,
+          "source_bits": 8,
+          "orientation": 1,
+          "source": {
+            "dtype": "uint8",
+            "shape": [
+              4,
+              5
+            ],
+            "sample_sha256": "e7aebf577f60412f0312d442c70a1fa6148c090bf5bab404caec29482ae779e8"
+          },
+          "native": {
+            "frames": 1,
+            "ifd_offset": 8,
+            "metadata": {
+              "little_endian": true,
+              "source_pixel_type": "U8",
+              "tags": {
+                "256": 5,
+                "257": 4,
+                "258": 8,
+                "259": 1,
+                "262": 1,
+                "273": 224,
+                "277": 1,
+                "278": 4,
+                "279": 20,
+                "282": {
+                  "denominator": 1,
+                  "kind": "rational",
+                  "numerator": 1
+                },
+                "283": {
+                  "denominator": 1,
+                  "kind": "rational",
+                  "numerator": 1
+                },
+                "296": 1,
+                "305": "tifffile.py",
+                "330": [
+                  244,
+                  460
+                ]
+              }
+            },
+            "pixel_type": "U8",
+            "pixels": {
+              "dtype": "uint8",
+              "sample_sha256": "e7aebf577f60412f0312d442c70a1fa6148c090bf5bab404caec29482ae779e8"
+            },
+            "shape": [
+              4,
+              5
+            ],
+            "value_hex": "000102030405060708090a0b0c0d0e0f10111213"
+          },
+          "exact_raw_samples": true
+        },
+        {
+          "ifd_offset": 244,
+          "primary_index": null,
+          "source_bits": 16,
+          "orientation": 1,
+          "source": {
+            "dtype": "uint16",
+            "shape": [
+              2,
+              3
+            ],
+            "sample_sha256": "b60e618d3c1db797337ff73a30df27377ce276728f85f33b663a240726507e34"
+          },
+          "native": {
+            "frames": 1,
+            "ifd_offset": 244,
+            "metadata": {
+              "little_endian": true,
+              "source_pixel_type": "U16",
+              "tags": {
+                "254": 1,
+                "256": 3,
+                "257": 2,
+                "258": 16,
+                "259": 1,
+                "262": 1,
+                "273": 448,
+                "277": 1,
+                "278": 2,
+                "279": 12,
+                "282": {
+                  "denominator": 1,
+                  "kind": "rational",
+                  "numerator": 1
+                },
+                "283": {
+                  "denominator": 1,
+                  "kind": "rational",
+                  "numerator": 1
+                },
+                "296": 1,
+                "305": "tifffile.py"
+              }
+            },
+            "pixel_type": "U16",
+            "pixels": {
+              "dtype": "uint16",
+              "sample_sha256": "b60e618d3c1db797337ff73a30df27377ce276728f85f33b663a240726507e34"
+            },
+            "shape": [
+              2,
+              3
+            ],
+            "value_hex": "00001127224e3375449c55c3"
+          },
+          "exact_raw_samples": true
+        },
+        {
+          "ifd_offset": 460,
+          "primary_index": null,
+          "source_bits": 32,
+          "orientation": 1,
+          "source": {
+            "dtype": "float32",
+            "shape": [
+              1,
+              4
+            ],
+            "sample_sha256": "f8a65c2a065a78f008428c5179fba93fcbf9b5bd88ad94b74e3c5cf8f93d05aa"
+          },
+          "native": {
+            "frames": 1,
+            "ifd_offset": 460,
+            "metadata": {
+              "little_endian": true,
+              "source_pixel_type": "F32",
+              "tags": {
+                "254": 1,
+                "256": 4,
+                "257": 1,
+                "258": 32,
+                "259": 1,
+                "262": 1,
+                "273": 688,
+                "277": 1,
+                "278": 1,
+                "279": 16,
+                "282": {
+                  "denominator": 1,
+                  "kind": "rational",
+                  "numerator": 1
+                },
+                "283": {
+                  "denominator": 1,
+                  "kind": "rational",
+                  "numerator": 1
+                },
+                "296": 1,
+                "305": "tifffile.py",
+                "339": 3
+              }
+            },
+            "pixel_type": "F32",
+            "pixels": {
+              "dtype": "float32",
+              "sample_sha256": "f8a65c2a065a78f008428c5179fba93fcbf9b5bd88ad94b74e3c5cf8f93d05aa"
+            },
+            "shape": [
+              1,
+              4
+            ],
+            "value_hex": "0000003f0000c0bf0000e84000000000"
+          },
+          "exact_raw_samples": true
+        },
+        {
+          "ifd_offset": 704,
+          "primary_index": 1,
+          "source_bits": 16,
+          "orientation": 1,
+          "source": {
+            "dtype": "int16",
+            "shape": [
+              3,
+              2
+            ],
+            "sample_sha256": "075333d8dac8f0d1651c87d837361dab2772ebff470cb41bfaaaf4c839525ccb"
+          },
+          "native": {
+            "frames": 1,
+            "ifd_offset": 704,
+            "metadata": {
+              "little_endian": true,
+              "source_pixel_type": "I16",
+              "tags": {
+                "256": 2,
+                "257": 3,
+                "258": 16,
+                "259": 1,
+                "262": 1,
+                "273": 912,
+                "277": 1,
+                "278": 3,
+                "279": 12,
+                "282": {
+                  "denominator": 1,
+                  "kind": "rational",
+                  "numerator": 1
+                },
+                "283": {
+                  "denominator": 1,
+                  "kind": "rational",
+                  "numerator": 1
+                },
+                "296": 1,
+                "305": "tifffile.py",
+                "339": 2
+              }
+            },
+            "pixel_type": "I16",
+            "pixels": {
+              "dtype": "int16",
+              "sample_sha256": "075333d8dac8f0d1651c87d837361dab2772ebff470cb41bfaaaf4c839525ccb"
+            },
+            "shape": [
+              3,
+              2
+            ],
+            "value_hex": "fdfffeffffff000001000200"
+          },
+          "exact_raw_samples": true
+        }
+      ],
+      "fabio": {
+        "status": "ok",
+        "lib": "TiffIO",
+        "nframes": 2,
+        "primary": {
+          "dtype": "uint8",
+          "shape": [
+            4,
+            5
+          ],
+          "sample_sha256": "e7aebf577f60412f0312d442c70a1fa6148c090bf5bab404caec29482ae779e8"
+        },
+        "classification": "primary-chain API only; no pinned FabIO SubIFD selection API"
+      },
+      "differences": []
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "url": "https://www.itu.int/itudoc/itu-t/com16/tiff-fx/docs/tiff6.pdf",
+    "bytes": 249524,
+    "sha256": "dbcdf729182937ecff415dfd06806894bf03bfd741291aa3ad7ba45335673def",
+    "accessed": "2026-11-06"
+  },
+  {
+    "url": "https://www.rfc-editor.org/rfc/rfc2306.txt",
+    "bytes": 59358,
+    "sha256": "71bdc119e945bb1c9c595856a3b7b854edeeb49d4b316737c079595375fa1f7e",
+    "accessed": "2026-11-06"
+  },
+  {
+    "url": "https://libtiff.gitlab.io/libtiff/multi_page.html",
+    "bytes": 31271,
+    "sha256": "cb3507077be8db87e21fdfac5c380fdfc8e37cd9f9bb10b4424260dfe2097f97",
+    "accessed": "2026-11-06"
+  },
+  {
+    "url": "https://libtiff.gitlab.io/libtiff/functions/TIFFSetDirectory.html",
+    "bytes": 12348,
+    "sha256": "bfb755e5e103a6d4a6b442b0047b01b574dd6a53d0a0534bf546b5990f9ab112",
+    "accessed": "2026-11-06"
+  }
+]

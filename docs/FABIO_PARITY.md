@@ -128,7 +128,7 @@ captures, with separate content-discovery and EDF header ledgers. A separate
 feature-disabled run distinguishes unavailable compilation features from missing
 readers. Every original registry entry remains in the ledger.
 
-Current evidence is recorded in `fabio-parity/2026-11-06-cif2-lowlevel.json`;
+Current evidence is recorded in `fabio-parity/2026-11-06-layout-types.json`;
 the earlier baseline and typed-HDF5 reports are retained. The current report is
 a failing full-parity gate, with exact native successes, unsupported layouts,
 reference differences and remaining readers kept separate.
@@ -321,3 +321,12 @@ Native source/count correctness, derived display values, reference exceptions
 and malformed/resource-limited inputs retain separate gates. The existing
 codec/metadata/input corpus and earlier companion/series proofs are revalidated;
 historical artifacts are retained unchanged.
+
+## Layout and type continuation
+
+The [layout/type audit](LAYOUT_TYPE_PARITY.md) adds explicit EDF array/plane
+reads, NumPy Boolean/binary16/empty arrays, exact HDF5 types and raw external
+windows, and TIFF SubIFD/fax layouts. Original source dimensions and IEEE bits
+remain authoritative. Independent word checks, unchanged reference failures,
+malformed input, resource policies and valid unsupported capabilities are
+recorded separately. Full reading parity remains unestablished.

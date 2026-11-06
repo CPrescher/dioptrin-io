@@ -16,12 +16,12 @@ Every format dependency is optional; default features are empty.
 
 | Feature | Implemented scope | Important remaining gaps |
 |---|---|---|
-| `hdf5` | Typed 2D/3D images/stacks with ten standard scalar types, both byte orders, Eiger/LImA/Lambda discovery, explicit external-file snapshots and bound regular VDS mosaics; original u32 compatibility reader; opt-in indexed raw u16/u32 chunks and bounded parallel consumers | Nested/printf/irregular VDS, raw external storage, complex/custom/float16 samples, arbitrary metadata and live refresh; raw fast path retains its narrower contract |
-| `tiff` | Scalar/packed/WhiteIsZero/palette/CFA/color/planar TIFF and BigTIFF; primary IFD pages, strips/tiles, lossless codecs, Group3 1D/Group4, legacy LZW, native YCbCr grids/units, modern JPEG and bounded OJPEG; explicit legacy metadata policies; ThunderScan complete/available-row reads; Pilatus/MAR headers | OJPEG/JPEG component reads need `jpeg`; SubIFD/other layouts remain gaps; F16 widening and reference views qualified |
+| `hdf5` | Typed 2D/3D images/stacks with standard scalar, binary16, Boolean and exact packed complex types, both byte orders, Eiger/LImA/Lambda discovery, explicit external-file/raw-window snapshots and bound regular VDS mosaics; original u32 compatibility reader; opt-in indexed raw u16/u32 chunks and bounded parallel consumers | Nested/printf/irregular VDS, arbitrary enums/compounds/custom types, other image ranks and live refresh; raw fast path retains its narrower contract |
+| `tiff` | Scalar/packed/WhiteIsZero/palette/CFA/color/planar TIFF and BigTIFF; primary pages and explicit SubIFD selection, strips/tiles, lossless codecs, CCITT RLE/Group3 1D/2D/Group4, legacy LZW, native YCbCr grids/units, modern JPEG and bounded OJPEG; explicit legacy metadata policies; ThunderScan complete/available-row reads; Pilatus/MAR headers | OJPEG/JPEG component reads need `jpeg`; fragmented OJPEG/other sampled layouts remain gaps; F16 widening and reference views qualified |
 | `jpeg`, `jpeg2000` | Mature libjpeg-turbo/OpenJPEG backends; lossless high-precision JPEG; original channels, precision, lossy provenance and headers | Unsupported precision/component layouts fail explicitly; see image contracts |
 | `cbf` | Eight integer types, explicit byte-offset dialects, original encoded payload/integrity access, raw CIF headers and separate source-preserving CIF 1.1/2.0 syntax trees | Dictionary semantics, other decoded codecs and multiple binary sections |
-| `edf` | Ten scalar types, stacks/general headers, internal/outer compression and bounded padding, explicit external-source snapshots, explicit legacy layout/label policies and typed-prefix recovery | Volumes, float128, byte-offset; complete-image APIs stay strict; recovery exposes missing spans and member integrity separately |
-| `native` | NPY v1/2/3 scalars/complex arrays, C/Fortran storage; d*TREK/ADSC, Fit2D masks/spreadsheets, HiPiC, PNM and explicit raw input | Remaining dtype/dimension variants; general discovery is available through `wrapped::Input` |
+| `edf` | Ten scalar types, full-rank source arrays/explicit planes and concatenated records/general headers, internal/outer compression and bounded padding, explicit external-source snapshots, explicit legacy layout/label policies and typed-prefix recovery | ABI-dependent float128, obsolete byte-offset; complete-image APIs stay strict; recovery exposes missing spans and member integrity separately |
+| `native` | NPY v1/2/3 scalar/complex/Boolean/binary16 and empty arrays, C/Fortran storage; d*TREK/ADSC, Fit2D masks/spreadsheets, HiPiC, PNM and explicit raw input | Remaining dtype/dimension variants; general discovery is available through `wrapped::Input` |
 | `columnfile` | Separate labeled ASCII tables, exact labels/comments/numeric tokens and explicit float64 values | Binary decoder is a stub in pinned FabIO; no binary schema is inferred |
 | `chiplot` | Separate FIT2D/CHIPLOT profiles, stored X coordinates, multiple Y curves and exact numeric tokens | Unspecified uncertainty layouts and declaration flags fail explicitly |
 | `containers` | SPE v2/v3/ROI/frames, typed MRC stacks and nested DM3 image/tag selection | Unsupported layouts/types; pinned reference quirks documented |
@@ -253,3 +253,8 @@ a native compiler and CMake. No installed Python is required.
 Dioptrin and PhaseSmith remain independent consumers. A small opt-in typed
 Dioptrin adapter is tested separately for the benchmark; no PhaseSmith migration
 or Dioptas changes are included.
+
+See [layout and type qualification](docs/LAYOUT_TYPE_PARITY.md) for source-rank
+EDF arrays, NumPy Boolean/binary16/empty arrays, HDF5 exact types/raw windows
+and TIFF directory/fax layouts. Source correctness, reference failures and
+valid unsupported variants are recorded separately.

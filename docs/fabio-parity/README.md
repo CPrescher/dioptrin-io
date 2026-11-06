@@ -1,4 +1,23 @@
-# CIF 2.0 and low-level readers, 2026-11-06
+# Layout and type readers, 2026-11-06
+
+The [current continuation](2026-11-06-layout-types.json) preserves all 626
+qualified input outcomes and 237 unchanged reference tests (zero failures/errors,
+one existing slow skip), including their pixel, metadata and attribute results.
+New independent proofs add EDF arrays/planes, NPY Boolean/binary16/empty arrays,
+exact HDF5 types/raw external windows and TIFF SubIFD/fax layouts. Six valid
+NumPy empty-array failures remain explicitly qualified FabIO reshape bugs.
+Other valid unsupported types/layouts, malformed input and resource rejection
+remain separate.
+
+See [combined evidence](../LAYOUT_TYPE_PARITY.md) and the
+[native checks](2026-11-06-layout-types-native-checks.json): 362 Rust tests,
+19 fax library tests, 120 Python controls, required/no-default checks,
+23 isolated optional features and Rust 1.89 CBF all pass. The ten previous
+standalone proofs also pass against the same final executable. Full FabIO
+reading parity remains unestablished for the documented unsupported variants
+and qualified source/reference differences.
+
+## Previous CIF 2.0 and low-level readers, retained
 
 The [reader continuation](2026-11-06-cif2-lowlevel.json) preserves all 626 input
 outcomes and 237 unchanged reference tests (zero failures/errors, one existing
