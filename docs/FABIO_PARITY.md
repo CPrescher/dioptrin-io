@@ -41,6 +41,15 @@ available-span comparisons are described in [source recovery](source-recovery/RE
 gate. Source-hash/test selectors, original/effective layout decisions, member
 integrity and missing ranges stay in schema 5 reports.
 
+Schema 6 separately qualifies `reference_decoder_defect`. It requires native
+source words to match tifffile and native libtiff, an exact byte-unpacker model
+to reproduce the actual wrong reference output, and a controlled correct Pillow
+backend to recover the expected display. Any failed or unsupported check leaves
+an ordinary mismatch. These defects retain the measured differences and are
+excluded from complete-count/view matches and the full parity gate. The
+[planar16 audit](pillow-planar16/README.md) also records negative classifier tests
+and the independently verified Dioptrin fixes found during this investigation.
+
 ## Reproduction
 
 Use a test-only Python environment. Exact packages used for this run are in

@@ -117,10 +117,15 @@ photometric samples through zune. Provenance records `JpegRgbDecode`. There is
 no retry after a decoding failure. Encoded and rendered chunk scratch each obey
 the reader intermediate limit; view output has its separate explicit limit.
 
-Pillow13 has a proven planar 16-bit color layout defect: it alternates high and low
-bytes rather than reducing each 16-bit sample correctly. The Pillow policy rejects
-these cases; independent source counts match tifffile and contig/planar native
-samples agree. No compatibility mode reproduces that defect. Mode1 NumPy bool
+Pillow13's default **uncompressed** planar 16-bit color path selects single-byte
+band unpackers, losing the 16-bit suffix and consuming the wrong source bytes.
+The Pillow policy rejects those cases; independent source counts match both
+tifffile and native libtiff. Compressed planar16 uses Pillow's correct libtiff
+path and now has verified display views. The previous broader rejection was a
+Dioptrin gap. Native planar partial-edge tiles also now calculate padding using
+the spatial tile index within each plane, fixing a vendored backend panic.
+See [the attribution and controlled-source proof](pillow-planar16/README.md).
+No compatibility mode reproduces the corrupt byte unpacking. Mode1 NumPy bool
 arrays can physically store true as 0xFF; view comparisons canonicalize logical
 bool values to 0/1 while preserving raw source signatures separately.
 

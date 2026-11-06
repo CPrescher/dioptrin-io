@@ -41,7 +41,10 @@ establish detector-specific metadata or master-file coverage.
 The [current pinned corpus run](docs/fabio-parity/README.md) has 542 matching
 complete read events and 11 independently verified partial-source cases, with
 no native rejection of a successful reference read. Expected failures and missing
-counts remain explicit; two known Pillow display defects remain mismatches.
+counts remain explicit. The [two Pillow display differences](docs/pillow-planar16/README.md)
+are independently qualified decoder defects. Related compressed-planar display
+and native partial-edge tile gaps are fixed; no unclassified mismatch remains
+in that pinned corpus.
 
 This development crate is not published. Use a local path dependency:
 

@@ -85,7 +85,7 @@
       "subformats_and_types": "classic TIFF/BigTIFF; endian scalar/color; strip/tile/IFD; photometric/predictor variants",
       "compression": "reference TiffIO/Pillow capabilities vary; none/PackBits/LZW/Deflate/JPEG require distinct fixtures",
       "stack": "primary IFD pages",
-      "implementation": "partial: scalar/packed/WhiteIsZero/color/planar/IFD/strip/tile/BigTIFF counts, Group3 1D/Group4/PackBits/LZW/Deflate/JPEG; source F16 explicitly widened to F32; explicit legacy LSB/late LZW via minimally patched vendored TIFF; original YCbCr grids/units/padding for none/LZW and JPEG, bounded single-chunk OJPEG with jpeg feature; explicit bounded uncompressed-window and mixed strip/tile metadata policies retain original IFDs; original ThunderScan codec with complete-only dense reads and separate available-row spans; optional Pillow13/TiffIO views separate; palette/CFA/opaque metadata retained; SubIFD/Group3 2D/RLE/fragmented OJPEG/other sampled layouts and two Pillow planar16 defects remain",
+      "implementation": "partial: scalar/packed/WhiteIsZero/color/planar/IFD/strip/tile/BigTIFF counts, Group3 1D/Group4/PackBits/LZW/Deflate/JPEG; source F16 explicitly widened to F32; explicit legacy LSB/late LZW via minimally patched vendored TIFF; original YCbCr grids/units/padding for none/LZW and JPEG, bounded single-chunk OJPEG with jpeg feature; explicit bounded uncompressed-window and mixed strip/tile metadata policies retain original IFDs; original ThunderScan codec with complete-only dense reads and separate available-row spans; optional Pillow13/TiffIO views separate; palette/CFA/opaque metadata retained; SubIFD/Group3 2D/RLE/fragmented OJPEG/other sampled layouts remain; uncompressed Pillow planar16 reference defects independently qualified; compressed planar16 views and native plane-relative edge-tile padding verified",
       "validation": [
         "tests/data/tiff/*.tif",
         "tests/tiff.rs",
@@ -110,6 +110,11 @@
         "tests/wrapped_views.rs",
         "tests/data/tiff-view/provenance.json",
         "docs/tiff-views-fabio-2026.6.0.json",
+        "tests/pillow_planar16.rs",
+        "tests/data/pillow-planar16/provenance.json",
+        "tests/data/pillow-planar16/multitile-provenance.json",
+        "docs/pillow-planar16/README.md",
+        "docs/pillow-planar16/2026-11-06-proof.json",
         "tests/tiff_recovery.rs",
         "tests/data/tiff-recovery/provenance.json",
         "docs/source-recovery/README.md"

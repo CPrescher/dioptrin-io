@@ -1,6 +1,6 @@
 # Complete reads, expected failures and available source data
 
-The [current full corpus run](../fabio-parity/2026-11-06-source-recovery.json)
+The [source-recovery corpus run](../fabio-parity/2026-11-06-source-recovery.json)
 has 542 complete matching read events and 11 independently verified partial
 source events, with no native rejection of a successful FabIO read. The
 [original 91-event audit](../rejection-audits/2026-11-06-after-source-recovery.json)
@@ -8,6 +8,11 @@ retains 80 complete closures and 11 partial cases. This does not claim complete
 counts for damaged files or full FabIO API parity. The reference suite has 213
 tests, no failures/errors and one existing skip; two known Pillow display
 defects remain explicit mismatches.
+
+The subsequent [planar16 investigation](../pillow-planar16/README.md) independently
+attributes those two differences to Pillow, fixes related native gaps and records
+them as qualified reference decoder defects in a new report. Earlier reports
+and their hashes remain unchanged.
 
 The pinned FabIO corpus contains both valid acquisitions and deliberately broken
 inputs. Passing its suite does not mean producing a complete image from every
