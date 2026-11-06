@@ -1,0 +1,2564 @@
+{
+  "schema": 1,
+  "baseline": "docs/fabio-parity/2026-11-05-mar-sparse.json",
+  "baseline_sha256": "cea6a3410b379dd8462eae624dcf645112b0def766dc0624c72f99a8f236d0ae",
+  "audited_events": 12,
+  "audited_unique_sources": 6,
+  "scope": "Six changed records only; retain the prior initial TIFF and four codec closures when combining with the previous13-source audit.",
+  "summary": {
+    "explicit_complete_source_layout_events": 11,
+    "partial_source_access_events": 1,
+    "synthetic_sample_events": 0
+  },
+  "reference": {
+    "FabIO": "2026.6.0",
+    "tifffile": "2026.10.15",
+    "imagecodecs": "2026.10.10"
+  },
+  "records": [
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/Feb09-bright-00.300s_WAXS.bz2",
+      "baseline_sha256": "8d3b8fa21d2acb13319f83c849aab2529b22ba0055dc6f24392243e08ca6cbf9",
+      "baseline_event_count": 3,
+      "baseline_tests": [
+        "fabio.test.codecs.test_tifimage.TestTif.test_frame",
+        "fabio.test.codecs.test_tifimage.TestTif.test_header",
+        "fabio.test.codecs.test_tifimage.TestTif.test_read"
+      ],
+      "baseline_error": "TIFF uncompressed chunk shorter than required source rows",
+      "input_condition": "malformed_structural_metadata",
+      "reader_action": "explicit_source_layout_closed",
+      "classification": "explicit_complete_uncompressed_source_footprint",
+      "evidence": {
+        "audited_source": "/tmp/dioptrin-io-fabio-corpus/Feb09-bright-00.300s_WAXS.bz2",
+        "source_sha256": "8d3b8fa21d2acb13319f83c849aab2529b22ba0055dc6f24392243e08ca6cbf9",
+        "source_bytes": 1320645,
+        "decoded_tiff_sha256": "89ed2cf5f3f3dd31442bd4eaa2516b0ed860fe88b868406ba7110bbcf72a2733",
+        "decoded_tiff_bytes": 2171714,
+        "source_unchanged": true,
+        "native_frames": [
+          {
+            "dtype": "uint16",
+            "fields": {},
+            "frame": 0,
+            "frames": 1,
+            "opaque_metadata": [],
+            "reference_view": {
+              "dtype": "uint16",
+              "fields": {},
+              "frame": 0,
+              "frames": 1,
+              "sample_sha256": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f",
+              "shape": [
+                1042,
+                1042
+              ],
+              "sources": [
+                "/private/tmp/dioptrin-io-fabio-corpus/Feb09-bright-00.300s_WAXS.bz2"
+              ]
+            },
+            "sample_sha256": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f",
+            "shape": [
+              1042,
+              1042
+            ],
+            "sources": [
+              "/private/tmp/dioptrin-io-fabio-corpus/Feb09-bright-00.300s_WAXS.bz2"
+            ],
+            "tiff_compatibility": {
+              "kind": "Strips",
+              "operations": [
+                "UncompressedWindowsFromShape"
+              ],
+              "rows_per_strip": 1042,
+              "source_entries": [
+                {
+                  "count": 1,
+                  "entry_offset": 10,
+                  "field_type": 4,
+                  "ifd_entry": [
+                    0,
+                    254,
+                    0,
+                    4,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 254
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 22,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    0,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    4,
+                    18,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 256
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 34,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    1,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    4,
+                    18,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 257
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 46,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    2,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    16,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 258
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 58,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    3,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    1,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 259
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 70,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    6,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    1,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 262
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 82,
+                  "field_type": 4,
+                  "ifd_entry": [
+                    1,
+                    17,
+                    0,
+                    4,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    186
+                  ],
+                  "payload_offset": null,
+                  "tag": 273
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 94,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    21,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    1,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 277
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 106,
+                  "field_type": 4,
+                  "ifd_entry": [
+                    1,
+                    22,
+                    0,
+                    4,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    4,
+                    18
+                  ],
+                  "payload_offset": null,
+                  "tag": 278
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 118,
+                  "field_type": 4,
+                  "ifd_entry": [
+                    1,
+                    23,
+                    0,
+                    4,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    16,
+                    145,
+                    68
+                  ],
+                  "payload_offset": null,
+                  "tag": 279
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 130,
+                  "field_type": 5,
+                  "ifd_entry": [
+                    1,
+                    26,
+                    0,
+                    5,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    170
+                  ],
+                  "payload_offset": 170,
+                  "tag": 282
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 142,
+                  "field_type": 5,
+                  "ifd_entry": [
+                    1,
+                    27,
+                    0,
+                    5,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    178
+                  ],
+                  "payload_offset": 178,
+                  "tag": 283
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 154,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    40,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    1,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 296
+                }
+              ],
+              "source_ifd_offset": 8,
+              "windows": [
+                {
+                  "bytes": 2171528,
+                  "offset": 186
+                }
+              ]
+            },
+            "view_policy": {
+              "kind": "consumer_display_view",
+              "name": "FabioTiffIo",
+              "operations": [],
+              "output_shape": [
+                1042,
+                1042
+              ],
+              "output_type": "Scalar(U16)",
+              "source_bits_per_sample": 16,
+              "source_components": [],
+              "source_compression": 1,
+              "source_layout": "Uniform",
+              "source_lossy": false,
+              "source_orientation": 1,
+              "source_photometric": 1,
+              "source_planar_configuration": 1,
+              "source_shape": [
+                1042,
+                1042
+              ],
+              "source_type": "U16"
+            }
+          }
+        ],
+        "explicit_probe_policy": "--tiff-compat",
+        "strict_default_unchanged": true,
+        "independent_method": "Independent TIFF header parse plus direct original source-window NumPy U16 decode, using exact source byte order and complete shape footprint; no backend inferred bytecounts or padded pixels.",
+        "computed_window": {
+          "offset": 186,
+          "bytes": 2171528,
+          "source_end": 2171714
+        },
+        "original_bytecounts": [
+          1085764
+        ],
+        "independent_source_signature": {
+          "shape": [
+            1042,
+            1042
+          ],
+          "dtype": "uint16",
+          "sample_sha256": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f"
+        },
+        "all_source_samples_match": true,
+        "pinned_reference_backend": "TiffIO",
+        "pinned_reference_signature": {
+          "shape": [
+            1042,
+            1042
+          ],
+          "dtype": "uint16",
+          "sample_sha256": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f"
+        },
+        "all_explicit_view_samples_match": true,
+        "strict_rejection": "TIFF uncompressed chunk shorter than required source rows"
+      }
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/Feb09-bright-00.300s_WAXS.gz",
+      "baseline_sha256": "c3b316575ebedda401b1b189dfac68343ee1d6eef1426a817994436297a84f40",
+      "baseline_event_count": 3,
+      "baseline_tests": [
+        "fabio.test.codecs.test_tifimage.TestTif.test_frame",
+        "fabio.test.codecs.test_tifimage.TestTif.test_header",
+        "fabio.test.codecs.test_tifimage.TestTif.test_read"
+      ],
+      "baseline_error": "TIFF uncompressed chunk shorter than required source rows",
+      "input_condition": "malformed_structural_metadata",
+      "reader_action": "explicit_source_layout_closed",
+      "classification": "explicit_complete_uncompressed_source_footprint",
+      "evidence": {
+        "audited_source": "/tmp/dioptrin-io-fabio-corpus/Feb09-bright-00.300s_WAXS.gz",
+        "source_sha256": "c3b316575ebedda401b1b189dfac68343ee1d6eef1426a817994436297a84f40",
+        "source_bytes": 1653880,
+        "decoded_tiff_sha256": "89ed2cf5f3f3dd31442bd4eaa2516b0ed860fe88b868406ba7110bbcf72a2733",
+        "decoded_tiff_bytes": 2171714,
+        "source_unchanged": true,
+        "native_frames": [
+          {
+            "dtype": "uint16",
+            "fields": {},
+            "frame": 0,
+            "frames": 1,
+            "opaque_metadata": [],
+            "reference_view": {
+              "dtype": "uint16",
+              "fields": {},
+              "frame": 0,
+              "frames": 1,
+              "sample_sha256": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f",
+              "shape": [
+                1042,
+                1042
+              ],
+              "sources": [
+                "/private/tmp/dioptrin-io-fabio-corpus/Feb09-bright-00.300s_WAXS.gz"
+              ]
+            },
+            "sample_sha256": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f",
+            "shape": [
+              1042,
+              1042
+            ],
+            "sources": [
+              "/private/tmp/dioptrin-io-fabio-corpus/Feb09-bright-00.300s_WAXS.gz"
+            ],
+            "tiff_compatibility": {
+              "kind": "Strips",
+              "operations": [
+                "UncompressedWindowsFromShape"
+              ],
+              "rows_per_strip": 1042,
+              "source_entries": [
+                {
+                  "count": 1,
+                  "entry_offset": 10,
+                  "field_type": 4,
+                  "ifd_entry": [
+                    0,
+                    254,
+                    0,
+                    4,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 254
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 22,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    0,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    4,
+                    18,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 256
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 34,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    1,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    4,
+                    18,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 257
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 46,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    2,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    16,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 258
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 58,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    3,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    1,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 259
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 70,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    6,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    1,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 262
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 82,
+                  "field_type": 4,
+                  "ifd_entry": [
+                    1,
+                    17,
+                    0,
+                    4,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    186
+                  ],
+                  "payload_offset": null,
+                  "tag": 273
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 94,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    21,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    1,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 277
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 106,
+                  "field_type": 4,
+                  "ifd_entry": [
+                    1,
+                    22,
+                    0,
+                    4,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    4,
+                    18
+                  ],
+                  "payload_offset": null,
+                  "tag": 278
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 118,
+                  "field_type": 4,
+                  "ifd_entry": [
+                    1,
+                    23,
+                    0,
+                    4,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    16,
+                    145,
+                    68
+                  ],
+                  "payload_offset": null,
+                  "tag": 279
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 130,
+                  "field_type": 5,
+                  "ifd_entry": [
+                    1,
+                    26,
+                    0,
+                    5,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    170
+                  ],
+                  "payload_offset": 170,
+                  "tag": 282
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 142,
+                  "field_type": 5,
+                  "ifd_entry": [
+                    1,
+                    27,
+                    0,
+                    5,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    178
+                  ],
+                  "payload_offset": 178,
+                  "tag": 283
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 154,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    40,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    1,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 296
+                }
+              ],
+              "source_ifd_offset": 8,
+              "windows": [
+                {
+                  "bytes": 2171528,
+                  "offset": 186
+                }
+              ]
+            },
+            "view_policy": {
+              "kind": "consumer_display_view",
+              "name": "FabioTiffIo",
+              "operations": [],
+              "output_shape": [
+                1042,
+                1042
+              ],
+              "output_type": "Scalar(U16)",
+              "source_bits_per_sample": 16,
+              "source_components": [],
+              "source_compression": 1,
+              "source_layout": "Uniform",
+              "source_lossy": false,
+              "source_orientation": 1,
+              "source_photometric": 1,
+              "source_planar_configuration": 1,
+              "source_shape": [
+                1042,
+                1042
+              ],
+              "source_type": "U16"
+            }
+          }
+        ],
+        "explicit_probe_policy": "--tiff-compat",
+        "strict_default_unchanged": true,
+        "independent_method": "Independent TIFF header parse plus direct original source-window NumPy U16 decode, using exact source byte order and complete shape footprint; no backend inferred bytecounts or padded pixels.",
+        "computed_window": {
+          "offset": 186,
+          "bytes": 2171528,
+          "source_end": 2171714
+        },
+        "original_bytecounts": [
+          1085764
+        ],
+        "independent_source_signature": {
+          "shape": [
+            1042,
+            1042
+          ],
+          "dtype": "uint16",
+          "sample_sha256": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f"
+        },
+        "all_source_samples_match": true,
+        "pinned_reference_backend": "TiffIO",
+        "pinned_reference_signature": {
+          "shape": [
+            1042,
+            1042
+          ],
+          "dtype": "uint16",
+          "sample_sha256": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f"
+        },
+        "all_explicit_view_samples_match": true,
+        "strict_rejection": "TIFF uncompressed chunk shorter than required source rows"
+      }
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/Feb09-bright-00.300s_WAXS",
+      "baseline_sha256": "89ed2cf5f3f3dd31442bd4eaa2516b0ed860fe88b868406ba7110bbcf72a2733",
+      "baseline_event_count": 3,
+      "baseline_tests": [
+        "fabio.test.codecs.test_tifimage.TestTif.test_frame",
+        "fabio.test.codecs.test_tifimage.TestTif.test_header",
+        "fabio.test.codecs.test_tifimage.TestTif.test_read"
+      ],
+      "baseline_error": "TIFF uncompressed chunk shorter than required source rows",
+      "input_condition": "malformed_structural_metadata",
+      "reader_action": "explicit_source_layout_closed",
+      "classification": "explicit_complete_uncompressed_source_footprint",
+      "evidence": {
+        "audited_source": "/tmp/dioptrin-io-fabio-corpus/Feb09-bright-00.300s_WAXS",
+        "source_sha256": "89ed2cf5f3f3dd31442bd4eaa2516b0ed860fe88b868406ba7110bbcf72a2733",
+        "source_bytes": 2171714,
+        "decoded_tiff_sha256": "89ed2cf5f3f3dd31442bd4eaa2516b0ed860fe88b868406ba7110bbcf72a2733",
+        "decoded_tiff_bytes": 2171714,
+        "source_unchanged": true,
+        "native_frames": [
+          {
+            "dtype": "uint16",
+            "fields": {},
+            "frame": 0,
+            "frames": 1,
+            "opaque_metadata": [],
+            "reference_view": {
+              "dtype": "uint16",
+              "fields": {},
+              "frame": 0,
+              "frames": 1,
+              "sample_sha256": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f",
+              "shape": [
+                1042,
+                1042
+              ],
+              "sources": [
+                "/private/tmp/dioptrin-io-fabio-corpus/Feb09-bright-00.300s_WAXS"
+              ]
+            },
+            "sample_sha256": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f",
+            "shape": [
+              1042,
+              1042
+            ],
+            "sources": [
+              "/private/tmp/dioptrin-io-fabio-corpus/Feb09-bright-00.300s_WAXS"
+            ],
+            "tiff_compatibility": {
+              "kind": "Strips",
+              "operations": [
+                "UncompressedWindowsFromShape"
+              ],
+              "rows_per_strip": 1042,
+              "source_entries": [
+                {
+                  "count": 1,
+                  "entry_offset": 10,
+                  "field_type": 4,
+                  "ifd_entry": [
+                    0,
+                    254,
+                    0,
+                    4,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 254
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 22,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    0,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    4,
+                    18,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 256
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 34,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    1,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    4,
+                    18,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 257
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 46,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    2,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    16,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 258
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 58,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    3,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    1,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 259
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 70,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    6,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    1,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 262
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 82,
+                  "field_type": 4,
+                  "ifd_entry": [
+                    1,
+                    17,
+                    0,
+                    4,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    186
+                  ],
+                  "payload_offset": null,
+                  "tag": 273
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 94,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    21,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    1,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 277
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 106,
+                  "field_type": 4,
+                  "ifd_entry": [
+                    1,
+                    22,
+                    0,
+                    4,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    4,
+                    18
+                  ],
+                  "payload_offset": null,
+                  "tag": 278
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 118,
+                  "field_type": 4,
+                  "ifd_entry": [
+                    1,
+                    23,
+                    0,
+                    4,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    16,
+                    145,
+                    68
+                  ],
+                  "payload_offset": null,
+                  "tag": 279
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 130,
+                  "field_type": 5,
+                  "ifd_entry": [
+                    1,
+                    26,
+                    0,
+                    5,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    170
+                  ],
+                  "payload_offset": 170,
+                  "tag": 282
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 142,
+                  "field_type": 5,
+                  "ifd_entry": [
+                    1,
+                    27,
+                    0,
+                    5,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    178
+                  ],
+                  "payload_offset": 178,
+                  "tag": 283
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 154,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    40,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    1,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 296
+                }
+              ],
+              "source_ifd_offset": 8,
+              "windows": [
+                {
+                  "bytes": 2171528,
+                  "offset": 186
+                }
+              ]
+            },
+            "view_policy": {
+              "kind": "consumer_display_view",
+              "name": "FabioTiffIo",
+              "operations": [],
+              "output_shape": [
+                1042,
+                1042
+              ],
+              "output_type": "Scalar(U16)",
+              "source_bits_per_sample": 16,
+              "source_components": [],
+              "source_compression": 1,
+              "source_layout": "Uniform",
+              "source_lossy": false,
+              "source_orientation": 1,
+              "source_photometric": 1,
+              "source_planar_configuration": 1,
+              "source_shape": [
+                1042,
+                1042
+              ],
+              "source_type": "U16"
+            }
+          }
+        ],
+        "explicit_probe_policy": "--tiff-compat",
+        "strict_default_unchanged": true,
+        "independent_method": "Independent TIFF header parse plus direct original source-window NumPy U16 decode, using exact source byte order and complete shape footprint; no backend inferred bytecounts or padded pixels.",
+        "computed_window": {
+          "offset": 186,
+          "bytes": 2171528,
+          "source_end": 2171714
+        },
+        "original_bytecounts": [
+          1085764
+        ],
+        "independent_source_signature": {
+          "shape": [
+            1042,
+            1042
+          ],
+          "dtype": "uint16",
+          "sample_sha256": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f"
+        },
+        "all_source_samples_match": true,
+        "pinned_reference_backend": "TiffIO",
+        "pinned_reference_signature": {
+          "shape": [
+            1042,
+            1042
+          ],
+          "dtype": "uint16",
+          "sample_sha256": "a03a1b9d0256ce808a6a0c92f6c0516b50b27e69406509a7aecab704fd50ee5f"
+        },
+        "all_explicit_view_samples_match": true,
+        "strict_rejection": "TIFF uncompressed chunk shorter than required source rows"
+      }
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/a0009.tif",
+      "baseline_sha256": "95b318fb8c6f3ab9edd33aba8f3feb6302d266b237f81a690fa62cc06ed7bb51",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_tifimage.TestTifImage_A0009.test1"
+      ],
+      "baseline_error": "format error: file should contain either (StripByteCounts and StripOffsets) or (TileByteCounts and TileOffsets), other combination was found",
+      "input_condition": "malformed_structural_metadata",
+      "reader_action": "explicit_source_layout_closed",
+      "classification": "explicit_complete_uncompressed_source_footprint",
+      "evidence": {
+        "audited_source": "/tmp/dioptrin-io-fabio-corpus/a0009.tif",
+        "source_sha256": "95b318fb8c6f3ab9edd33aba8f3feb6302d266b237f81a690fa62cc06ed7bb51",
+        "source_bytes": 2097326,
+        "decoded_tiff_sha256": "95b318fb8c6f3ab9edd33aba8f3feb6302d266b237f81a690fa62cc06ed7bb51",
+        "decoded_tiff_bytes": 2097326,
+        "source_unchanged": true,
+        "native_frames": [
+          {
+            "dtype": "uint16",
+            "fields": {},
+            "frame": 0,
+            "frames": 1,
+            "opaque_metadata": [],
+            "reference_view": {
+              "dtype": "uint16",
+              "fields": {},
+              "frame": 0,
+              "frames": 1,
+              "sample_sha256": "87fecc64e32c5d2a623d185fb773c0ba6962776b05968ba1003460642af88d68",
+              "shape": [
+                1024,
+                1024
+              ],
+              "sources": [
+                "/private/tmp/dioptrin-io-fabio-corpus/a0009.tif"
+              ]
+            },
+            "sample_sha256": "87fecc64e32c5d2a623d185fb773c0ba6962776b05968ba1003460642af88d68",
+            "shape": [
+              1024,
+              1024
+            ],
+            "sources": [
+              "/private/tmp/dioptrin-io-fabio-corpus/a0009.tif"
+            ],
+            "tiff_compatibility": {
+              "kind": "Strips",
+              "operations": [
+                "UncompressedWindowsFromShape"
+              ],
+              "rows_per_strip": 1024,
+              "source_entries": [
+                {
+                  "count": 1,
+                  "entry_offset": 10,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    255,
+                    0,
+                    3,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 255
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 22,
+                  "field_type": 4,
+                  "ifd_entry": [
+                    0,
+                    1,
+                    4,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    4,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 256
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 34,
+                  "field_type": 4,
+                  "ifd_entry": [
+                    1,
+                    1,
+                    4,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    4,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 257
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 46,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    2,
+                    1,
+                    3,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    16,
+                    0,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 258
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 58,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    3,
+                    1,
+                    3,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 259
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 70,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    6,
+                    1,
+                    3,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 262
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 82,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    10,
+                    1,
+                    3,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 266
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 94,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    18,
+                    1,
+                    3,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 274
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 106,
+                  "field_type": 4,
+                  "ifd_entry": [
+                    17,
+                    1,
+                    4,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    174,
+                    0,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 273
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 118,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    21,
+                    1,
+                    3,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 277
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 130,
+                  "field_type": 5,
+                  "ifd_entry": [
+                    26,
+                    1,
+                    5,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    158,
+                    0,
+                    0,
+                    0
+                  ],
+                  "payload_offset": 158,
+                  "tag": 282
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 142,
+                  "field_type": 5,
+                  "ifd_entry": [
+                    27,
+                    1,
+                    5,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    166,
+                    0,
+                    0,
+                    0
+                  ],
+                  "payload_offset": 166,
+                  "tag": 283
+                }
+              ],
+              "source_ifd_offset": 8,
+              "windows": [
+                {
+                  "bytes": 2097152,
+                  "offset": 174
+                }
+              ]
+            },
+            "view_policy": {
+              "kind": "consumer_display_view",
+              "name": "FabioTiffIo",
+              "operations": [],
+              "output_shape": [
+                1024,
+                1024
+              ],
+              "output_type": "Scalar(U16)",
+              "source_bits_per_sample": 16,
+              "source_components": [],
+              "source_compression": 1,
+              "source_layout": "Uniform",
+              "source_lossy": false,
+              "source_orientation": 1,
+              "source_photometric": 1,
+              "source_planar_configuration": 1,
+              "source_shape": [
+                1024,
+                1024
+              ],
+              "source_type": "U16"
+            }
+          }
+        ],
+        "explicit_probe_policy": "--tiff-compat",
+        "strict_default_unchanged": true,
+        "independent_method": "Independent TIFF header parse plus direct original source-window NumPy U16 decode, using exact source byte order and complete shape footprint; no backend inferred bytecounts or padded pixels.",
+        "computed_window": {
+          "offset": 174,
+          "bytes": 2097152,
+          "source_end": 2097326
+        },
+        "original_bytecounts": null,
+        "independent_source_signature": {
+          "shape": [
+            1024,
+            1024
+          ],
+          "dtype": "uint16",
+          "sample_sha256": "87fecc64e32c5d2a623d185fb773c0ba6962776b05968ba1003460642af88d68"
+        },
+        "all_source_samples_match": true,
+        "pinned_reference_backend": "TiffIO",
+        "pinned_reference_signature": {
+          "shape": [
+            1024,
+            1024
+          ],
+          "dtype": "uint16",
+          "sample_sha256": "87fecc64e32c5d2a623d185fb773c0ba6962776b05968ba1003460642af88d68"
+        },
+        "all_explicit_view_samples_match": true,
+        "strict_rejection": "format error: file should contain either (StripByteCounts and StripOffsets) or (TileByteCounts and TileOffsets), other combination was found"
+      }
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/text.tif",
+      "baseline_sha256": "0b9c03248c2e1d4acaf1437e9b16326a1e0da46342c56f38a4a1b62a51d448d7",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_tifimage.TestTif_LibTiffPic.test_all_images"
+      ],
+      "baseline_error": "unsupported TIFF detector compression 32809",
+      "input_condition": "incomplete_declared_source",
+      "reader_action": "partial_source_access",
+      "classification": "validated_available_rows_without_synthetic_counts",
+      "evidence": {
+        "audited_source": "/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/text.tif",
+        "source_sha256": "0b9c03248c2e1d4acaf1437e9b16326a1e0da46342c56f38a4a1b62a51d448d7",
+        "source_bytes": 154496,
+        "decoded_tiff_sha256": "0b9c03248c2e1d4acaf1437e9b16326a1e0da46342c56f38a4a1b62a51d448d7",
+        "decoded_tiff_bytes": 154496,
+        "source_unchanged": true,
+        "native_frames": [
+          {
+            "dtype": "uint8",
+            "fields": {},
+            "frame": 0,
+            "frames": 2,
+            "sample_sha256": "803b73a275d091c3304cf3b7e626c17c9a14e602e8391aefa22d624a33cdfaa0",
+            "shape": [
+              538272
+            ],
+            "source_recovery": {
+              "available_rows": [
+                {
+                  "rows": 356,
+                  "sample_offset": 0,
+                  "start_row": 0
+                }
+              ],
+              "complete": false,
+              "declared_shape": [
+                359,
+                1512
+              ],
+              "format": "tiff-thunderscan",
+              "missing_rows": [
+                {
+                  "reason": "native ThunderScan row validation failed: InputExhausted; failed-row padding discarded",
+                  "rows": 3,
+                  "start_row": 356,
+                  "strip": 5
+                }
+              ],
+              "strips": [
+                {
+                  "complete_rows": 64,
+                  "consumed_bytes": 17446,
+                  "declared_bytes": 17446,
+                  "integrity": "Complete",
+                  "offset": 258,
+                  "requested_rows": 64
+                },
+                {
+                  "complete_rows": 64,
+                  "consumed_bytes": 15161,
+                  "declared_bytes": 15161,
+                  "integrity": "Complete",
+                  "offset": 17704,
+                  "requested_rows": 64
+                },
+                {
+                  "complete_rows": 64,
+                  "consumed_bytes": 16944,
+                  "declared_bytes": 16944,
+                  "integrity": "Complete",
+                  "offset": 32865,
+                  "requested_rows": 64
+                },
+                {
+                  "complete_rows": 64,
+                  "consumed_bytes": 15862,
+                  "declared_bytes": 15862,
+                  "integrity": "Complete",
+                  "offset": 49809,
+                  "requested_rows": 64
+                },
+                {
+                  "complete_rows": 64,
+                  "consumed_bytes": 10913,
+                  "declared_bytes": 10913,
+                  "integrity": "Complete",
+                  "offset": 65671,
+                  "requested_rows": 64
+                },
+                {
+                  "complete_rows": 36,
+                  "consumed_bytes": 9764,
+                  "declared_bytes": 9764,
+                  "integrity": "InputExhausted",
+                  "offset": 76584,
+                  "requested_rows": 39
+                }
+              ]
+            },
+            "sources": [
+              "/private/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/text.tif"
+            ]
+          },
+          {
+            "dtype": "uint8",
+            "fields": {},
+            "frame": 1,
+            "frames": 2,
+            "opaque_metadata": [],
+            "reference_view": {
+              "dtype": "bool",
+              "fields": {},
+              "frame": 1,
+              "frames": 2,
+              "sample_sha256": "3f74ae980586a55cba7f7fe0efdb8b67d236d0481996001ea7b497f8b907e98c",
+              "shape": [
+                359,
+                1512
+              ],
+              "sources": [
+                "/private/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/text.tif"
+              ]
+            },
+            "sample_sha256": "0b391b7f70db52fc5963ff89b60a31fed0fe6d911ac8b7c1fd8c4b9a0aa7c985",
+            "shape": [
+              359,
+              1512
+            ],
+            "sources": [
+              "/private/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/text.tif"
+            ],
+            "view_policy": {
+              "kind": "consumer_display_view",
+              "name": "Pillow13",
+              "operations": [
+                "BilevelBool",
+                "WhiteIsZeroDisplay"
+              ],
+              "output_shape": [
+                359,
+                1512
+              ],
+              "output_type": "Bool",
+              "source_bits_per_sample": 1,
+              "source_components": [],
+              "source_compression": 1,
+              "source_layout": "Uniform",
+              "source_lossy": false,
+              "source_orientation": 1,
+              "source_photometric": 0,
+              "source_planar_configuration": 1,
+              "source_shape": [
+                359,
+                1512
+              ],
+              "source_type": "U8"
+            }
+          }
+        ],
+        "explicit_probe_policy": "--tiff-available",
+        "strict_default_unchanged": true,
+        "independent_partial_source_check": {
+          "differences": [],
+          "reference": {
+            "source_sha256": "0b9c03248c2e1d4acaf1437e9b16326a1e0da46342c56f38a4a1b62a51d448d7",
+            "source_unchanged": true,
+            "library": "/private/tmp/dioptrin-io-reference-313-20261105/lib/python3.13/site-packages/PIL/.dylibs/libtiff.6.dylib",
+            "library_sha256": "d17ccc4d89a37c1db72aca63fdf26b2f07eaaeb737a5232a337585e3c920b3ed",
+            "library_version": "LIBTIFF, Version 4.7.2\nCopyright (c) 1988-1996 Sam Leffler\nCopyright (c) 1991-1996 Silicon Graphics, Inc.",
+            "method": "native TIFFReadScanline; exact source tags/windows; failed native row discarded; independent token-only boundary checks; raw nibble/bit samples without photometric inversion",
+            "pages": [
+              {
+                "frame": 0,
+                "declared_shape": [
+                  359,
+                  1512
+                ],
+                "source_bits": 4,
+                "dtype": "uint8",
+                "shape": [
+                  538272
+                ],
+                "sample_sha256": "803b73a275d091c3304cf3b7e626c17c9a14e602e8391aefa22d624a33cdfaa0",
+                "sample_count": 538272,
+                "available_rows": [
+                  {
+                    "start_row": 0,
+                    "rows": 356,
+                    "sample_offset": 0
+                  }
+                ],
+                "missing_rows": [
+                  {
+                    "start_row": 356,
+                    "rows": 3,
+                    "strip": 5
+                  }
+                ],
+                "strips": [
+                  {
+                    "offset": 258,
+                    "declared_bytes": 17446,
+                    "consumed_bytes": 17446,
+                    "requested_rows": 64,
+                    "complete_rows": 64,
+                    "integrity": "Complete"
+                  },
+                  {
+                    "offset": 17704,
+                    "declared_bytes": 15161,
+                    "consumed_bytes": 15161,
+                    "requested_rows": 64,
+                    "complete_rows": 64,
+                    "integrity": "Complete"
+                  },
+                  {
+                    "offset": 32865,
+                    "declared_bytes": 16944,
+                    "consumed_bytes": 16944,
+                    "requested_rows": 64,
+                    "complete_rows": 64,
+                    "integrity": "Complete"
+                  },
+                  {
+                    "offset": 49809,
+                    "declared_bytes": 15862,
+                    "consumed_bytes": 15862,
+                    "requested_rows": 64,
+                    "complete_rows": 64,
+                    "integrity": "Complete"
+                  },
+                  {
+                    "offset": 65671,
+                    "declared_bytes": 10913,
+                    "consumed_bytes": 10913,
+                    "requested_rows": 64,
+                    "complete_rows": 64,
+                    "integrity": "Complete"
+                  },
+                  {
+                    "offset": 76584,
+                    "declared_bytes": 9764,
+                    "consumed_bytes": 9764,
+                    "requested_rows": 39,
+                    "complete_rows": 36,
+                    "integrity": "InputExhausted"
+                  }
+                ],
+                "complete": false
+              },
+              {
+                "frame": 1,
+                "declared_shape": [
+                  359,
+                  1512
+                ],
+                "source_bits": 1,
+                "dtype": "uint8",
+                "shape": [
+                  359,
+                  1512
+                ],
+                "sample_sha256": "0b391b7f70db52fc5963ff89b60a31fed0fe6d911ac8b7c1fd8c4b9a0aa7c985",
+                "sample_count": 542808,
+                "available_rows": [
+                  {
+                    "start_row": 0,
+                    "rows": 359,
+                    "sample_offset": 0
+                  }
+                ],
+                "missing_rows": [],
+                "strips": [
+                  {
+                    "offset": 86598,
+                    "declared_bytes": 12096,
+                    "consumed_bytes": 12096,
+                    "requested_rows": 64,
+                    "complete_rows": 64,
+                    "integrity": "Complete"
+                  },
+                  {
+                    "offset": 98694,
+                    "declared_bytes": 12096,
+                    "consumed_bytes": 12096,
+                    "requested_rows": 64,
+                    "complete_rows": 64,
+                    "integrity": "Complete"
+                  },
+                  {
+                    "offset": 110790,
+                    "declared_bytes": 12096,
+                    "consumed_bytes": 12096,
+                    "requested_rows": 64,
+                    "complete_rows": 64,
+                    "integrity": "Complete"
+                  },
+                  {
+                    "offset": 122886,
+                    "declared_bytes": 12096,
+                    "consumed_bytes": 12096,
+                    "requested_rows": 64,
+                    "complete_rows": 64,
+                    "integrity": "Complete"
+                  },
+                  {
+                    "offset": 134982,
+                    "declared_bytes": 12096,
+                    "consumed_bytes": 12096,
+                    "requested_rows": 64,
+                    "complete_rows": 64,
+                    "integrity": "Complete"
+                  },
+                  {
+                    "offset": 147078,
+                    "declared_bytes": 7371,
+                    "consumed_bytes": 7371,
+                    "requested_rows": 39,
+                    "complete_rows": 39,
+                    "integrity": "Complete"
+                  }
+                ],
+                "complete": true
+              }
+            ]
+          }
+        },
+        "zero_fill_discarded": true,
+        "declared_rows": 359,
+        "available_rows": 356,
+        "missing_rows": 3,
+        "last_strip_end": 86348,
+        "second_ifd_offset": 86348,
+        "interpretation": "No encoded source remains for the last three declared 4-bit rows; header-height error versus lost encoded rows cannot be distinguished. Independent 1-bit second IFD is not a substitute for 4-bit counts."
+      }
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/quad-tile.tif",
+      "baseline_sha256": "ab5e5c87cd575472c6fc3e0d5824ebc818b88bf6e5e4aff3afe66f8725351a09",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_tifimage.TestTif_LibTiffPic.test_all_images"
+      ],
+      "baseline_error": "format error: inconsistent sizes encountered",
+      "input_condition": "legacy_mixed_tag_dialect",
+      "reader_action": "explicit_source_layout_closed",
+      "classification": "explicit_unique_tile_geometry_and_original_source_windows",
+      "evidence": {
+        "audited_source": "/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/quad-tile.tif",
+        "source_sha256": "ab5e5c87cd575472c6fc3e0d5824ebc818b88bf6e5e4aff3afe66f8725351a09",
+        "source_bytes": 209220,
+        "decoded_tiff_sha256": "ab5e5c87cd575472c6fc3e0d5824ebc818b88bf6e5e4aff3afe66f8725351a09",
+        "decoded_tiff_bytes": 209220,
+        "source_unchanged": true,
+        "native_frames": [
+          {
+            "dtype": "uint8",
+            "fields": {},
+            "frame": 0,
+            "frames": 1,
+            "opaque_metadata": [],
+            "reference_view": {
+              "dtype": "float32",
+              "fields": {},
+              "frame": 0,
+              "frames": 1,
+              "sample_sha256": "d3964e015d60ed3686e7fe8b6cb8a6eca90208b960f1c3d855aacdbd6c1f151a",
+              "shape": [
+                384,
+                512
+              ],
+              "sources": [
+                "/private/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/quad-tile.tif"
+              ]
+            },
+            "sample_sha256": "cd515a3f3a51ac88da3df62a657d892e97942992b091cd7f16900721ae41cb9b",
+            "shape": [
+              384,
+              512,
+              3
+            ],
+            "sources": [
+              "/private/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/quad-tile.tif"
+            ],
+            "tiff_compatibility": {
+              "kind": "Tiles",
+              "operations": [
+                "TileTablesFromStripTags"
+              ],
+              "rows_per_strip": 128,
+              "source_entries": [
+                {
+                  "count": 1,
+                  "entry_offset": 208880,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    0,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    2,
+                    0,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 256
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 208892,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    1,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    1,
+                    128,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 257
+                },
+                {
+                  "count": 3,
+                  "entry_offset": 208904,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    2,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    3,
+                    0,
+                    3,
+                    48,
+                    204
+                  ],
+                  "payload_offset": 209100,
+                  "tag": 258
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 208916,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    3,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    5,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 259
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 208928,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    6,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    2,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 262
+                },
+                {
+                  "count": 12,
+                  "entry_offset": 208940,
+                  "field_type": 4,
+                  "ifd_entry": [
+                    1,
+                    17,
+                    0,
+                    4,
+                    0,
+                    0,
+                    0,
+                    12,
+                    0,
+                    3,
+                    48,
+                    210
+                  ],
+                  "payload_offset": 209106,
+                  "tag": 273
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 208952,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    18,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    1,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 274
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 208964,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    21,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    3,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 277
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 208976,
+                  "field_type": 4,
+                  "ifd_entry": [
+                    1,
+                    22,
+                    0,
+                    4,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    128
+                  ],
+                  "payload_offset": null,
+                  "tag": 278
+                },
+                {
+                  "count": 12,
+                  "entry_offset": 208988,
+                  "field_type": 4,
+                  "ifd_entry": [
+                    1,
+                    23,
+                    0,
+                    4,
+                    0,
+                    0,
+                    0,
+                    12,
+                    0,
+                    3,
+                    49,
+                    2
+                  ],
+                  "payload_offset": 209154,
+                  "tag": 279
+                },
+                {
+                  "count": 3,
+                  "entry_offset": 209000,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    24,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    3,
+                    0,
+                    3,
+                    49,
+                    50
+                  ],
+                  "payload_offset": 209202,
+                  "tag": 280
+                },
+                {
+                  "count": 3,
+                  "entry_offset": 209012,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    25,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    3,
+                    0,
+                    3,
+                    49,
+                    56
+                  ],
+                  "payload_offset": 209208,
+                  "tag": 281
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 209024,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    28,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    1,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 284
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 209036,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    66,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    128,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 322
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 209048,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    1,
+                    67,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    128,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 323
+                },
+                {
+                  "count": 3,
+                  "entry_offset": 209060,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    128,
+                    228,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    3,
+                    0,
+                    3,
+                    49,
+                    62
+                  ],
+                  "payload_offset": 209214,
+                  "tag": 32996
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 209072,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    128,
+                    229,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    1,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 32997
+                },
+                {
+                  "count": 1,
+                  "entry_offset": 209084,
+                  "field_type": 3,
+                  "ifd_entry": [
+                    128,
+                    230,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    1,
+                    0,
+                    0
+                  ],
+                  "payload_offset": null,
+                  "tag": 32998
+                }
+              ],
+              "source_ifd_offset": 208878,
+              "windows": [
+                {
+                  "bytes": 19244,
+                  "offset": 8
+                },
+                {
+                  "bytes": 19646,
+                  "offset": 19252
+                },
+                {
+                  "bytes": 20708,
+                  "offset": 38898
+                },
+                {
+                  "bytes": 16971,
+                  "offset": 59606
+                },
+                {
+                  "bytes": 11267,
+                  "offset": 76577
+                },
+                {
+                  "bytes": 10629,
+                  "offset": 87844
+                },
+                {
+                  "bytes": 21958,
+                  "offset": 98473
+                },
+                {
+                  "bytes": 17530,
+                  "offset": 120431
+                },
+                {
+                  "bytes": 17569,
+                  "offset": 137961
+                },
+                {
+                  "bytes": 18935,
+                  "offset": 155530
+                },
+                {
+                  "bytes": 20167,
+                  "offset": 174465
+                },
+                {
+                  "bytes": 14246,
+                  "offset": 194632
+                }
+              ]
+            },
+            "view_policy": {
+              "kind": "consumer_display_view",
+              "name": "Pillow13",
+              "operations": [
+                "RgbLuminanceF32"
+              ],
+              "output_shape": [
+                384,
+                512
+              ],
+              "output_type": "Scalar(F32)",
+              "source_bits_per_sample": 8,
+              "source_components": [],
+              "source_compression": 5,
+              "source_layout": "Uniform",
+              "source_lossy": false,
+              "source_orientation": 1,
+              "source_photometric": 2,
+              "source_planar_configuration": 1,
+              "source_shape": [
+                384,
+                512,
+                3
+              ],
+              "source_type": "U8"
+            }
+          }
+        ],
+        "explicit_probe_policy": "--tiff-compat",
+        "strict_default_unchanged": true,
+        "independent_method": "Original StripOffsets/StripByteCounts interpreted as tiles only because declared tile geometry uniquely matches12 entries while strip geometry requires3; mature imagecodecs LZW per exact declared window, independent row-major tile placement.",
+        "independent_chunks": [
+          {
+            "offset": 8,
+            "bytes": 19244,
+            "decoded_source_bytes": 49152,
+            "decoded_sha256": "746636227913d908165e2e3df3f5bf5f20d275fe888612b3e72a7ccae2717b3e"
+          },
+          {
+            "offset": 19252,
+            "bytes": 19646,
+            "decoded_source_bytes": 49152,
+            "decoded_sha256": "db9e8525609e7bfa55441becac9fa16604c42865d39868e90d87c8ee1c8921b2"
+          },
+          {
+            "offset": 38898,
+            "bytes": 20708,
+            "decoded_source_bytes": 49152,
+            "decoded_sha256": "4e64e40abe7ae39538bf28c5fb3e6b264db2d9b35dee82374741241a788ec729"
+          },
+          {
+            "offset": 59606,
+            "bytes": 16971,
+            "decoded_source_bytes": 49152,
+            "decoded_sha256": "f42a0045fa1efd3ef60d6585f99477ca079e915e429faca90bdee9e6c7a3ea02"
+          },
+          {
+            "offset": 76577,
+            "bytes": 11267,
+            "decoded_source_bytes": 49152,
+            "decoded_sha256": "53e076462f79ab5100bdaff7b4339c301e03c7cf9456d53f7b088a4eb5d130fc"
+          },
+          {
+            "offset": 87844,
+            "bytes": 10629,
+            "decoded_source_bytes": 49152,
+            "decoded_sha256": "0f102eeb94f51943248a493bd5501f2b234d0989c4a4034cafb1ba67523de801"
+          },
+          {
+            "offset": 98473,
+            "bytes": 21958,
+            "decoded_source_bytes": 49152,
+            "decoded_sha256": "0999c03ea539926a8e50a8d2886b0be04699850a52757b980cbe1fb0381bcdf0"
+          },
+          {
+            "offset": 120431,
+            "bytes": 17530,
+            "decoded_source_bytes": 49152,
+            "decoded_sha256": "9a6732dadb7c4e537449567af84522a00b623f008451ad1b7b5ed4b4570c44d6"
+          },
+          {
+            "offset": 137961,
+            "bytes": 17569,
+            "decoded_source_bytes": 49152,
+            "decoded_sha256": "3b0a62c801d68f63902d70dd5a669b9dfcc508319b09e7d543db9b9489ba237b"
+          },
+          {
+            "offset": 155530,
+            "bytes": 18935,
+            "decoded_source_bytes": 49152,
+            "decoded_sha256": "1fd94d42e977ecedb59cbcece8d077ba3da3b997b61d19e1b6adff43994a27c9"
+          },
+          {
+            "offset": 174465,
+            "bytes": 20167,
+            "decoded_source_bytes": 49152,
+            "decoded_sha256": "1bb57eeebf6c14eb3c19a27e266a3ef9c4491fd7bbb41b5cd7ad20cc1a28fb60"
+          },
+          {
+            "offset": 194632,
+            "bytes": 14246,
+            "decoded_source_bytes": 49152,
+            "decoded_sha256": "28c6190218e38af8cddc13645c936c2ea9b3c06e22a9e414b7e970c1ea431a5a"
+          }
+        ],
+        "independent_source_signature": {
+          "shape": [
+            384,
+            512,
+            3
+          ],
+          "dtype": "uint8",
+          "sample_sha256": "cd515a3f3a51ac88da3df62a657d892e97942992b091cd7f16900721ae41cb9b"
+        },
+        "all_source_samples_match": true,
+        "pinned_reference_backend": "PIL",
+        "pinned_reference_signature": {
+          "shape": [
+            384,
+            512
+          ],
+          "dtype": "float32",
+          "sample_sha256": "d3964e015d60ed3686e7fe8b6cb8a6eca90208b960f1c3d855aacdbd6c1f151a"
+        },
+        "all_explicit_view_samples_match": true,
+        "strict_rejection": "format error: inconsistent sizes encountered"
+      }
+    }
+  ],
+  "writer_padding_evidence": {
+    "package": "imagecodecs",
+    "version": "2026.10.10",
+    "source_url": "https://raw.githubusercontent.com/cgohlke/imagecodecs/v2026.10.10/imagecodecs/imcd.c",
+    "source_sha256": "964390f729fa80b5dd8cacdcaacc77d01fb3a25383b200b27decc5677bc3c32e",
+    "function": "imcd_lzw_encode",
+    "source_lines": [
+      2743,
+      2765
+    ],
+    "observation": "Pinned writer unconditionally flushes an output byte after EOI; when EOI is byte-aligned this produces8 zero bits. Explicit recovered modern LZW accepts at most8 all-zero bits, fewer than one minimum9-bit code, while requiring exact source output count and EOI. Legacy LSB remains<8; default modern streaming unchanged.",
+    "independent_fixture": {
+      "path": "tests/data/tiff-recovery/mixed-modern-lzw-tiles.tif",
+      "tile_index": 2,
+      "EOI_end_bit": 792,
+      "encoded_bytes": 100,
+      "tail_zero_bits": 8,
+      "decoded_source_bytes": 768
+    },
+    "regression": "recovered_lzw_requires_complete_source_tile_counts_and_end_code: exact8-zero positive, nonzero and16-zero negative"
+  },
+  "validation": {
+    "cargo_fmt_check": true,
+    "clippy_all_targets_all_features_D_warnings": true,
+    "all_features_tests_passed": 162,
+    "no_default_features_check_and_test": true,
+    "root_combined_probe_independent_partial_check": true,
+    "runtime_source_commits": [
+      "a3458ca",
+      "a3680f8"
+    ],
+    "reference_helper_commit": "b6f3cab"
+  }
+}
