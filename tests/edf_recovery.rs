@@ -441,3 +441,29 @@ fn missing_compressed_payload_and_recorded_codec_padding_have_distinct_integrity
         );
     }
 }
+
+#[cfg(unix)]
+#[test]
+fn immutable_recovery_rejects_fifo_before_opening_a_blocking_read_handle() {
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("not-a-file.edf");
+    assert!(
+        std::process::Command::new("mkfifo")
+            .arg(&path)
+            .status()
+            .unwrap()
+            .success()
+    );
+    let (sender, receiver) = std::sync::mpsc::channel();
+    std::thread::spawn(move || {
+        let error = recovery::Reader::open(path, Limits::default(), recovery::Options::default())
+            .err()
+            .map(|e| e.to_string());
+        let _ = sender.send(error);
+    });
+    let error = receiver
+        .recv_timeout(std::time::Duration::from_secs(2))
+        .expect("opening a FIFO must fail before blocking")
+        .expect("FIFO must be rejected");
+    assert!(error.contains("regular immutable source"));
+}

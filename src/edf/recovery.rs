@@ -161,6 +161,11 @@ impl Source {
             ));
         }
         let snapshot = Snapshot::open(path).map_err(Error)?;
+        if !std::fs::metadata(&snapshot.path)?.is_file() {
+            return Err(Error(
+                "EDF recovery requires a regular immutable source".into(),
+            ));
+        }
         let mut identity = File::open(&snapshot.path)?;
         snapshot.check_handle(&identity).map_err(Error)?;
         if !identity.metadata()?.is_file() {
