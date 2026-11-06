@@ -16,11 +16,11 @@ Every format dependency is optional; default features are empty.
 
 | Feature | Implemented scope | Important remaining gaps |
 |---|---|---|
-| `hdf5` | Typed 2D/3D images/stacks with ten standard scalar types, both byte orders, Eiger/LImA/Lambda discovery and explicit external-file snapshots; original u32 compatibility reader; opt-in indexed raw u16/u32 chunks and bounded parallel consumers | VDS/master relocation, raw external storage, complex/custom/float16 samples, arbitrary metadata and live refresh; raw fast path retains its narrower contract |
-| `tiff` | Scalar/packed/WhiteIsZero/palette/CFA/color/planar TIFF and BigTIFF; primary IFD pages, strips/tiles, lossless codecs, Group3 1D/Group4, legacy LZW, native YCbCr grids/units, modern JPEG and bounded OJPEG; Pilatus/MAR headers | OJPEG/JPEG component reads need `jpeg`; SubIFD/other layouts remain gaps; F16 widening and reference views qualified |
+| `hdf5` | Typed 2D/3D images/stacks with ten standard scalar types, both byte orders, Eiger/LImA/Lambda discovery, explicit external-file snapshots and bound regular VDS mosaics; original u32 compatibility reader; opt-in indexed raw u16/u32 chunks and bounded parallel consumers | Nested/printf/irregular VDS, raw external storage, complex/custom/float16 samples, arbitrary metadata and live refresh; raw fast path retains its narrower contract |
+| `tiff` | Scalar/packed/WhiteIsZero/palette/CFA/color/planar TIFF and BigTIFF; primary IFD pages, strips/tiles, lossless codecs, Group3 1D/Group4, legacy LZW, native YCbCr grids/units, modern JPEG and bounded OJPEG; explicit legacy metadata policies; ThunderScan complete/available-row reads; Pilatus/MAR headers | OJPEG/JPEG component reads need `jpeg`; SubIFD/other layouts remain gaps; F16 widening and reference views qualified |
 | `jpeg`, `jpeg2000` | Mature libjpeg-turbo/OpenJPEG backends; lossless high-precision JPEG; original channels, precision, lossy provenance and headers | Unsupported precision/component layouts fail explicitly; see image contracts |
 | `cbf` | Eight integer types, explicit byte-offset dialects, Content-MD5 and raw CIF headers | Semantic CIF/Pilatus maps and multiple sections |
-| `edf` | Ten scalar types, stacks/general headers, internal/outer compression and bounded padding, explicit external-source snapshots | Volumes, float128, byte-offset; default Exact windows remain strict, with explicit bounded external-window compatibility |
+| `edf` | Ten scalar types, stacks/general headers, internal/outer compression and bounded padding, explicit external-source snapshots, explicit legacy layout/label policies and typed-prefix recovery | Volumes, float128, byte-offset; complete-image APIs stay strict; recovery exposes missing spans and member integrity separately |
 | `native` | NPY v1/2/3 scalars/complex arrays, C/Fortran storage; d*TREK/ADSC, Fit2D masks/spreadsheets, HiPiC, PNM and explicit raw input | Remaining dtype/dimension variants; no autodetection |
 | `containers` | SPE v2/v3/ROI/frames, typed MRC stacks and nested DM3 image/tag selection | Unsupported layouts/types; pinned reference quirks documented |
 | `bruker`, `oxford`, `raxis` | Bruker86/100 tables/baselines, Oxford raw/TY1/TY5, R-AXIS words and explicit expanded-intensity view | Bruker LINEAR float encoding has an explicit decoded view; unknown record layouts fail |
@@ -37,6 +37,11 @@ Every format dependency is optional; default features are empty.
 registry entries (35 distinct codecs), subformats, compression and stack targets,
 independent fixtures and remaining work. Generic TIFF/HDF5 success does not
 establish detector-specific metadata or master-file coverage.
+
+The [current pinned corpus run](docs/fabio-parity/README.md) has 542 matching
+complete read events and 11 independently verified partial-source cases, with
+no native rejection of a successful reference read. Expected failures and missing
+counts remain explicit; two known Pillow display defects remain mismatches.
 
 This development crate is not published. Use a local path dependency:
 
@@ -100,6 +105,14 @@ search, neighboring-file substitution and live refresh are not performed.
 Datasets with undefined unwritten regions are rejected; defined HDF5 fill values
 remain part of the source array's documented storage semantics.
 
+`typed::Reader::open_snapshot_with_vds` admits regular, nonoverlapping,
+frame-preserving 3D mosaics using caller-provided exact `FilenameBinding`s.
+It freezes the frame extent from concrete modules, tracks the complete source
+graph and reads those modules directly. `UnmappedRegions::DeclaredFill` explicitly
+permits defined original detector-gap fill; absent/unallocated mapped sources
+remain errors. Ordinary opens continue to reject VDS. See [source contracts and
+recovery](docs/source-recovery/README.md).
+
 ## TIFF, CBF and EDF
 
 Each module provides `Reader`, `Limits`, `FrameBuffer`, metadata access and
@@ -115,6 +128,15 @@ raw samples remain available. Palette indices and original ColorMap are retained
 Old-style JPEG requires `tiff,jpeg` and reuses the existing bundled codec.
 See [the image contracts](docs/IMAGE_READERS.md) for bounded chunk windows,
 opaque legacy description metadata and qualified reference display defects.
+
+`tiff::Options` explicitly selects bounded uncompressed windows derived from
+shape or legacy strip tables used as tiles; metadata retains original IFD
+entries and effective decisions. ThunderScan uses the original permissively
+licensed codec through a bounded row adapter. `read_thunderscan_available_into`
+exposes validated row spans and missing ranges without failed-row padding.
+`edf::recovery::Reader` similarly exposes only available typed prefixes,
+partial-element bytes, headers and compression-member integrity. These outputs
+are separate from complete dense frames; absent counts are never invented.
 
 CBF dialects can be ambiguous at INT32_MIN. `cbf::Reader::open` uses the extended
 8/16/32/64-bit dialect. For FabIO/Pilatus terminal signed32 streams, explicitly

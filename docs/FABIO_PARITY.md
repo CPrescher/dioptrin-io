@@ -32,6 +32,15 @@ must not be presented as passing those additional reading contracts. Writing,
 in-place Python object manipulation and numerical statistics are not production
 APIs of this I/O crate; writer tests still provide useful generated reader inputs.
 
+The corpus also contains expected failures and deliberately incomplete sources.
+EDF empty/wrong-magic/half-header tests expect exceptions; other malformed-file
+tests expect incomplete flags and padded data. The native complete-image API
+keeps absent counts unavailable. Explicit source recipes and independent
+available-span comparisons are described in [source recovery](source-recovery/README.md).
+`partial_source_read` is a distinct outcome and never passes the complete-count
+gate. Source-hash/test selectors, original/effective layout decisions, member
+integrity and missing ranges stay in schema 5 reports.
+
 ## Reproduction
 
 Use a test-only Python environment. Exact packages used for this run are in

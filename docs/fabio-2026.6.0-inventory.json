@@ -38,7 +38,7 @@
       "subformats_and_types": "EDF 0/1/2/3; concatenated frames; general headers; inline/external binary; 2D/volume; integer/float aliases including optional float128",
       "compression": "none; internal gzip/zlib/bzip2; optional byte-offset; outer gzip/bzip2",
       "stack": "concatenated frames",
-      "implementation": "partial: 2D ten scalar types, both byte orders, general inheritance/raw repeats and exact closing boundaries; bounded inline/outer gzip/zlib/bzip2 with explicit padding; external snapshots/relocation/counterparts require options; default Exact external windows stay strict, explicit UpToDeclared compatibility records declared/effective bytes and still requires complete samples/codecs; volume/float128/offset pending; truncated counts rejected",
+      "implementation": "partial: 2D ten scalar types, both byte orders, general inheritance/raw repeats and exact closing boundaries; bounded inline/outer gzip/zlib/bzip2 with explicit padding; external snapshots/relocation/counterparts require options; default Exact external windows stay strict, explicit UpToDeclared compatibility records declared/effective bytes and still requires complete samples/codecs; explicit parsed-boundary Size windows and exact-label stored-raw policies retain original declarations; dense reads reject truncated counts, separate typed-prefix/header/member-integrity recovery available; volume/float128/offset pending",
       "validation": [
         "tests/data/edf/*.edf",
         "tests/binary.rs",
@@ -46,7 +46,10 @@
         "src/transport.rs",
         "tests/edf_windows.rs",
         "tests/wrapped_views.rs",
-        "docs/rejection-audits/2026-11-06-edf.json"
+        "docs/rejection-audits/2026-11-06-edf.json",
+        "tests/edf_recovery.rs",
+        "docs/source-recovery/README.md",
+        "docs/source-recovery/read-policies.json"
       ],
       "parity_verified": false
     },
@@ -82,7 +85,7 @@
       "subformats_and_types": "classic TIFF/BigTIFF; endian scalar/color; strip/tile/IFD; photometric/predictor variants",
       "compression": "reference TiffIO/Pillow capabilities vary; none/PackBits/LZW/Deflate/JPEG require distinct fixtures",
       "stack": "primary IFD pages",
-      "implementation": "partial: scalar/packed/WhiteIsZero/color/planar/IFD/strip/tile/BigTIFF counts, Group3 1D/Group4/PackBits/LZW/Deflate/JPEG; source F16 explicitly widened to F32; explicit legacy LSB/late LZW via minimally patched vendored TIFF; original YCbCr grids/units/padding for none/LZW and JPEG, bounded single-chunk OJPEG with jpeg feature; optional Pillow13/TiffIO views separate; palette/CFA/opaque metadata retained; SubIFD/Group3 2D/RLE/fragmented OJPEG/other sampled layouts and two Pillow planar16 defects remain",
+      "implementation": "partial: scalar/packed/WhiteIsZero/color/planar/IFD/strip/tile/BigTIFF counts, Group3 1D/Group4/PackBits/LZW/Deflate/JPEG; source F16 explicitly widened to F32; explicit legacy LSB/late LZW via minimally patched vendored TIFF; original YCbCr grids/units/padding for none/LZW and JPEG, bounded single-chunk OJPEG with jpeg feature; explicit bounded uncompressed-window and mixed strip/tile metadata policies retain original IFDs; original ThunderScan codec with complete-only dense reads and separate available-row spans; optional Pillow13/TiffIO views separate; palette/CFA/opaque metadata retained; SubIFD/Group3 2D/RLE/fragmented OJPEG/other sampled layouts and two Pillow planar16 defects remain",
       "validation": [
         "tests/data/tiff/*.tif",
         "tests/tiff.rs",
@@ -106,7 +109,10 @@
         "tests/tiff_alias_bounds.rs",
         "tests/wrapped_views.rs",
         "tests/data/tiff-view/provenance.json",
-        "docs/tiff-views-fabio-2026.6.0.json"
+        "docs/tiff-views-fabio-2026.6.0.json",
+        "tests/tiff_recovery.rs",
+        "tests/data/tiff-recovery/provenance.json",
+        "docs/source-recovery/README.md"
       ],
       "parity_verified": false
     },
@@ -506,7 +512,7 @@
       "subformats_and_types": "Eiger/Dectris HDF5; direct dataset, grouped data_NNNNNN, master/external links; detector metadata",
       "compression": "dataset HDF5 filter pipeline (Bitshuffle/LZ4, gzip etc.)",
       "stack": "dataset(s) mapped to frame sequence",
-      "implementation": "partial: typed Eiger discovery handles entry/data, grouped data_N and legacy entry/data_N sequences; explicit FollowSnapshot policy tracks every external/intermediate file, fails on missing sources, preserves per-part types/shapes; VDS and complete detector metadata/live acquisition pending; original raw u16/u32 benchmark retained",
+      "implementation": "partial: typed Eiger discovery handles entry/data, grouped data_N and legacy entry/data_N sequences; explicit FollowSnapshot policy tracks every external/intermediate file, fails on missing sources, preserves per-part types/shapes; explicit bound regular frame-preserving 3D VDS snapshots reuse typed source admission; nested/printf/irregular VDS and complete detector metadata/live acquisition pending; original raw u16/u32 benchmark retained",
       "validation": [
         "tests/data/counts-bitshuffle-lz4.h5",
         "tests/reader.rs",
@@ -514,7 +520,10 @@
         "docs/benchmarks/2026-11-05-native-eiger/count-reference.json",
         "tests/hdf5_typed.rs",
         "tests/data/hdf5-native/provenance.json",
-        "docs/fabio-parity/2026-11-05-hdf5.json"
+        "docs/fabio-parity/2026-11-05-hdf5.json",
+        "tests/vds.rs",
+        "tests/data/vds/provenance.json",
+        "docs/source-recovery/README.md"
       ],
       "parity_verified": false
     },
@@ -529,14 +538,17 @@
       "subformats_and_types": "explicit file::dataset HDF5 image or stack, nested frame selection",
       "compression": "native HDF5 filters",
       "stack": "2D/3D datasets",
-      "implementation": "partial: typed snapshots read explicit 2D/3D images/stacks with ten standard integer/IEEE types, both byte orders, group/data selection, native lossless filters, declared fill and source manifests; complex/float16/custom precision, VDS/raw external storage, arbitrary attributes and live refresh pending",
+      "implementation": "partial: typed snapshots read explicit 2D/3D images/stacks with ten standard integer/IEEE types, both byte orders, group/data selection, native lossless filters, declared fill and source manifests; regular nonoverlapping frame-preserving 3D VDS with explicit filename bindings/fill and full source graph; complex/float16/custom precision, nested/printf/irregular VDS, raw external storage, arbitrary attributes and live refresh pending",
       "validation": [
         "tests/reader.rs",
         "tests/raw.rs",
         "tests/cache.rs",
         "tests/hdf5_typed.rs",
         "tests/data/hdf5-native/provenance.json",
-        "docs/fabio-parity/2026-11-05-hdf5.json"
+        "docs/fabio-parity/2026-11-05-hdf5.json",
+        "tests/vds.rs",
+        "tests/data/vds/provenance.json",
+        "docs/source-recovery/README.md"
       ],
       "parity_verified": false
     },
@@ -704,7 +716,10 @@
       "validation": [
         "tests/hdf5_typed.rs",
         "tests/data/hdf5-native/provenance.json",
-        "docs/fabio-parity/2026-11-05-hdf5.json"
+        "docs/fabio-parity/2026-11-05-hdf5.json",
+        "tests/vds.rs",
+        "tests/data/vds/provenance.json",
+        "docs/source-recovery/README.md"
       ],
       "parity_verified": false
     },
@@ -721,14 +736,17 @@
       "subformats_and_types": "Lambda HDF5/NeXus detector-description/path convention",
       "compression": "HDF5 filters",
       "stack": "3D detector dataset",
-      "implementation": "partial: native detector-description/local-name/path discovery and typed samples; same upstream module files read successfully; VDS master mappings/source relocation and complete NeXus metadata remain pending",
+      "implementation": "partial: native detector-description/local-name/path discovery and typed samples; same upstream module files and all five relocated VDS master frames read with explicit bindings, frozen module-derived extent and separately recorded declared gap fill; nested/printf/irregular VDS and complete NeXus metadata remain pending",
       "validation": [
         "tests/hdf5_typed.rs",
         "tests/data/hdf5-native/provenance.json",
         "docs/fabio-parity/2026-11-05-hdf5.json",
         "tests/lambda_vds_rejection.rs",
         "tests/data/lambda-vds-rejection/provenance.json",
-        "docs/rejection-audits/LAMBDA_TY5.md"
+        "docs/rejection-audits/LAMBDA_TY5.md",
+        "tests/vds.rs",
+        "tests/data/vds/provenance.json",
+        "docs/source-recovery/README.md"
       ],
       "parity_verified": false
     },
