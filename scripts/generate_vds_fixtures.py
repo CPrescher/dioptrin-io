@@ -42,6 +42,13 @@ with h5py.File(ROOT/'partial-a.h5','w')as f:
  d=f.create_dataset('data',shape=(2,2,3),chunks=(1,2,3),dtype='<i2');d[0]=av[0]
 module('stride-a.h5',np.arange(24).reshape(2,4,3))
 master('finite.h5');master('unlimited.h5',unlimited=True);master('overlap.h5',overlap=True)
+module('growing-b.h5',bv,chunks=(1,1,2),maxshape=(None,1,2))
+with h5py.File(ROOT/'multi-vds.h5','w',libver='latest')as f:
+ group=f.require_group('/entry/data')
+ for name,filename,array in [('data_000001',A,av),('data_000002',B,bv)]:
+  layout=h5py.VirtualLayout(shape=array.shape,dtype='<i2');layout[:]=h5py.VirtualSource(filename,'/data',shape=array.shape)
+  group.create_virtual_dataset(name,layout)
+ group.create_dataset('data_000003',data=bv,chunks=(1,1,2),maxshape=(None,1,2))
 # Strict source hyperslab disallows a gap between selected module rows.
 layout=h5py.VirtualLayout(shape=(2,2,3),dtype='<i2');layout[:]=h5py.VirtualSource(A,'/data',shape=(2,4,3))[:,::2,:]
 with h5py.File(ROOT/'strided.h5','w',libver='latest')as f:f.create_virtual_dataset('data',layout,fillvalue=0)

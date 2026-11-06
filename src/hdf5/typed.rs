@@ -368,6 +368,7 @@ impl Reader {
         if let Some(bindings) = bindings {
             bindings.finish()?;
         }
+        check_virtual_graph(&parts)?;
         sources.check()?;
         Ok(Self {
             parts,
@@ -413,6 +414,7 @@ impl Reader {
     pub fn read_frame_into(&self, index: usize, buffer: &mut FrameBuffer) -> Result<(), Error> {
         buffer.shape = None;
         self.sources.check()?;
+        check_virtual_graph(&self.parts)?;
         let part = self
             .part(index)
             .ok_or_else(|| Error("HDF5 frame outside snapshot".into()))?;
@@ -428,6 +430,7 @@ impl Reader {
         if let Some(mosaic) = &part.mosaic {
             mosaic.read(index - meta.first_frame, meta.shape, &mut buffer.pixels)?;
             self.sources.check()?;
+            check_virtual_graph(&self.parts)?;
             buffer.shape = Some(meta.shape);
             return Ok(());
         }
@@ -464,9 +467,30 @@ impl Reader {
             }
         })?;
         self.sources.check()?;
+        check_virtual_graph(&self.parts)?;
         buffer.shape = Some(meta.shape);
         Ok(())
     }
+}
+
+// A scan that opts into virtual mappings freezes the complete dataset graph,
+// including other virtual parts and ordinary parts sharing the global index.
+// Shape checks also catch unflushed in-process HDF5 extensions before file stamps
+// change. Ordinary non-VDS readers retain their existing access/check behavior.
+fn check_virtual_graph(parts: &[Part]) -> Result<(), Error> {
+    if !parts.iter().any(|part| part.mosaic.is_some()) {
+        return Ok(());
+    }
+    for part in parts {
+        if let Some(mosaic) = &part.mosaic {
+            mosaic.check()?;
+        } else if part.dataset.shape() != part.metadata.source_shape {
+            return Err(Error(
+                "HDF5 dataset in virtual source graph changed; reopen snapshot".into(),
+            ));
+        }
+    }
+    Ok(())
 }
 
 /// Shared storage admission for typed images and explicitly selected sparse arrays.

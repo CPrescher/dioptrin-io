@@ -566,3 +566,49 @@ fn every_scalar_and_endian_preserves_nan_payloads_negative_zero_integer_extrema_
         );
     }
 }
+#[test]
+fn growth_in_another_virtual_or_regular_part_invalidates_the_global_scan_index() {
+    for ordinary_part in [false, true] {
+        let dir = copied();
+        let master = dir.path().join("multi-vds.h5");
+        let writable = hdf5_backend::File::open_rw(if ordinary_part {
+            master.clone()
+        } else {
+            dir.path().join("growing-b.h5")
+        })
+        .unwrap();
+        let growing = writable
+            .dataset(if ordinary_part {
+                "/entry/data/data_000003"
+            } else {
+                "/data"
+            })
+            .unwrap();
+        let maps = bindings(
+            dir.path().join("module-a.h5"),
+            dir.path().join("growing-b.h5"),
+        );
+        let reader = Reader::open_snapshot_with_vds(
+            master,
+            Selection::Eiger,
+            Options {
+                external_links: ExternalLinks::FollowSnapshot,
+                ..Options::default()
+            },
+            VdsOptions {
+                filenames: &maps,
+                unmapped_regions: UnmappedRegions::Reject,
+            },
+        )
+        .unwrap();
+        assert_eq!(reader.frames(), 6);
+        let mut frame = FrameBuffer::default();
+        reader.read_frame_into(0, &mut frame).unwrap();
+        growing.resize((3, 1, 2)).unwrap();
+        assert!(
+            reader.read_frame_into(0, &mut frame).is_err(),
+            "change in another part must invalidate this frame"
+        );
+        assert!(frame.pixels().is_none());
+    }
+}
