@@ -184,7 +184,7 @@ def main():
         if {p.stem for p in paths} != requested:
             parser.error("unknown codec test module")
     ledger = json.loads((ROOT / "docs/fabio-2026.6.0-inventory.json").read_text())
-    report = {"schema": 5, "reference": ledger["reference"],
+    report = {"schema": 6, "reference": ledger["reference"],
               "selection": {"all_codec_modules": not bool(args.modules), "modules": []},
               "contract": "uniform count/dtype/shape and independent native component/unit comparisons, with separate explicit display views, at successful upstream .read calls; not Python API or full header parity",
               "recovery_contract": "explicit source recipes selected before decoding; independently verified partial spans/header-only access are separate from complete count parity and expected input errors",
@@ -192,7 +192,7 @@ def main():
               "out_of_scope": ["Python mutation/writing APIs and numerical statistics"],
               "reads": [], "reference_rejections": [], "source_files": {}, "reference_import_errors": [], "reference_tests": {}}
     report["environment"] = {"python": sys.version, "packages": {}}
-    for name in ["fabio", "numpy", "h5py", "hdf5plugin", "Pillow", "glymur", "imagecodecs"]:
+    for name in ["fabio", "numpy", "h5py", "hdf5plugin", "Pillow", "glymur", "imagecodecs", "tifffile"]:
         try:
             report["environment"]["packages"][name] = importlib.metadata.version(name)
         except importlib.metadata.PackageNotFoundError:
@@ -203,10 +203,14 @@ def main():
     except ImportError:
         report["reference_native_libraries"] = {"glymur_openjpeg": None}
     component_reference = None
+    pillow_reference = None
     if args.tiff_reference_library is not None:
         from tiff_component_reference import Reference
         component_reference = Reference(args.tiff_reference_library)
         report["reference_native_libraries"]["tiff_components"] = component_reference.metadata
+        from pillow_planar16_reference import Reference as PillowReference
+        pillow_reference = PillowReference(args.tiff_reference_library)
+        report["reference_native_libraries"]["pillow_planar16"] = pillow_reference.metadata
     report["probe_sha256"] = sha_file(probe_path)
     report["rejected_source_capture"] = str(args.rejected_source_dir) if args.rejected_source_dir else None
     report["runtime_capabilities"] = capabilities
@@ -220,7 +224,7 @@ def main():
     report["build_files_sha256"] = {name: sha_file(ROOT/name) for name in ["Cargo.toml", "Cargo.lock", "build.rs"] if (ROOT/name).is_file()}
     report["bridge_sources_sha256"] = {name: sha_file(ROOT/name) for name in [
         "scripts/fabio_suite_parity.py", "scripts/tiff_component_reference.py", "scripts/edf_recovery_reference.py",
-        "scripts/thunderscan_reference.py", "scripts/inventory_fabio.py", "examples/parity_probe.rs", "docs/fabio-2026.6.0-inventory.json"]}
+        "scripts/thunderscan_reference.py", "scripts/pillow_planar16_reference.py", "scripts/inventory_fabio.py", "examples/parity_probe.rs", "docs/fabio-2026.6.0-inventory.json"]}
     active = False
     current_test = None
 
@@ -564,6 +568,23 @@ def main():
                         if selected[key] != value:
                             failures.append({"frame": index, "field": key, "native": selected[key], "reference": value})
                 status = "mismatch" if failures else "component_view_match" if component_frames else "reconstruction_match" if reconstruction else "reference_view_match" if view_policies else "counts_match"
+                if failures and codec == "tifimage" and record.get("reference_backend") == "PIL" and pillow_reference is not None:
+                    # Qualification requires every native source word to match
+                    # independent libtiff/tifffile, an exact raw-unpacker model,
+                    # the actual reference output and a correct controlled
+                    # Pillow backend. Neither hashes nor error text alone can
+                    # turn a mismatch into a reference defect.
+                    evidence = []
+                    for index in sorted({failure["frame"] for failure in failures}):
+                        ref = image.data if expected_frames == 1 else image.getframe(index).data
+                        try:
+                            proof = pillow_reference.verify(path, index, frames[index], ref)
+                        except Exception as error:
+                            proof = {"qualified": False, "error": f"{type(error).__name__}: {error}"}
+                        evidence.append({"frame": index, "proof": proof})
+                    record["reference_defect_checks"] = evidence
+                    if evidence and all(entry["proof"] is not None and entry["proof"]["qualified"] for entry in evidence):
+                        status = "reference_decoder_defect"
                 record.update(status=status, frames=len(frames), mismatches=failures)
                 if stored_differences:
                     record["stored_representation_differences"] = stored_differences
@@ -687,12 +708,14 @@ def main():
     report["native_sources_unchanged_during_run"] = all(sha_file(ROOT/p) == h for p,h in report["native_sources_sha256"].items())
     report["build_files_unchanged_during_run"] = all(sha_file(ROOT/p) == h for p,h in report["build_files_sha256"].items())
     report["reference_component_library_unchanged_during_run"] = component_reference is None or component_reference.unchanged()
+    report["reference_pillow_libraries_unchanged_during_run"] = pillow_reference is None or pillow_reference.unchanged()
     report["bridge_unchanged_during_run"] = all(sha_file(ROOT/p) == h for p,h in report["bridge_sources_sha256"].items())
     report["explicit_policies_unchanged_during_run"] = all(sha_file(pathlib.Path(item["path"])) == item["sha256"]
         for item in policy_files.values())
     if not all(report[key] for key in ["probe_unchanged_during_run", "sources_unchanged_during_run",
             "bridge_unchanged_during_run", "vendored_sources_unchanged_during_run",
             "build_files_unchanged_during_run", "reference_component_library_unchanged_during_run",
+            "reference_pillow_libraries_unchanged_during_run",
             "native_sources_unchanged_during_run",
             "explicit_policies_unchanged_during_run"]):
         report["full_reading_parity"] = False

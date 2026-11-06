@@ -80,6 +80,8 @@ def main():
         if comparison.get("schema", 0) >= 5 and not all(comparison[key] for key in [
                 "explicit_policies_unchanged_during_run", "native_sources_unchanged_during_run"]):
             parser.error("comparison explicit source policies or native sources changed")
+        if comparison.get("schema", 0) >= 6 and not comparison["reference_pillow_libraries_unchanged_during_run"]:
+            parser.error("comparison Pillow reference dependency hashes changed")
         for row in rows:
             identity = row["baseline_sha256"]
             tested = [event for event in comparison["reads"] if event["codec"] == row["codec"]

@@ -1,0 +1,1209 @@
+{
+  "schema": 1,
+  "baseline": "/Users/clemens/Programming/dioptrin-io/docs/fabio-parity/2026-11-06-source-recovery.json",
+  "baseline_sha256": "1928f0bcba28201dcc66cd17b9ce8c3c64b0138674484d6b48c12ad8e575954c",
+  "contract": "Original mismatches independently attributed; reference defects never count as matching complete counts or views; corrected compressed views preserve all source words.",
+  "probe_sha256": "a8f049209524c7f05511f86023e04318707c989f8f01bc690cb3ba912f54c40d",
+  "code_and_fixture_manifest_sha256": {
+    "src/tiff/view.rs": "c4f32a6903c98c8030047a217ef572c6f03261e37fe4d4b0724315f5f4dbc2ed",
+    "vendor/tiff-0.11.3/src/decoder/image.rs": "78471b9cd0e9dc948eea77a5b321d0b38dea920a8b37b3766008e30c9f9ceb50",
+    "scripts/audit_pillow_planar16.py": "c42e532db73f4bc0fee1a2bb79936caf6ac444c93fd251132887e5616b6593bb",
+    "scripts/pillow_planar16_reference.py": "d4e6e41d35c914eeee066ebc466982af37251539eaa7132b5c8f05ad7f8ff5a1",
+    "scripts/generate_pillow_planar16_fixtures.py": "83420553ee7fa53bd62bace5fcc8e5b4bc194c2b51f9601db4e6ba4628a76b33",
+    "tests/data/pillow-planar16/provenance.json": "232ba12e42e6f24eba2bbc787a28849f3e34b8e93982bd6a0f1ab732c5f61225",
+    "tests/data/pillow-planar16/multitile-provenance.json": "3b621f379f69ffa0edd4acfc3f66f14b425640b9531e6017bf3fe0a2e2ccd110"
+  },
+  "reference": {
+    "fabio": "2026.6.0",
+    "Pillow": "13.0.0",
+    "tifffile": "2026.10.15",
+    "libtiff_version": "LIBTIFF, Version 4.7.2\nCopyright (c) 1988-1996 Sam Leffler\nCopyright (c) 1991-1996 Silicon Graphics, Inc.",
+    "files_sha256": {
+      "/opt/homebrew/Cellar/libtiff/4.7.2/lib/libtiff.6.dylib": "ed5a54e3e8a621ba58f51ce632debb3f8d0ef068faf5bee887672581698e4cc1",
+      "/private/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/PIL/TiffImagePlugin.py": "e3322c6660610c41196adddb6b2d46f303dd0d0034d76544f9364fb32a13f709",
+      "/private/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/PIL/Image.py": "04050c2d4dd67931ce8c3cfdbc49ac4a6944d379d037c8f1d5eeeb67fba29a10",
+      "/private/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/PIL/_imaging.cpython-313-darwin.so": "74c6c515a8b07c89a6e55d2fcce14b985fbd59afb1fab5d542b8c9ab28aa859c",
+      "/private/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/tifffile/tifffile.py": "e5f9d27176ba2fda8d716a6a8fe1a911a72c286b97456b578806732ed3e41557"
+    },
+    "qualification": "only default Pillow13 raw, uint16, planar2, RGB/RGBA-unassociated/CMYK, strips, fillorder1, orientation1; all independent checks mandatory",
+    "FabIO_sources_sha256": {
+      "/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/fabio/TiffIO.py": "761e09edb72380be24fb313a60f456b8e2f3d73c26acbe2ccbd02b5c88bdbb50",
+      "/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/fabio/utils/pilutils.py": "0ab92db43cbd896bbc9d51ce3fec76fe89af3492ee1b24369705dc9454ba5956",
+      "/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/fabio/tifimage.py": "7a9ec6f5dd9e0cd80b211ad4d2a430aa2ee6312677e90bcd1ecb5ebca4df6082"
+    }
+  },
+  "records": [
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/depth/flower-rgb-planar-16.tif",
+      "source_sha256": "0a143fb6c5792fa7755e06feb757c745ad68944336985dc5be8a0c37247fe36d",
+      "original_event": "fabio.test.codecs.test_tifimage.TestTif_LibTiffPic.test_all_images",
+      "TiffIO_fallback_cause": "ValueError: cannot reshape array of size 3139 into shape (73,3)",
+      "proof": {
+        "qualified": true,
+        "classification": "reference_decoder_defect",
+        "owner": "Pillow13 raw TIFF planar16 unpacker; FabIO inherits its corrupted color samples",
+        "checks": {
+          "source_tifffile_equals_native_libtiff": true,
+          "source_native_equals_independent_words": true,
+          "default_pillow_uses_raw_decoder": true,
+          "raw_8bit_descriptor_model_equals_pillow": true,
+          "model_luminance_equals_pillow": true,
+          "reference_luminance_equals_default_pillow": true,
+          "forced_libtiff_equals_correct_source_high_bytes": true,
+          "forced_libtiff_luminance_equals_corrected": true,
+          "default_pillow_color_is_wrong": true,
+          "default_pillow_luminance_is_wrong": true,
+          "native_declines_corrupt_reference_view": true,
+          "source_unchanged": true,
+          "reference_libraries_unchanged": true
+        },
+        "source_sha256": "0a143fb6c5792fa7755e06feb757c745ad68944336985dc5be8a0c37247fe36d",
+        "source": {
+          "byteorder": ">",
+          "shape": [
+            43,
+            73,
+            3
+          ],
+          "bits_per_sample": 16,
+          "planar_configuration": 2,
+          "compression": 1,
+          "photometric": 2,
+          "rows_per_strip": 43,
+          "offsets": [
+            8,
+            6286,
+            12564
+          ],
+          "bytecounts": [
+            6278,
+            6278,
+            6278
+          ]
+        },
+        "raw_descriptors": [
+          {
+            "codec": "raw",
+            "extents": [
+              0,
+              0,
+              73,
+              43
+            ],
+            "offset": 8,
+            "band": "R",
+            "effective_byte_stride": 73
+          },
+          {
+            "codec": "raw",
+            "extents": [
+              0,
+              0,
+              73,
+              43
+            ],
+            "offset": 6286,
+            "band": "G",
+            "effective_byte_stride": 73
+          },
+          {
+            "codec": "raw",
+            "extents": [
+              0,
+              0,
+              73,
+              43
+            ],
+            "offset": 12564,
+            "band": "B",
+            "effective_byte_stride": 73
+          }
+        ],
+        "independent_source": {
+          "shape": [
+            43,
+            73,
+            3
+          ],
+          "dtype": "uint16",
+          "sample_sha256": "a57539ac081c9e54376c0bc3519e72c6c786c11d0f113b0377d69f95d79394ea"
+        },
+        "native_libtiff_source": {
+          "shape": [
+            43,
+            73,
+            3
+          ],
+          "dtype": "uint16",
+          "sample_sha256": "a57539ac081c9e54376c0bc3519e72c6c786c11d0f113b0377d69f95d79394ea"
+        },
+        "default_pillow_color": {
+          "shape": [
+            43,
+            73,
+            3
+          ],
+          "dtype": "uint8",
+          "sample_sha256": "6a27a0d9ea81623ec4e05f3358dac0feb30846ac34143d3bbf2722781832d458"
+        },
+        "simulated_8bit_bands": {
+          "shape": [
+            43,
+            73,
+            3
+          ],
+          "dtype": "uint8",
+          "sample_sha256": "6a27a0d9ea81623ec4e05f3358dac0feb30846ac34143d3bbf2722781832d458"
+        },
+        "correct_high_byte_color": {
+          "shape": [
+            43,
+            73,
+            3
+          ],
+          "dtype": "uint8",
+          "sample_sha256": "45744a0d0425213032f55a27abe4373ef0d24a0fe20b98ad7a918890418f5b48"
+        },
+        "default_pillow_luminance": {
+          "shape": [
+            43,
+            73
+          ],
+          "dtype": "float32",
+          "sample_sha256": "e033dac71fe54418c2fd4080e60d290abbebafb2e3cbe2edb29e41e528279a16"
+        },
+        "corrected_luminance": {
+          "shape": [
+            43,
+            73
+          ],
+          "dtype": "float32",
+          "sample_sha256": "7da35ad9ffd8d7aadee5a6632a9acdf9ad284614bdd11e1d324f665fd8c58364"
+        },
+        "wrong_color_samples": 9350,
+        "wrong_luminance_pixels": 3138,
+        "first_source_pixels": [
+          [
+            22731,
+            22693,
+            18288
+          ],
+          [
+            21244,
+            21473,
+            17829
+          ],
+          [
+            21714,
+            21964,
+            17999
+          ],
+          [
+            20303,
+            20611,
+            17486
+          ],
+          [
+            23753,
+            23663,
+            19871
+          ],
+          [
+            21654,
+            22180,
+            18097
+          ]
+        ],
+        "first_pillow_pixels": [
+          [
+            88,
+            88,
+            71
+          ],
+          [
+            203,
+            165,
+            112
+          ],
+          [
+            82,
+            83,
+            69
+          ],
+          [
+            252,
+            225,
+            165
+          ],
+          [
+            84,
+            85,
+            70
+          ],
+          [
+            210,
+            204,
+            79
+          ]
+        ],
+        "first_correct_pixels": [
+          [
+            88,
+            88,
+            71
+          ],
+          [
+            82,
+            83,
+            69
+          ],
+          [
+            84,
+            85,
+            70
+          ],
+          [
+            79,
+            80,
+            68
+          ],
+          [
+            92,
+            92,
+            77
+          ],
+          [
+            84,
+            86,
+            70
+          ]
+        ]
+      },
+      "negative_qualification_checks": {
+        "wrong_native_hash_rejected": true,
+        "changed_reference_pixel_rejected": true
+      },
+      "same_words_storage_controls": [
+        {
+          "planar": "contig",
+          "compression": "none",
+          "tiff_sha256": "e24e5aa7b23d192e9c9d10bfbfe63795f9b5bcbba13be1d2aed443bb8a2b2750",
+          "source_words_unchanged": true,
+          "pillow_corrected_luminance": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "float32",
+            "sample_sha256": "7da35ad9ffd8d7aadee5a6632a9acdf9ad284614bdd11e1d324f665fd8c58364"
+          },
+          "native_corrected_view_matches": true
+        },
+        {
+          "planar": "separate",
+          "compression": "deflate",
+          "tiff_sha256": "02b56d1015221586b8864bee5d0d16f882a71f22d271ee259e89558e6d219598",
+          "source_words_unchanged": true,
+          "pillow_corrected_luminance": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "float32",
+            "sample_sha256": "7da35ad9ffd8d7aadee5a6632a9acdf9ad284614bdd11e1d324f665fd8c58364"
+          },
+          "native_corrected_view_matches": true
+        },
+        {
+          "planar": "separate",
+          "compression": "lzw",
+          "tiff_sha256": "0a6140175850031c4a446100b1426de6c0cce986dcaef5762e42135843293bbd",
+          "source_words_unchanged": true,
+          "pillow_corrected_luminance": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "float32",
+            "sample_sha256": "7da35ad9ffd8d7aadee5a6632a9acdf9ad284614bdd11e1d324f665fd8c58364"
+          },
+          "native_corrected_view_matches": true
+        },
+        {
+          "planar": "separate",
+          "compression": "packbits",
+          "tiff_sha256": "df1ea2625f2110e5876a06c847dfbbaba2eed463e7412bd5c13af08ab5cf7b2b",
+          "source_words_unchanged": true,
+          "pillow_corrected_luminance": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "float32",
+            "sample_sha256": "7da35ad9ffd8d7aadee5a6632a9acdf9ad284614bdd11e1d324f665fd8c58364"
+          },
+          "native_corrected_view_matches": true
+        }
+      ]
+    },
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/libtiffpic.tar.gz__content/depth/flower-separated-planar-16.tif",
+      "source_sha256": "07bd74b686dfa4293d0047ec80bcd4c08159d669ff70dd33914edb0d050da850",
+      "original_event": "fabio.test.codecs.test_tifimage.TestTif_LibTiffPic.test_all_images",
+      "TiffIO_fallback_cause": "ValueError: Unsupported number of bits for unsigned int: (16, 16, 16, 16)",
+      "proof": {
+        "qualified": true,
+        "classification": "reference_decoder_defect",
+        "owner": "Pillow13 raw TIFF planar16 unpacker; FabIO inherits its corrupted color samples",
+        "checks": {
+          "source_tifffile_equals_native_libtiff": true,
+          "source_native_equals_independent_words": true,
+          "default_pillow_uses_raw_decoder": true,
+          "raw_8bit_descriptor_model_equals_pillow": true,
+          "model_luminance_equals_pillow": true,
+          "reference_luminance_equals_default_pillow": true,
+          "forced_libtiff_equals_correct_source_high_bytes": true,
+          "forced_libtiff_luminance_equals_corrected": true,
+          "default_pillow_color_is_wrong": true,
+          "default_pillow_luminance_is_wrong": true,
+          "native_declines_corrupt_reference_view": true,
+          "source_unchanged": true,
+          "reference_libraries_unchanged": true
+        },
+        "source_sha256": "07bd74b686dfa4293d0047ec80bcd4c08159d669ff70dd33914edb0d050da850",
+        "source": {
+          "byteorder": ">",
+          "shape": [
+            43,
+            73,
+            4
+          ],
+          "bits_per_sample": 16,
+          "planar_configuration": 2,
+          "compression": 1,
+          "photometric": 5,
+          "rows_per_strip": 43,
+          "offsets": [
+            8,
+            6286,
+            12564,
+            18842
+          ],
+          "bytecounts": [
+            6278,
+            6278,
+            6278,
+            6278
+          ]
+        },
+        "raw_descriptors": [
+          {
+            "codec": "raw",
+            "extents": [
+              0,
+              0,
+              73,
+              43
+            ],
+            "offset": 8,
+            "band": "C",
+            "effective_byte_stride": 73
+          },
+          {
+            "codec": "raw",
+            "extents": [
+              0,
+              0,
+              73,
+              43
+            ],
+            "offset": 6286,
+            "band": "M",
+            "effective_byte_stride": 73
+          },
+          {
+            "codec": "raw",
+            "extents": [
+              0,
+              0,
+              73,
+              43
+            ],
+            "offset": 12564,
+            "band": "Y",
+            "effective_byte_stride": 73
+          },
+          {
+            "codec": "raw",
+            "extents": [
+              0,
+              0,
+              73,
+              43
+            ],
+            "offset": 18842,
+            "band": "K",
+            "effective_byte_stride": 73
+          }
+        ],
+        "independent_source": {
+          "shape": [
+            43,
+            73,
+            4
+          ],
+          "dtype": "uint16",
+          "sample_sha256": "14a66200eb70119a0e963f1cc3fb133c0a973dc7293f66d7450f38ea034b9cf7"
+        },
+        "native_libtiff_source": {
+          "shape": [
+            43,
+            73,
+            4
+          ],
+          "dtype": "uint16",
+          "sample_sha256": "14a66200eb70119a0e963f1cc3fb133c0a973dc7293f66d7450f38ea034b9cf7"
+        },
+        "default_pillow_color": {
+          "shape": [
+            43,
+            73,
+            4
+          ],
+          "dtype": "uint8",
+          "sample_sha256": "e24975ed8cb6f7786fbc1e7cec7263451470c455d32643528ee51aa806fdf7f0"
+        },
+        "simulated_8bit_bands": {
+          "shape": [
+            43,
+            73,
+            4
+          ],
+          "dtype": "uint8",
+          "sample_sha256": "e24975ed8cb6f7786fbc1e7cec7263451470c455d32643528ee51aa806fdf7f0"
+        },
+        "correct_high_byte_color": {
+          "shape": [
+            43,
+            73,
+            4
+          ],
+          "dtype": "uint8",
+          "sample_sha256": "cd373837838bbd0d87890db72c279de2b2e376ff533d66f23966e9f637467401"
+        },
+        "default_pillow_luminance": {
+          "shape": [
+            43,
+            73
+          ],
+          "dtype": "float32",
+          "sample_sha256": "cbfa7502fc5fc98639d29f8424dce8d9d0edae1e2efa318c6c158ec9bbec205b"
+        },
+        "corrected_luminance": {
+          "shape": [
+            43,
+            73
+          ],
+          "dtype": "float32",
+          "sample_sha256": "3e274abb36715c511d73647e4ee1bed7078a399e8ac410cfafd741ab379b4a0e"
+        },
+        "wrong_color_samples": 12473,
+        "wrong_luminance_pixels": 3138,
+        "first_source_pixels": [
+          [
+            42803,
+            42841,
+            47246,
+            42803
+          ],
+          [
+            44290,
+            44061,
+            47705,
+            44061
+          ],
+          [
+            43820,
+            43570,
+            47535,
+            43570
+          ],
+          [
+            45231,
+            44923,
+            48048,
+            44923
+          ],
+          [
+            41781,
+            41871,
+            45663,
+            41781
+          ],
+          [
+            43880,
+            43354,
+            47437,
+            43354
+          ]
+        ],
+        "first_pillow_pixels": [
+          [
+            167,
+            167,
+            184,
+            167
+          ],
+          [
+            51,
+            89,
+            142,
+            51
+          ],
+          [
+            173,
+            172,
+            186,
+            172
+          ],
+          [
+            2,
+            29,
+            89,
+            29
+          ],
+          [
+            171,
+            170,
+            185,
+            170
+          ],
+          [
+            44,
+            50,
+            175,
+            50
+          ]
+        ],
+        "first_correct_pixels": [
+          [
+            167,
+            167,
+            184,
+            167
+          ],
+          [
+            173,
+            172,
+            186,
+            172
+          ],
+          [
+            171,
+            170,
+            185,
+            170
+          ],
+          [
+            176,
+            175,
+            187,
+            175
+          ],
+          [
+            163,
+            163,
+            178,
+            163
+          ],
+          [
+            171,
+            169,
+            185,
+            169
+          ]
+        ]
+      },
+      "negative_qualification_checks": {
+        "wrong_native_hash_rejected": true,
+        "changed_reference_pixel_rejected": true
+      },
+      "same_words_storage_controls": [
+        {
+          "planar": "contig",
+          "compression": "none",
+          "tiff_sha256": "4b68f8edfc8777a11484c717f66eaa9aa65fcb4e16e22d798e0404ce1e9bcd03",
+          "source_words_unchanged": true,
+          "pillow_corrected_luminance": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "float32",
+            "sample_sha256": "3e274abb36715c511d73647e4ee1bed7078a399e8ac410cfafd741ab379b4a0e"
+          },
+          "native_corrected_view_matches": true
+        },
+        {
+          "planar": "separate",
+          "compression": "deflate",
+          "tiff_sha256": "07d0d34eea5e046f452f9ae9f706119eea9b077e797d2a2825cd3327a9689e3c",
+          "source_words_unchanged": true,
+          "pillow_corrected_luminance": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "float32",
+            "sample_sha256": "3e274abb36715c511d73647e4ee1bed7078a399e8ac410cfafd741ab379b4a0e"
+          },
+          "native_corrected_view_matches": true
+        },
+        {
+          "planar": "separate",
+          "compression": "lzw",
+          "tiff_sha256": "00b5a996d432b2f93192be906f738b63c736bdea699040061e13a96043118fe2",
+          "source_words_unchanged": true,
+          "pillow_corrected_luminance": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "float32",
+            "sample_sha256": "3e274abb36715c511d73647e4ee1bed7078a399e8ac410cfafd741ab379b4a0e"
+          },
+          "native_corrected_view_matches": true
+        },
+        {
+          "planar": "separate",
+          "compression": "packbits",
+          "tiff_sha256": "c1dc3d9f1c2f9df867a5b2dfd22e8ff86cc6b3c24971e8484948e09e632621c0",
+          "source_words_unchanged": true,
+          "pillow_corrected_luminance": {
+            "shape": [
+              43,
+              73
+            ],
+            "dtype": "float32",
+            "sample_sha256": "3e274abb36715c511d73647e4ee1bed7078a399e8ac410cfafd741ab379b4a0e"
+          },
+          "native_corrected_view_matches": true
+        }
+      ]
+    }
+  ],
+  "fixtures": [
+    {
+      "source": "tests/data/pillow-planar16/rgb-le-strip-raw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": true
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgb-le-strip-deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgb-le-strip-adobe_deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgb-le-strip-lzw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgb-le-strip-packbits.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgb-le-tile-raw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": true
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgb-le-tile-deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgb-le-tile-adobe_deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgb-le-tile-lzw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgb-le-tile-packbits.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgb-be-strip-raw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": true
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgb-be-strip-deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgb-be-strip-adobe_deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgb-be-strip-lzw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgb-be-strip-packbits.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgb-be-tile-raw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": true
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgb-be-tile-deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgb-be-tile-adobe_deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgb-be-tile-lzw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgb-be-tile-packbits.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgba-le-strip-raw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": true
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgba-le-strip-deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgba-le-strip-adobe_deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgba-le-strip-lzw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgba-le-strip-packbits.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgba-le-tile-raw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": true
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgba-le-tile-deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgba-le-tile-adobe_deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgba-le-tile-lzw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgba-le-tile-packbits.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgba-be-strip-raw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": true
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgba-be-strip-deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgba-be-strip-adobe_deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgba-be-strip-lzw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgba-be-strip-packbits.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgba-be-tile-raw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": true
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgba-be-tile-deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgba-be-tile-adobe_deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgba-be-tile-lzw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/rgba-be-tile-packbits.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/cmyk-le-strip-raw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": true
+    },
+    {
+      "source": "tests/data/pillow-planar16/cmyk-le-strip-deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/cmyk-le-strip-adobe_deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/cmyk-le-strip-lzw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/cmyk-le-strip-packbits.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/cmyk-le-tile-raw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": true
+    },
+    {
+      "source": "tests/data/pillow-planar16/cmyk-le-tile-deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/cmyk-le-tile-adobe_deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/cmyk-le-tile-lzw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/cmyk-le-tile-packbits.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/cmyk-be-strip-raw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": true
+    },
+    {
+      "source": "tests/data/pillow-planar16/cmyk-be-strip-deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/cmyk-be-strip-adobe_deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/cmyk-be-strip-lzw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/cmyk-be-strip-packbits.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/cmyk-be-tile-raw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": true
+    },
+    {
+      "source": "tests/data/pillow-planar16/cmyk-be-tile-deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/cmyk-be-tile-adobe_deflate.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/cmyk-be-tile-lzw.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/cmyk-be-tile-packbits.tif",
+      "source_words_match": true,
+      "pillow_display_matches": true,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-u1-3-le.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-u1-3-be.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-u1-4-le.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-u1-4-be.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-u2-3-le.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-u2-3-be.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-u2-4-le.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-u2-4-be.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-u4-3-le.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-u4-3-be.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-u4-4-le.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-u4-4-be.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-i2-3-le.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-i2-3-be.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-i2-4-le.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-i2-4-be.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-f4-3-le.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-f4-3-be.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-f4-4-le.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-f4-4-be.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-f8-3-le.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-f8-3-be.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-f8-4-le.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    },
+    {
+      "source": "tests/data/pillow-planar16/multi-f8-4-be.tif",
+      "source_words_match": true,
+      "pillow_display_matches": null,
+      "uncompressed_reference_defect_refused": false
+    }
+  ],
+  "summary": {
+    "original_reference_decoder_defects": 2,
+    "compressed_display_regressions": 48,
+    "uncompressed_defect_guards": 12,
+    "multitile_source_regressions": 24,
+    "same_words_storage_controls": 8
+  },
+  "all_source_runtime_reference_hashes_unchanged": true
+}
