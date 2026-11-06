@@ -254,7 +254,7 @@ fn metadata_details(metadata: wrapped::Metadata<'_>, _index: usize) -> serde_jso
         }
         #[cfg(feature = "mar345")]
         wrapped::Metadata::Mar345(m) => {
-            json!({"little_endian":m.little_endian,"binary_scalars":m.binary_scalars().into_iter().map(|(k,v)| {use dioptrin_io::mar345::HeaderValue as V;
+            json!({"little_endian":m.little_endian,"pck_version":m.pck_version,"pck_v2_dialect":m.pck_v2_dialect.map(|v|format!("{v:?}")),"binary_scalars":m.binary_scalars().into_iter().map(|(k,v)| {use dioptrin_io::mar345::HeaderValue as V;
                 (k, match v {V::Integer(n)=>json!(n),V::Float(n)=>header_float(n),V::Text(t)=>json!(t)})
             }).collect::<std::collections::BTreeMap<_,_>>(),"text_scalars":m.text_scalars().collect::<Vec<_>>()})
         }
@@ -397,6 +397,13 @@ fn vds_selection(selection: &dioptrin_io::hdf5::typed::VdsSelection) -> serde_js
         } => json!({
             "kind":"Regular","shape":shape,"maximum_shape":maximum_shape,
             "start":start,"stride":stride,"count":count,"block":block}),
+        VdsSelection::Irregular {
+            shape,
+            maximum_shape,
+            blocks,
+        } => {
+            json!({"kind":"Irregular","shape":shape,"maximum_shape":maximum_shape,"blocks":blocks})
+        }
     }
 }
 
@@ -1053,11 +1060,12 @@ fn run() -> Result<(), Box<dyn Error>> {
                     "master_max_shape":vds.master_max_shape,
                     "unmapped_regions":format!("{:?}",vds.unmapped_regions),
                     "unmapped_pixels_per_frame":vds.unmapped_pixels_per_frame,
+                    "unmapped_pixels_by_frame":vds.unmapped_pixels_by_frame,
                     "fill_value":format!("{:?}",reader.metadata(i).unwrap().fill_value),
                     "mappings":vds.mappings.iter().map(|mapping|json!({
                         "stored_filename":mapping.stored_filename,"declared_dataset":mapping.declared_dataset,
                         "source_file":mapping.source_file,"resolved_dataset":mapping.resolved_dataset,
-                        "source_shape":mapping.source_shape,"source_origin":mapping.source_origin,
+                        "source_shape":mapping.source_shape,"selection_layout":format!("{:?}",mapping.selection_layout),"source_bounding_shape":mapping.source_bounding_shape,"virtual_bounding_shape":mapping.virtual_bounding_shape,"selected_elements":mapping.selected_elements,"source_origin":mapping.source_origin,
                         "virtual_origin":mapping.virtual_origin,"mapped_shape":mapping.mapped_shape,
                         "source_selection":vds_selection(&mapping.source_selection),
                         "virtual_selection":vds_selection(&mapping.virtual_selection),
@@ -1289,6 +1297,8 @@ fn run() -> Result<(), Box<dyn Error>> {
                 row["source_codec"] = json!({
                     "reconstruction":format!("{:?}",original.reconstruction),
                     "encoded_shape":original.encoded_shape,"precision":original.precision,"subsampling":original.subsampling,
+                    "restart_interval":original.restart_interval,"restart_markers_inserted":original.restart_markers_inserted,
+                    "fragments":original.fragments.iter().map(|f|json!({"index":f.index,"source_offset":f.source_offset,"source_bytes":f.source_bytes,"entropy_offset":f.entropy_offset,"entropy_bytes":f.entropy_bytes,"origin":f.origin,"stream_origin":f.stream_origin,"image_shape":f.image_shape,"encoded_shape":f.encoded_shape})).collect::<Vec<_>>(),
                     "source_windows":original.source_windows.iter().map(|window|json!({"offset":window.offset,"bytes":window.bytes,"role":window.role})).collect::<Vec<_>>(),
                     "baseline_sos_normalized":original.baseline_sos_normalized,
                     "original_jpeg_header_bytes":original.original_jpeg_header.len(),

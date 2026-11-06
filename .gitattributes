@@ -11,3 +11,7 @@ tests/data/tiff-layouts/* -text -whitespace
 vendor/fax-0.2.7/*.patch -whitespace
 vendor/tiff-0.11.3/*.patch -whitespace
 vendor/fax-0.2.7/Cargo.toml -whitespace
+tests/data/mar345-v2/* -text -whitespace
+tests/data/ojpeg-fragments/* -text -whitespace
+tests/data/vds-irregular/* -text -whitespace
+tests/data/mar345-v2-original/* -text -whitespace

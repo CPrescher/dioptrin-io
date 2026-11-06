@@ -313,6 +313,21 @@ fn header(input: &mut impl Read, limit: usize) -> Result<(Vec<Segment>, u8, u8),
 /// Native codecs still own entropy decoding and reject invalid coding parameters.
 #[cfg(feature = "tiff")]
 pub(crate) fn inspect_dct_bytes(data: &[u8], limit: usize) -> Result<(Vec<Segment>, usize), Error> {
+    let (segments, entropy) = inspect_dct_header_bytes(data, limit)?;
+    let mut input = std::io::Cursor::new(data);
+    input.set_position(entropy as u64);
+    dct_end(&mut input, limit)?;
+    Ok((segments, entropy))
+}
+
+/// Inspect only the bounded header through SOS. This does not establish entropy
+/// availability/integrity; callers assembling declared TIFF fragments must run
+/// the complete envelope and native codec checks before exposing samples.
+#[cfg(feature = "tiff")]
+pub(crate) fn inspect_dct_header_bytes(
+    data: &[u8],
+    limit: usize,
+) -> Result<(Vec<Segment>, usize), Error> {
     let mut input = std::io::Cursor::new(data);
     let (segments, precision, sof) = header(&mut input, limit)?;
     if precision != 8 || !matches!(sof, 0xc0..=0xc2) {
@@ -322,7 +337,6 @@ pub(crate) fn inspect_dct_bytes(data: &[u8], limit: usize) -> Result<(Vec<Segmen
     }
     let entropy = usize::try_from(input.position())
         .map_err(|_| Error("JPEG header position overflow".into()))?;
-    dct_end(&mut input, limit)?;
     Ok((segments, entropy))
 }
 
@@ -504,6 +518,23 @@ fn dct_end(input: &mut impl Read, limit: usize) -> Result<(), Error> {
 #[cfg(test)]
 mod metadata_tests {
     use super::*;
+    #[cfg(feature = "tiff")]
+    #[test]
+    fn header_prefix_never_certifies_a_complete_jpeg_envelope() {
+        let source = include_bytes!("../tests/data/images/gray.jpg");
+        let (_, entropy) = inspect_dct_bytes(source, 1 << 20).unwrap();
+        let prefix = &source[..entropy];
+        assert_eq!(
+            inspect_dct_header_bytes(prefix, 1 << 20).unwrap().1,
+            entropy
+        );
+        assert!(inspect_dct_bytes(prefix, 1 << 20).is_err());
+        let mut trailing = source.to_vec();
+        trailing.push(0);
+        assert!(inspect_dct_bytes(&trailing, 1 << 20).is_err());
+        assert!(inspect_dct_header_bytes(source, 1).is_err());
+        assert!(inspect_dct_bytes(source, 1).is_err());
+    }
     #[test]
     fn jfif_density_uses_big_endian_and_retains_unknown_units() {
         let raw = b"JFIF\0\x01\x02\x07\x01\x2c\x02\x58\x03\x04";

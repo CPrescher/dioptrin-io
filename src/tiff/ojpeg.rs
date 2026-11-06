@@ -5,6 +5,7 @@ use std::{
     fs::File,
     io::{Read, Seek, SeekFrom},
 };
+mod fragments;
 /// Original declared legacy JPEG source window. Tables have intrinsic lengths
 /// (64 quantizers or 16 Huffman counts plus their exact number of symbols).
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -17,6 +18,22 @@ pub struct SourceWindow {
 pub enum Reconstruction {
     CompleteInterchange,
     TableDefinedSingleChunk,
+    TableDefinedFragments,
+    FragmentedInterchange,
+}
+/// One original declared encoded chunk and its contribution to the stream.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Fragment {
+    pub index: usize,
+    pub source_offset: u64,
+    pub source_bytes: usize,
+    pub entropy_offset: u64,
+    pub entropy_bytes: usize,
+    pub origin: [usize; 2],
+    /// Position in the encoded stacked JPEG frame, distinct from logical tile origin.
+    pub stream_origin: [usize; 2],
+    pub image_shape: [usize; 2],
+    pub encoded_shape: [usize; 2],
 }
 /// Legacy container interpretation, separate from decoded component buffers.
 #[derive(Debug, Clone)]
@@ -34,6 +51,9 @@ pub struct SourceMetadata {
     /// as the sequential baseline scan Se=63; original source bytes stay above.
     pub baseline_sos_normalized: bool,
     pub retained_bytes: usize,
+    pub restart_interval: u16,
+    pub restart_markers_inserted: usize,
+    pub fragments: Vec<Fragment>,
 }
 struct Prepared {
     encoded: Vec<u8>,
@@ -55,16 +75,27 @@ pub(super) fn decode(
     limits: Limits,
 ) -> Result<Vec<Chunk>, Error> {
     let prepared = prepare(snapshot, identity, page, limits)?;
+    if prepared.metadata.fragments.len() > 1 {
+        fragments::check_decode_budget(&prepared.metadata, prepared.encoded.len(), limits)?;
+    }
     let chunk = decode_jpeg(
         &prepared.encoded,
         [0, 0],
-        page.shape,
+        if prepared.metadata.fragments.len() > 1 {
+            prepared.metadata.encoded_shape
+        } else {
+            page.shape
+        },
         prepared.metadata.encoded_shape,
         prepared.metadata.subsampling,
         limits,
     )?;
     snapshot.check_handle(identity).map_err(Error)?;
-    Ok(vec![chunk])
+    if prepared.metadata.fragments.len() > 1 {
+        fragments::split(chunk, &prepared.metadata.fragments, limits)
+    } else {
+        Ok(vec![chunk])
+    }
 }
 fn prepare(
     snapshot: &Snapshot,
@@ -79,7 +110,6 @@ fn prepare(
         || page.channels != 3
         || page.planar_configuration != 1
         || scalar(page, 512, 1)? != 1
-        || scalar(page, 515, 0)? != 0
     {
         return Err(Error(
             "old JPEG TIFF requires baseline8 contiguousYCbCr without restart declarations".into(),
@@ -88,7 +118,10 @@ fn prepare(
     let tiled = page.tags.contains_key(&324);
     let offsets = vector(page, if tiled { 324 } else { 273 })?;
     let lengths = vector(page, if tiled { 325 } else { 279 })?;
-    if offsets.len() != 1 || lengths.len() != 1 {
+    if offsets.len() > 1 {
+        return fragments::prepare(snapshot, identity, page, limits, offsets, lengths);
+    }
+    if offsets.len() != 1 || lengths.len() != 1 || scalar(page, 515, 0)? != 0 {
         return Err(Error(
             "old JPEG TIFF currently requires exactly one complete strip/tile".into(),
         ));
@@ -200,96 +233,18 @@ fn prepare(
                 "old JPEG interchange size lacks its source offset".into(),
             ));
         }
-        let mut data = vec![255, 216];
-        let mut selectors = [[0u8; 3]; 3];
-        for (kind, tag) in [(0, 519), (1, 520), (2, 521)] {
-            let locations = vector(page, tag)?;
-            if locations.len() != 3 || locations[0] == 0 {
-                return Err(Error(
-                    "old JPEG requires three declared table selectors".into(),
-                ));
-            }
-            for component in 0..3 {
-                if component > 0
-                    && (locations[component] == 0
-                        || locations[component] == locations[component - 1])
-                {
-                    selectors[kind][component] = selectors[kind][component - 1];
-                    continue;
-                }
-                if locations[..component].contains(&locations[component]) {
-                    return Err(Error("old JPEG table selector order is unsupported".into()));
-                }
-                selectors[kind][component] = component as u8;
-                let role = match kind {
-                    0 => "quantization table",
-                    1 => "DC Huffman table",
-                    _ => "AC Huffman table",
-                };
-                let table = if kind == 0 {
-                    read(
-                        &mut file,
-                        source_len,
-                        locations[component],
-                        64,
-                        role,
-                        limits,
-                        &mut windows,
-                    )?
-                } else {
-                    let counts = read(
-                        &mut file,
-                        source_len,
-                        locations[component],
-                        16,
-                        role,
-                        limits,
-                        &mut Vec::new(),
-                    )?;
-                    let symbols: usize = counts.iter().map(|&n| usize::from(n)).sum();
-                    if symbols == 0 || symbols > 256 {
-                        return Err(Error("invalid old JPEG Huffman symbol count".into()));
-                    }
-                    read(
-                        &mut file,
-                        source_len,
-                        locations[component],
-                        16 + symbols,
-                        role,
-                        limits,
-                        &mut windows,
-                    )?
-                };
-                let mut payload = vec![(if kind == 2 { 16 } else { 0 }) | component as u8];
-                payload.extend(table);
-                marker(
-                    &mut data,
-                    if kind == 0 { 0xdb } else { 0xc4 },
-                    &payload,
-                    limits,
-                )?;
-            }
-        }
-        let mut frame = vec![8];
-        frame.extend((shape[0] as u16).to_be_bytes());
-        frame.extend((shape[1] as u16).to_be_bytes());
-        frame.push(3);
-        let mut scan = vec![3];
-        for (c, &q_selector) in selectors[0].iter().enumerate() {
-            frame.extend([
-                c as u8,
-                if c == 0 {
-                    ((factors[0] as u8) << 4) | factors[1] as u8
-                } else {
-                    0x11
-                },
-                q_selector,
-            ]);
-            scan.extend([c as u8, selectors[1][c] << 4 | selectors[2][c]]);
-        }
-        scan.extend([0, 63, 0]);
-        marker(&mut data, 0xc0, &frame, limits)?;
-        marker(&mut data, 0xda, &scan, limits)?;
+        let mut data = table_header(
+            &mut file,
+            source_len,
+            page,
+            FrameSpec {
+                shape,
+                factors,
+                restart: 0,
+            },
+            limits,
+            &mut windows,
+        )?;
         let mut entropy = read(
             &mut file,
             source_len,
@@ -345,6 +300,9 @@ fn prepare(
             original_jpeg_header: original_header,
             baseline_sos_normalized: normalized,
             retained_bytes,
+            restart_interval: 0,
+            restart_markers_inserted: 0,
+            fragments: Vec::new(),
         },
     })
 }
@@ -412,4 +370,117 @@ fn scalar(page: &Metadata, tag: u16, default: u64) -> Result<u64, Error> {
 }
 fn io(error: std::io::Error) -> Error {
     Error(error.to_string())
+}
+
+struct FrameSpec {
+    shape: [usize; 2],
+    factors: [usize; 2],
+    restart: u16,
+}
+fn table_header(
+    file: &mut File,
+    source_len: u64,
+    page: &Metadata,
+    spec: FrameSpec,
+    limits: Limits,
+    windows: &mut Vec<SourceWindow>,
+) -> Result<Vec<u8>, Error> {
+    let FrameSpec {
+        shape,
+        factors,
+        restart,
+    } = spec;
+    let mut data = vec![255, 216];
+    let mut selectors = [[0u8; 3]; 3];
+    for (kind, tag) in [(0, 519), (1, 520), (2, 521)] {
+        let locations = vector(page, tag)?;
+        if locations.len() != 3 || locations[0] == 0 {
+            return Err(Error(
+                "old JPEG requires three declared table selectors".into(),
+            ));
+        }
+        for component in 0..3 {
+            if component > 0
+                && (locations[component] == 0 || locations[component] == locations[component - 1])
+            {
+                selectors[kind][component] = selectors[kind][component - 1];
+                continue;
+            }
+            if locations[..component].contains(&locations[component]) {
+                return Err(Error("old JPEG table selector order is unsupported".into()));
+            }
+            selectors[kind][component] = component as u8;
+            let role = match kind {
+                0 => "quantization table",
+                1 => "DC Huffman table",
+                _ => "AC Huffman table",
+            };
+            let table = if kind == 0 {
+                read(
+                    file,
+                    source_len,
+                    locations[component],
+                    64,
+                    role,
+                    limits,
+                    windows,
+                )?
+            } else {
+                let counts = read(
+                    file,
+                    source_len,
+                    locations[component],
+                    16,
+                    role,
+                    limits,
+                    &mut Vec::new(),
+                )?;
+                let symbols: usize = counts.iter().map(|&n| usize::from(n)).sum();
+                if symbols == 0 || symbols > 256 {
+                    return Err(Error("invalid old JPEG Huffman symbol count".into()));
+                }
+                read(
+                    file,
+                    source_len,
+                    locations[component],
+                    16 + symbols,
+                    role,
+                    limits,
+                    windows,
+                )?
+            };
+            let mut payload = vec![(if kind == 2 { 16 } else { 0 }) | component as u8];
+            payload.extend(table);
+            marker(
+                &mut data,
+                if kind == 0 { 0xdb } else { 0xc4 },
+                &payload,
+                limits,
+            )?;
+        }
+    }
+    let mut frame = vec![8];
+    frame.extend((shape[0] as u16).to_be_bytes());
+    frame.extend((shape[1] as u16).to_be_bytes());
+    frame.push(3);
+    let mut scan = vec![3];
+    for (c, &q_selector) in selectors[0].iter().enumerate() {
+        frame.extend([
+            c as u8,
+            if c == 0 {
+                ((factors[0] as u8) << 4) | factors[1] as u8
+            } else {
+                0x11
+            },
+            q_selector,
+        ]);
+        scan.extend([c as u8, selectors[1][c] << 4 | selectors[2][c]]);
+    }
+    scan.extend([0, 63, 0]);
+    if restart != 0 {
+        marker(&mut data, 0xdd, &restart.to_be_bytes(), limits)?;
+    }
+    marker(&mut data, 0xc0, &frame, limits)?;
+    marker(&mut data, 0xda, &scan, limits)?;
+    Ok(data)
 }

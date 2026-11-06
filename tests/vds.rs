@@ -110,7 +110,7 @@ fn independent_finite_and_unlimited_mosaics_preserve_counts_and_declared_fill_pr
         assert!(!meta.storage_allocated);
         let mapping = meta.virtual_dataset.as_ref().unwrap();
         assert_eq!(mapping.frozen_shape, [2, 4, 6]);
-        assert_eq!(mapping.unmapped_pixels_per_frame, 16);
+        assert_eq!(mapping.unmapped_pixels_per_frame, Some(16));
         assert_eq!(mapping.mappings.len(), 2);
         assert!(mapping.mappings.iter().all(|m| m.storage_allocated));
         let mut buffer = FrameBuffer::default();
@@ -292,12 +292,7 @@ fn default_policies_missing_partial_wrong_or_ambiguous_bindings_never_fill_modul
 #[test]
 fn unsupported_mapping_fill_and_metadata_layouts_are_explicit() {
     let maps = standard();
-    for name in [
-        "overlap.h5",
-        "shifted.h5",
-        "never-fill.h5",
-        "frame-master-mismatch.h5",
-    ] {
+    for name in ["overlap.h5", "never-fill.h5"] {
         assert!(
             open(
                 fixture(name),
@@ -313,14 +308,23 @@ fn unsupported_mapping_fill_and_metadata_layouts_are_explicit() {
         stored_filename: A.into(),
         actual_file: fixture("stride-a.h5"),
     }];
-    assert!(
-        open(
-            fixture("strided.h5"),
-            &strided,
-            UnmappedRegions::DeclaredFill,
-            Limits::default()
-        )
-        .is_err()
+    let reader = open(
+        fixture("strided.h5"),
+        &strided,
+        UnmappedRegions::Reject,
+        Limits::default(),
+    )
+    .unwrap();
+    let mut output = FrameBuffer::default();
+    reader.read_frame_into(0, &mut output).unwrap();
+    assert_eq!(
+        output.pixels(),
+        Some(&PixelBuffer::I16(vec![0, 1, 2, 6, 7, 8]))
+    );
+    reader.read_frame_into(1, &mut output).unwrap();
+    assert_eq!(
+        output.pixels(),
+        Some(&PixelBuffer::I16(vec![12, 13, 14, 18, 19, 20]))
     );
     assert!(
         Reader::open_snapshot_with_vds(
@@ -350,7 +354,7 @@ fn unsupported_mapping_fill_and_metadata_layouts_are_explicit() {
             .as_ref()
             .unwrap()
             .unmapped_pixels_per_frame,
-        27
+        Some(27)
     );
     let full = vec![maps[0].clone()];
     let reader = open(
@@ -368,7 +372,7 @@ fn unsupported_mapping_fill_and_metadata_layouts_are_explicit() {
             .as_ref()
             .unwrap()
             .unmapped_pixels_per_frame,
-        0
+        Some(0)
     );
 }
 #[test]

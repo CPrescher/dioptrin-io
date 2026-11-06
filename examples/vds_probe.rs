@@ -7,8 +7,29 @@ use sha2::{Digest, Sha256};
 use std::path::PathBuf;
 fn hash(pixels: &PixelBuffer) -> String {
     let mut hash = Sha256::new();
+    match pixels {
+        PixelBuffer::C32(v) => {
+            for x in v.iter().flatten() {
+                hash.update(x.to_le_bytes());
+            }
+            return format!("{:x}", hash.finalize());
+        }
+        PixelBuffer::C64(v) => {
+            for x in v.iter().flatten() {
+                hash.update(x.to_le_bytes());
+            }
+            return format!("{:x}", hash.finalize());
+        }
+        PixelBuffer::CI16(v) => {
+            for x in v.iter().flatten() {
+                hash.update(x.to_le_bytes());
+            }
+            return format!("{:x}", hash.finalize());
+        }
+        _ => {}
+    }
     macro_rules! values{($($v:ident);*)=>{match pixels{$(PixelBuffer::$v(values)=>for value in values{hash.update(value.to_le_bytes());},)*_=>unreachable!()}};}
-    values!(U8;I8;U16;I16;U32;I32;U64;I64;F32;F64);
+    values!(Bool;F16;U8;I8;U16;I16;U32;I32;U64;I64;F32;F64);
     format!("{:x}", hash.finalize())
 }
 fn main() -> Result<(), Box<dyn std::error::Error>> {

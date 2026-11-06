@@ -4,8 +4,8 @@ pub use super::sources::{Link, Source};
 #[path = "external_raw.rs"]
 mod external_raw;
 pub use super::vds::{
-    FilenameBinding, Mapping as VdsMapping, SelectionRecord as VdsSelection, UnmappedRegions,
-    VdsMetadata, VdsOptions,
+    FilenameBinding, Mapping as VdsMapping, SelectionLayout, SelectionRecord as VdsSelection,
+    UnmappedRegions, VdsMetadata, VdsOptions,
 };
 pub use super::{Error, Filter};
 use super::{sources::Sources, vds};
@@ -92,8 +92,8 @@ pub struct Metadata {
     pub fill_value: Option<PixelBuffer>,
     pub storage_allocated: bool,
     pub fill_time: hdf5_backend::dataset::FillTime,
-    /// Explicit virtual mapping provenance. Source frame extents are derived
-    /// from concrete bound modules; missing modules never supply fill.
+    /// Explicit virtual provenance: finite fixed master extent or unlimited
+    /// bound source-derived extent. Missing mapped modules never supply fill.
     pub virtual_dataset: Option<VdsMetadata>,
     /// Explicit bound raw filenames and admitted frozen byte windows.
     pub external_raw: Option<ExternalRawMetadata>,
@@ -591,7 +591,8 @@ fn check_virtual_graph(parts: &[Part], sources: &Sources) -> Result<(), Error> {
     }
     for part in parts {
         if part.raw.is_some() {
-            let current = sources.file(part.source).dataset(&part.metadata.dataset)?;
+            let current =
+                super::sources::hard_dataset(sources.file(part.source), &part.metadata.dataset)?;
             if current.loc_info()?.token != part.dataset.loc_info()?.token {
                 return Err(Error(
                     "raw external dataset binding changed; reopen snapshot".into(),

@@ -12,6 +12,9 @@ pub use input::{Input, Provenance};
 pub enum Format {
     #[cfg(feature = "mar345")]
     Mar345,
+    /// Explicit PCK V2 dialect; default MAR345 input follows the original writer.
+    #[cfg(feature = "mar345")]
+    Mar345WithOptions(crate::mar345::Options),
     #[cfg(feature = "esperanto")]
     Esperanto,
     #[cfg(feature = "fit2d")]
@@ -283,6 +286,10 @@ impl Reader {
         let backend = match format {
             #[cfg(feature = "mar345")]
             Format::Mar345 => Backend::Mar345(crate::mar345::Reader::open(input, image)?),
+            #[cfg(feature = "mar345")]
+            Format::Mar345WithOptions(options) => Backend::Mar345(
+                crate::mar345::Reader::open_with_options(input, image, options)?,
+            ),
             #[cfg(feature = "esperanto")]
             Format::Esperanto => Backend::Esperanto(crate::esperanto::Reader::open(input, image)?),
             #[cfg(feature = "fit2d")]

@@ -232,6 +232,71 @@ impl Sources {
                 .check_handle(&source.handle)
                 .map_err(Error)?;
         }
+        // Link controls may change in an already-open native file before any
+        // filesystem timestamp changes. Recheck bounded original bytes too.
+        hdf5_backend::sync::sync(|| {
+            for link in &self.links {
+                let file = self
+                    .tracked
+                    .iter()
+                    .find(|s| s.snapshot.path == link.source)
+                    .ok_or_else(|| Error("HDF5 link source missing from snapshot".into()))?;
+                let (parent, name) = hard_link_parent(&file.h5, &link.path)?;
+                let path = CString::new(name)
+                    .map_err(|_| Error("NUL in tracked HDF5 link path".into()))?;
+                let mut info = MaybeUninit::<H5L_info2_t>::uninit();
+                if unsafe {
+                    H5Lget_info2(parent.id(), path.as_ptr(), info.as_mut_ptr(), H5P_DEFAULT)
+                } < 0
+                {
+                    return Err(Error(
+                        "HDF5 source link disappeared; reopen snapshot".into(),
+                    ));
+                }
+                let kind = unsafe {
+                    std::ptr::addr_of!((*info.as_ptr()).type_)
+                        .cast::<std::ffi::c_int>()
+                        .read()
+                };
+                let expected = if link.external {
+                    H5L_type_t::H5L_TYPE_EXTERNAL as i32
+                } else {
+                    H5L_type_t::H5L_TYPE_SOFT as i32
+                };
+                if kind != expected {
+                    return Err(Error(
+                        "HDF5 source link kind changed; reopen snapshot".into(),
+                    ));
+                }
+                let bytes =
+                    unsafe { *(*std::ptr::addr_of_mut!((*info.as_mut_ptr()).u)).val_size() };
+                if bytes != link.raw_value.len() {
+                    return Err(Error(
+                        "HDF5 source link value changed; reopen snapshot".into(),
+                    ));
+                }
+                let mut raw = Vec::new();
+                raw.try_reserve_exact(bytes)
+                    .map_err(|e| Error(e.to_string()))?;
+                raw.resize(bytes, 0);
+                if unsafe {
+                    H5Lget_val(
+                        parent.id(),
+                        path.as_ptr(),
+                        raw.as_mut_ptr().cast(),
+                        bytes,
+                        H5P_DEFAULT,
+                    )
+                } < 0
+                    || raw != link.raw_value
+                {
+                    return Err(Error(
+                        "HDF5 source link value changed; reopen snapshot".into(),
+                    ));
+                }
+            }
+            Ok(())
+        })?;
         Ok(())
     }
     pub fn file(&self, index: usize) -> &File {
@@ -487,4 +552,76 @@ fn text(bytes: &[u8]) -> Result<&str, Error> {
     }
     std::str::from_utf8(bytes)
         .map_err(|_| Error("non-UTF8 HDF5 link strings are unsupported".into()))
+}
+
+/// Revalidate a previously resolved concrete path without ever following a
+/// newly introduced soft/external component through native HDF5 lookup.
+pub(super) fn hard_dataset(file: &File, path: &str) -> Result<hdf5_backend::Dataset, Error> {
+    hdf5_backend::sync::sync(|| {
+        if !path.starts_with('/') {
+            return Err(Error("resolved HDF5 dataset path must be absolute".into()));
+        }
+        let mut components = path.split('/').filter(|part| !part.is_empty()).peekable();
+        let mut group = file.group("/")?;
+        while let Some(name) = components.next() {
+            let cname =
+                CString::new(name).map_err(|_| Error("NUL in resolved HDF5 component".into()))?;
+            let mut info = MaybeUninit::<H5L_info2_t>::uninit();
+            if unsafe { H5Lget_info2(group.id(), cname.as_ptr(), info.as_mut_ptr(), H5P_DEFAULT) }
+                < 0
+            {
+                return Err(Error(
+                    "resolved HDF5 path disappeared; reopen snapshot".into(),
+                ));
+            }
+            let kind = unsafe {
+                std::ptr::addr_of!((*info.as_ptr()).type_)
+                    .cast::<std::ffi::c_int>()
+                    .read()
+            };
+            if kind != H5L_type_t::H5L_TYPE_HARD as i32 {
+                return Err(Error(
+                    "resolved HDF5 path now contains a non-hard link; reopen snapshot".into(),
+                ));
+            }
+            if components.peek().is_none() {
+                return Ok(group.dataset(name)?);
+            }
+            group = group.group(name)?;
+        }
+        Err(Error("resolved HDF5 dataset path is empty".into()))
+    })
+}
+
+// Every ancestor was hard at original resolution. Rechecking components before
+// opening each next group prevents newly introduced native external traversal.
+fn hard_link_parent<'a>(file: &File, path: &'a str) -> Result<(Group, &'a str), Error> {
+    let (parent, name) = path
+        .rsplit_once('/')
+        .filter(|(_, name)| !name.is_empty())
+        .ok_or_else(|| Error("invalid tracked HDF5 link path".into()))?;
+    if !path.starts_with('/') {
+        return Err(Error("tracked HDF5 link must be absolute".into()));
+    }
+    let mut group = file.group("/")?;
+    for component in parent.split('/').filter(|p| !p.is_empty()) {
+        let name =
+            CString::new(component).map_err(|_| Error("NUL in tracked HDF5 parent".into()))?;
+        let mut info = MaybeUninit::<H5L_info2_t>::uninit();
+        if unsafe { H5Lget_info2(group.id(), name.as_ptr(), info.as_mut_ptr(), H5P_DEFAULT) } < 0 {
+            return Err(Error("tracked HDF5 link parent disappeared".into()));
+        }
+        let kind = unsafe {
+            std::ptr::addr_of!((*info.as_ptr()).type_)
+                .cast::<std::ffi::c_int>()
+                .read()
+        };
+        if kind != H5L_type_t::H5L_TYPE_HARD as i32 {
+            return Err(Error(
+                "tracked HDF5 link parent now contains non-hard traversal".into(),
+            ));
+        }
+        group = group.group(component)?;
+    }
+    Ok((group, name))
 }

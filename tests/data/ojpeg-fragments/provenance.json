@@ -1,0 +1,4136 @@
+{
+  "license": "CC0-1.0",
+  "source": "Independent explicit Y/Cb/Cr component arrays encoded with native TurboJPEG; original TIFF6 table/header fragments and implied restart boundaries assembled manually without production reader or FabIO writer",
+  "generator_sha256": "571a80351b0521a34cabfaca14a7de3c5631f15f6a9aa3340ff6e1aa5141b995",
+  "jpeg_library": {
+    "path": "/opt/homebrew/Cellar/jpeg-turbo/3.2.0/lib/libturbojpeg.0.5.0.dylib",
+    "sha256": "ab2a42bf1bb3a812ad1d82c5fa6abedec02b7cd50dc984472f7bd974ef83d8e4"
+  },
+  "reference_library": {
+    "path": "/opt/homebrew/Cellar/libtiff/4.7.2/lib/libtiff.6.dylib",
+    "sha256": "ed5a54e3e8a621ba58f51ce632debb3f8d0ef068faf5bee887672581698e4cc1",
+    "version": "LIBTIFF, Version 4.7.2\nCopyright (c) 1988-1996 Sam Leffler\nCopyright (c) 1991-1996 Silicon Graphics, Inc.",
+    "lzw_reference": {
+      "package": "imagecodecs",
+      "version": "2026.10.10",
+      "codec": "imcd 2026.10.10",
+      "path": "/private/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/imagecodecs/_imcd.abi3.so",
+      "sha256": "26d2f4e4dd4de711e8800ab4f90922aee045881a8689a0d2cc026f54a9bd076b",
+      "policy": "decode complete raw LZW payload, retaining full final-strip padding rather than libtiff logical-row clipping"
+    },
+    "modern_jpeg_reference": {
+      "package": "imagecodecs",
+      "version": "2026.10.10",
+      "codec": "libjpeg_turbo 3.2.0/8.0",
+      "path": "/private/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/imagecodecs/_jpeg8.abi3.so",
+      "sha256": "5941cf2d329d25beb440bc263a4b0f20e59c614c2506be9e3deb32bd4ff3c41a",
+      "policy": "aligned original JPEG chunks, explicit YCbCr output with nearest replication; exact inverse decimation recovers source chroma grids. LibTIFF RAW can return partially zero-filled modern JPEG units and is not used for compression7."
+    }
+  },
+  "files": {
+    "table-strips.tif": {
+      "original_jpeg_header_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_sha256": "8b0b859e436d77262dd2aabebeb0855bbddd461fb39edbe0f94afffffc1d8227",
+      "source_bytes": 1625,
+      "shape": [
+        48,
+        32
+      ],
+      "encoded_shape": [
+        48,
+        32
+      ],
+      "subsampling": [
+        2,
+        2
+      ],
+      "mode": "table",
+      "fragments": 3,
+      "restart_interval": 2,
+      "physical_order_reversed": true,
+      "reference": {
+        "shape": [
+          48,
+          32
+        ],
+        "subsampling": [
+          2,
+          2
+        ],
+        "precision": 8,
+        "compression": 6,
+        "storage": "JpegDecodedComponents",
+        "chunks": [
+          {
+            "origin": [
+              0,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "b1497fbc065d0b344029b27f1b8cab54bcac743514ed4b9e5f9d0d3e2f1513d1"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "cda614d58fb0594ff95ad143f100b0d24422eec453ba762a25c5034ff0168641"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "eb942a96af013c9c1a5a25979012ad4ec60ff9e086899eb7ba204f4d28768707"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "9c0bc143bfe5cdd2d2119a1d96737902e7a9ef1989b6491574b2c3e8baf60e2c"
+              }
+            ]
+          },
+          {
+            "origin": [
+              16,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "86709b8fa782f9afd9f829af8c09c5062e0db119580b2a26c68130c4bcd80bf4"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "f2efa67894180da3cfbea39a5bbbc6ce3910653745c698c9c82211dec3f5b83c"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "e813c82c57b2b43c06997f18954bfaf111fc90266802a800ca23d5e505f231c6"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "4848a3b871f7d5b3d1cb6d1963f9e5184d464ad1c89df8ef2d2c772704cb3647"
+              }
+            ]
+          },
+          {
+            "origin": [
+              32,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "69d163fe262349a32c16ca3c097b68ff670faaf34ef5445cb22ef8ab8b1e4f32"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "5f87426ab0745565114d39f3129c950185638ae404e9c0913d12406cff82d8c9"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "6a62546ff2c96bc2d5c82a2bbdfbad23d7b4b9efb73714668b5d9883ed0aec80"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "5b37e8579d86ba999a9f5862e89992ab94014f0ca8bf8d1fecb3af3263a78c7a"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "table-edge-strips.tif": {
+      "original_jpeg_header_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_sha256": "6a80a0210e227918b411f74301cfef8d35f7011316a74555fb4af493fe4caf01",
+      "source_bytes": 1602,
+      "shape": [
+        43,
+        32
+      ],
+      "encoded_shape": [
+        43,
+        32
+      ],
+      "subsampling": [
+        2,
+        2
+      ],
+      "mode": "table",
+      "fragments": 3,
+      "restart_interval": 2,
+      "physical_order_reversed": false,
+      "reference": {
+        "shape": [
+          43,
+          32
+        ],
+        "subsampling": [
+          2,
+          2
+        ],
+        "precision": 8,
+        "compression": 6,
+        "storage": "JpegDecodedComponents",
+        "chunks": [
+          {
+            "origin": [
+              0,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "b1497fbc065d0b344029b27f1b8cab54bcac743514ed4b9e5f9d0d3e2f1513d1"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "cda614d58fb0594ff95ad143f100b0d24422eec453ba762a25c5034ff0168641"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "eb942a96af013c9c1a5a25979012ad4ec60ff9e086899eb7ba204f4d28768707"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "9c0bc143bfe5cdd2d2119a1d96737902e7a9ef1989b6491574b2c3e8baf60e2c"
+              }
+            ]
+          },
+          {
+            "origin": [
+              16,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "86709b8fa782f9afd9f829af8c09c5062e0db119580b2a26c68130c4bcd80bf4"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "f2efa67894180da3cfbea39a5bbbc6ce3910653745c698c9c82211dec3f5b83c"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "e813c82c57b2b43c06997f18954bfaf111fc90266802a800ca23d5e505f231c6"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "4848a3b871f7d5b3d1cb6d1963f9e5184d464ad1c89df8ef2d2c772704cb3647"
+              }
+            ]
+          },
+          {
+            "origin": [
+              32,
+              0
+            ],
+            "image_shape": [
+              11,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                6,
+                16,
+                6
+              ],
+              "sample_sha256": "c48116b945d71af5200acd4165f525414488f20bbdbaf15463e93756ae6b9cac"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  11,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  12,
+                  32
+                ],
+                "sample_sha256": "ccfcc633116765548c37cc66c159827740863e88e7a6ed3ab5c3c95e8279d928"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  6,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  6,
+                  16
+                ],
+                "sample_sha256": "b7c49dc40bd4ff51d96e6abef5f7201dad3efafb294ea0f2a9ef43278c500f9d"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  6,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  6,
+                  16
+                ],
+                "sample_sha256": "e75f9e29553a05ae474fd0898de6530676e8cefe788bfefcd012e0646e96e0eb"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "table-vertical-tiles.tif": {
+      "original_jpeg_header_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_sha256": "043921ec698d76aa2cd1150bdb6a890566cefef96e26f4e3a3252da180b1aea2",
+      "source_bytes": 1637,
+      "shape": [
+        43,
+        29
+      ],
+      "encoded_shape": [
+        48,
+        32
+      ],
+      "subsampling": [
+        2,
+        2
+      ],
+      "mode": "table",
+      "fragments": 3,
+      "restart_interval": 2,
+      "physical_order_reversed": true,
+      "reference": {
+        "shape": [
+          43,
+          29
+        ],
+        "subsampling": [
+          2,
+          2
+        ],
+        "precision": 8,
+        "compression": 6,
+        "storage": "JpegDecodedComponents",
+        "chunks": [
+          {
+            "origin": [
+              0,
+              0
+            ],
+            "image_shape": [
+              16,
+              29
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "b1497fbc065d0b344029b27f1b8cab54bcac743514ed4b9e5f9d0d3e2f1513d1"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  29
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "cda614d58fb0594ff95ad143f100b0d24422eec453ba762a25c5034ff0168641"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  15
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "eb942a96af013c9c1a5a25979012ad4ec60ff9e086899eb7ba204f4d28768707"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  15
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "9c0bc143bfe5cdd2d2119a1d96737902e7a9ef1989b6491574b2c3e8baf60e2c"
+              }
+            ]
+          },
+          {
+            "origin": [
+              16,
+              0
+            ],
+            "image_shape": [
+              16,
+              29
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "86709b8fa782f9afd9f829af8c09c5062e0db119580b2a26c68130c4bcd80bf4"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  29
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "f2efa67894180da3cfbea39a5bbbc6ce3910653745c698c9c82211dec3f5b83c"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  15
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "e813c82c57b2b43c06997f18954bfaf111fc90266802a800ca23d5e505f231c6"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  15
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "4848a3b871f7d5b3d1cb6d1963f9e5184d464ad1c89df8ef2d2c772704cb3647"
+              }
+            ]
+          },
+          {
+            "origin": [
+              32,
+              0
+            ],
+            "image_shape": [
+              11,
+              29
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "69d163fe262349a32c16ca3c097b68ff670faaf34ef5445cb22ef8ab8b1e4f32"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  11,
+                  29
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "5f87426ab0745565114d39f3129c950185638ae404e9c0913d12406cff82d8c9"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  6,
+                  15
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "6a62546ff2c96bc2d5c82a2bbdfbad23d7b4b9efb73714668b5d9883ed0aec80"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  6,
+                  15
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "5b37e8579d86ba999a9f5862e89992ab94014f0ca8bf8d1fecb3af3263a78c7a"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "table-422-strips.tif": {
+      "original_jpeg_header_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_sha256": "2fb6428a7c4cab70034df6084df1014cfdc9e2bed3813fc6c06d32ec2c4e54cc",
+      "source_bytes": 1290,
+      "shape": [
+        23,
+        32
+      ],
+      "encoded_shape": [
+        23,
+        32
+      ],
+      "subsampling": [
+        2,
+        1
+      ],
+      "mode": "table",
+      "fragments": 3,
+      "restart_interval": 2,
+      "physical_order_reversed": false,
+      "reference": {
+        "shape": [
+          23,
+          32
+        ],
+        "subsampling": [
+          2,
+          1
+        ],
+        "precision": 8,
+        "compression": 6,
+        "storage": "JpegDecodedComponents",
+        "chunks": [
+          {
+            "origin": [
+              0,
+              0
+            ],
+            "image_shape": [
+              8,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                4
+              ],
+              "sample_sha256": "be0cfe28e8f07e2dc17c7af5a30ffc4135da9d688d1e807bab131b5f1d11fea1"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  8,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  32
+                ],
+                "sample_sha256": "cec93a559085f22ffe8b43228d91852a297f6e65c4fdddbe17fb8abaa5a561fe"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  1,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "eb942a96af013c9c1a5a25979012ad4ec60ff9e086899eb7ba204f4d28768707"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  1,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "9c0bc143bfe5cdd2d2119a1d96737902e7a9ef1989b6491574b2c3e8baf60e2c"
+              }
+            ]
+          },
+          {
+            "origin": [
+              8,
+              0
+            ],
+            "image_shape": [
+              8,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                4
+              ],
+              "sample_sha256": "27532697e66b7603ca0f80402ec509308afecbfd464c3394ed858f10108fc27a"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  8,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  32
+                ],
+                "sample_sha256": "3ec0222b73de0f56535f260f9a1d60186c0958ce9c2046836a97791e2a4c6177"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  1,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "e813c82c57b2b43c06997f18954bfaf111fc90266802a800ca23d5e505f231c6"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  1,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "4848a3b871f7d5b3d1cb6d1963f9e5184d464ad1c89df8ef2d2c772704cb3647"
+              }
+            ]
+          },
+          {
+            "origin": [
+              16,
+              0
+            ],
+            "image_shape": [
+              7,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                7,
+                16,
+                4
+              ],
+              "sample_sha256": "5d01d4b1134e8316f86af571480f0ed84bca640993150ff8084e7550f07dfb83"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  7,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  7,
+                  32
+                ],
+                "sample_sha256": "9cac06309e7b24bc056dbede3280242226e3c0aad2e32e4093e75244371d3f7f"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  1,
+                  2
+                ],
+                "valid_shape": [
+                  7,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  7,
+                  16
+                ],
+                "sample_sha256": "d550803cdb09439919a9eb396c4d16a20c7c658e26e2d214e0af59635c0df3d9"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  1,
+                  2
+                ],
+                "valid_shape": [
+                  7,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  7,
+                  16
+                ],
+                "sample_sha256": "21537394ab2dd7017ee63ac8cc7d38801880e78b381cbb831ddeddda91968e34"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "prefix-strips.tif": {
+      "original_jpeg_header_sha256": "0b49c291356b79f33e1698cd495bde26bd545f760c63849070e7583254365419",
+      "source_sha256": "87e23df8b773ed69d6b141b7a0a40b3ffa083fb2f2fcbea9b2355da4e00c4684",
+      "source_bytes": 1692,
+      "shape": [
+        48,
+        32
+      ],
+      "encoded_shape": [
+        48,
+        32
+      ],
+      "subsampling": [
+        2,
+        2
+      ],
+      "mode": "prefix",
+      "fragments": 3,
+      "restart_interval": 2,
+      "physical_order_reversed": false,
+      "reference": {
+        "shape": [
+          48,
+          32
+        ],
+        "subsampling": [
+          2,
+          2
+        ],
+        "precision": 8,
+        "compression": 6,
+        "storage": "JpegDecodedComponents",
+        "chunks": [
+          {
+            "origin": [
+              0,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "b1497fbc065d0b344029b27f1b8cab54bcac743514ed4b9e5f9d0d3e2f1513d1"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "cda614d58fb0594ff95ad143f100b0d24422eec453ba762a25c5034ff0168641"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "eb942a96af013c9c1a5a25979012ad4ec60ff9e086899eb7ba204f4d28768707"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "9c0bc143bfe5cdd2d2119a1d96737902e7a9ef1989b6491574b2c3e8baf60e2c"
+              }
+            ]
+          },
+          {
+            "origin": [
+              16,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "86709b8fa782f9afd9f829af8c09c5062e0db119580b2a26c68130c4bcd80bf4"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "f2efa67894180da3cfbea39a5bbbc6ce3910653745c698c9c82211dec3f5b83c"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "e813c82c57b2b43c06997f18954bfaf111fc90266802a800ca23d5e505f231c6"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "4848a3b871f7d5b3d1cb6d1963f9e5184d464ad1c89df8ef2d2c772704cb3647"
+              }
+            ]
+          },
+          {
+            "origin": [
+              32,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "69d163fe262349a32c16ca3c097b68ff670faaf34ef5445cb22ef8ab8b1e4f32"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "5f87426ab0745565114d39f3129c950185638ae404e9c0913d12406cff82d8c9"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "6a62546ff2c96bc2d5c82a2bbdfbad23d7b4b9efb73714668b5d9883ed0aec80"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "5b37e8579d86ba999a9f5862e89992ab94014f0ca8bf8d1fecb3af3263a78c7a"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "split-header-strips.tif": {
+      "original_jpeg_header_sha256": "0b49c291356b79f33e1698cd495bde26bd545f760c63849070e7583254365419",
+      "source_sha256": "fadb9fa5d6432cde1cbb361895d8fbd82da8416fd7f1d7a67846de60e2c14365",
+      "source_bytes": 1692,
+      "shape": [
+        48,
+        32
+      ],
+      "encoded_shape": [
+        48,
+        32
+      ],
+      "subsampling": [
+        2,
+        2
+      ],
+      "mode": "split",
+      "fragments": 3,
+      "restart_interval": 2,
+      "physical_order_reversed": true,
+      "reference": {
+        "shape": [
+          48,
+          32
+        ],
+        "subsampling": [
+          2,
+          2
+        ],
+        "precision": 8,
+        "compression": 6,
+        "storage": "JpegDecodedComponents",
+        "chunks": [
+          {
+            "origin": [
+              0,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "b1497fbc065d0b344029b27f1b8cab54bcac743514ed4b9e5f9d0d3e2f1513d1"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "cda614d58fb0594ff95ad143f100b0d24422eec453ba762a25c5034ff0168641"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "eb942a96af013c9c1a5a25979012ad4ec60ff9e086899eb7ba204f4d28768707"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "9c0bc143bfe5cdd2d2119a1d96737902e7a9ef1989b6491574b2c3e8baf60e2c"
+              }
+            ]
+          },
+          {
+            "origin": [
+              16,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "86709b8fa782f9afd9f829af8c09c5062e0db119580b2a26c68130c4bcd80bf4"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "f2efa67894180da3cfbea39a5bbbc6ce3910653745c698c9c82211dec3f5b83c"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "e813c82c57b2b43c06997f18954bfaf111fc90266802a800ca23d5e505f231c6"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "4848a3b871f7d5b3d1cb6d1963f9e5184d464ad1c89df8ef2d2c772704cb3647"
+              }
+            ]
+          },
+          {
+            "origin": [
+              32,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "69d163fe262349a32c16ca3c097b68ff670faaf34ef5445cb22ef8ab8b1e4f32"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "5f87426ab0745565114d39f3129c950185638ae404e9c0913d12406cff82d8c9"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "6a62546ff2c96bc2d5c82a2bbdfbad23d7b4b9efb73714668b5d9883ed0aec80"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "5b37e8579d86ba999a9f5862e89992ab94014f0ca8bf8d1fecb3af3263a78c7a"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "first-header-strips.tif": {
+      "original_jpeg_header_sha256": "0b49c291356b79f33e1698cd495bde26bd545f760c63849070e7583254365419",
+      "source_sha256": "4227f0ec6d4bf3537823effddc485bf66456f4c500a3ff9e5d840a65b22d12a5",
+      "source_bytes": 1642,
+      "shape": [
+        48,
+        32
+      ],
+      "encoded_shape": [
+        48,
+        32
+      ],
+      "subsampling": [
+        2,
+        2
+      ],
+      "mode": "first",
+      "fragments": 3,
+      "restart_interval": 2,
+      "physical_order_reversed": false,
+      "reference": {
+        "shape": [
+          48,
+          32
+        ],
+        "subsampling": [
+          2,
+          2
+        ],
+        "precision": 8,
+        "compression": 6,
+        "storage": "JpegDecodedComponents",
+        "chunks": [
+          {
+            "origin": [
+              0,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "b1497fbc065d0b344029b27f1b8cab54bcac743514ed4b9e5f9d0d3e2f1513d1"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "cda614d58fb0594ff95ad143f100b0d24422eec453ba762a25c5034ff0168641"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "eb942a96af013c9c1a5a25979012ad4ec60ff9e086899eb7ba204f4d28768707"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "9c0bc143bfe5cdd2d2119a1d96737902e7a9ef1989b6491574b2c3e8baf60e2c"
+              }
+            ]
+          },
+          {
+            "origin": [
+              16,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "86709b8fa782f9afd9f829af8c09c5062e0db119580b2a26c68130c4bcd80bf4"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "f2efa67894180da3cfbea39a5bbbc6ce3910653745c698c9c82211dec3f5b83c"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "e813c82c57b2b43c06997f18954bfaf111fc90266802a800ca23d5e505f231c6"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "4848a3b871f7d5b3d1cb6d1963f9e5184d464ad1c89df8ef2d2c772704cb3647"
+              }
+            ]
+          },
+          {
+            "origin": [
+              32,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "69d163fe262349a32c16ca3c097b68ff670faaf34ef5445cb22ef8ab8b1e4f32"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "5f87426ab0745565114d39f3129c950185638ae404e9c0913d12406cff82d8c9"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "6a62546ff2c96bc2d5c82a2bbdfbad23d7b4b9efb73714668b5d9883ed0aec80"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "5b37e8579d86ba999a9f5862e89992ab94014f0ca8bf8d1fecb3af3263a78c7a"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "complete-interchange-strips.tif": {
+      "original_jpeg_header_sha256": "0b49c291356b79f33e1698cd495bde26bd545f760c63849070e7583254365419",
+      "source_sha256": "f0ed4b608c84b2ca913abc2f05961c9361da82712acd7e66d060de2023103989",
+      "source_bytes": 1654,
+      "shape": [
+        48,
+        32
+      ],
+      "encoded_shape": [
+        48,
+        32
+      ],
+      "subsampling": [
+        2,
+        2
+      ],
+      "mode": "complete",
+      "fragments": 3,
+      "restart_interval": 2,
+      "physical_order_reversed": false,
+      "reference": {
+        "shape": [
+          48,
+          32
+        ],
+        "subsampling": [
+          2,
+          2
+        ],
+        "precision": 8,
+        "compression": 6,
+        "storage": "JpegDecodedComponents",
+        "chunks": [
+          {
+            "origin": [
+              0,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "b1497fbc065d0b344029b27f1b8cab54bcac743514ed4b9e5f9d0d3e2f1513d1"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "cda614d58fb0594ff95ad143f100b0d24422eec453ba762a25c5034ff0168641"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "eb942a96af013c9c1a5a25979012ad4ec60ff9e086899eb7ba204f4d28768707"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "9c0bc143bfe5cdd2d2119a1d96737902e7a9ef1989b6491574b2c3e8baf60e2c"
+              }
+            ]
+          },
+          {
+            "origin": [
+              16,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "86709b8fa782f9afd9f829af8c09c5062e0db119580b2a26c68130c4bcd80bf4"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "f2efa67894180da3cfbea39a5bbbc6ce3910653745c698c9c82211dec3f5b83c"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "e813c82c57b2b43c06997f18954bfaf111fc90266802a800ca23d5e505f231c6"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "4848a3b871f7d5b3d1cb6d1963f9e5184d464ad1c89df8ef2d2c772704cb3647"
+              }
+            ]
+          },
+          {
+            "origin": [
+              32,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "69d163fe262349a32c16ca3c097b68ff670faaf34ef5445cb22ef8ab8b1e4f32"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "5f87426ab0745565114d39f3129c950185638ae404e9c0913d12406cff82d8c9"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "6a62546ff2c96bc2d5c82a2bbdfbad23d7b4b9efb73714668b5d9883ed0aec80"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "5b37e8579d86ba999a9f5862e89992ab94014f0ca8bf8d1fecb3af3263a78c7a"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "table-source-eoi.tif": {
+      "original_jpeg_header_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_sha256": "91249b18bba9609035a1a5957342f336810fc63897338cfd021b5863deb01f54",
+      "source_bytes": 1627,
+      "shape": [
+        48,
+        32
+      ],
+      "encoded_shape": [
+        48,
+        32
+      ],
+      "subsampling": [
+        2,
+        2
+      ],
+      "mode": "table",
+      "fragments": 3,
+      "restart_interval": 2,
+      "physical_order_reversed": false,
+      "reference": {
+        "shape": [
+          48,
+          32
+        ],
+        "subsampling": [
+          2,
+          2
+        ],
+        "precision": 8,
+        "compression": 6,
+        "storage": "JpegDecodedComponents",
+        "chunks": [
+          {
+            "origin": [
+              0,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "b1497fbc065d0b344029b27f1b8cab54bcac743514ed4b9e5f9d0d3e2f1513d1"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "cda614d58fb0594ff95ad143f100b0d24422eec453ba762a25c5034ff0168641"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "eb942a96af013c9c1a5a25979012ad4ec60ff9e086899eb7ba204f4d28768707"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "9c0bc143bfe5cdd2d2119a1d96737902e7a9ef1989b6491574b2c3e8baf60e2c"
+              }
+            ]
+          },
+          {
+            "origin": [
+              16,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "86709b8fa782f9afd9f829af8c09c5062e0db119580b2a26c68130c4bcd80bf4"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "f2efa67894180da3cfbea39a5bbbc6ce3910653745c698c9c82211dec3f5b83c"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "e813c82c57b2b43c06997f18954bfaf111fc90266802a800ca23d5e505f231c6"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "4848a3b871f7d5b3d1cb6d1963f9e5184d464ad1c89df8ef2d2c772704cb3647"
+              }
+            ]
+          },
+          {
+            "origin": [
+              32,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "69d163fe262349a32c16ca3c097b68ff670faaf34ef5445cb22ef8ab8b1e4f32"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "5f87426ab0745565114d39f3129c950185638ae404e9c0913d12406cff82d8c9"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "6a62546ff2c96bc2d5c82a2bbdfbad23d7b4b9efb73714668b5d9883ed0aec80"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "5b37e8579d86ba999a9f5862e89992ab94014f0ca8bf8d1fecb3af3263a78c7a"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "legacy-prefix-strips.tif": {
+      "original_jpeg_header_sha256": "b03c8a397771e9b64710e6593f3f33d87f3b428f4d014b65e55441b33f07f091",
+      "source_sha256": "f8ae31cc21b31a18e60025a435f41a48940b86c3bfc210c132bf6226d01d43e4",
+      "source_bytes": 1692,
+      "shape": [
+        48,
+        32
+      ],
+      "encoded_shape": [
+        48,
+        32
+      ],
+      "subsampling": [
+        2,
+        2
+      ],
+      "mode": "legacy-prefix",
+      "fragments": 3,
+      "restart_interval": 2,
+      "physical_order_reversed": false,
+      "reference": {
+        "shape": [
+          48,
+          32
+        ],
+        "subsampling": [
+          2,
+          2
+        ],
+        "precision": 8,
+        "compression": 6,
+        "storage": "JpegDecodedComponents",
+        "chunks": [
+          {
+            "origin": [
+              0,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "b1497fbc065d0b344029b27f1b8cab54bcac743514ed4b9e5f9d0d3e2f1513d1"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "cda614d58fb0594ff95ad143f100b0d24422eec453ba762a25c5034ff0168641"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "eb942a96af013c9c1a5a25979012ad4ec60ff9e086899eb7ba204f4d28768707"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "9c0bc143bfe5cdd2d2119a1d96737902e7a9ef1989b6491574b2c3e8baf60e2c"
+              }
+            ]
+          },
+          {
+            "origin": [
+              16,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "86709b8fa782f9afd9f829af8c09c5062e0db119580b2a26c68130c4bcd80bf4"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "f2efa67894180da3cfbea39a5bbbc6ce3910653745c698c9c82211dec3f5b83c"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "e813c82c57b2b43c06997f18954bfaf111fc90266802a800ca23d5e505f231c6"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "4848a3b871f7d5b3d1cb6d1963f9e5184d464ad1c89df8ef2d2c772704cb3647"
+              }
+            ]
+          },
+          {
+            "origin": [
+              32,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "69d163fe262349a32c16ca3c097b68ff670faaf34ef5445cb22ef8ab8b1e4f32"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "5f87426ab0745565114d39f3129c950185638ae404e9c0913d12406cff82d8c9"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "6a62546ff2c96bc2d5c82a2bbdfbad23d7b4b9efb73714668b5d9883ed0aec80"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "5b37e8579d86ba999a9f5862e89992ab94014f0ca8bf8d1fecb3af3263a78c7a"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "table-restart-cycle.tif": {
+      "original_jpeg_header_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_sha256": "6edd81cb7597dcd12396e59b5d566f32c79e1e96bfced649053a7ed4f3797cb6",
+      "source_bytes": 2343,
+      "shape": [
+        160,
+        16
+      ],
+      "encoded_shape": [
+        160,
+        16
+      ],
+      "subsampling": [
+        2,
+        2
+      ],
+      "mode": "table",
+      "fragments": 10,
+      "restart_interval": 1,
+      "physical_order_reversed": true,
+      "reference": {
+        "shape": [
+          160,
+          16
+        ],
+        "subsampling": [
+          2,
+          2
+        ],
+        "precision": 8,
+        "compression": 6,
+        "storage": "JpegDecodedComponents",
+        "chunks": [
+          {
+            "origin": [
+              0,
+              0
+            ],
+            "image_shape": [
+              16,
+              16
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                8,
+                6
+              ],
+              "sample_sha256": "5de9f86b908212c4d85564739d7ce2b00ccd99045e2ce767a15737c5b89edf3a"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  16
+                ],
+                "sample_sha256": "ca52e31b3e3394cb46af4e658bd81de613b799a2fd002800db70bea3763e52b3"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "d7406989f878f030aeaea520691357304aa8e9182973098bfbd19047815b7ef5"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "1e567f90d515a98d50965a2176d4ea82c1259e50d76190506ef9857477b5d61a"
+              }
+            ]
+          },
+          {
+            "origin": [
+              16,
+              0
+            ],
+            "image_shape": [
+              16,
+              16
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                8,
+                6
+              ],
+              "sample_sha256": "feda7b24866d359a9f5b8dfe8bb6d0756f303c1bfc1733399573b85ddb992cce"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  16
+                ],
+                "sample_sha256": "246421b7e72729205e7ebc8215eae021e1bcac9b91f5876d72de5b479e22255b"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "dc237728d6ab2288a50ce5505448f9baa9ce21046152b40260fbd6f8baa71f76"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "ba2ccb241f2f7116ba1afd39b30b38ef85d3a77f97c4b9913b6ebb0a9342f896"
+              }
+            ]
+          },
+          {
+            "origin": [
+              32,
+              0
+            ],
+            "image_shape": [
+              16,
+              16
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                8,
+                6
+              ],
+              "sample_sha256": "8eebf4abe778efe70d3bdf0467d5e21fd4ef1ac75f5ad161a02a1682be4b2c19"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  16
+                ],
+                "sample_sha256": "ca85ceabe17b0a040c16502ff78e4e8afc9a45126c2e4eae84dadd7fa00cb9ba"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "44b37b8a9e730289abe7a1c1c286902eafe06d8f79e1b7ac0ba4edbc79690984"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "f9c88c4ec19f29c03df2ec8b73540064b4b5b3a2efb28a58650b8530b4eab6f3"
+              }
+            ]
+          },
+          {
+            "origin": [
+              48,
+              0
+            ],
+            "image_shape": [
+              16,
+              16
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                8,
+                6
+              ],
+              "sample_sha256": "11ce11c83517a2d74ae21e57bdc22236d6c0321adf56925065f8dc9f22c4819b"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  16
+                ],
+                "sample_sha256": "0f8b34a7ac3ca15dd5891bfd7d98ec611eeda94a38d9f057c36b2f7be3fa7fbd"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "27e46a3747a852bfe64cde2a7b45a1be47e750c26f76d03fed48b4c3085e2136"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "2e4f65d736cde4a439473926dbc03be6082eec845f729a8df1994e03c81f0542"
+              }
+            ]
+          },
+          {
+            "origin": [
+              64,
+              0
+            ],
+            "image_shape": [
+              16,
+              16
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                8,
+                6
+              ],
+              "sample_sha256": "3003320f496b45cfad8171d629e65bf161e9de467e5144ce2be3ceca1378cab0"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  16
+                ],
+                "sample_sha256": "f421d3e55b2e899cea5501fb3ed87edd226560c1c4ead2c6ef31b11b900a1596"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "03b91d299ce71163fb1de07f9e7f72836cb216758c0a1ca800ed16f6ad9fa1e8"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "804cd47515f3b6d613f9971db60c4178799693ecb6db2381b591b9ca9f674d0d"
+              }
+            ]
+          },
+          {
+            "origin": [
+              80,
+              0
+            ],
+            "image_shape": [
+              16,
+              16
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                8,
+                6
+              ],
+              "sample_sha256": "217791211eee88d43b9e7a80ee9f8ce56517249e0565223c3bd5829a1783f528"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  16
+                ],
+                "sample_sha256": "10282894144c0d5d667fe4eef9f97a293954c0e54ce6fb99348b8f4ade82c0ce"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "a1e2ea86ccbbf5cf4ee965f429a506b3634c3455b170236c78b02884260d899f"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "baf8105365e8e228c5985b6f9e4bc2ae2b3d244c5e0b538d25e34cd5ccf20af2"
+              }
+            ]
+          },
+          {
+            "origin": [
+              96,
+              0
+            ],
+            "image_shape": [
+              16,
+              16
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                8,
+                6
+              ],
+              "sample_sha256": "71071d470792c7c31a94e075abc1df0265e2d7317a4d23170c44ef07e9e84ee0"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  16
+                ],
+                "sample_sha256": "635b4a47ed03c56d46ffbac7306bf8a1df1302af5f386d4e6f9f8e233f0e8132"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "d5875f42a7d9ef3e96035489f63508953ec42ea585cb18be0fe7cbf33d58a19c"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "339ef65e2b9fa0e6b804ae2c3abc516043d4158ef9ba0aa839785633debd8058"
+              }
+            ]
+          },
+          {
+            "origin": [
+              112,
+              0
+            ],
+            "image_shape": [
+              16,
+              16
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                8,
+                6
+              ],
+              "sample_sha256": "1852298516c10d424e036e53b887379bd2995bfa28a54368af4c7b15afd0e67a"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  16
+                ],
+                "sample_sha256": "276436f252e1d152aa2b70fc8920cb1f09d7d3af881cb2e52731e0dcf0a19a69"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "bc9240895e5b91ef1321c68be66f3a5c46c9371e3e9bdcad5f70323283236dbb"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "75885c7450b473c22681eecf118aa8627f4ff9bfb4be1c1815fc3fe87fc60fec"
+              }
+            ]
+          },
+          {
+            "origin": [
+              128,
+              0
+            ],
+            "image_shape": [
+              16,
+              16
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                8,
+                6
+              ],
+              "sample_sha256": "5d81ccdd76a071a6abdec00c2004ca2089d720d55ffd25061a8409453739cc06"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  16
+                ],
+                "sample_sha256": "3d3e1c4685a54bd2aa361abb44ebd925ca088ee7428af686c0692b86d7e5dee4"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "ce8e5474d2ec130a8bac9e1e261cae2f9e1d70061d4f09202a32cc3805a57338"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "1c0b0702ac7f2c5db314011fa3cd44073853ca4bc714c35bc32bc5c587fb6dc9"
+              }
+            ]
+          },
+          {
+            "origin": [
+              144,
+              0
+            ],
+            "image_shape": [
+              16,
+              16
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                8,
+                6
+              ],
+              "sample_sha256": "6c72f4d1e2780b7c47aa6606df70e499dff431ddcc1fd9f2cd785ed934045144"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  16
+                ],
+                "sample_sha256": "758937e79e5ab84fd2e4cf62d174c6debbd8e6ee9bef3e7d73cbefb681c52160"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "c11fd8f0b0572b94b9c143ab3eaa0ef5857c5aaddb878c21d18a564675fba401"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  8
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  8
+                ],
+                "sample_sha256": "1e03508b1fdd6b4df071bedf1d630c24f58cbadaf3af9ea994b6387ab88842ae"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "prefix-grid-tiles.tif": {
+      "original_jpeg_header_sha256": "7c17f2c93f6cf3336978925f222719d8382e8984ca92804fd73f149fd6adc48e",
+      "source_sha256": "345107235e254bda595b5ce96c03ba42a36d65b8c70655d4bf458d75a3aa79f2",
+      "source_bytes": 2116,
+      "shape": [
+        29,
+        51
+      ],
+      "encoded_shape": [
+        64,
+        32
+      ],
+      "subsampling": [
+        2,
+        2
+      ],
+      "mode": "prefix",
+      "fragments": 4,
+      "restart_interval": 2,
+      "physical_order_reversed": true,
+      "reference": {
+        "shape": [
+          29,
+          51
+        ],
+        "subsampling": [
+          2,
+          2
+        ],
+        "precision": 8,
+        "compression": 6,
+        "storage": "JpegDecodedComponents",
+        "chunks": [
+          {
+            "origin": [
+              0,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "b1497fbc065d0b344029b27f1b8cab54bcac743514ed4b9e5f9d0d3e2f1513d1"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "cda614d58fb0594ff95ad143f100b0d24422eec453ba762a25c5034ff0168641"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "eb942a96af013c9c1a5a25979012ad4ec60ff9e086899eb7ba204f4d28768707"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "9c0bc143bfe5cdd2d2119a1d96737902e7a9ef1989b6491574b2c3e8baf60e2c"
+              }
+            ]
+          },
+          {
+            "origin": [
+              0,
+              32
+            ],
+            "image_shape": [
+              16,
+              19
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "86709b8fa782f9afd9f829af8c09c5062e0db119580b2a26c68130c4bcd80bf4"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  19
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "f2efa67894180da3cfbea39a5bbbc6ce3910653745c698c9c82211dec3f5b83c"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  10
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "e813c82c57b2b43c06997f18954bfaf111fc90266802a800ca23d5e505f231c6"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  10
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "4848a3b871f7d5b3d1cb6d1963f9e5184d464ad1c89df8ef2d2c772704cb3647"
+              }
+            ]
+          },
+          {
+            "origin": [
+              16,
+              0
+            ],
+            "image_shape": [
+              13,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "69d163fe262349a32c16ca3c097b68ff670faaf34ef5445cb22ef8ab8b1e4f32"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  13,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "5f87426ab0745565114d39f3129c950185638ae404e9c0913d12406cff82d8c9"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  7,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "6a62546ff2c96bc2d5c82a2bbdfbad23d7b4b9efb73714668b5d9883ed0aec80"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  7,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "5b37e8579d86ba999a9f5862e89992ab94014f0ca8bf8d1fecb3af3263a78c7a"
+              }
+            ]
+          },
+          {
+            "origin": [
+              16,
+              32
+            ],
+            "image_shape": [
+              13,
+              19
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "2e3b2b6fe5ec05f9c25548cbe407a27883d67d3d157d75ec3b46cba4d048d644"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  13,
+                  19
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "0a6c81050e1dbe7b8b75aee3cdb0d3408d8ed5cbe5a006535b383e04c0a5ade0"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  7,
+                  10
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "fe05f86e94bfa468cb4c34a34ab7f2a28fe1af1703611f2d327fa1ff1c90a670"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  7,
+                  10
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "cb4cba0d23cb3e8271be1010d0e11e6c51dd7382667e481338dea6003269ff66"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "table-odd-width-strips.tif": {
+      "original_jpeg_header_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_sha256": "599474106c2669f2e205a672c4a243c3a7d0a787cd98791a0bc0a69d96b2edf8",
+      "source_bytes": 1602,
+      "shape": [
+        43,
+        31
+      ],
+      "encoded_shape": [
+        43,
+        31
+      ],
+      "subsampling": [
+        2,
+        2
+      ],
+      "mode": "table",
+      "fragments": 3,
+      "restart_interval": 2,
+      "physical_order_reversed": false,
+      "reference": {
+        "shape": [
+          43,
+          31
+        ],
+        "subsampling": [
+          2,
+          2
+        ],
+        "precision": 8,
+        "compression": 6,
+        "storage": "JpegDecodedComponents",
+        "chunks": [
+          {
+            "origin": [
+              0,
+              0
+            ],
+            "image_shape": [
+              16,
+              31
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "b1497fbc065d0b344029b27f1b8cab54bcac743514ed4b9e5f9d0d3e2f1513d1"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  31
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "cda614d58fb0594ff95ad143f100b0d24422eec453ba762a25c5034ff0168641"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "eb942a96af013c9c1a5a25979012ad4ec60ff9e086899eb7ba204f4d28768707"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "9c0bc143bfe5cdd2d2119a1d96737902e7a9ef1989b6491574b2c3e8baf60e2c"
+              }
+            ]
+          },
+          {
+            "origin": [
+              16,
+              0
+            ],
+            "image_shape": [
+              16,
+              31
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "86709b8fa782f9afd9f829af8c09c5062e0db119580b2a26c68130c4bcd80bf4"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  31
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "f2efa67894180da3cfbea39a5bbbc6ce3910653745c698c9c82211dec3f5b83c"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "e813c82c57b2b43c06997f18954bfaf111fc90266802a800ca23d5e505f231c6"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "4848a3b871f7d5b3d1cb6d1963f9e5184d464ad1c89df8ef2d2c772704cb3647"
+              }
+            ]
+          },
+          {
+            "origin": [
+              32,
+              0
+            ],
+            "image_shape": [
+              11,
+              31
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                6,
+                16,
+                6
+              ],
+              "sample_sha256": "c48116b945d71af5200acd4165f525414488f20bbdbaf15463e93756ae6b9cac"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  11,
+                  31
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  12,
+                  32
+                ],
+                "sample_sha256": "ccfcc633116765548c37cc66c159827740863e88e7a6ed3ab5c3c95e8279d928"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  6,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  6,
+                  16
+                ],
+                "sample_sha256": "b7c49dc40bd4ff51d96e6abef5f7201dad3efafb294ea0f2a9ef43278c500f9d"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  6,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  6,
+                  16
+                ],
+                "sample_sha256": "e75f9e29553a05ae474fd0898de6530676e8cefe788bfefcd012e0646e96e0eb"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "prefix-inferred-restart.tif": {
+      "original_jpeg_header_sha256": "c0f54c64b40f7f1f4c9ea8e97bc50030de122dc917c54bd42881055b173805f1",
+      "source_sha256": "bfe1b3354afc565877ced5eaccebd431c70bb2f707839e90c95d48f54d42c78d",
+      "source_bytes": 1686,
+      "shape": [
+        48,
+        32
+      ],
+      "encoded_shape": [
+        48,
+        32
+      ],
+      "subsampling": [
+        2,
+        2
+      ],
+      "mode": "prefix",
+      "fragments": 3,
+      "restart_interval": 2,
+      "physical_order_reversed": false,
+      "reference": {
+        "shape": [
+          48,
+          32
+        ],
+        "subsampling": [
+          2,
+          2
+        ],
+        "precision": 8,
+        "compression": 6,
+        "storage": "JpegDecodedComponents",
+        "chunks": [
+          {
+            "origin": [
+              0,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "b1497fbc065d0b344029b27f1b8cab54bcac743514ed4b9e5f9d0d3e2f1513d1"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "cda614d58fb0594ff95ad143f100b0d24422eec453ba762a25c5034ff0168641"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "eb942a96af013c9c1a5a25979012ad4ec60ff9e086899eb7ba204f4d28768707"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "9c0bc143bfe5cdd2d2119a1d96737902e7a9ef1989b6491574b2c3e8baf60e2c"
+              }
+            ]
+          },
+          {
+            "origin": [
+              16,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "86709b8fa782f9afd9f829af8c09c5062e0db119580b2a26c68130c4bcd80bf4"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "f2efa67894180da3cfbea39a5bbbc6ce3910653745c698c9c82211dec3f5b83c"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "e813c82c57b2b43c06997f18954bfaf111fc90266802a800ca23d5e505f231c6"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "4848a3b871f7d5b3d1cb6d1963f9e5184d464ad1c89df8ef2d2c772704cb3647"
+              }
+            ]
+          },
+          {
+            "origin": [
+              32,
+              0
+            ],
+            "image_shape": [
+              16,
+              32
+            ],
+            "sampling_units": {
+              "dtype": "uint8",
+              "shape": [
+                8,
+                16,
+                6
+              ],
+              "sample_sha256": "69d163fe262349a32c16ca3c097b68ff670faaf34ef5445cb22ef8ab8b1e4f32"
+            },
+            "planes": [
+              {
+                "component": "Y",
+                "sampling": [
+                  1,
+                  1
+                ],
+                "valid_shape": [
+                  16,
+                  32
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  16,
+                  32
+                ],
+                "sample_sha256": "5f87426ab0745565114d39f3129c950185638ae404e9c0913d12406cff82d8c9"
+              },
+              {
+                "component": "Cb",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "6a62546ff2c96bc2d5c82a2bbdfbad23d7b4b9efb73714668b5d9883ed0aec80"
+              },
+              {
+                "component": "Cr",
+                "sampling": [
+                  2,
+                  2
+                ],
+                "valid_shape": [
+                  8,
+                  16
+                ],
+                "dtype": "uint8",
+                "shape": [
+                  8,
+                  16
+                ],
+                "sample_sha256": "5b37e8579d86ba999a9f5862e89992ab94014f0ca8bf8d1fecb3af3263a78c7a"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

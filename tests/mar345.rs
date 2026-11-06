@@ -179,11 +179,12 @@ fn malformed_truncated_unsupported_resource_limited_and_changed_sources_fail_clo
         b"CCP4 packed image V2, X: ".iter().copied(),
     );
     std::fs::write(&path, bytes).unwrap();
-    let error = match Reader::open(&path, Limits::default()) {
-        Ok(_) => panic!("V2 must not fall back toV1"),
-        Err(e) => e,
-    };
-    assert!(error.to_string().contains("V2"));
+    // Relabeling a V1 stream never triggers a V1 decoder retry under a V2 marker.
+    let reader = Reader::open(&path, Limits::default()).unwrap();
+    assert_eq!(reader.metadata().pck_version, 2);
+    let mut mislabeled = FrameBuffer::default();
+    assert!(reader.read_frame_into(0, &mut mislabeled).is_err());
+    assert!(mislabeled.pixels().is_none());
     let reader = Reader::open(fixture("overflow-padded-le.mar345"), Limits::default()).unwrap();
     let payload = 4096 + reader.metadata().overflow_bytes.len() + reader.metadata().marker.len();
     let mut bytes = original.clone();

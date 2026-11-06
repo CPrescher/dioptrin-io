@@ -320,9 +320,64 @@ fn attribute_input(
         _ => return Err("unknown typed attribute filter".into()),
     })
 }
+#[cfg(feature = "hdf5")]
+fn vds_selection(s: &dioptrin_io::hdf5::typed::VdsSelection) -> Value {
+    use dioptrin_io::hdf5::typed::VdsSelection;
+    match s {
+        VdsSelection::All {
+            shape,
+            maximum_shape,
+        } => json!({"kind":"All","shape":shape,"maximum_shape":maximum_shape}),
+        VdsSelection::Regular {
+            shape,
+            maximum_shape,
+            start,
+            stride,
+            count,
+            block,
+        } => {
+            json!({"kind":"Regular","shape":shape,"maximum_shape":maximum_shape,"start":start,"stride":stride,"count":count,"block":block})
+        }
+        VdsSelection::Irregular {
+            shape,
+            maximum_shape,
+            blocks,
+        } => {
+            json!({"kind":"Irregular","shape":shape,"maximum_shape":maximum_shape,"blocks":blocks})
+        }
+    }
+}
+#[cfg(feature = "hdf5")]
+fn vds_metadata(v: &dioptrin_io::hdf5::typed::VdsMetadata) -> Value {
+    json!({"declared_shape":v.declared_shape,"frozen_shape":v.frozen_shape,"master_max_shape":v.master_max_shape,"unmapped_regions":format!("{:?}",v.unmapped_regions),"unmapped_pixels_per_frame":v.unmapped_pixels_per_frame,"unmapped_pixels_by_frame":v.unmapped_pixels_by_frame,"mappings":v.mappings.iter().map(|m|json!({"stored_filename":m.stored_filename,"declared_dataset":m.declared_dataset,"source_file":m.source_file,"resolved_dataset":m.resolved_dataset,"source_shape":m.source_shape,"selection_layout":format!("{:?}",m.selection_layout),"source_bounding_shape":m.source_bounding_shape,"virtual_bounding_shape":m.virtual_bounding_shape,"selected_elements":m.selected_elements,"source_selection":vds_selection(&m.source_selection),"virtual_selection":vds_selection(&m.virtual_selection),"source_origin":m.source_origin,"virtual_origin":m.virtual_origin,"mapped_shape":m.mapped_shape,"source_pixel_type":format!("{:?}",m.source_pixel_type),"source_little_endian":m.source_little_endian,"source_layout":format!("{:?}",m.source_layout),"source_fill_value":m.source_fill_value.as_ref().map(|p|json!({"pixels":pixels(p),"value_hex":bytes_hex(&canonical_bytes(p))})),"source_fill_time":format!("{:?}",m.source_fill_time),"storage_allocated":m.storage_allocated,"filters":m.filters.iter().map(|f|format!("{f:?}")).collect::<Vec<_>>() })).collect::<Vec<_>>()})
+}
 fn main() -> Result<(), Box<dyn Error>> {
     let args = std::env::args().collect::<Vec<_>>();
     let kind = args.get(1).ok_or("API command required")?;
+    #[cfg(feature = "mar345")]
+    if kind == "mar345-layout" {
+        let dialect = match args.get(3).map(String::as_str) {
+            None | Some("original") => dioptrin_io::mar345::PckV2Dialect::Original,
+            Some("fabio8") => dioptrin_io::mar345::PckV2Dialect::FabioLegacyEightBit,
+            _ => return Err("MAR345 dialect must be original or fabio8".into()),
+        };
+        let reader = dioptrin_io::mar345::Reader::open_with_options(
+            args.get(2).ok_or("path required")?,
+            Default::default(),
+            dioptrin_io::mar345::Options {
+                v2_dialect: dialect,
+            },
+        )?;
+        let m = reader.metadata();
+        let mut buffer = dioptrin_io::mar345::FrameBuffer::default();
+        reader.read_frame_into(0, &mut buffer)?;
+        let p = buffer.pixels().ok_or("pixels unavailable")?;
+        println!(
+            "{}",
+            json!({"frames":reader.frames(),"shape":buffer.shape(),"pixel_type":format!("{:?}",p.pixel_type()),"pixels":pixels(p),"value_hex":bytes_hex(&canonical_bytes(p)),"metadata":{"shape":m.shape,"pixel_type":format!("{:?}",m.pixel_type),"base_pixel_type":format!("{:?}",m.base_pixel_type),"little_endian":m.little_endian,"pck_version":m.pck_version,"pck_v2_dialect":m.pck_v2_dialect.map(|v|format!("{v:?}")),"overflow_layout":format!("{:?}",m.overflow_layout),"header_hex":bytes_hex(&m.header),"binary_words":m.binary_words,"text_start":m.text_start,"fields":m.fields,"entries":m.entries,"overflow_records":m.overflow_records.iter().map(|r|json!({"one_based_index":r.one_based_index,"value":r.value})).collect::<Vec<_>>(),"overflow_bytes_hex":bytes_hex(&m.overflow_bytes),"marker_hex":bytes_hex(&m.marker),"encoded_bytes":m.encoded_bytes}})
+        );
+        return Ok(());
+    }
     if kind == "npy-layout" {
         let reader = native::Reader::open(
             args.get(2).ok_or("path required")?,
@@ -410,30 +465,39 @@ fn main() -> Result<(), Box<dyn Error>> {
     if kind == "hdf5-layout" {
         use dioptrin_io::hdf5::typed::{
             ExternalLinks, ExternalRawOptions, FilenameBinding, Options, Reader, Selection,
+            UnmappedRegions, VdsOptions,
         };
         let c: Value =
             serde_json::from_slice(&std::fs::read(args.get(2).ok_or("JSON request required")?)?)?;
-        let raw_bindings = c
-            .get("raw_filenames")
-            .map(|v| v.as_array().ok_or("raw_filenames array required"))
-            .transpose()?
-            .map(|a| {
-                a.iter()
-                    .map(|v| {
-                        Ok::<_, Box<dyn Error>>(FilenameBinding {
-                            stored_filename: v["stored_filename"]
-                                .as_str()
-                                .ok_or("stored_filename required")?
-                                .into(),
-                            actual_file: v["actual_file"]
-                                .as_str()
-                                .ok_or("actual_file required")?
-                                .into(),
+        let read_bindings = |key: &str| -> Result<Option<Vec<FilenameBinding>>, Box<dyn Error>> {
+            c.get(key)
+                .map(|v| v.as_array().ok_or("filename bindings array required"))
+                .transpose()?
+                .map(|a| {
+                    a.iter()
+                        .map(|v| {
+                            Ok::<_, Box<dyn Error>>(FilenameBinding {
+                                stored_filename: v["stored_filename"]
+                                    .as_str()
+                                    .ok_or("stored_filename required")?
+                                    .into(),
+                                actual_file: v["actual_file"]
+                                    .as_str()
+                                    .ok_or("actual_file required")?
+                                    .into(),
+                            })
                         })
-                    })
-                    .collect::<Result<Vec<_>, _>>()
-            })
-            .transpose()?;
+                        .collect::<Result<Vec<_>, _>>()
+                })
+                .transpose()
+        };
+        let raw_bindings = read_bindings("raw_filenames")?;
+        let vds_bindings = read_bindings("vds_filenames")?;
+        let unmapped = match c["unmapped_regions"].as_str() {
+            None | Some("reject") => UnmappedRegions::Reject,
+            Some("declared_fill") => UnmappedRegions::DeclaredFill,
+            _ => return Err("unknown unmapped region policy".into()),
+        };
         let options = Options {
             external_links: if c["follow_external"].as_bool().unwrap_or(false) {
                 ExternalLinks::FollowSnapshot
@@ -446,7 +510,10 @@ fn main() -> Result<(), Box<dyn Error>> {
             c["path"].as_str().ok_or("path required")?,
             Selection::Dataset(c["dataset"].as_str().ok_or("dataset required")?),
             options,
-            None,
+            vds_bindings.as_ref().map(|filenames| VdsOptions {
+                filenames,
+                unmapped_regions: unmapped,
+            }),
             raw_bindings
                 .as_ref()
                 .map(|v| ExternalRawOptions { filenames: v }),
@@ -459,7 +526,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             if !first_frames.insert(m.first_frame) {
                 continue;
             }
-            metadata.push(json!({"source_file":m.source_file,"dataset":m.dataset,"source_shape":m.source_shape,"shape":m.shape,"frames":m.frames,"first_frame":m.first_frame,"pixel_type":format!("{:?}",m.pixel_type),"little_endian":m.little_endian,"type_descriptor":m.type_descriptor,"layout":format!("{:?}",m.layout),"filters":m.filters.iter().map(|v|format!("{v:?}")).collect::<Vec<_>>(),"fill_value":m.fill_value.as_ref().map(|v|json!({"pixels":pixels(v),"value_hex":bytes_hex(&canonical_bytes(v))})),"storage_allocated":m.storage_allocated,"fill_time":format!("{:?}",m.fill_time),"external_raw":m.external_raw.as_ref().map(|r|json!({"frozen_bytes":r.frozen_bytes,"windows":r.windows.iter().map(|w|json!({"stored_filename":w.stored_filename,"source_file":w.source_file,"file_offset":w.file_offset,"declared_bytes":w.declared_bytes,"logical_offset":w.logical_offset,"effective_bytes":w.effective_bytes})).collect::<Vec<_>>()}))}));
+            metadata.push(json!({"source_file":m.source_file,"dataset":m.dataset,"source_shape":m.source_shape,"shape":m.shape,"frames":m.frames,"first_frame":m.first_frame,"pixel_type":format!("{:?}",m.pixel_type),"little_endian":m.little_endian,"type_descriptor":m.type_descriptor,"layout":format!("{:?}",m.layout),"filters":m.filters.iter().map(|v|format!("{v:?}")).collect::<Vec<_>>(),"fill_value":m.fill_value.as_ref().map(|v|json!({"pixels":pixels(v),"value_hex":bytes_hex(&canonical_bytes(v))})),"storage_allocated":m.storage_allocated,"fill_time":format!("{:?}",m.fill_time),"virtual_dataset":m.virtual_dataset.as_ref().map(vds_metadata),"external_raw":m.external_raw.as_ref().map(|r|json!({"frozen_bytes":r.frozen_bytes,"windows":r.windows.iter().map(|w|json!({"stored_filename":w.stored_filename,"source_file":w.source_file,"file_offset":w.file_offset,"declared_bytes":w.declared_bytes,"logical_offset":w.logical_offset,"effective_bytes":w.effective_bytes})).collect::<Vec<_>>()}))}));
         }
         let frames = if let Some(v) = c.get("frames") {
             v.as_array()

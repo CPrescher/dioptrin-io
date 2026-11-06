@@ -1,4 +1,4 @@
-//! Explicit immutable, frame-preserving VDS mosaics. Native HDF5 decodes only
+//! Explicit immutable finite/unlimited VDS mappings. Native HDF5 decodes only
 //! explicitly resolved concrete sources; it never resolves or reads a VDS.
 use super::{
     Error, Filter,
@@ -23,6 +23,8 @@ use hdf5_sys::{
     },
     h5t::H5Tequal,
 };
+#[path = "vds_finite.rs"]
+mod finite;
 use std::{
     cmp::Reverse,
     collections::{BTreeMap, BTreeSet, BinaryHeap},
@@ -57,6 +59,13 @@ pub enum SelectionRecord {
         shape: Vec<u64>,
         maximum_shape: Vec<u64>,
     },
+    /// Canonical inclusive native HDF5 hyperslab blocks; iteration pairing is
+    /// still performed by HDF5, never by matching block indices.
+    Irregular {
+        shape: [u64; 3],
+        maximum_shape: [u64; 3],
+        blocks: Vec<[[u64; 3]; 2]>,
+    },
     Regular {
         shape: [u64; 3],
         maximum_shape: [u64; 3],
@@ -65,6 +74,11 @@ pub enum SelectionRecord {
         count: [u64; 3],
         block: [u64; 3],
     },
+}
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SelectionLayout {
+    ContiguousRectangle,
+    FiniteSelection,
 }
 #[derive(Debug, Clone)]
 pub struct Mapping {
@@ -77,7 +91,13 @@ pub struct Mapping {
     pub virtual_selection: SelectionRecord,
     pub source_origin: [usize; 3],
     pub virtual_origin: [usize; 3],
+    /// Compatibility alias of virtual_bounding_shape; holes may exist for
+    /// FiniteSelection. selected_elements gives actual mapped sample count.
     pub mapped_shape: [usize; 3],
+    pub selection_layout: SelectionLayout,
+    pub source_bounding_shape: [usize; 3],
+    pub virtual_bounding_shape: [usize; 3],
+    pub selected_elements: u64,
     pub filters: Vec<Filter>,
     pub source_pixel_type: PixelType,
     pub source_little_endian: bool,
@@ -92,22 +112,32 @@ pub struct Mapping {
 pub struct VdsMetadata {
     /// Original mapping dataspace dimensions, independent of native VDS lookup.
     pub declared_shape: [u64; 3],
-    /// Frame extent derived solely from explicit concrete source selections.
+    /// Finite: fixed declared master extent; unlimited: bound source-derived extent.
     pub frozen_shape: [usize; 3],
     /// Original maximum dimensions; u64::MAX denotes HDF5 UNLIMITED.
     pub master_max_shape: [u64; 3],
     pub mappings: Vec<Mapping>,
     pub unmapped_regions: UnmappedRegions,
-    pub unmapped_pixels_per_frame: usize,
+    pub unmapped_pixels_per_frame: Option<usize>,
+    pub unmapped_pixels_by_frame: Vec<usize>,
 }
 struct SourcePart {
+    file: hdf5_backend::File,
+    path: String,
     dataset: Dataset,
+    finite: Option<finite::Selection>,
     frozen_shape: [usize; 3],
     source_origin: [usize; 3],
     virtual_origin: [usize; 3],
     mapped_shape: [usize; 3],
 }
 pub(super) struct Mosaic {
+    master: Dataset,
+    master_file: hdf5_backend::File,
+    master_path: String,
+    master_plist: hdf5_backend::plist::DatasetCreate,
+    // Finite mappings have no conditional/unlimited source-derived extent.
+    finite_extent: Option<Vec<usize>>,
     parts: Vec<SourcePart>,
     fill: Option<PixelBuffer>,
 }
@@ -171,7 +201,42 @@ impl<'a> Bindings<'a> {
 }
 impl Mosaic {
     pub fn check(&self) -> Result<(), Error> {
+        let current = super::sources::hard_dataset(&self.master_file, &self.master_path)?;
+        let same_plist = hdf5_backend::sync::sync(|| {
+            unsafe { hdf5_sys::h5p::H5Pequal(current.dcpl()?.id(), self.master_plist.id()) }
+                .gt(&0)
+                .then_some(())
+                .ok_or_else(|| Error("VDS master mapping metadata changed; reopen snapshot".into()))
+        });
+        let current_info = current.loc_info()?;
+        let original_info = self.master.loc_info()?;
+        if (current_info.fileno, current_info.token) != (original_info.fileno, original_info.token)
+        {
+            return Err(Error(
+                "VDS master dataset binding changed; reopen snapshot".into(),
+            ));
+        }
+        same_plist?;
+        if self
+            .finite_extent
+            .as_ref()
+            .is_some_and(|shape| current.shape() != *shape)
+        {
+            return Err(Error(
+                "finite VDS master extent changed; reopen snapshot".into(),
+            ));
+        }
         for part in &self.parts {
+            let current = super::sources::hard_dataset(&part.file, &part.path)?;
+            let current_info = current.loc_info()?;
+            let original_info = part.dataset.loc_info()?;
+            if (current_info.fileno, current_info.token)
+                != (original_info.fileno, original_info.token)
+            {
+                return Err(Error(
+                    "VDS concrete dataset binding changed; reopen snapshot".into(),
+                ));
+            }
             if part.dataset.shape() != part.frozen_shape {
                 return Err(Error(
                     "VDS concrete source shape changed; reopen snapshot".into(),
@@ -192,6 +257,10 @@ impl Mosaic {
         }
         let memory_type = typed::memory_type(pixels.pixel_type())?;
         for part in &self.parts {
+            if let Some(selection) = &part.finite {
+                selection.read(&part.dataset, frame, shape, &memory_type, pixels)?;
+                continue;
+            }
             let [_, sy, sx] = part.source_origin;
             let [_, dy, dx] = part.virtual_origin;
             let [_, height, width] = part.mapped_shape;
@@ -256,6 +325,11 @@ pub(super) fn admit(
                 "VDS mapping count exceeds dataset limit or is empty".into(),
             ));
         }
+        sources.charge(
+            count
+                .checked_mul(512)
+                .ok_or_else(|| Error("VDS descriptor metadata overflow".into()))?,
+        )?;
         let mut out = Vec::new();
         out.try_reserve_exact(count)
             .map_err(|e| Error(e.to_string()))?;
@@ -275,22 +349,38 @@ pub(super) fn admit(
             out.push((
                 filename,
                 path,
-                selection(s.0, true)?,
-                selection(v.0, false)?,
+                selection(s.0, true, sources, limits)?,
+                selection(v.0, false, sources, limits)?,
+                s,
+                v,
             ));
         }
         Ok(out)
     })?;
     *indexed_datasets += descriptors.len();
+    if descriptors
+        .iter()
+        .all(|d| finite::record_is_finite(&d.2) && finite::record_is_finite(&d.3))
+    {
+        return finite::admit(dataset, sources, bindings, limits, pixel_type, descriptors);
+    }
     let mut metadata = Vec::new();
     let mut parts = Vec::new();
     let mut declared = None;
     let mut master_maximum = None;
     let mut frame_count = None;
-    for (filename, declared_dataset, source_selection, virtual_selection) in descriptors {
+    for (
+        filename,
+        declared_dataset,
+        source_selection,
+        virtual_selection,
+        _source_space,
+        _virtual_space,
+    ) in descriptors
+    {
         let source = bindings.source(&filename, sources)?;
         let (source, path) = sources.resolve(source, &declared_dataset)?;
-        let concrete = sources.file(source).dataset(&path)?;
+        let concrete = super::sources::hard_dataset(sources.file(source), &path)?;
         if concrete.layout() == Layout::Virtual {
             return Err(Error(
                 "nested/cyclic VDS sources require a separate recursive mapping contract".into(),
@@ -403,13 +493,17 @@ pub(super) fn admit(
             stored_filename: filename,
             declared_dataset,
             source_file: sources.path(source).to_path_buf(),
-            resolved_dataset: path,
+            resolved_dataset: path.clone(),
             source_shape: frozen_shape,
             source_selection,
             virtual_selection,
             source_origin,
             virtual_origin,
             mapped_shape,
+            selection_layout: SelectionLayout::ContiguousRectangle,
+            source_bounding_shape: mapped_shape,
+            virtual_bounding_shape: mapped_shape,
+            selected_elements: mapped_shape.iter().fold(1u64, |n, &d| n * d as u64),
             filters: storage.filters,
             source_pixel_type,
             source_little_endian,
@@ -419,6 +513,9 @@ pub(super) fn admit(
             storage_allocated: true,
         });
         parts.push(SourcePart {
+            file: sources.file(source).clone(),
+            path: path.clone(),
+            finite: None,
             dataset: concrete,
             frozen_shape,
             source_origin,
@@ -468,7 +565,17 @@ pub(super) fn admit(
             "VDS unmapped regions require explicit defined DeclaredFill policy".into(),
         ));
     }
+    sources.charge(
+        frames
+            .checked_mul(std::mem::size_of::<usize>())
+            .ok_or_else(|| Error("VDS frame metadata overflow".into()))?,
+    )?;
     let mosaic = Mosaic {
+        master: dataset.clone(),
+        master_file: dataset.file()?,
+        master_path: dataset.name(),
+        master_plist: dataset.dcpl()?,
+        finite_extent: None,
         parts,
         fill: if unmapped > 0 { fill.clone() } else { None },
     };
@@ -481,7 +588,8 @@ pub(super) fn admit(
             master_max_shape,
             mappings: metadata,
             unmapped_regions: bindings.options.unmapped_regions,
-            unmapped_pixels_per_frame: unmapped,
+            unmapped_pixels_per_frame: Some(unmapped),
+            unmapped_pixels_by_frame: vec![unmapped; frames],
         },
         storage: Storage {
             filters: Vec::new(),
@@ -536,7 +644,24 @@ fn fill_pixels(target: &mut PixelBuffer, fill: &PixelBuffer) -> Result<(), Error
     values!(Bool;F16;U8;I8;U16;I16;U32;I32;U64;I64;F32;F64;C32;C64;CI16);
     Ok(())
 }
+type Descriptor = (
+    String,
+    String,
+    SelectionRecord,
+    SelectionRecord,
+    Space,
+    Space,
+);
 struct Space(hid_t);
+impl Space {
+    fn into_dataspace(mut self) -> Result<Dataspace, Error> {
+        let id = self.0;
+        self.0 = -1;
+        // SAFETY: H5P/H5S returned an owned dataspace; ownership transfers once.
+        Ok(unsafe { hdf5_backend::from_id(id)? })
+    }
+}
+
 impl Drop for Space {
     fn drop(&mut self) {
         if self.0 >= 0 {
@@ -579,7 +704,12 @@ fn string(plist: hid_t, index: usize, filename: bool, limit: usize) -> Result<St
         Error("non-UTF8 VDS source names require a separate byte-path contract".into())
     })
 }
-fn selection(id: hid_t, source: bool) -> Result<SelectionRecord, Error> {
+fn selection(
+    id: hid_t,
+    source: bool,
+    sources: &mut Sources,
+    limits: Limits,
+) -> Result<SelectionRecord, Error> {
     // SAFETY: live owned dataspace ID, fixed-size outputs only after rank check.
     unsafe {
         let rank = H5Sget_simple_extent_ndims(id);
@@ -630,9 +760,15 @@ fn selection(id: hid_t, source: bool) -> Result<SelectionRecord, Error> {
                     block,
                 })
             }
-            _ => Err(Error(
-                "unsupported VDS point/irregular/empty selection".into(),
-            )),
+            H5S_sel_type::H5S_SEL_HYPERSLABS if rank == 3 => {
+                let blocks = finite::blocks(id, sources, limits)?;
+                Ok(SelectionRecord::Irregular {
+                    shape,
+                    maximum_shape,
+                    blocks,
+                })
+            }
+            _ => Err(Error("unsupported VDS point/empty selection".into())),
         }
     }
 }
@@ -655,6 +791,11 @@ fn selection_shape(selection: &SelectionRecord) -> Result<([u64; 3], [u64; 3]), 
             shape,
             maximum_shape,
             ..
+        }
+        | SelectionRecord::Irregular {
+            shape,
+            maximum_shape,
+            ..
         } => Ok((*shape, *maximum_shape)),
     }
 }
@@ -663,6 +804,9 @@ fn rectangle(
     source: Option<[usize; 3]>,
 ) -> Result<([usize; 3], [Option<usize>; 3]), Error> {
     match selection {
+        SelectionRecord::Irregular { .. } => Err(Error(
+            "irregular VDS selection requires finite projection".into(),
+        )),
         SelectionRecord::All { shape, .. } => {
             let extents = if let Some(source) = source {
                 source

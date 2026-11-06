@@ -1,0 +1,1493 @@
+{
+  "schema": 1,
+  "license": "CC0-1.0",
+  "generator": "scripts/generate_irregular_vds_fixtures.py",
+  "origin": "independent IEEE/enum storage words and explicitly enumerated C-order selection sets; no VDS read or reference writer generates expected counts",
+  "cases": {
+    "u64": {
+      "master": "u64.h5",
+      "dataset": "/data",
+      "source_file": "source.h5",
+      "source_dataset": "/u64",
+      "source_shape": [
+        3,
+        4,
+        5
+      ],
+      "shape": [
+        3,
+        5,
+        6
+      ],
+      "dtype": "<u8",
+      "source_boxes": [
+        [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ],
+        [
+          [
+            0,
+            2,
+            1
+          ],
+          [
+            3,
+            2,
+            1
+          ]
+        ]
+      ],
+      "virtual_boxes": [
+        [
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            2
+          ]
+        ],
+        [
+          [
+            0,
+            3,
+            2
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ]
+      ],
+      "unmapped_by_frame": [
+        25,
+        25,
+        25
+      ],
+      "frame_hex": [
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000000080ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff01000000000020000b000000000000001000000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff14000000000000001500000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff16000000000000001f000000000000002400000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff28000000000000002900000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff2a0000000000000033000000000000003800000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      ]
+    },
+    "u64-be": {
+      "master": "u64-be.h5",
+      "dataset": "/data",
+      "source_file": "source.h5",
+      "source_dataset": "/u64-be",
+      "source_shape": [
+        3,
+        4,
+        5
+      ],
+      "shape": [
+        3,
+        5,
+        6
+      ],
+      "dtype": ">u8",
+      "source_boxes": [
+        [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ],
+        [
+          [
+            0,
+            2,
+            1
+          ],
+          [
+            3,
+            2,
+            1
+          ]
+        ]
+      ],
+      "virtual_boxes": [
+        [
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            2
+          ]
+        ],
+        [
+          [
+            0,
+            3,
+            2
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ]
+      ],
+      "unmapped_by_frame": [
+        25,
+        25,
+        25
+      ],
+      "frame_hex": [
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000000080ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff01000000000020000b000000000000001000000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff14000000000000001500000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff16000000000000001f000000000000002400000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff28000000000000002900000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff2a0000000000000033000000000000003800000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      ]
+    },
+    "i16": {
+      "master": "i16.h5",
+      "dataset": "/data",
+      "source_file": "source.h5",
+      "source_dataset": "/i16",
+      "source_shape": [
+        3,
+        4,
+        5
+      ],
+      "shape": [
+        3,
+        5,
+        6
+      ],
+      "dtype": "<i2",
+      "source_boxes": [
+        [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ],
+        [
+          [
+            0,
+            2,
+            1
+          ],
+          [
+            3,
+            2,
+            1
+          ]
+        ]
+      ],
+      "virtual_boxes": [
+        [
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            2
+          ]
+        ],
+        [
+          [
+            0,
+            3,
+            2
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ]
+      ],
+      "unmapped_by_frame": [
+        25,
+        25,
+        25
+      ],
+      "frame_hex": [
+        "e2ffe2ffe2ffe2ffe2ffe2ffe2ffe3ffe2ffe2ffe2ffe2ffe2ffe2ffe2ffe2ffe2ffe2ffe2ffe2ffe4ffedfff2ffe2ffe2ffe2ffe2ffe2ffe2ffe2ff",
+        "e2ffe2ffe2ffe2ffe2ffe2fff6fff7ffe2ffe2ffe2ffe2ffe2ffe2ffe2ffe2ffe2ffe2ffe2ffe2fff8ff01000600e2ffe2ffe2ffe2ffe2ffe2ffe2ff",
+        "e2ffe2ffe2ffe2ffe2ffe2ff0a000b00e2ffe2ffe2ffe2ffe2ffe2ffe2ffe2ffe2ffe2ffe2ffe2ff0c0015001a00e2ffe2ffe2ffe2ffe2ffe2ffe2ff"
+      ]
+    },
+    "f16": {
+      "master": "f16.h5",
+      "dataset": "/data",
+      "source_file": "source.h5",
+      "source_dataset": "/f16",
+      "source_shape": [
+        3,
+        4,
+        5
+      ],
+      "shape": [
+        3,
+        5,
+        6
+      ],
+      "dtype": "<f2",
+      "source_boxes": [
+        [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ],
+        [
+          [
+            0,
+            2,
+            1
+          ],
+          [
+            3,
+            2,
+            1
+          ]
+        ]
+      ],
+      "virtual_boxes": [
+        [
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            2
+          ]
+        ],
+        [
+          [
+            0,
+            3,
+            2
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ]
+      ],
+      "unmapped_by_frame": [
+        25,
+        25,
+        25
+      ],
+      "frame_hex": [
+        "0080008000800080008000800080557e008000800080008000800080008000800080008000800080aafe00fc007c0080008000800080008000800080",
+        "008000800080008000800080aafe0100008000800080008000800080008000800080008000800080007c557e00800080008000800080008000800080",
+        "008000800080008000800080007c00fc00800080008000800080008000800080008000800080008000800100aafe0080008000800080008000800080"
+      ]
+    },
+    "f16-be": {
+      "master": "f16-be.h5",
+      "dataset": "/data",
+      "source_file": "source.h5",
+      "source_dataset": "/f16-be",
+      "source_shape": [
+        3,
+        4,
+        5
+      ],
+      "shape": [
+        3,
+        5,
+        6
+      ],
+      "dtype": ">f2",
+      "source_boxes": [
+        [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ],
+        [
+          [
+            0,
+            2,
+            1
+          ],
+          [
+            3,
+            2,
+            1
+          ]
+        ]
+      ],
+      "virtual_boxes": [
+        [
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            2
+          ]
+        ],
+        [
+          [
+            0,
+            3,
+            2
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ]
+      ],
+      "unmapped_by_frame": [
+        25,
+        25,
+        25
+      ],
+      "frame_hex": [
+        "0080008000800080008000800080557e008000800080008000800080008000800080008000800080aafe00fc007c0080008000800080008000800080",
+        "008000800080008000800080aafe0100008000800080008000800080008000800080008000800080007c557e00800080008000800080008000800080",
+        "008000800080008000800080007c00fc00800080008000800080008000800080008000800080008000800100aafe0080008000800080008000800080"
+      ]
+    },
+    "f32": {
+      "master": "f32.h5",
+      "dataset": "/data",
+      "source_file": "source.h5",
+      "source_dataset": "/f32",
+      "source_shape": [
+        3,
+        4,
+        5
+      ],
+      "shape": [
+        3,
+        5,
+        6
+      ],
+      "dtype": "<f4",
+      "source_boxes": [
+        [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ],
+        [
+          [
+            0,
+            2,
+            1
+          ],
+          [
+            3,
+            2,
+            1
+          ]
+        ]
+      ],
+      "virtual_boxes": [
+        [
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            2
+          ]
+        ],
+        [
+          [
+            0,
+            3,
+            2
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ]
+      ],
+      "unmapped_by_frame": [
+        25,
+        25,
+        25
+      ],
+      "frame_hex": [
+        "000000800000008000000080000000800000008000000080000000804523c17f0000008000000080000000800000008000000080000000800000008000000080000000800000008000000080000000802143c5ff000080ff0000807f00000080000000800000008000000080000000800000008000000080",
+        "0000008000000080000000800000008000000080000000802143c5ff010000000000008000000080000000800000008000000080000000800000008000000080000000800000008000000080000000800000807f4523c17f0000008000000080000000800000008000000080000000800000008000000080",
+        "0000008000000080000000800000008000000080000000800000807f000080ff00000080000000800000008000000080000000800000008000000080000000800000008000000080000000800000008000000080010000002143c5ff00000080000000800000008000000080000000800000008000000080"
+      ]
+    },
+    "f64": {
+      "master": "f64.h5",
+      "dataset": "/data",
+      "source_file": "source.h5",
+      "source_dataset": "/f64",
+      "source_shape": [
+        3,
+        4,
+        5
+      ],
+      "shape": [
+        3,
+        5,
+        6
+      ],
+      "dtype": "<f8",
+      "source_boxes": [
+        [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ],
+        [
+          [
+            0,
+            2,
+            1
+          ],
+          [
+            3,
+            2,
+            1
+          ]
+        ]
+      ],
+      "virtual_boxes": [
+        [
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            2
+          ]
+        ],
+        [
+          [
+            0,
+            3,
+            2
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ]
+      ],
+      "unmapped_by_frame": [
+        25,
+        25,
+        25
+      ],
+      "frame_hex": [
+        "0000000000000080000000000000008000000000000000800000000000000080000000000000008000000000000000800000000000000080bc9a78563412f87f0000000000000080000000000000008000000000000000800000000000000080000000000000008000000000000000800000000000000080000000000000008000000000000000800000000000000080000000000000008000000000000000803412badccdabf8ff000000000000f0ff000000000000f07f0000000000000080000000000000008000000000000000800000000000000080000000000000008000000000000000800000000000000080",
+        "0000000000000080000000000000008000000000000000800000000000000080000000000000008000000000000000803412badccdabf8ff0100000000000000000000000000008000000000000000800000000000000080000000000000008000000000000000800000000000000080000000000000008000000000000000800000000000000080000000000000008000000000000000800000000000000080000000000000f07fbc9a78563412f87f00000000000000800000000000000080000000000000008000000000000000800000000000000080000000000000008000000000000000800000000000000080",
+        "000000000000008000000000000000800000000000000080000000000000008000000000000000800000000000000080000000000000f07f000000000000f0ff000000000000008000000000000000800000000000000080000000000000008000000000000000800000000000000080000000000000008000000000000000800000000000000080000000000000008000000000000000800000000000000080000000000000008001000000000000003412badccdabf8ff0000000000000080000000000000008000000000000000800000000000000080000000000000008000000000000000800000000000000080"
+      ]
+    },
+    "c32": {
+      "master": "c32.h5",
+      "dataset": "/data",
+      "source_file": "source.h5",
+      "source_dataset": "/c32",
+      "source_shape": [
+        3,
+        4,
+        5
+      ],
+      "shape": [
+        3,
+        5,
+        6
+      ],
+      "dtype": "<c8",
+      "source_boxes": [
+        [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ],
+        [
+          [
+            0,
+            2,
+            1
+          ],
+          [
+            3,
+            2,
+            1
+          ]
+        ]
+      ],
+      "virtual_boxes": [
+        [
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            2
+          ]
+        ],
+        [
+          [
+            0,
+            3,
+            2
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ]
+      ],
+      "unmapped_by_frame": [
+        25,
+        25,
+        25
+      ],
+      "frame_hex": [
+        "000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f2143c5ff01000000000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f0000807f000080ff0000807f000080ff2143c5ff01000000000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f",
+        "000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f0000807f000080ff000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f2143c5ff010000002143c5ff01000000000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f",
+        "000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f2143c5ff010000000000807f000080ff000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f0000807f000080ff000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f"
+      ]
+    },
+    "c32-be": {
+      "master": "c32-be.h5",
+      "dataset": "/data",
+      "source_file": "source.h5",
+      "source_dataset": "/c32-be",
+      "source_shape": [
+        3,
+        4,
+        5
+      ],
+      "shape": [
+        3,
+        5,
+        6
+      ],
+      "dtype": ">c8",
+      "source_boxes": [
+        [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ],
+        [
+          [
+            0,
+            2,
+            1
+          ],
+          [
+            3,
+            2,
+            1
+          ]
+        ]
+      ],
+      "virtual_boxes": [
+        [
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            2
+          ]
+        ],
+        [
+          [
+            0,
+            3,
+            2
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ]
+      ],
+      "unmapped_by_frame": [
+        25,
+        25,
+        25
+      ],
+      "frame_hex": [
+        "000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f2143c5ff01000000000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f0000807f000080ff0000807f000080ff2143c5ff01000000000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f",
+        "000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f0000807f000080ff000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f2143c5ff010000002143c5ff01000000000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f",
+        "000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f2143c5ff010000000000807f000080ff000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f0000807f000080ff000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f"
+      ]
+    },
+    "c64": {
+      "master": "c64.h5",
+      "dataset": "/data",
+      "source_file": "source.h5",
+      "source_dataset": "/c64",
+      "source_shape": [
+        3,
+        4,
+        5
+      ],
+      "shape": [
+        3,
+        5,
+        6
+      ],
+      "dtype": "<c16",
+      "source_boxes": [
+        [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ],
+        [
+          [
+            0,
+            2,
+            1
+          ],
+          [
+            3,
+            2,
+            1
+          ]
+        ]
+      ],
+      "virtual_boxes": [
+        [
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            2
+          ]
+        ],
+        [
+          [
+            0,
+            3,
+            2
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ]
+      ],
+      "unmapped_by_frame": [
+        25,
+        25,
+        25
+      ],
+      "frame_hex": [
+        "0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f3412badccdabf8ff01000000000000000000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f000000000000f07f000000000000f0ff000000000000f07f000000000000f0ff3412badccdabf8ff01000000000000000000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f",
+        "0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f000000000000f07f000000000000f0ff0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f3412badccdabf8ff01000000000000003412badccdabf8ff01000000000000000000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f",
+        "0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f3412badccdabf8ff0100000000000000000000000000f07f000000000000f0ff0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f000000000000f07f000000000000f0ff0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f0000000000000080bc9a78563412f87f"
+      ]
+    },
+    "bool": {
+      "master": "bool.h5",
+      "dataset": "/data",
+      "source_file": "source.h5",
+      "source_dataset": "/bool",
+      "source_shape": [
+        3,
+        4,
+        5
+      ],
+      "shape": [
+        3,
+        5,
+        6
+      ],
+      "dtype": "|b1",
+      "source_boxes": [
+        [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ],
+        [
+          [
+            0,
+            2,
+            1
+          ],
+          [
+            3,
+            2,
+            1
+          ]
+        ]
+      ],
+      "virtual_boxes": [
+        [
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            2
+          ]
+        ],
+        [
+          [
+            0,
+            3,
+            2
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ]
+      ],
+      "unmapped_by_frame": [
+        25,
+        25,
+        25
+      ],
+      "frame_hex": [
+        "000000000000000100000000000000000000000002ff8000000000000000",
+        "000000000000027f00000000000000000000000080010000000000000000",
+        "00000000000080ff000000000000000000000000007f0200000000000000"
+      ]
+    },
+    "cross-frame": {
+      "master": "cross-frame.h5",
+      "dataset": "/data",
+      "source_file": "source.h5",
+      "source_dataset": "/u64",
+      "source_shape": [
+        3,
+        4,
+        5
+      ],
+      "shape": [
+        4,
+        4,
+        5
+      ],
+      "dtype": "<u8",
+      "source_boxes": [
+        [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            4
+          ]
+        ],
+        [
+          [
+            1,
+            2,
+            1
+          ],
+          [
+            1,
+            1,
+            2
+          ]
+        ],
+        [
+          [
+            2,
+            0,
+            0
+          ],
+          [
+            1,
+            2,
+            2
+          ]
+        ]
+      ],
+      "virtual_boxes": [
+        [
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            2
+          ]
+        ],
+        [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            5
+          ]
+        ],
+        [
+          [
+            2,
+            3,
+            2
+          ],
+          [
+            1,
+            1,
+            3
+          ]
+        ]
+      ],
+      "unmapped_by_frame": [
+        18,
+        15,
+        17,
+        20
+      ],
+      "frame_hex": [
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000000080ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "010000000000200003000000000000001f0000000000000020000000000000002800000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff29000000000000002d000000000000002e00000000000000",
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      ]
+    },
+    "nested-path": {
+      "master": "nested-path.h5",
+      "dataset": "/data",
+      "source_file": "source.h5",
+      "source_dataset": "/deep/actual/data",
+      "source_shape": [
+        3,
+        4,
+        5
+      ],
+      "shape": [
+        3,
+        5,
+        6
+      ],
+      "dtype": "<u8",
+      "source_boxes": [
+        [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ],
+        [
+          [
+            0,
+            2,
+            1
+          ],
+          [
+            3,
+            2,
+            1
+          ]
+        ]
+      ],
+      "virtual_boxes": [
+        [
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            2
+          ]
+        ],
+        [
+          [
+            0,
+            3,
+            2
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ]
+      ],
+      "unmapped_by_frame": [
+        25,
+        25,
+        25
+      ],
+      "frame_hex": [
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000000080ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff01000000000020000b000000000000001000000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff14000000000000001500000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff16000000000000001f000000000000002400000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff28000000000000002900000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff2a0000000000000033000000000000003800000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      ]
+    },
+    "strided": {
+      "master": "strided.h5",
+      "dataset": "/data",
+      "source_file": "source.h5",
+      "source_dataset": "/u64",
+      "source_shape": [
+        3,
+        4,
+        5
+      ],
+      "shape": [
+        3,
+        2,
+        3
+      ],
+      "dtype": "<u8",
+      "source_boxes": [
+        [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        [
+          [
+            0,
+            0,
+            2
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        [
+          [
+            0,
+            0,
+            4
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        [
+          [
+            0,
+            2,
+            0
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        [
+          [
+            0,
+            2,
+            2
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        [
+          [
+            0,
+            2,
+            4
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        [
+          [
+            1,
+            0,
+            2
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        [
+          [
+            1,
+            0,
+            4
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        [
+          [
+            1,
+            2,
+            0
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        [
+          [
+            1,
+            2,
+            2
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        [
+          [
+            1,
+            2,
+            4
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        [
+          [
+            2,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        [
+          [
+            2,
+            0,
+            2
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        [
+          [
+            2,
+            0,
+            4
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        [
+          [
+            2,
+            2,
+            0
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        [
+          [
+            2,
+            2,
+            2
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        [
+          [
+            2,
+            2,
+            4
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ]
+      ],
+      "virtual_boxes": [
+        [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            3,
+            2,
+            3
+          ]
+        ]
+      ],
+      "unmapped_by_frame": [
+        0,
+        0,
+        0
+      ],
+      "frame_hex": [
+        "ffffffffffffffff010000000000200004000000000000000a000000000000000c000000000000000e00000000000000",
+        "1400000000000000160000000000000018000000000000001e0000000000000020000000000000002200000000000000",
+        "28000000000000002a000000000000002c00000000000000320000000000000034000000000000003600000000000000"
+      ]
+    },
+    "external-graph": {
+      "master": "external-graph.h5",
+      "dataset": "/data",
+      "source_file": "bound.h5",
+      "source_dataset": "/data",
+      "source_shape": [
+        3,
+        4,
+        5
+      ],
+      "shape": [
+        3,
+        5,
+        6
+      ],
+      "dtype": "<u8",
+      "source_boxes": [
+        [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ],
+        [
+          [
+            0,
+            2,
+            1
+          ],
+          [
+            3,
+            2,
+            1
+          ]
+        ]
+      ],
+      "virtual_boxes": [
+        [
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            3,
+            1,
+            2
+          ]
+        ],
+        [
+          [
+            0,
+            3,
+            2
+          ],
+          [
+            3,
+            1,
+            3
+          ]
+        ]
+      ],
+      "unmapped_by_frame": [
+        25,
+        25,
+        25
+      ],
+      "frame_hex": [
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000000000000080ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff01000000000020000b000000000000001000000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff14000000000000001500000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff16000000000000001f000000000000002400000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff28000000000000002900000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff2a0000000000000033000000000000003800000000000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      ]
+    }
+  },
+  "files": {
+    "block-limit.h5": {
+      "bytes": 818168,
+      "sha256": "d345b9f94764240a8906230b9089112fea93929e4caf86d9f3f4ba5353c3e236"
+    },
+    "bool.h5": {
+      "bytes": 6144,
+      "sha256": "ad473215b5784d95d8669f3f54e32d08181ebd5584b639277bae68583683c60c"
+    },
+    "bound.h5": {
+      "bytes": 888,
+      "sha256": "9d9c2c77a759fe0e62e755a4471b45afd90897c0c6e828064a4ebbbd654876a1"
+    },
+    "c32-be.h5": {
+      "bytes": 6144,
+      "sha256": "290a53650c0f880dd40c6888262683a5f552e050bef392a4809cfc80d0a7f044"
+    },
+    "c32.h5": {
+      "bytes": 6144,
+      "sha256": "07823ac60c75cab3c2d86e6a213f97cae85fd0321c5e7196b68f4c3dc2931949"
+    },
+    "c64.h5": {
+      "bytes": 6144,
+      "sha256": "778e7ab58dbcdbd74685924d16f477d160c77cad7b3c25d38ceff23b7dc568d3"
+    },
+    "cross-frame.h5": {
+      "bytes": 6144,
+      "sha256": "9857998996ba52eb786e7c4a6db575772cc778b392b1ecbb19b604db37dfc252"
+    },
+    "external-graph.h5": {
+      "bytes": 6144,
+      "sha256": "2a72bf41e9ebcc73c1442693757bb8a4b4349b5fb956812c5159bc4421dccf6d"
+    },
+    "f16-be.h5": {
+      "bytes": 6144,
+      "sha256": "15dd0b2525370d836036157ab6f86f3bd9735ac6a75471c8079b4679dc823312"
+    },
+    "f16.h5": {
+      "bytes": 6144,
+      "sha256": "dde71e1e27f7b8b482d250d491f76077cf6c5bc388fa6aed8ee90b0446fd5221"
+    },
+    "f32.h5": {
+      "bytes": 6144,
+      "sha256": "ae2f010fa8725b5896b5dc6df1773976d58ab9f59c79f53ac24672198856c0a2"
+    },
+    "f64.h5": {
+      "bytes": 6144,
+      "sha256": "6a3524c08ead6ec77b1313568b90336c9f9e1d8675e49617914fb93adadaebe7"
+    },
+    "i16.h5": {
+      "bytes": 6144,
+      "sha256": "1bc07ce48baec8d2cf1d1cfc9348957dff4065aa6ea8545c84dbc89e4bff0389"
+    },
+    "large-source.h5": {
+      "bytes": 57247,
+      "sha256": "acc34a141757616db4be4a1ef746cf7b372118d110bfb8379eb7ca8834ece352"
+    },
+    "nested-path.h5": {
+      "bytes": 6144,
+      "sha256": "b9d263d55fb8a1e148f56542644113ec91ce4bede184c965b38da3f4ec474d18"
+    },
+    "overlap.h5": {
+      "bytes": 6144,
+      "sha256": "6fc14e3adb5a495268d178d0061ff3b04ffa96529ade429b59c1b6137cd71a1c"
+    },
+    "partial.h5": {
+      "bytes": 4728,
+      "sha256": "4c632a6c2b93e68febe54e43615a2d169d7bd621068fbec0441e89013bab82a6"
+    },
+    "relay.h5": {
+      "bytes": 888,
+      "sha256": "bfca15d438078f85b1718b5a6e375e211cb3d53687cbcabfa8da9baa8a02bdf2"
+    },
+    "short.h5": {
+      "bytes": 2168,
+      "sha256": "0f710ff253d5f299d0804daedd8fbeedf29adc19937a77d17f56b9b5f9f3b3bb"
+    },
+    "source.h5": {
+      "bytes": 45434,
+      "sha256": "68a6f3f54a8f0490b671bd6275dfd58a9ca68ee574fadb6eac33ffb06b12db9b"
+    },
+    "strided.h5": {
+      "bytes": 6144,
+      "sha256": "3df30419ad689dc838a738ba411c4ba3038ca005972bab6a86bc40f3c9031a9d"
+    },
+    "u64-be.h5": {
+      "bytes": 6144,
+      "sha256": "2966ec604e2b41d414aa71138facdcc1768c2b4377f441fe389e33eda4661401"
+    },
+    "u64.h5": {
+      "bytes": 6144,
+      "sha256": "8b54f37abbcd38a0801360f292b655d5b271fde0fe24ad510e3b7746f498d771"
+    }
+  }
+}

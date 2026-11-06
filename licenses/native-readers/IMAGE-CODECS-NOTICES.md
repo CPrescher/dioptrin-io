@@ -39,3 +39,9 @@ The optional TIFF feature compiles the unchanged permissive libtiff 4.7.2
 license and exact source hash are retained under `native/tiff-thunderscan`.
 The TIFF parser/layout remains the Rust backend; no full native TIFF parser or
 automatic metadata repair is linked by this shim.
+
+Fragmented original-JPEG TIFF profiles additionally follow libtiff 4.7.2
+`OJPEGReadHeaderInfo`, `OJPEGWriteStreamDri` and `OJPEGWriteStreamRst` container
+operations. The existing full `LibTIFF-OJPEG.txt` permission notice applies.
+Entropy decoding and IDCT still use the existing optional native JPEG codec;
+no production libtiff dependency is introduced.

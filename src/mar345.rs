@@ -1,5 +1,6 @@
-//! Bounded MAR345/MAR555 PCK V1 images with original unsigned counts/headers.
+//! Bounded MAR345/MAR555 PCK V1/V2 images with original unsigned counts/headers.
 //! PCK decoding/predictor adapted from MIT FabIO ext/mar345_IO.pyx, ESRF.
+//! V2 changes only independently specified block framing constants.
 //! The older LGPL ccp4_pack implementation is not incorporated.
 pub use crate::binary::{Error, FrameBuffer, Limits};
 use crate::{PixelBuffer, PixelType, binary::resize_bytes, source::Snapshot};
@@ -10,6 +11,20 @@ use std::{
     path::Path,
 };
 const HEADER_BYTES: usize = 4096;
+/// The original marker does not distinguish the incompatible eight-bit fork.
+/// Select that fork before decoding; no failed-reader fallback is performed.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
+pub enum PckV2Dialect {
+    #[default]
+    Original,
+    /// FabIO's older separate C decoder framing (four run bits, four width bits).
+    /// The source predictor retains the original signed16 arithmetic contract.
+    FabioLegacyEightBit,
+}
+#[derive(Clone, Copy, Debug, Default)]
+pub struct Options {
+    pub v2_dialect: PckV2Dialect,
+}
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum OverflowLayout {
     PaddedEight,
@@ -30,6 +45,8 @@ pub struct Metadata {
     pub base_pixel_type: PixelType,
     pub little_endian: bool,
     pub pck_version: u8,
+    /// None for V1; V2 dialect is a caller-selected source interpretation.
+    pub pck_v2_dialect: Option<PckV2Dialect>,
     pub overflow_layout: OverflowLayout,
     pub header: Vec<u8>,
     pub binary_words: [i32; 16],
@@ -115,11 +132,22 @@ pub struct Reader {
     offset: u64,
 }
 impl Reader {
-    /// Open one frozen MAR345 or MAR555 image. PCK V2/spiral and unknown layouts
+    /// Open one frozen MAR345 or MAR555 PCK V1/V2 image. Spiral/unknown layouts
     /// fail explicitly; no fallback or whitespace trimming changes binary pixels.
     /// # Errors
     /// Malformed/unsupported headers, shape/overflow/marker bounds, limits or mutation.
     pub fn open(path: impl AsRef<Path>, limits: Limits) -> Result<Self, Error> {
+        Self::open_with_options(path, limits, Options::default())
+    }
+    /// Open with an explicitly selected V2 dialect. The default is the original
+    /// J.P. Abrahams encoder's seven-bit header; the eight-bit fork is opt-in.
+    /// # Errors
+    /// Same bounded/source/framing errors as open, without any decoder retry.
+    pub fn open_with_options(
+        path: impl AsRef<Path>,
+        limits: Limits,
+        options: Options,
+    ) -> Result<Self, Error> {
         limits.validate()?;
         if limits.header_bytes < HEADER_BYTES || limits.metadata_bytes < HEADER_BYTES * 4 {
             return Err(Error("MAR345 header exceeds limits".into()));
@@ -258,9 +286,6 @@ impl Reader {
             ));
         }
         let (table_bytes, layout, (version, marker_shape, marker)) = candidates.pop().unwrap();
-        if version != 1 {
-            return Err(Error("MAR345 PCK V2 unsupported; no V1 fallback".into()));
-        }
         if marker_shape != shape {
             return Err(Error("MAR345 binary/PCK dimensions disagree".into()));
         }
@@ -325,7 +350,8 @@ impl Reader {
                 pixel_type: PixelType::U32,
                 base_pixel_type: PixelType::U16,
                 little_endian: little,
-                pck_version: 1,
+                pck_version: version,
+                pck_v2_dialect: (version == 2).then_some(options.v2_dialect),
                 overflow_layout: layout,
                 header,
                 binary_words: words,
@@ -370,7 +396,13 @@ impl Reader {
         let PixelBuffer::U32(output) = &mut buffer.pixels else {
             unreachable!()
         };
-        decode_v1(&buffer.encoded, shape[1], output)?;
+        decode_pck(
+            &buffer.encoded,
+            shape[1],
+            output,
+            self.metadata.pck_version,
+            self.metadata.pck_v2_dialect.unwrap_or_default(),
+        )?;
         for record in &self.metadata.overflow_records {
             output[record.one_based_index as usize - 1] = record.value;
         }
@@ -456,16 +488,42 @@ impl Bits<'_> {
         Ok(((word >> offset) & ((1u64 << width) - 1)) as u32)
     }
 }
-fn decode_v1(encoded: &[u8], width: usize, output: &mut [u32]) -> Result<(), Error> {
+fn decode_pck(
+    encoded: &[u8],
+    width: usize,
+    output: &mut [u32],
+    version: u8,
+    dialect: PckV2Dialect,
+) -> Result<(), Error> {
+    // The checked bit reader, signed differences and predictor remain the
+    // existing MIT-derived V1 implementation. V2 format facts change only the
+    // block header, run exponent and signed width alphabet. The original V2
+    // writer emits three run bits plus four width bits; FabIO’s eight-bit fork
+    // is a distinct explicit caller interpretation, never an automatic fallback.
+    // No LGPL decoder expressions/state machine are translated or incorporated.
+    let (header_bits, exponent_bits, widths): (u8, u8, &[u8]) = match (version, dialect) {
+        (1, _) => (6, 3, &[0, 4, 5, 6, 7, 8, 16, 32]),
+        (2, PckV2Dialect::Original) => (
+            7,
+            3,
+            &[0, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 32],
+        ),
+        (2, PckV2Dialect::FabioLegacyEightBit) => {
+            (8, 4, &[0, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 32])
+        }
+        _ => return Err(Error("unsupported MAR345 PCK version".into())),
+    };
     let mut bits = Bits {
         data: encoded,
         position: 0,
     };
     let mut index = 0usize;
     while index < output.len() {
-        let header = bits.take(6)?;
-        let count = 1usize << (header & 7);
-        let size = [0u8, 4, 5, 6, 7, 8, 16, 32][(header >> 3) as usize];
+        let header = bits.take(header_bits)?;
+        let count = 1usize << (header & ((1 << exponent_bits) - 1));
+        let size = *widths
+            .get((header >> exponent_bits) as usize)
+            .ok_or_else(|| Error("MAR345 PCK V2 reserved width selector15".into()))?;
         if count > output.len() - index {
             return Err(Error(
                 "MAR345 PCK block exceeds declared pixel count".into(),
