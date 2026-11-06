@@ -4,11 +4,13 @@ Reference: [FabIO 2026.6.0, tag v2026.06](https://github.com/silx-kit/fabio/tree
 
 Machine-readable subformats, compression, stacks, provenance and validation are in [the inventory](fabio-2026.6.0-inventory.json). Regenerate with `python scripts/inventory_fabio.py /path/to/pinned/fabio`.
 
-Companion formats outside the image-codec registry now include strict CIF 1.1
+Companion formats outside the image-codec registry now include strict CIF 1.1/2.0
 documents (`cbf::syntax`), labeled ASCII tables (`columnfile`) and FIT2D/CHIPLOT
 profiles (`chiplot`). Their [separate audit](CIF_LEGACY_PARITY.md) distinguishes
-source correctness, malformed fixtures, failed FabIO helpers and unsupported
-CIF 2.0/binary-table capabilities; image-count parity does not imply these APIs.
+source correctness, malformed fixtures and failed FabIO helpers. The subsequent
+[CIF 2.0/low-level audit](CIF2_LOWLEVEL_PARITY.md) adds TIFF controls, Pilatus,
+NeXus metadata queries and original encoded CBF input. Binary column tables are
+still an unimplemented upstream stub; image-count parity does not imply these APIs.
 
 | Reader | Subformats / source types | Compression | Stack | Current status |
 |---|---|---|---|---|

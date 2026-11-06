@@ -19,7 +19,7 @@ Every format dependency is optional; default features are empty.
 | `hdf5` | Typed 2D/3D images/stacks with ten standard scalar types, both byte orders, Eiger/LImA/Lambda discovery, explicit external-file snapshots and bound regular VDS mosaics; original u32 compatibility reader; opt-in indexed raw u16/u32 chunks and bounded parallel consumers | Nested/printf/irregular VDS, raw external storage, complex/custom/float16 samples, arbitrary metadata and live refresh; raw fast path retains its narrower contract |
 | `tiff` | Scalar/packed/WhiteIsZero/palette/CFA/color/planar TIFF and BigTIFF; primary IFD pages, strips/tiles, lossless codecs, Group3 1D/Group4, legacy LZW, native YCbCr grids/units, modern JPEG and bounded OJPEG; explicit legacy metadata policies; ThunderScan complete/available-row reads; Pilatus/MAR headers | OJPEG/JPEG component reads need `jpeg`; SubIFD/other layouts remain gaps; F16 widening and reference views qualified |
 | `jpeg`, `jpeg2000` | Mature libjpeg-turbo/OpenJPEG backends; lossless high-precision JPEG; original channels, precision, lossy provenance and headers | Unsupported precision/component layouts fail explicitly; see image contracts |
-| `cbf` | Eight integer types, explicit byte-offset dialects, Content-MD5, raw CIF headers and a separate source-preserving CIF 1.1 syntax tree | CIF 2.0, dictionary semantics and multiple binary sections |
+| `cbf` | Eight integer types, explicit byte-offset dialects, original encoded payload/integrity access, raw CIF headers and separate source-preserving CIF 1.1/2.0 syntax trees | Dictionary semantics, other decoded codecs and multiple binary sections |
 | `edf` | Ten scalar types, stacks/general headers, internal/outer compression and bounded padding, explicit external-source snapshots, explicit legacy layout/label policies and typed-prefix recovery | Volumes, float128, byte-offset; complete-image APIs stay strict; recovery exposes missing spans and member integrity separately |
 | `native` | NPY v1/2/3 scalars/complex arrays, C/Fortran storage; d*TREK/ADSC, Fit2D masks/spreadsheets, HiPiC, PNM and explicit raw input | Remaining dtype/dimension variants; general discovery is available through `wrapped::Input` |
 | `columnfile` | Separate labeled ASCII tables, exact labels/comments/numeric tokens and explicit float64 values | Binary decoder is a stub in pinned FabIO; no binary schema is inferred |
@@ -197,10 +197,11 @@ CBF dialect or backend substitution.
 See [file series, navigation and companions](docs/SERIES_COMPANIONS_PARITY.md)
 for frozen manifests, checked global/local frame mapping and acquisition records.
 
-See [CIF grammar and legacy tables/profiles](docs/CIF_LEGACY_PARITY.md) for
-strict CIF 1.1 scopes, optional ASCII table/profile readers, exact source-token
-preservation and independently qualified FabIO defects. These are separate
-document/table/profile APIs, rather than detector images or implicit discovery.
+See [CIF 2.0 and low-level reader APIs](docs/CIF2_LOWLEVEL_PARITY.md) for versioned
+CIF syntax, TIFF controls, Pilatus documents, read-only NeXus navigation and
+original CBF encoded bytes. The earlier [table/profile audit](docs/CIF_LEGACY_PARITY.md)
+qualifies exact ASCII source tokens. Documents/tables/profiles and explicit
+reference display views retain separate source contracts.
 
 See [content discovery and stream input](docs/INPUT_APIS.md) for bounded
 nonseekable reads, explicit relative origins and conservative format decisions.

@@ -1,8 +1,9 @@
 # Xcalibur run descriptions
 
-The subsequent [CIF/table/profile continuation](CIF_LEGACY_PARITY.md) adds strict
-CIF 1.1 syntax, ASCII column tables and CHIPLOT profiles. The historical
-projection/helper results below remain scoped to their original audit.
+Subsequent audits add [ASCII table/profile input](CIF_LEGACY_PARITY.md) and
+[CIF 2.0/low-level read APIs](CIF2_LOWLEVEL_PARITY.md). The projection/helper
+results below retain their original audit scope; the inventory points to the
+current native contracts.
 
 The optional `xcalibur` feature exposes `xcalibur::run::{RunDescription, Sweep,
 Reader, Provenance}`. These are acquisition metadata, with no image or pixel
@@ -65,11 +66,13 @@ than another source reader.
 | API | Current boundary |
 | --- | --- |
 | `xcaliburimage.CcdCharacteristiscs` and its point/row/column/polygon/machine subrecords | Existing native CCD reader and separately qualified geometry APIs; not new run counts. |
-| `datIO.columnfile.read`, `ext.cf_io.read` | Separate labeled numerical-table reader, including ASCII/binary extension modes. No references were found in pinned tests. Not implemented or claimed by this task. Existing MIT C/Cython reader must be evaluated before a native implementation. |
-| `cbfimage.CIF.loadCIF`, `CIF.loadCHIPLOT` | Standalone CIF scalar/loop projection is now available through the existing detector parser, with explicit grammar/binary/scope limits; positive profiles qualify the path/BytesIO reference entry points. CHIPLOT remains a separately observed broken helper, described below. No pinned test references were found. |
-| `TiffIO.TiffIO.getData/getInfo/getImageFileDirectories` | Existing image/header backend; its standalone low-level API is distinct from a new companion file format and needs its own API qualification. |
-| `cbfimage.PilatusHeader` | A text-metadata parser used by existing detector CBF/Pilatus readers; direct constructor/mapping API remains a separate compatibility question. |
-| `nexus.Nexus` | General HDF5/NeXus access and writer helper (`get_entry/get_entries/find_detector/find_data/get_default_NXdata`). Native typed dataset/source-graph reads do not claim an h5py-object API replacement. |
+| `datIO.columnfile.read`, `ext.cf_io.read` | [Native ASCII tables](COLUMNFILE.md) preserve source tokens and an explicit float64 view. Original wrappers fail before decoding; binary C decoding is an empty stub. |
+| `cbfimage.CIF.loadCIF`, `CIF.loadCHIPLOT` | The original header projection is retained; [strict CIF 1.1/2.0](CIF2_SYNTAX.md) and [CHIPLOT](CHIPLOT.md) now have separate source-preserving native APIs and explicit reference qualifications. |
+| `CIF.exists/existsInLoop/LoopHasKey` | Native scoped scalar/loop-column lookup and null/literal distinctions are available. No flat Python dictionary or arbitrary-list object behavior is claimed by those syntax methods. |
+| `CbfImage.read(only_raw=True)/read_raw_data` | [Original encoded payloads](CBF_ENCODED.md), source bounds and explicit checksum status are separate from strict complete image decoding. |
+| `TiffIO.TiffIO.getData/getImage/getInfo/getNumberOfImages/getImageFileDirectories` | [Native TIFF controls](TIFF_API_PARITY.md) reuse the existing sample and metadata readers; stored words, explicit reference views, row selection and count/IFD metadata have separate proofs. |
+| `cbfimage.PilatusHeader` | [Standalone documents and read-only field/cleaner access](LOWLEVEL_HELPERS.md) reuse the shared detector parser, preserving raw input and diagnosing original helper failures. |
+| `nexus.Nexus` | [Read-only NeXus navigation](LOWLEVEL_HELPERS.md) exposes source-owned entry/class/attribute/detector/data/default descriptors and existing typed image selection. General h5py object, creation, time/signature and writer helpers remain separate. |
 | Filename/series utilities and file/compression wrappers | Transport/iteration utilities rather than additional stored companion formats. Their entry points belong in the separate API inventory. |
 
 The audited checkout is commit

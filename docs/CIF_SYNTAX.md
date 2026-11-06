@@ -1,6 +1,10 @@
 # Structured CIF syntax
 
-`cbf::syntax` exposes a strict CIF 1.1 syntax document under the existing `cbf`
+`cbf::syntax` exposes versioned strict CIF 1.1 and CIF 2.0 documents under `cbf`.
+This page describes the CIF 1.1 profile; see [CIF 2.0 syntax](CIF2_SYNTAX.md)
+for composite values, Unicode names and explicit logical text views.
+
+The CIF 1.1 syntax document uses the existing `cbf`
 feature. `Document::from_bytes`, `Document::from_reader`, and the immutable
 `Reader::open` path API preserve original bytes and produce ordered data blocks,
 save frames, scalar items and loops. This API parses syntax, not dictionary
@@ -59,13 +63,9 @@ standalone strict syntax, `_array_data.data` is an ordinary data name. Binary CB
 payloads are outside this text-only API; image decoding stays in the existing
 detector reader.
 
-The [CIF 2.0 specification](https://www.iucr.org/what-we-do/digital-standards/cif/cif2)
-and its [annotated grammar](https://www.iucr.org/__data/assets/text_file/0009/112131/CIF2-ENBF.txt)
-were evaluated. Their Unicode, composite values, triple-quoted strings and text
-processing protocols require a different versioned grammar. Declared CIF 2.0
-and unknown version markers return `unsupported CIF syntax version`; this is a
-remaining feature gap, not malformed CIF 1.1 or a FabIO defect. Unmarked input is
-interpreted as CIF 1.1. Some one-line strings are valid in both versions with
+Declared CIF 2.0 now selects a [separate versioned grammar](CIF2_SYNTAX.md).
+Unknown version markers return `unsupported CIF syntax version`. Unmarked input
+is interpreted as CIF 1.1. Some one-line strings are valid in both versions with
 different meanings, so syntax cannot infer an omitted version declaration.
 
 The CC0 fixtures and handwritten expected scope trees are recorded in
@@ -99,17 +99,18 @@ standalone projection and CBF decoded-count tests also pass. The reference
 controls deliberately change scope, null flags, styles, large integer text,
 spans and source hashes to verify they cannot be ignored by comparisons.
 
-The [final proof](cif-syntax/2026-11-06-cif11.json) qualifies 39 native calls:
+The [original CIF 1.1 proof](cif-syntax/2026-11-06-cif11.json) qualifies 39 native calls:
 15 exact valid-source trees, 21 specific malformed-source rejections and three
-unsupported CIF 2.0 rejections. All 52 unchanged FabIO observations complete;
+then-unsupported CIF 2.0 rejections. All 52 unchanged FabIO observations complete;
 their projection/acceptance differences remain separately classified. Six Python
 controls include timeout-protected FIFO/directory admission checks for both the
 CIF and profile path APIs. Reproduce the syntax proof with the pinned test
-Python environment:
+Python environment to reproduce the current CIF 1.1-only regression (the
+historical CIF 2.0 source is now separately accepted and qualified):
 
 ```sh
 python scripts/cif_syntax_reference.py --probe target/release/examples/api_probe \
-  --upstream /tmp/dioptrin-io-fabio-2026.6.0 --output /tmp/cif11-reference.json
+  --upstream /tmp/dioptrin-io-fabio-2026.6.0 --cif1-only --output /tmp/cif11-reference.json
 ```
 
 `--independent-module-directory` optionally supplies an isolated Gemmi module

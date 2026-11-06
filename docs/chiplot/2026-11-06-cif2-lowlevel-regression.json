@@ -1,0 +1,3995 @@
+{
+  "schema": 1,
+  "contract": "native CHIPLOT profile reading with exact source lexemes and scalar types; derived float/grid views separately tested; unchanged reference failures are not API parity successes",
+  "reference_commit": "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece",
+  "reference_version": "2026.6.0",
+  "python": "3.13.5 (main, Jun 12 2025, 12:22:43) [Clang 20.1.4 ]",
+  "format_authority": {
+    "url": "https://www.esrf.fr/computing/scientific/FIT2D/FIT2D_REF/node115.html",
+    "sha256": "e3b012c52ad4134f32cbd0fb72373931c5c1e1f4c53a73701260db9ac7ba59b7",
+    "bytes": 37018,
+    "local_audit_copy": "/tmp/dioptrin-chiplot-format-node115.html"
+  },
+  "reference_source_matches": true,
+  "sources": {
+    "/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/fabio/cbfimage.py": {
+      "path": "/private/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/fabio/cbfimage.py",
+      "bytes": 40966,
+      "sha256": "0161b83dce84114421767969ccfef6ae8d51bf90739ab84cc5cf390da1e844d3"
+    },
+    "/tmp/dioptrin-io-fabio-2026.6.0/src/fabio/cbfimage.py": {
+      "path": "/private/tmp/dioptrin-io-fabio-2026.6.0/src/fabio/cbfimage.py",
+      "bytes": 40966,
+      "sha256": "0161b83dce84114421767969ccfef6ae8d51bf90739ab84cc5cf390da1e844d3"
+    },
+    "/Users/clemens/Programming/dioptrin-io/scripts/chiplot_reference.py": {
+      "path": "/Users/clemens/Programming/dioptrin-io/scripts/chiplot_reference.py",
+      "bytes": 10266,
+      "sha256": "a57517a579910c159ee61be38c7cdae2c8a2bd2064f3b71295ad18039472b521"
+    },
+    "/Users/clemens/Programming/dioptrin-io/scripts/test_chiplot_reference.py": {
+      "path": "/Users/clemens/Programming/dioptrin-io/scripts/test_chiplot_reference.py",
+      "bytes": 2978,
+      "sha256": "185186a2f0a969e9750a4e118cd90de9613de5fccbef9d1a3294d58de5b48f31"
+    },
+    "/Users/clemens/Programming/dioptrin-io/scripts/generate_chiplot_fixtures.py": {
+      "path": "/Users/clemens/Programming/dioptrin-io/scripts/generate_chiplot_fixtures.py",
+      "bytes": 2093,
+      "sha256": "5cf51a30c480780349bd9ddc225587d34ce220ec82a11befaf7c0f85b85d7664"
+    },
+    "/Users/clemens/Programming/dioptrin-io/tests/data/chiplot/provenance.json": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/chiplot/provenance.json",
+      "bytes": 1877,
+      "sha256": "72e9f85c6b09495870243a2cc26ed0e9cba1c77242d3eea81140dbeb44420a75"
+    },
+    "/Users/clemens/Programming/dioptrin-io/tests/chiplot.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/chiplot.rs",
+      "bytes": 8272,
+      "sha256": "bbb44bfc83b1968b0718117de8eb01ed4ab4b6e6127d6e24a9d472524f6654d8"
+    },
+    "/Users/clemens/Programming/dioptrin-io/Cargo.toml": {
+      "path": "/Users/clemens/Programming/dioptrin-io/Cargo.toml",
+      "bytes": 4245,
+      "sha256": "354eebbd257aac3e63af355ab5929804eac219248132f6d324c1d5cc65f1917d"
+    },
+    "/Users/clemens/Programming/dioptrin-io/Cargo.lock": {
+      "path": "/Users/clemens/Programming/dioptrin-io/Cargo.lock",
+      "bytes": 27876,
+      "sha256": "8e9af361cf4eea8358b408d03af73d23769e286b4cf3dc6090d7e009577aab21"
+    },
+    "/tmp/dioptrin-chiplot-format-node115.html": {
+      "path": "/private/tmp/dioptrin-chiplot-format-node115.html",
+      "bytes": 37018,
+      "sha256": "e3b012c52ad4134f32cbd0fb72373931c5c1e1f4c53a73701260db9ac7ba59b7"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/binary.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/binary.rs",
+      "bytes": 7425,
+      "sha256": "794ddd240ae8dfa3ef313b3392d46b47c8a33b8f825f2b5ad72183269c90bf88"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/bruker/common.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/bruker/common.rs",
+      "bytes": 2087,
+      "sha256": "58ebb4b8bc1e89dba4288caa1224cae78f02812bbce4d911ec3159983c7020bc"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/bruker/view.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/bruker/view.rs",
+      "bytes": 2513,
+      "sha256": "4fb7483ddf6e85120b4a08e959de7c2716ae02e5cebd98d50c2d798ce6d2e059"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/bruker.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/bruker.rs",
+      "bytes": 18441,
+      "sha256": "3b7d0ea45d1e418697b96015b38bce2f6dc2c02926b1bdb8cebb76386568d8e0"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/cbf/document.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/cbf/document.rs",
+      "bytes": 5905,
+      "sha256": "f0e6dd547ead39f785c86e7b76c7b6dc880f532c7d8bf0e0f23607624d139962"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/cbf/header.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/cbf/header.rs",
+      "bytes": 8727,
+      "sha256": "5713a8bef504b118dfd07eceff3749e170654f88ed247a4ba9fdcbfb91283766"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/cbf/syntax/cif2.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/cbf/syntax/cif2.rs",
+      "bytes": 15580,
+      "sha256": "427dcb6d2172c87e4c42163618c24425204d16a81e2f739201b4acbc2dd4955e"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/cbf/syntax.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/cbf/syntax.rs",
+      "bytes": 29570,
+      "sha256": "449cb3e9e9f4bf50134174b128a47d60449cf801b209a806897a5057128fff33"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/cbf.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/cbf.rs",
+      "bytes": 16726,
+      "sha256": "cd9249983ddc3142cd7dbaef569b8855f57d42b4a46f5c2d1eef86aa249d38f3"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/chiplot.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/chiplot.rs",
+      "bytes": 22862,
+      "sha256": "a6b39507c21a231d7579cbd65ff31ffcae73b7b162484f68278851c80236d92d"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/columnfile.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/columnfile.rs",
+      "bytes": 12979,
+      "sha256": "45bf335382c0d173a7daac9e55b3609ee91989de890df6287e8e14f61660c79b"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/detector_tiff/mar_schema.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/detector_tiff/mar_schema.rs",
+      "bytes": 4999,
+      "sha256": "0d224ae8a52443423f144a61604176be37727deec320333fdb4c947581ffb819"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/detector_tiff.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/detector_tiff.rs",
+      "bytes": 7623,
+      "sha256": "06cbc9b5a8db291196e6fa3bfab75baeb860c4948dba5dd21811a001160712fd"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/discovery.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/discovery.rs",
+      "bytes": 17364,
+      "sha256": "acfac305e21289355c6617c6d78ff0886fc79e852e1a069b0e11482fb269d7cd"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/dm3.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/dm3.rs",
+      "bytes": 23777,
+      "sha256": "a7b9ad01a2eac150156c92f2aec088587786ffa90e80c502f1628e0537747b93"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/edf/recovery.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/edf/recovery.rs",
+      "bytes": 36548,
+      "sha256": "b8206c62dc3ca88c715f173803aec8c30af85a1f67f4ec39c1a3c1d27eab8cdb"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/edf.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/edf.rs",
+      "bytes": 32939,
+      "sha256": "50efe2c4d2fe7d6783cf73afaaeabe5a53a68f7a0a047c9218d49c7350de942a"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/esperanto.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/esperanto.rs",
+      "bytes": 19487,
+      "sha256": "d2bb2f34e02000e28810a62479b9f16958c9f7ebe6bc4a9400b41b1841abc8ed"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/fit2d.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/fit2d.rs",
+      "bytes": 13169,
+      "sha256": "a3dfab6f09927651c98f9561fc497788d9f4736a0795be9c6c37de52de3c2004"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/ge.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/ge.rs",
+      "bytes": 18063,
+      "sha256": "73ef7bbb055d7e90f7fb8ffcef887bd5382b5a82c818f1972558a51d522e4326"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/attributes.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/attributes.rs",
+      "bytes": 10331,
+      "sha256": "78390402928bde88699434b6261d7f2e6ec8cca63050533c9fa94740b97c4264"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/cache.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/cache.rs",
+      "bytes": 6940,
+      "sha256": "2b2927c6cc7bcf4d8daae4add9a72c9fa2414b93dd51950cffb634beaf45c050"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/discovery.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/discovery.rs",
+      "bytes": 11509,
+      "sha256": "d3fe9f5f5c6abf10084cbc3b7562b443b17359336e0fb102ff5aa28f6f1881aa"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/nexus.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/nexus.rs",
+      "bytes": 34110,
+      "sha256": "1891400519701d99afde2b302eedb30eeb080234437f88a2f619b676f8b073ba"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/raw.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/raw.rs",
+      "bytes": 17858,
+      "sha256": "aa1c6fa0a31303cc769214393039fec9975bff9c1e1d54eca59808e98d3927fc"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/sources.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/sources.rs",
+      "bytes": 16329,
+      "sha256": "f79106332878717c9dae77373fcaf9f711e2c36fdf45a06bfaec087c8aa6ec54"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse/numeric.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse/numeric.rs",
+      "bytes": 4551,
+      "sha256": "afb9cec3ca9a4932df277befb60df5a40e30d86395a5021bd5f37a4814defdac"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse/reconstruction.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse/reconstruction.rs",
+      "bytes": 7608,
+      "sha256": "801f9c866a9e5796e7de966cad42f50e5c128183cf895660d155265cd99df364"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse.rs",
+      "bytes": 28016,
+      "sha256": "61dcae769a76d61ae84ba0906c54c88077ce8edb6078a53dbcf19ca021efbdcf"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/typed.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/typed.rs",
+      "bytes": 27857,
+      "sha256": "6042b1b05f900bfd405c25b86b879e9a29cf9d6bed4395d0315a102fda39b6d0"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/vds.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/vds.rs",
+      "bytes": 26894,
+      "sha256": "e8e82c3152e40d589e196a31a5165723f056ed7f2875deb235dc8f587dd68207"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5.rs",
+      "bytes": 8813,
+      "sha256": "5de3fc39ff82b2e562e120aee09ca5b3e321a80ceb0d69e2701a77189d41ba5e"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/jpeg.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/jpeg.rs",
+      "bytes": 20027,
+      "sha256": "ab2e7dbea38cf2c876e4ad2a73ce74e4e2ee19c28a193365054b33082522f445"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/jpeg2000.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/jpeg2000.rs",
+      "bytes": 14778,
+      "sha256": "be8ad6f74a6c161532e73aaae16dff9d37533f6c1181f66eae35fc5ff99ba7e3"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/kcd.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/kcd.rs",
+      "bytes": 7516,
+      "sha256": "fb532aa6e23648399ea52e0872edf0f57e45aacfe951c1284c1f46d3e12330e8"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/lib.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/lib.rs",
+      "bytes": 2494,
+      "sha256": "bb092d882419e4c7dd472d0bbf0173ed7cefa3bf0715012fa028f649668a99a5"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/mar345.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/mar345.rs",
+      "bytes": 19721,
+      "sha256": "cf527509342046e1725b12ebe5ffbc4ad2f21f6c63b9d820e9c168c9818e16aa"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/mpa.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/mpa.rs",
+      "bytes": 14470,
+      "sha256": "6c81d70a3ef9b7f6a95a2f52a7add8aa14c70c15bd21c9ecb252e98b3e4cda9a"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/mrc.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/mrc.rs",
+      "bytes": 10019,
+      "sha256": "eb01640b8d6436f363b3b45531050de3ff06f42b4ecb4e3a120bce8ea16bca28"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/native.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/native.rs",
+      "bytes": 35783,
+      "sha256": "b526d517a3e35d9e020bfa26944b41f4198d5aa6347289d44710402d406f28c2"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/navigation.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/navigation.rs",
+      "bytes": 7700,
+      "sha256": "6fe155d07f11fefca9d9ba09c623a235688fcf4d17e6a3083ed88adc73901f68"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/oxford/ty5.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/oxford/ty5.rs",
+      "bytes": 3518,
+      "sha256": "1ca4411422d7b4ecc6ed574bdc8a5ac592d27f0a2baae0b77ded7a7e457e5136"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/oxford.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/oxford.rs",
+      "bytes": 19856,
+      "sha256": "134d222d921b9685483a486177e50984159afa6d91bb850d55f59ee1973c9a0d"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/pilatus.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/pilatus.rs",
+      "bytes": 16299,
+      "sha256": "555a6fcdc75bef993131bf147ddd1f57d5046db089623c0ae176b69fb1784e02"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/pixels.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/pixels.rs",
+      "bytes": 5522,
+      "sha256": "89f9b646e2970e79c77c625529f367f5fe96bd35c9ecf73cad67bbb59dde3c12"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/pixi.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/pixi.rs",
+      "bytes": 4380,
+      "sha256": "2522bc7b5cfc0a70f4624d87193fade8075857b08c7cf34fb05ce9f0ddf5b7ee"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/raster.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/raster.rs",
+      "bytes": 2453,
+      "sha256": "f27377deff1a475984240c548cc77890d8d1f53181245ac8654333fdd7a29c1f"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/raxis.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/raxis.rs",
+      "bytes": 14260,
+      "sha256": "c0bee389a94056c437a18948996c1449351aefcae9ea9191dd228ce1d63e11db"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/series.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/series.rs",
+      "bytes": 22464,
+      "sha256": "fd197478fa7206f11411627cb58c4f2bc5952a63173e0544536a813c5c564a64"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/source.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/source.rs",
+      "bytes": 3293,
+      "sha256": "afd15eef583ecfa7cc44528cb176188d2ec57916202f05aa5f1d01a2f5fc476f"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/spe.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/spe.rs",
+      "bytes": 22313,
+      "sha256": "48849be1954fe507ed36d9eb7ae476b43b2810abe434dcf889165af7df71fb98"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/api.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/api.rs",
+      "bytes": 13665,
+      "sha256": "af9b46890c15339a8904064d997cba988cfb0266421b9232aed9ffaac7b720be"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/compatibility.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/compatibility.rs",
+      "bytes": 11603,
+      "sha256": "ee3dc5bdd237f58bde81538c46ee6a393793b0632e9c921e867479f3c7a4e541"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/group3.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/group3.rs",
+      "bytes": 8117,
+      "sha256": "ede0d60ba03fc62e6e707bd2a4f7a06d8fc272f83ba9d0bd1ab62943cb49f1da"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/header.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/header.rs",
+      "bytes": 4268,
+      "sha256": "eb73d259c05fea3b03e6d0524ba42d93abf58462db39a7831ed8f48b8113700d"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/ifd_view.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/ifd_view.rs",
+      "bytes": 16989,
+      "sha256": "75d7ac11299d65d1780a5f8bf1a43649a17f5fe17f95d52f9c00e48d0d21a77b"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/jpeg_components.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/jpeg_components.rs",
+      "bytes": 4634,
+      "sha256": "8cc9ef27459a54f7a6e47ea6e594d5a51bdb0b0820d10c2c93a778f010014c53"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/ojpeg.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/ojpeg.rs",
+      "bytes": 14553,
+      "sha256": "27ea210bfa75c251d75a396fb949b1d466fe68c67b5e8201cb25f7a81296176a"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/thunderscan.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/thunderscan.rs",
+      "bytes": 9250,
+      "sha256": "7d299c5032402b5af16f79ec7f66d9609a03046a058fe91b9cc13206673fff2c"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/view.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/view.rs",
+      "bytes": 16361,
+      "sha256": "c4f32a6903c98c8030047a217ef572c6f03261e37fe4d4b0724315f5f4dbc2ed"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/view_jpeg.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/view_jpeg.rs",
+      "bytes": 9501,
+      "sha256": "8f8df0d1a26d93e9f15715d9d238e47c7bd420afe8d3c7337004691c0af522e1"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/view_ycbcr.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/view_ycbcr.rs",
+      "bytes": 7331,
+      "sha256": "9fbb8713ae4739ef0433441e15412d54ad8920b297652caab687b14c57d9f583"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/ycbcr.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/ycbcr.rs",
+      "bytes": 16472,
+      "sha256": "12958c127df223a150ee186094d70126a2841d79ccccb68bd3a08d78e4cdaa19"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/ycbcr_jpeg.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/ycbcr_jpeg.rs",
+      "bytes": 5864,
+      "sha256": "3a70a695fed2fca125b2609356989c669b3020eeaeaed6d86a4c1c3f2365e679"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff.rs",
+      "bytes": 42159,
+      "sha256": "cf2e4d1f637842f4d52c7698c2da1f43c57c162999bd3c39b4f88d4480aa8b69"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/transport.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/transport.rs",
+      "bytes": 6991,
+      "sha256": "9201e70f29c23ee027334f0db48e4965f32c7cbf04720b5d14d84087407c4aa3"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/wrapped/input.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/wrapped/input.rs",
+      "bytes": 12222,
+      "sha256": "dfa3474eaa04ad8c00733165f4f104e572f673b8630750b027b724aff88ce337"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/wrapped.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/wrapped.rs",
+      "bytes": 38868,
+      "sha256": "0d2ed07e6475d8763c6c994d33cafb5ef46436131be1143ec014ec0de6f76633"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/xcalibur/decomposition.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/xcalibur/decomposition.rs",
+      "bytes": 6743,
+      "sha256": "b3d2d3e0decf3ae69fdfc742fc2ebe623459b98e817550a01efe774a4c886269"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/xcalibur/run.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/xcalibur/run.rs",
+      "bytes": 8792,
+      "sha256": "f0e998aa761d4cf1a6b93c1b24c13f8077baca0751ef030f3eeb914ab9fbc595"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/xcalibur.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/xcalibur.rs",
+      "bytes": 16637,
+      "sha256": "7a308e59ffd22c11f501e79f618b13bf1d4aa200cf90e23786682003352048d9"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/xsd.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/xsd.rs",
+      "bytes": 11824,
+      "sha256": "bcfe7328bc0d9d809dc6abda92d790039069e3829332abcfb300b0379e0ac601"
+    }
+  },
+  "probe": {
+    "path": "/Users/clemens/Programming/dioptrin-io/target/release/examples/api_probe",
+    "bytes": 8268368,
+    "sha256": "db4cdd7765590b63c3b45da55cfb9e5969ed7e681478d344524fedc839e4cab2"
+  },
+  "reads": [
+    {
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/chiplot/ascending.chi",
+        "bytes": 66,
+        "sha256": "a491b30415c2945d052c55671ca59ce34633abe24b8211ae8c0ca7324ab101f6"
+      },
+      "independent_numeric_oracle": {
+        "implementation": "Python int + Decimal, no binary64 conversion",
+        "identities": [
+          {
+            "sign": 0,
+            "digits": "0",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "123400",
+            "exponent": -4
+          },
+          {
+            "sign": 0,
+            "digits": "1",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "2",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "2",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "3",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "3",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "4",
+            "exponent": 0
+          }
+        ]
+      },
+      "reference": {
+        "status": "read_not_completed",
+        "error_type": "TypeError",
+        "error": "'<' not supported between instances of 'str' and 'int'",
+        "classification": "pinned_string_vs_integer_step_bug",
+        "partial_fields": {
+          "_audit_creation_method": "From 2-D detector using FIT2D and CIFfile",
+          "_pd_meas_scan_method": "fixed",
+          "_pd_spec_description": "Independent ascending",
+          "_pd_meas_2theta_range_inc": "1.0000"
+        },
+        "reading_parity_claimed": false,
+        "qualification": "unchanged pinned failure recorded; native source-reading proof uses primary format and exact independent oracle, no patched reference"
+      },
+      "apis": [
+        {
+          "command": "chiplot",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [],
+            "curves": 1,
+            "declaration": {
+              "hex": "34",
+              "span": [
+                39,
+                40
+              ],
+              "text": "4"
+            },
+            "declared_points": 4,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "496e646570656e64656e7420617363656e64696e67",
+                "span": [
+                  0,
+                  21
+                ],
+                "text": "Independent ascending"
+              },
+              {
+                "hex": "327468657461",
+                "span": [
+                  22,
+                  28
+                ],
+                "text": "2theta"
+              },
+              {
+                "hex": "696e74656e73697479",
+                "span": [
+                  29,
+                  38
+                ],
+                "text": "intensity"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "PathSnapshot",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 5,
+                "samples": [
+                  {
+                    "lexeme": "0",
+                    "number": {
+                      "kind": "I64",
+                      "value": 0
+                    },
+                    "offset": 41
+                  },
+                  {
+                    "lexeme": "00012.3400",
+                    "number": {
+                      "kind": "Decimal"
+                    },
+                    "offset": 43
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "samples": [
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 54
+                  },
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 56
+                  }
+                ]
+              },
+              {
+                "line": 7,
+                "samples": [
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 58
+                  },
+                  {
+                    "lexeme": "3",
+                    "number": {
+                      "kind": "I64",
+                      "value": 3
+                    },
+                    "offset": 60
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "samples": [
+                  {
+                    "lexeme": "3",
+                    "number": {
+                      "kind": "I64",
+                      "value": 3
+                    },
+                    "offset": 62
+                  },
+                  {
+                    "lexeme": "4",
+                    "number": {
+                      "kind": "I64",
+                      "value": 4
+                    },
+                    "offset": 64
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 66,
+            "source_sha256": "a491b30415c2945d052c55671ca59ce34633abe24b8211ae8c0ca7324ab101f6"
+          }
+        },
+        {
+          "command": "chiplot-bytes",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [],
+            "curves": 1,
+            "declaration": {
+              "hex": "34",
+              "span": [
+                39,
+                40
+              ],
+              "text": "4"
+            },
+            "declared_points": 4,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "496e646570656e64656e7420617363656e64696e67",
+                "span": [
+                  0,
+                  21
+                ],
+                "text": "Independent ascending"
+              },
+              {
+                "hex": "327468657461",
+                "span": [
+                  22,
+                  28
+                ],
+                "text": "2theta"
+              },
+              {
+                "hex": "696e74656e73697479",
+                "span": [
+                  29,
+                  38
+                ],
+                "text": "intensity"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "Buffer",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 5,
+                "samples": [
+                  {
+                    "lexeme": "0",
+                    "number": {
+                      "kind": "I64",
+                      "value": 0
+                    },
+                    "offset": 41
+                  },
+                  {
+                    "lexeme": "00012.3400",
+                    "number": {
+                      "kind": "Decimal"
+                    },
+                    "offset": 43
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "samples": [
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 54
+                  },
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 56
+                  }
+                ]
+              },
+              {
+                "line": 7,
+                "samples": [
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 58
+                  },
+                  {
+                    "lexeme": "3",
+                    "number": {
+                      "kind": "I64",
+                      "value": 3
+                    },
+                    "offset": 60
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "samples": [
+                  {
+                    "lexeme": "3",
+                    "number": {
+                      "kind": "I64",
+                      "value": 3
+                    },
+                    "offset": 62
+                  },
+                  {
+                    "lexeme": "4",
+                    "number": {
+                      "kind": "I64",
+                      "value": 4
+                    },
+                    "offset": 64
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 66,
+            "source_sha256": "a491b30415c2945d052c55671ca59ce34633abe24b8211ae8c0ca7324ab101f6"
+          }
+        },
+        {
+          "command": "chiplot-stream",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [],
+            "curves": 1,
+            "declaration": {
+              "hex": "34",
+              "span": [
+                39,
+                40
+              ],
+              "text": "4"
+            },
+            "declared_points": 4,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "496e646570656e64656e7420617363656e64696e67",
+                "span": [
+                  0,
+                  21
+                ],
+                "text": "Independent ascending"
+              },
+              {
+                "hex": "327468657461",
+                "span": [
+                  22,
+                  28
+                ],
+                "text": "2theta"
+              },
+              {
+                "hex": "696e74656e73697479",
+                "span": [
+                  29,
+                  38
+                ],
+                "text": "intensity"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "StreamCapture",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 5,
+                "samples": [
+                  {
+                    "lexeme": "0",
+                    "number": {
+                      "kind": "I64",
+                      "value": 0
+                    },
+                    "offset": 41
+                  },
+                  {
+                    "lexeme": "00012.3400",
+                    "number": {
+                      "kind": "Decimal"
+                    },
+                    "offset": 43
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "samples": [
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 54
+                  },
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 56
+                  }
+                ]
+              },
+              {
+                "line": 7,
+                "samples": [
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 58
+                  },
+                  {
+                    "lexeme": "3",
+                    "number": {
+                      "kind": "I64",
+                      "value": 3
+                    },
+                    "offset": 60
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "samples": [
+                  {
+                    "lexeme": "3",
+                    "number": {
+                      "kind": "I64",
+                      "value": 3
+                    },
+                    "offset": 62
+                  },
+                  {
+                    "lexeme": "4",
+                    "number": {
+                      "kind": "I64",
+                      "value": 4
+                    },
+                    "offset": 64
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 66,
+            "source_sha256": "a491b30415c2945d052c55671ca59ce34633abe24b8211ae8c0ca7324ab101f6"
+          }
+        }
+      ],
+      "status": "qualified_native_source_read",
+      "source_unchanged": true
+    },
+    {
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/chiplot/descending.chi",
+        "bytes": 39,
+        "sha256": "5025bea70a14f4ea3a718f3e17012f94fa8e6eb158c00315d6ebb3252de8789a"
+      },
+      "independent_numeric_oracle": {
+        "implementation": "Python int + Decimal, no binary64 conversion",
+        "identities": [
+          {
+            "sign": 0,
+            "digits": "3",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "11",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "2",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "22",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "1",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "33",
+            "exponent": 0
+          }
+        ]
+      },
+      "reference": {
+        "status": "read_not_completed",
+        "error_type": "TypeError",
+        "error": "'<' not supported between instances of 'str' and 'int'",
+        "classification": "pinned_string_vs_integer_step_bug",
+        "partial_fields": {
+          "_audit_creation_method": "From 2-D detector using FIT2D and CIFfile",
+          "_pd_meas_scan_method": "fixed",
+          "_pd_spec_description": "Descending source",
+          "_pd_meas_2theta_range_inc": "-1.0000"
+        },
+        "reading_parity_claimed": false,
+        "qualification": "unchanged pinned failure recorded; native source-reading proof uses primary format and exact independent oracle, no patched reference"
+      },
+      "apis": [
+        {
+          "command": "chiplot",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [],
+            "curves": 1,
+            "declaration": {
+              "hex": "33",
+              "span": [
+                22,
+                23
+              ],
+              "text": "3"
+            },
+            "declared_points": 3,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "44657363656e64696e6720736f75726365",
+                "span": [
+                  0,
+                  17
+                ],
+                "text": "Descending source"
+              },
+              {
+                "hex": "78",
+                "span": [
+                  18,
+                  19
+                ],
+                "text": "x"
+              },
+              {
+                "hex": "79",
+                "span": [
+                  20,
+                  21
+                ],
+                "text": "y"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "PathSnapshot",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 5,
+                "samples": [
+                  {
+                    "lexeme": "3",
+                    "number": {
+                      "kind": "I64",
+                      "value": 3
+                    },
+                    "offset": 24
+                  },
+                  {
+                    "lexeme": "11",
+                    "number": {
+                      "kind": "I64",
+                      "value": 11
+                    },
+                    "offset": 26
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "samples": [
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 29
+                  },
+                  {
+                    "lexeme": "22",
+                    "number": {
+                      "kind": "I64",
+                      "value": 22
+                    },
+                    "offset": 31
+                  }
+                ]
+              },
+              {
+                "line": 7,
+                "samples": [
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 34
+                  },
+                  {
+                    "lexeme": "33",
+                    "number": {
+                      "kind": "I64",
+                      "value": 33
+                    },
+                    "offset": 36
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 39,
+            "source_sha256": "5025bea70a14f4ea3a718f3e17012f94fa8e6eb158c00315d6ebb3252de8789a"
+          }
+        },
+        {
+          "command": "chiplot-bytes",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [],
+            "curves": 1,
+            "declaration": {
+              "hex": "33",
+              "span": [
+                22,
+                23
+              ],
+              "text": "3"
+            },
+            "declared_points": 3,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "44657363656e64696e6720736f75726365",
+                "span": [
+                  0,
+                  17
+                ],
+                "text": "Descending source"
+              },
+              {
+                "hex": "78",
+                "span": [
+                  18,
+                  19
+                ],
+                "text": "x"
+              },
+              {
+                "hex": "79",
+                "span": [
+                  20,
+                  21
+                ],
+                "text": "y"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "Buffer",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 5,
+                "samples": [
+                  {
+                    "lexeme": "3",
+                    "number": {
+                      "kind": "I64",
+                      "value": 3
+                    },
+                    "offset": 24
+                  },
+                  {
+                    "lexeme": "11",
+                    "number": {
+                      "kind": "I64",
+                      "value": 11
+                    },
+                    "offset": 26
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "samples": [
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 29
+                  },
+                  {
+                    "lexeme": "22",
+                    "number": {
+                      "kind": "I64",
+                      "value": 22
+                    },
+                    "offset": 31
+                  }
+                ]
+              },
+              {
+                "line": 7,
+                "samples": [
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 34
+                  },
+                  {
+                    "lexeme": "33",
+                    "number": {
+                      "kind": "I64",
+                      "value": 33
+                    },
+                    "offset": 36
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 39,
+            "source_sha256": "5025bea70a14f4ea3a718f3e17012f94fa8e6eb158c00315d6ebb3252de8789a"
+          }
+        },
+        {
+          "command": "chiplot-stream",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [],
+            "curves": 1,
+            "declaration": {
+              "hex": "33",
+              "span": [
+                22,
+                23
+              ],
+              "text": "3"
+            },
+            "declared_points": 3,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "44657363656e64696e6720736f75726365",
+                "span": [
+                  0,
+                  17
+                ],
+                "text": "Descending source"
+              },
+              {
+                "hex": "78",
+                "span": [
+                  18,
+                  19
+                ],
+                "text": "x"
+              },
+              {
+                "hex": "79",
+                "span": [
+                  20,
+                  21
+                ],
+                "text": "y"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "StreamCapture",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 5,
+                "samples": [
+                  {
+                    "lexeme": "3",
+                    "number": {
+                      "kind": "I64",
+                      "value": 3
+                    },
+                    "offset": 24
+                  },
+                  {
+                    "lexeme": "11",
+                    "number": {
+                      "kind": "I64",
+                      "value": 11
+                    },
+                    "offset": 26
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "samples": [
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 29
+                  },
+                  {
+                    "lexeme": "22",
+                    "number": {
+                      "kind": "I64",
+                      "value": 22
+                    },
+                    "offset": 31
+                  }
+                ]
+              },
+              {
+                "line": 7,
+                "samples": [
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 34
+                  },
+                  {
+                    "lexeme": "33",
+                    "number": {
+                      "kind": "I64",
+                      "value": 33
+                    },
+                    "offset": 36
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 39,
+            "source_sha256": "5025bea70a14f4ea3a718f3e17012f94fa8e6eb158c00315d6ebb3252de8789a"
+          }
+        }
+      ],
+      "status": "qualified_native_source_read",
+      "source_unchanged": true
+    },
+    {
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/chiplot/nonuniform.chi",
+        "bytes": 40,
+        "sha256": "b1c62c616541d93e6db60b1b051efade4b2eb17d5e3a11bb972c461170d5d368"
+      },
+      "independent_numeric_oracle": {
+        "implementation": "Python int + Decimal, no binary64 conversion",
+        "identities": [
+          {
+            "sign": 0,
+            "digits": "0",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "11",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "5",
+            "exponent": -1
+          },
+          {
+            "sign": 0,
+            "digits": "22",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "2",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "33",
+            "exponent": 0
+          }
+        ]
+      },
+      "reference": {
+        "status": "read_not_completed",
+        "error_type": "TypeError",
+        "error": "'<' not supported between instances of 'str' and 'int'",
+        "classification": "pinned_string_vs_integer_step_bug",
+        "partial_fields": {
+          "_audit_creation_method": "From 2-D detector using FIT2D and CIFfile",
+          "_pd_meas_scan_method": "fixed",
+          "_pd_spec_description": "Irregular source",
+          "_pd_meas_2theta_range_inc": "1.0000"
+        },
+        "reading_parity_claimed": false,
+        "qualification": "unchanged pinned failure recorded; native source-reading proof uses primary format and exact independent oracle, no patched reference"
+      },
+      "apis": [
+        {
+          "command": "chiplot",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [],
+            "curves": 1,
+            "declaration": {
+              "hex": "33",
+              "span": [
+                21,
+                22
+              ],
+              "text": "3"
+            },
+            "declared_points": 3,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "4972726567756c617220736f75726365",
+                "span": [
+                  0,
+                  16
+                ],
+                "text": "Irregular source"
+              },
+              {
+                "hex": "78",
+                "span": [
+                  17,
+                  18
+                ],
+                "text": "x"
+              },
+              {
+                "hex": "79",
+                "span": [
+                  19,
+                  20
+                ],
+                "text": "y"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "PathSnapshot",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 5,
+                "samples": [
+                  {
+                    "lexeme": "0",
+                    "number": {
+                      "kind": "I64",
+                      "value": 0
+                    },
+                    "offset": 23
+                  },
+                  {
+                    "lexeme": "11",
+                    "number": {
+                      "kind": "I64",
+                      "value": 11
+                    },
+                    "offset": 25
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "samples": [
+                  {
+                    "lexeme": "0.5",
+                    "number": {
+                      "kind": "Decimal"
+                    },
+                    "offset": 28
+                  },
+                  {
+                    "lexeme": "22",
+                    "number": {
+                      "kind": "I64",
+                      "value": 22
+                    },
+                    "offset": 32
+                  }
+                ]
+              },
+              {
+                "line": 7,
+                "samples": [
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 35
+                  },
+                  {
+                    "lexeme": "33",
+                    "number": {
+                      "kind": "I64",
+                      "value": 33
+                    },
+                    "offset": 37
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 40,
+            "source_sha256": "b1c62c616541d93e6db60b1b051efade4b2eb17d5e3a11bb972c461170d5d368"
+          }
+        },
+        {
+          "command": "chiplot-bytes",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [],
+            "curves": 1,
+            "declaration": {
+              "hex": "33",
+              "span": [
+                21,
+                22
+              ],
+              "text": "3"
+            },
+            "declared_points": 3,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "4972726567756c617220736f75726365",
+                "span": [
+                  0,
+                  16
+                ],
+                "text": "Irregular source"
+              },
+              {
+                "hex": "78",
+                "span": [
+                  17,
+                  18
+                ],
+                "text": "x"
+              },
+              {
+                "hex": "79",
+                "span": [
+                  19,
+                  20
+                ],
+                "text": "y"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "Buffer",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 5,
+                "samples": [
+                  {
+                    "lexeme": "0",
+                    "number": {
+                      "kind": "I64",
+                      "value": 0
+                    },
+                    "offset": 23
+                  },
+                  {
+                    "lexeme": "11",
+                    "number": {
+                      "kind": "I64",
+                      "value": 11
+                    },
+                    "offset": 25
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "samples": [
+                  {
+                    "lexeme": "0.5",
+                    "number": {
+                      "kind": "Decimal"
+                    },
+                    "offset": 28
+                  },
+                  {
+                    "lexeme": "22",
+                    "number": {
+                      "kind": "I64",
+                      "value": 22
+                    },
+                    "offset": 32
+                  }
+                ]
+              },
+              {
+                "line": 7,
+                "samples": [
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 35
+                  },
+                  {
+                    "lexeme": "33",
+                    "number": {
+                      "kind": "I64",
+                      "value": 33
+                    },
+                    "offset": 37
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 40,
+            "source_sha256": "b1c62c616541d93e6db60b1b051efade4b2eb17d5e3a11bb972c461170d5d368"
+          }
+        },
+        {
+          "command": "chiplot-stream",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [],
+            "curves": 1,
+            "declaration": {
+              "hex": "33",
+              "span": [
+                21,
+                22
+              ],
+              "text": "3"
+            },
+            "declared_points": 3,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "4972726567756c617220736f75726365",
+                "span": [
+                  0,
+                  16
+                ],
+                "text": "Irregular source"
+              },
+              {
+                "hex": "78",
+                "span": [
+                  17,
+                  18
+                ],
+                "text": "x"
+              },
+              {
+                "hex": "79",
+                "span": [
+                  19,
+                  20
+                ],
+                "text": "y"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "StreamCapture",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 5,
+                "samples": [
+                  {
+                    "lexeme": "0",
+                    "number": {
+                      "kind": "I64",
+                      "value": 0
+                    },
+                    "offset": 23
+                  },
+                  {
+                    "lexeme": "11",
+                    "number": {
+                      "kind": "I64",
+                      "value": 11
+                    },
+                    "offset": 25
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "samples": [
+                  {
+                    "lexeme": "0.5",
+                    "number": {
+                      "kind": "Decimal"
+                    },
+                    "offset": 28
+                  },
+                  {
+                    "lexeme": "22",
+                    "number": {
+                      "kind": "I64",
+                      "value": 22
+                    },
+                    "offset": 32
+                  }
+                ]
+              },
+              {
+                "line": 7,
+                "samples": [
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 35
+                  },
+                  {
+                    "lexeme": "33",
+                    "number": {
+                      "kind": "I64",
+                      "value": 33
+                    },
+                    "offset": 37
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 40,
+            "source_sha256": "b1c62c616541d93e6db60b1b051efade4b2eb17d5e3a11bb972c461170d5d368"
+          }
+        }
+      ],
+      "status": "qualified_native_source_read",
+      "source_unchanged": true
+    },
+    {
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/chiplot/multi-curve.chi",
+        "bytes": 115,
+        "sha256": "fdad043cc9454d7e199bac6bd56f7348dd51978df82d321f5c8f9387fa99be47"
+      },
+      "independent_numeric_oracle": {
+        "implementation": "Python int + Decimal, no binary64 conversion",
+        "identities": [
+          {
+            "sign": 0,
+            "digits": "0",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "1",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "9007199254740993",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "1",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "2",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "18446744073709551615",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "2",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "3",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "18446744073709551616",
+            "exponent": 0
+          }
+        ]
+      },
+      "reference": {
+        "status": "read_not_completed",
+        "error_type": "TypeError",
+        "error": "'<' not supported between instances of 'str' and 'int'",
+        "classification": "pinned_string_vs_integer_step_bug",
+        "partial_fields": {
+          "_audit_creation_method": "From 2-D detector using FIT2D and CIFfile",
+          "_pd_meas_scan_method": "fixed",
+          "_pd_spec_description": "Two stored curves",
+          "_pd_meas_2theta_range_inc": "180.0000"
+        },
+        "reading_parity_claimed": false,
+        "qualification": "unchanged pinned failure recorded; native source-reading proof uses primary format and exact independent oracle, no patched reference"
+      },
+      "apis": [
+        {
+          "command": "chiplot",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [
+              {
+                "hex": "23206578616374553634",
+                "line": 6,
+                "offset": 79
+              }
+            ],
+            "curves": 2,
+            "declaration": {
+              "hex": "332c32",
+              "span": [
+                29,
+                32
+              ],
+              "text": "3,2"
+            },
+            "declared_points": 3,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "54776f2073746f72656420637572766573",
+                "span": [
+                  0,
+                  17
+                ],
+                "text": "Two stored curves"
+              },
+              {
+                "hex": "78",
+                "span": [
+                  18,
+                  19
+                ],
+                "text": "x"
+              },
+              {
+                "hex": "5920637572766573",
+                "span": [
+                  20,
+                  28
+                ],
+                "text": "Y curves"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "PathSnapshot",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 5,
+                "samples": [
+                  {
+                    "lexeme": "0",
+                    "number": {
+                      "kind": "I64",
+                      "value": 0
+                    },
+                    "offset": 33
+                  },
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 35
+                  },
+                  {
+                    "lexeme": "9007199254740993",
+                    "number": {
+                      "kind": "I64",
+                      "value": 9007199254740993
+                    },
+                    "offset": 37
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "samples": [
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 54
+                  },
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 56
+                  },
+                  {
+                    "lexeme": "18446744073709551615",
+                    "number": {
+                      "kind": "U64",
+                      "value": 18446744073709551615
+                    },
+                    "offset": 58
+                  }
+                ]
+              },
+              {
+                "line": 7,
+                "samples": [
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 90
+                  },
+                  {
+                    "lexeme": "3",
+                    "number": {
+                      "kind": "I64",
+                      "value": 3
+                    },
+                    "offset": 92
+                  },
+                  {
+                    "lexeme": "18446744073709551616",
+                    "number": {
+                      "kind": "IntegerText"
+                    },
+                    "offset": 94
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 115,
+            "source_sha256": "fdad043cc9454d7e199bac6bd56f7348dd51978df82d321f5c8f9387fa99be47"
+          }
+        },
+        {
+          "command": "chiplot-bytes",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [
+              {
+                "hex": "23206578616374553634",
+                "line": 6,
+                "offset": 79
+              }
+            ],
+            "curves": 2,
+            "declaration": {
+              "hex": "332c32",
+              "span": [
+                29,
+                32
+              ],
+              "text": "3,2"
+            },
+            "declared_points": 3,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "54776f2073746f72656420637572766573",
+                "span": [
+                  0,
+                  17
+                ],
+                "text": "Two stored curves"
+              },
+              {
+                "hex": "78",
+                "span": [
+                  18,
+                  19
+                ],
+                "text": "x"
+              },
+              {
+                "hex": "5920637572766573",
+                "span": [
+                  20,
+                  28
+                ],
+                "text": "Y curves"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "Buffer",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 5,
+                "samples": [
+                  {
+                    "lexeme": "0",
+                    "number": {
+                      "kind": "I64",
+                      "value": 0
+                    },
+                    "offset": 33
+                  },
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 35
+                  },
+                  {
+                    "lexeme": "9007199254740993",
+                    "number": {
+                      "kind": "I64",
+                      "value": 9007199254740993
+                    },
+                    "offset": 37
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "samples": [
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 54
+                  },
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 56
+                  },
+                  {
+                    "lexeme": "18446744073709551615",
+                    "number": {
+                      "kind": "U64",
+                      "value": 18446744073709551615
+                    },
+                    "offset": 58
+                  }
+                ]
+              },
+              {
+                "line": 7,
+                "samples": [
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 90
+                  },
+                  {
+                    "lexeme": "3",
+                    "number": {
+                      "kind": "I64",
+                      "value": 3
+                    },
+                    "offset": 92
+                  },
+                  {
+                    "lexeme": "18446744073709551616",
+                    "number": {
+                      "kind": "IntegerText"
+                    },
+                    "offset": 94
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 115,
+            "source_sha256": "fdad043cc9454d7e199bac6bd56f7348dd51978df82d321f5c8f9387fa99be47"
+          }
+        },
+        {
+          "command": "chiplot-stream",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [
+              {
+                "hex": "23206578616374553634",
+                "line": 6,
+                "offset": 79
+              }
+            ],
+            "curves": 2,
+            "declaration": {
+              "hex": "332c32",
+              "span": [
+                29,
+                32
+              ],
+              "text": "3,2"
+            },
+            "declared_points": 3,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "54776f2073746f72656420637572766573",
+                "span": [
+                  0,
+                  17
+                ],
+                "text": "Two stored curves"
+              },
+              {
+                "hex": "78",
+                "span": [
+                  18,
+                  19
+                ],
+                "text": "x"
+              },
+              {
+                "hex": "5920637572766573",
+                "span": [
+                  20,
+                  28
+                ],
+                "text": "Y curves"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "StreamCapture",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 5,
+                "samples": [
+                  {
+                    "lexeme": "0",
+                    "number": {
+                      "kind": "I64",
+                      "value": 0
+                    },
+                    "offset": 33
+                  },
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 35
+                  },
+                  {
+                    "lexeme": "9007199254740993",
+                    "number": {
+                      "kind": "I64",
+                      "value": 9007199254740993
+                    },
+                    "offset": 37
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "samples": [
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 54
+                  },
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 56
+                  },
+                  {
+                    "lexeme": "18446744073709551615",
+                    "number": {
+                      "kind": "U64",
+                      "value": 18446744073709551615
+                    },
+                    "offset": 58
+                  }
+                ]
+              },
+              {
+                "line": 7,
+                "samples": [
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 90
+                  },
+                  {
+                    "lexeme": "3",
+                    "number": {
+                      "kind": "I64",
+                      "value": 3
+                    },
+                    "offset": 92
+                  },
+                  {
+                    "lexeme": "18446744073709551616",
+                    "number": {
+                      "kind": "IntegerText"
+                    },
+                    "offset": 94
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 115,
+            "source_sha256": "fdad043cc9454d7e199bac6bd56f7348dd51978df82d321f5c8f9387fa99be47"
+          }
+        }
+      ],
+      "status": "qualified_native_source_read",
+      "source_unchanged": true
+    },
+    {
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/chiplot/zero.chi",
+        "bytes": 45,
+        "sha256": "f3d5b906a0331bde0776191a9cdc1c9f32fe68d22be2816ff6b78557e4c1e403"
+      },
+      "independent_numeric_oracle": {
+        "implementation": "Python int + Decimal, no binary64 conversion",
+        "identities": []
+      },
+      "reference": {
+        "status": "read_not_completed",
+        "error_type": "TypeError",
+        "error": "'<' not supported between instances of 'str' and 'int'",
+        "classification": "pinned_string_vs_integer_step_bug",
+        "partial_fields": {
+          "_audit_creation_method": "From 2-D detector using FIT2D and CIFfile",
+          "_pd_meas_scan_method": "fixed",
+          "_pd_spec_description": "Zero point profile",
+          "_pd_meas_2theta_range_inc": "180.0000"
+        },
+        "reading_parity_claimed": false,
+        "qualification": "unchanged pinned failure recorded; native source-reading proof uses primary format and exact independent oracle, no patched reference"
+      },
+      "apis": [
+        {
+          "command": "chiplot",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [
+              {
+                "hex": "23206e6f2073746f7265642073616d706c6573",
+                "line": 5,
+                "offset": 25
+              }
+            ],
+            "curves": 1,
+            "declaration": {
+              "hex": "30",
+              "span": [
+                23,
+                24
+              ],
+              "text": "0"
+            },
+            "declared_points": 0,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "5a65726f20706f696e742070726f66696c65",
+                "span": [
+                  0,
+                  18
+                ],
+                "text": "Zero point profile"
+              },
+              {
+                "hex": "78",
+                "span": [
+                  19,
+                  20
+                ],
+                "text": "x"
+              },
+              {
+                "hex": "79",
+                "span": [
+                  21,
+                  22
+                ],
+                "text": "y"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "PathSnapshot",
+            "representation": "ExactSourceLexemes",
+            "rows": [],
+            "source_bytes": 45,
+            "source_sha256": "f3d5b906a0331bde0776191a9cdc1c9f32fe68d22be2816ff6b78557e4c1e403"
+          }
+        },
+        {
+          "command": "chiplot-bytes",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [
+              {
+                "hex": "23206e6f2073746f7265642073616d706c6573",
+                "line": 5,
+                "offset": 25
+              }
+            ],
+            "curves": 1,
+            "declaration": {
+              "hex": "30",
+              "span": [
+                23,
+                24
+              ],
+              "text": "0"
+            },
+            "declared_points": 0,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "5a65726f20706f696e742070726f66696c65",
+                "span": [
+                  0,
+                  18
+                ],
+                "text": "Zero point profile"
+              },
+              {
+                "hex": "78",
+                "span": [
+                  19,
+                  20
+                ],
+                "text": "x"
+              },
+              {
+                "hex": "79",
+                "span": [
+                  21,
+                  22
+                ],
+                "text": "y"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "Buffer",
+            "representation": "ExactSourceLexemes",
+            "rows": [],
+            "source_bytes": 45,
+            "source_sha256": "f3d5b906a0331bde0776191a9cdc1c9f32fe68d22be2816ff6b78557e4c1e403"
+          }
+        },
+        {
+          "command": "chiplot-stream",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [
+              {
+                "hex": "23206e6f2073746f7265642073616d706c6573",
+                "line": 5,
+                "offset": 25
+              }
+            ],
+            "curves": 1,
+            "declaration": {
+              "hex": "30",
+              "span": [
+                23,
+                24
+              ],
+              "text": "0"
+            },
+            "declared_points": 0,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "5a65726f20706f696e742070726f66696c65",
+                "span": [
+                  0,
+                  18
+                ],
+                "text": "Zero point profile"
+              },
+              {
+                "hex": "78",
+                "span": [
+                  19,
+                  20
+                ],
+                "text": "x"
+              },
+              {
+                "hex": "79",
+                "span": [
+                  21,
+                  22
+                ],
+                "text": "y"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "StreamCapture",
+            "representation": "ExactSourceLexemes",
+            "rows": [],
+            "source_bytes": 45,
+            "source_sha256": "f3d5b906a0331bde0776191a9cdc1c9f32fe68d22be2816ff6b78557e4c1e403"
+          }
+        }
+      ],
+      "status": "qualified_native_source_read",
+      "source_unchanged": true
+    },
+    {
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/chiplot/one.chi",
+        "bytes": 48,
+        "sha256": "f96bfe87551b3ed519b9ffd8d01d3f1f5a34d4e687257a06c7f99907121b34a3"
+      },
+      "independent_numeric_oracle": {
+        "implementation": "Python int + Decimal, no binary64 conversion",
+        "identities": [
+          {
+            "sign": 1,
+            "digits": "0",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "9007199254740993",
+            "exponent": 0
+          }
+        ]
+      },
+      "reference": {
+        "status": "read_not_completed",
+        "error_type": "ZeroDivisionError",
+        "error": "float division by zero",
+        "classification": "one_point_uniform_projection_undefined",
+        "partial_fields": {
+          "_audit_creation_method": "From 2-D detector using FIT2D and CIFfile",
+          "_pd_meas_scan_method": "fixed",
+          "_pd_spec_description": "One point profile"
+        },
+        "reading_parity_claimed": false,
+        "qualification": "unchanged pinned failure recorded; native source-reading proof uses primary format and exact independent oracle, no patched reference"
+      },
+      "apis": [
+        {
+          "command": "chiplot",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [],
+            "curves": 1,
+            "declaration": {
+              "hex": "31",
+              "span": [
+                22,
+                23
+              ],
+              "text": "1"
+            },
+            "declared_points": 1,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "4f6e6520706f696e742070726f66696c65",
+                "span": [
+                  0,
+                  17
+                ],
+                "text": "One point profile"
+              },
+              {
+                "hex": "78",
+                "span": [
+                  18,
+                  19
+                ],
+                "text": "x"
+              },
+              {
+                "hex": "79",
+                "span": [
+                  20,
+                  21
+                ],
+                "text": "y"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "PathSnapshot",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 5,
+                "samples": [
+                  {
+                    "lexeme": "-0",
+                    "number": {
+                      "kind": "I64",
+                      "value": 0
+                    },
+                    "offset": 24
+                  },
+                  {
+                    "lexeme": "+0009007199254740993",
+                    "number": {
+                      "kind": "I64",
+                      "value": 9007199254740993
+                    },
+                    "offset": 27
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 48,
+            "source_sha256": "f96bfe87551b3ed519b9ffd8d01d3f1f5a34d4e687257a06c7f99907121b34a3"
+          }
+        },
+        {
+          "command": "chiplot-bytes",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [],
+            "curves": 1,
+            "declaration": {
+              "hex": "31",
+              "span": [
+                22,
+                23
+              ],
+              "text": "1"
+            },
+            "declared_points": 1,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "4f6e6520706f696e742070726f66696c65",
+                "span": [
+                  0,
+                  17
+                ],
+                "text": "One point profile"
+              },
+              {
+                "hex": "78",
+                "span": [
+                  18,
+                  19
+                ],
+                "text": "x"
+              },
+              {
+                "hex": "79",
+                "span": [
+                  20,
+                  21
+                ],
+                "text": "y"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "Buffer",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 5,
+                "samples": [
+                  {
+                    "lexeme": "-0",
+                    "number": {
+                      "kind": "I64",
+                      "value": 0
+                    },
+                    "offset": 24
+                  },
+                  {
+                    "lexeme": "+0009007199254740993",
+                    "number": {
+                      "kind": "I64",
+                      "value": 9007199254740993
+                    },
+                    "offset": 27
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 48,
+            "source_sha256": "f96bfe87551b3ed519b9ffd8d01d3f1f5a34d4e687257a06c7f99907121b34a3"
+          }
+        },
+        {
+          "command": "chiplot-stream",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [],
+            "curves": 1,
+            "declaration": {
+              "hex": "31",
+              "span": [
+                22,
+                23
+              ],
+              "text": "1"
+            },
+            "declared_points": 1,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "4f6e6520706f696e742070726f66696c65",
+                "span": [
+                  0,
+                  17
+                ],
+                "text": "One point profile"
+              },
+              {
+                "hex": "78",
+                "span": [
+                  18,
+                  19
+                ],
+                "text": "x"
+              },
+              {
+                "hex": "79",
+                "span": [
+                  20,
+                  21
+                ],
+                "text": "y"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "StreamCapture",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 5,
+                "samples": [
+                  {
+                    "lexeme": "-0",
+                    "number": {
+                      "kind": "I64",
+                      "value": 0
+                    },
+                    "offset": 24
+                  },
+                  {
+                    "lexeme": "+0009007199254740993",
+                    "number": {
+                      "kind": "I64",
+                      "value": 9007199254740993
+                    },
+                    "offset": 27
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 48,
+            "source_sha256": "f96bfe87551b3ed519b9ffd8d01d3f1f5a34d4e687257a06c7f99907121b34a3"
+          }
+        }
+      ],
+      "status": "qualified_native_source_read",
+      "source_unchanged": true
+    },
+    {
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/chiplot/nonfinite.chi",
+        "bytes": 60,
+        "sha256": "bd4e98a169f6ec1ca56a27d8a0ef75bb8426796e064e753ed8f5dd73507ebad1"
+      },
+      "independent_numeric_oracle": {
+        "implementation": "Python int + Decimal, no binary64 conversion",
+        "identities": [
+          {
+            "sign": 0,
+            "digits": "0",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "",
+            "exponent": "n"
+          },
+          {
+            "sign": 0,
+            "digits": "1",
+            "exponent": 0
+          },
+          {
+            "sign": 1,
+            "digits": "0",
+            "exponent": "F"
+          },
+          {
+            "sign": 0,
+            "digits": "2",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "0",
+            "exponent": "F"
+          }
+        ]
+      },
+      "reference": {
+        "status": "read_not_completed",
+        "error_type": "TypeError",
+        "error": "'<' not supported between instances of 'str' and 'int'",
+        "classification": "pinned_string_vs_integer_step_bug",
+        "partial_fields": {
+          "_audit_creation_method": "From 2-D detector using FIT2D and CIFfile",
+          "_pd_meas_scan_method": "fixed",
+          "_pd_spec_description": "Explicit nonfinite extension",
+          "_pd_meas_2theta_range_inc": "1.0000"
+        },
+        "reading_parity_claimed": false,
+        "qualification": "unchanged pinned failure recorded; native source-reading proof uses primary format and exact independent oracle, no patched reference"
+      },
+      "apis": [
+        {
+          "command": "chiplot",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [],
+            "curves": 1,
+            "declaration": {
+              "hex": "33",
+              "span": [
+                33,
+                34
+              ],
+              "text": "3"
+            },
+            "declared_points": 3,
+            "diagnostics": [
+              "nonfinite text scalar extension retained; no finite numerical/grid interpretation implied"
+            ],
+            "headers": [
+              {
+                "hex": "4578706c69636974206e6f6e66696e69746520657874656e73696f6e",
+                "span": [
+                  0,
+                  28
+                ],
+                "text": "Explicit nonfinite extension"
+              },
+              {
+                "hex": "78",
+                "span": [
+                  29,
+                  30
+                ],
+                "text": "x"
+              },
+              {
+                "hex": "79",
+                "span": [
+                  31,
+                  32
+                ],
+                "text": "y"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "PathSnapshot",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 5,
+                "samples": [
+                  {
+                    "lexeme": "0",
+                    "number": {
+                      "kind": "I64",
+                      "value": 0
+                    },
+                    "offset": 35
+                  },
+                  {
+                    "lexeme": "nan",
+                    "number": {
+                      "kind": "NonFinite"
+                    },
+                    "offset": 37
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "samples": [
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 41
+                  },
+                  {
+                    "lexeme": "-inf",
+                    "number": {
+                      "kind": "NonFinite"
+                    },
+                    "offset": 43
+                  }
+                ]
+              },
+              {
+                "line": 7,
+                "samples": [
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 48
+                  },
+                  {
+                    "lexeme": "+Infinity",
+                    "number": {
+                      "kind": "NonFinite"
+                    },
+                    "offset": 50
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 60,
+            "source_sha256": "bd4e98a169f6ec1ca56a27d8a0ef75bb8426796e064e753ed8f5dd73507ebad1"
+          }
+        },
+        {
+          "command": "chiplot-bytes",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [],
+            "curves": 1,
+            "declaration": {
+              "hex": "33",
+              "span": [
+                33,
+                34
+              ],
+              "text": "3"
+            },
+            "declared_points": 3,
+            "diagnostics": [
+              "nonfinite text scalar extension retained; no finite numerical/grid interpretation implied"
+            ],
+            "headers": [
+              {
+                "hex": "4578706c69636974206e6f6e66696e69746520657874656e73696f6e",
+                "span": [
+                  0,
+                  28
+                ],
+                "text": "Explicit nonfinite extension"
+              },
+              {
+                "hex": "78",
+                "span": [
+                  29,
+                  30
+                ],
+                "text": "x"
+              },
+              {
+                "hex": "79",
+                "span": [
+                  31,
+                  32
+                ],
+                "text": "y"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "Buffer",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 5,
+                "samples": [
+                  {
+                    "lexeme": "0",
+                    "number": {
+                      "kind": "I64",
+                      "value": 0
+                    },
+                    "offset": 35
+                  },
+                  {
+                    "lexeme": "nan",
+                    "number": {
+                      "kind": "NonFinite"
+                    },
+                    "offset": 37
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "samples": [
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 41
+                  },
+                  {
+                    "lexeme": "-inf",
+                    "number": {
+                      "kind": "NonFinite"
+                    },
+                    "offset": 43
+                  }
+                ]
+              },
+              {
+                "line": 7,
+                "samples": [
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 48
+                  },
+                  {
+                    "lexeme": "+Infinity",
+                    "number": {
+                      "kind": "NonFinite"
+                    },
+                    "offset": 50
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 60,
+            "source_sha256": "bd4e98a169f6ec1ca56a27d8a0ef75bb8426796e064e753ed8f5dd73507ebad1"
+          }
+        },
+        {
+          "command": "chiplot-stream",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [],
+            "curves": 1,
+            "declaration": {
+              "hex": "33",
+              "span": [
+                33,
+                34
+              ],
+              "text": "3"
+            },
+            "declared_points": 3,
+            "diagnostics": [
+              "nonfinite text scalar extension retained; no finite numerical/grid interpretation implied"
+            ],
+            "headers": [
+              {
+                "hex": "4578706c69636974206e6f6e66696e69746520657874656e73696f6e",
+                "span": [
+                  0,
+                  28
+                ],
+                "text": "Explicit nonfinite extension"
+              },
+              {
+                "hex": "78",
+                "span": [
+                  29,
+                  30
+                ],
+                "text": "x"
+              },
+              {
+                "hex": "79",
+                "span": [
+                  31,
+                  32
+                ],
+                "text": "y"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "StreamCapture",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 5,
+                "samples": [
+                  {
+                    "lexeme": "0",
+                    "number": {
+                      "kind": "I64",
+                      "value": 0
+                    },
+                    "offset": 35
+                  },
+                  {
+                    "lexeme": "nan",
+                    "number": {
+                      "kind": "NonFinite"
+                    },
+                    "offset": 37
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "samples": [
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 41
+                  },
+                  {
+                    "lexeme": "-inf",
+                    "number": {
+                      "kind": "NonFinite"
+                    },
+                    "offset": 43
+                  }
+                ]
+              },
+              {
+                "line": 7,
+                "samples": [
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 48
+                  },
+                  {
+                    "lexeme": "+Infinity",
+                    "number": {
+                      "kind": "NonFinite"
+                    },
+                    "offset": 50
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 60,
+            "source_sha256": "bd4e98a169f6ec1ca56a27d8a0ef75bb8426796e064e753ed8f5dd73507ebad1"
+          }
+        }
+      ],
+      "status": "qualified_native_source_read",
+      "source_unchanged": true
+    },
+    {
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/chiplot/precision.chi",
+        "bytes": 128,
+        "sha256": "b218caf7dec3d49c85055c4a8204cf99edb8f7992e67cd978b04cf903d728267"
+      },
+      "independent_numeric_oracle": {
+        "implementation": "Python int + Decimal, no binary64 conversion",
+        "identities": [
+          {
+            "sign": 1,
+            "digits": "0",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "9223372036854775807",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "1",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "18446744073709551615",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "2",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "123456789012345678901234567890123456789",
+            "exponent": -38
+          },
+          {
+            "sign": 0,
+            "digits": "3",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "1",
+            "exponent": -999
+          }
+        ]
+      },
+      "reference": {
+        "status": "read_not_completed",
+        "error_type": "TypeError",
+        "error": "'<' not supported between instances of 'str' and 'int'",
+        "classification": "pinned_string_vs_integer_step_bug",
+        "partial_fields": {
+          "_audit_creation_method": "From 2-D detector using FIT2D and CIFfile",
+          "_pd_meas_scan_method": "fixed",
+          "_pd_spec_description": "Exact text and extremes",
+          "_pd_meas_2theta_range_inc": "1.0000"
+        },
+        "reading_parity_claimed": false,
+        "qualification": "unchanged pinned failure recorded; native source-reading proof uses primary format and exact independent oracle, no patched reference"
+      },
+      "apis": [
+        {
+          "command": "chiplot",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [],
+            "curves": 1,
+            "declaration": {
+              "hex": "34",
+              "span": [
+                28,
+                29
+              ],
+              "text": "4"
+            },
+            "declared_points": 4,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "4578616374207465787420616e642065787472656d6573",
+                "span": [
+                  0,
+                  23
+                ],
+                "text": "Exact text and extremes"
+              },
+              {
+                "hex": "78",
+                "span": [
+                  24,
+                  25
+                ],
+                "text": "x"
+              },
+              {
+                "hex": "79",
+                "span": [
+                  26,
+                  27
+                ],
+                "text": "y"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "PathSnapshot",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 5,
+                "samples": [
+                  {
+                    "lexeme": "-0",
+                    "number": {
+                      "kind": "I64",
+                      "value": 0
+                    },
+                    "offset": 30
+                  },
+                  {
+                    "lexeme": "9223372036854775807",
+                    "number": {
+                      "kind": "I64",
+                      "value": 9223372036854775807
+                    },
+                    "offset": 33
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "samples": [
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 53
+                  },
+                  {
+                    "lexeme": "18446744073709551615",
+                    "number": {
+                      "kind": "U64",
+                      "value": 18446744073709551615
+                    },
+                    "offset": 55
+                  }
+                ]
+              },
+              {
+                "line": 7,
+                "samples": [
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 76
+                  },
+                  {
+                    "lexeme": "1.23456789012345678901234567890123456789",
+                    "number": {
+                      "kind": "Decimal"
+                    },
+                    "offset": 78
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "samples": [
+                  {
+                    "lexeme": "3",
+                    "number": {
+                      "kind": "I64",
+                      "value": 3
+                    },
+                    "offset": 119
+                  },
+                  {
+                    "lexeme": "1e-999",
+                    "number": {
+                      "kind": "Decimal"
+                    },
+                    "offset": 121
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 128,
+            "source_sha256": "b218caf7dec3d49c85055c4a8204cf99edb8f7992e67cd978b04cf903d728267"
+          }
+        },
+        {
+          "command": "chiplot-bytes",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [],
+            "curves": 1,
+            "declaration": {
+              "hex": "34",
+              "span": [
+                28,
+                29
+              ],
+              "text": "4"
+            },
+            "declared_points": 4,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "4578616374207465787420616e642065787472656d6573",
+                "span": [
+                  0,
+                  23
+                ],
+                "text": "Exact text and extremes"
+              },
+              {
+                "hex": "78",
+                "span": [
+                  24,
+                  25
+                ],
+                "text": "x"
+              },
+              {
+                "hex": "79",
+                "span": [
+                  26,
+                  27
+                ],
+                "text": "y"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "Buffer",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 5,
+                "samples": [
+                  {
+                    "lexeme": "-0",
+                    "number": {
+                      "kind": "I64",
+                      "value": 0
+                    },
+                    "offset": 30
+                  },
+                  {
+                    "lexeme": "9223372036854775807",
+                    "number": {
+                      "kind": "I64",
+                      "value": 9223372036854775807
+                    },
+                    "offset": 33
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "samples": [
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 53
+                  },
+                  {
+                    "lexeme": "18446744073709551615",
+                    "number": {
+                      "kind": "U64",
+                      "value": 18446744073709551615
+                    },
+                    "offset": 55
+                  }
+                ]
+              },
+              {
+                "line": 7,
+                "samples": [
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 76
+                  },
+                  {
+                    "lexeme": "1.23456789012345678901234567890123456789",
+                    "number": {
+                      "kind": "Decimal"
+                    },
+                    "offset": 78
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "samples": [
+                  {
+                    "lexeme": "3",
+                    "number": {
+                      "kind": "I64",
+                      "value": 3
+                    },
+                    "offset": 119
+                  },
+                  {
+                    "lexeme": "1e-999",
+                    "number": {
+                      "kind": "Decimal"
+                    },
+                    "offset": 121
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 128,
+            "source_sha256": "b218caf7dec3d49c85055c4a8204cf99edb8f7992e67cd978b04cf903d728267"
+          }
+        },
+        {
+          "command": "chiplot-stream",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [],
+            "curves": 1,
+            "declaration": {
+              "hex": "34",
+              "span": [
+                28,
+                29
+              ],
+              "text": "4"
+            },
+            "declared_points": 4,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "4578616374207465787420616e642065787472656d6573",
+                "span": [
+                  0,
+                  23
+                ],
+                "text": "Exact text and extremes"
+              },
+              {
+                "hex": "78",
+                "span": [
+                  24,
+                  25
+                ],
+                "text": "x"
+              },
+              {
+                "hex": "79",
+                "span": [
+                  26,
+                  27
+                ],
+                "text": "y"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "StreamCapture",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 5,
+                "samples": [
+                  {
+                    "lexeme": "-0",
+                    "number": {
+                      "kind": "I64",
+                      "value": 0
+                    },
+                    "offset": 30
+                  },
+                  {
+                    "lexeme": "9223372036854775807",
+                    "number": {
+                      "kind": "I64",
+                      "value": 9223372036854775807
+                    },
+                    "offset": 33
+                  }
+                ]
+              },
+              {
+                "line": 6,
+                "samples": [
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 53
+                  },
+                  {
+                    "lexeme": "18446744073709551615",
+                    "number": {
+                      "kind": "U64",
+                      "value": 18446744073709551615
+                    },
+                    "offset": 55
+                  }
+                ]
+              },
+              {
+                "line": 7,
+                "samples": [
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 76
+                  },
+                  {
+                    "lexeme": "1.23456789012345678901234567890123456789",
+                    "number": {
+                      "kind": "Decimal"
+                    },
+                    "offset": 78
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "samples": [
+                  {
+                    "lexeme": "3",
+                    "number": {
+                      "kind": "I64",
+                      "value": 3
+                    },
+                    "offset": 119
+                  },
+                  {
+                    "lexeme": "1e-999",
+                    "number": {
+                      "kind": "Decimal"
+                    },
+                    "offset": 121
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 128,
+            "source_sha256": "b218caf7dec3d49c85055c4a8204cf99edb8f7992e67cd978b04cf903d728267"
+          }
+        }
+      ],
+      "status": "qualified_native_source_read",
+      "source_unchanged": true
+    },
+    {
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/chiplot/comments-crlf.chi",
+        "bytes": 94,
+        "sha256": "f168251336086ef79158361cce7b5a5b3276db59c7b24b1ead9b2d2ea5bc9a26"
+      },
+      "independent_numeric_oracle": {
+        "implementation": "Python int + Decimal, no binary64 conversion",
+        "identities": [
+          {
+            "sign": 0,
+            "digits": "0",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "1",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "1",
+            "exponent": 0
+          },
+          {
+            "sign": 0,
+            "digits": "2",
+            "exponent": 0
+          }
+        ]
+      },
+      "reference": {
+        "status": "read_not_completed",
+        "error_type": "ValueError",
+        "error": "could not convert string to float: '0,'",
+        "classification": "reference_numeric_or_delimiter_limitation",
+        "partial_fields": {
+          "_audit_creation_method": "From 2-D detector using FIT2D and CIFfile",
+          "_pd_meas_scan_method": "fixed",
+          "_pd_spec_description": "raw title"
+        },
+        "reading_parity_claimed": false,
+        "qualification": "unchanged pinned failure recorded; native source-reading proof uses primary format and exact independent oracle, no patched reference"
+      },
+      "apis": [
+        {
+          "command": "chiplot",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [
+              {
+                "hex": "23206465636c6172656420706f696e7473",
+                "line": 4,
+                "offset": 21
+              },
+              {
+                "hex": "232066756c6c20636f6d6d656e74",
+                "line": 5,
+                "offset": 40
+              },
+              {
+                "hex": "23206669727374",
+                "line": 6,
+                "offset": 61
+              },
+              {
+                "hex": "23207365636f6e64",
+                "line": 8,
+                "offset": 76
+              },
+              {
+                "hex": "23207461696c",
+                "line": 9,
+                "offset": 86
+              }
+            ],
+            "curves": 1,
+            "declaration": {
+              "hex": "322023206465636c6172656420706f696e7473",
+              "span": [
+                19,
+                38
+              ],
+              "text": "2 # declared points"
+            },
+            "declared_points": 2,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "20726177207469746c6520",
+                "span": [
+                  0,
+                  11
+                ],
+                "text": " raw title "
+              },
+              {
+                "hex": "58",
+                "span": [
+                  13,
+                  14
+                ],
+                "text": "X"
+              },
+              {
+                "hex": "59",
+                "span": [
+                  16,
+                  17
+                ],
+                "text": "Y"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "PathSnapshot",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 6,
+                "samples": [
+                  {
+                    "lexeme": "0",
+                    "number": {
+                      "kind": "I64",
+                      "value": 0
+                    },
+                    "offset": 56
+                  },
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 59
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "samples": [
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 72
+                  },
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 74
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 94,
+            "source_sha256": "f168251336086ef79158361cce7b5a5b3276db59c7b24b1ead9b2d2ea5bc9a26"
+          }
+        },
+        {
+          "command": "chiplot-bytes",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [
+              {
+                "hex": "23206465636c6172656420706f696e7473",
+                "line": 4,
+                "offset": 21
+              },
+              {
+                "hex": "232066756c6c20636f6d6d656e74",
+                "line": 5,
+                "offset": 40
+              },
+              {
+                "hex": "23206669727374",
+                "line": 6,
+                "offset": 61
+              },
+              {
+                "hex": "23207365636f6e64",
+                "line": 8,
+                "offset": 76
+              },
+              {
+                "hex": "23207461696c",
+                "line": 9,
+                "offset": 86
+              }
+            ],
+            "curves": 1,
+            "declaration": {
+              "hex": "322023206465636c6172656420706f696e7473",
+              "span": [
+                19,
+                38
+              ],
+              "text": "2 # declared points"
+            },
+            "declared_points": 2,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "20726177207469746c6520",
+                "span": [
+                  0,
+                  11
+                ],
+                "text": " raw title "
+              },
+              {
+                "hex": "58",
+                "span": [
+                  13,
+                  14
+                ],
+                "text": "X"
+              },
+              {
+                "hex": "59",
+                "span": [
+                  16,
+                  17
+                ],
+                "text": "Y"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "Buffer",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 6,
+                "samples": [
+                  {
+                    "lexeme": "0",
+                    "number": {
+                      "kind": "I64",
+                      "value": 0
+                    },
+                    "offset": 56
+                  },
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 59
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "samples": [
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 72
+                  },
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 74
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 94,
+            "source_sha256": "f168251336086ef79158361cce7b5a5b3276db59c7b24b1ead9b2d2ea5bc9a26"
+          }
+        },
+        {
+          "command": "chiplot-stream",
+          "status": "match",
+          "exit_code": 0,
+          "differences": [],
+          "native": {
+            "comments": [
+              {
+                "hex": "23206465636c6172656420706f696e7473",
+                "line": 4,
+                "offset": 21
+              },
+              {
+                "hex": "232066756c6c20636f6d6d656e74",
+                "line": 5,
+                "offset": 40
+              },
+              {
+                "hex": "23206669727374",
+                "line": 6,
+                "offset": 61
+              },
+              {
+                "hex": "23207365636f6e64",
+                "line": 8,
+                "offset": 76
+              },
+              {
+                "hex": "23207461696c",
+                "line": 9,
+                "offset": 86
+              }
+            ],
+            "curves": 1,
+            "declaration": {
+              "hex": "322023206465636c6172656420706f696e7473",
+              "span": [
+                19,
+                38
+              ],
+              "text": "2 # declared points"
+            },
+            "declared_points": 2,
+            "diagnostics": [],
+            "headers": [
+              {
+                "hex": "20726177207469746c6520",
+                "span": [
+                  0,
+                  11
+                ],
+                "text": " raw title "
+              },
+              {
+                "hex": "58",
+                "span": [
+                  13,
+                  14
+                ],
+                "text": "X"
+              },
+              {
+                "hex": "59",
+                "span": [
+                  16,
+                  17
+                ],
+                "text": "Y"
+              }
+            ],
+            "kind": "chiplot",
+            "provenance": "StreamCapture",
+            "representation": "ExactSourceLexemes",
+            "rows": [
+              {
+                "line": 6,
+                "samples": [
+                  {
+                    "lexeme": "0",
+                    "number": {
+                      "kind": "I64",
+                      "value": 0
+                    },
+                    "offset": 56
+                  },
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 59
+                  }
+                ]
+              },
+              {
+                "line": 8,
+                "samples": [
+                  {
+                    "lexeme": "1",
+                    "number": {
+                      "kind": "I64",
+                      "value": 1
+                    },
+                    "offset": 72
+                  },
+                  {
+                    "lexeme": "2",
+                    "number": {
+                      "kind": "I64",
+                      "value": 2
+                    },
+                    "offset": 74
+                  }
+                ]
+              }
+            ],
+            "source_bytes": 94,
+            "source_sha256": "f168251336086ef79158361cce7b5a5b3276db59c7b24b1ead9b2d2ea5bc9a26"
+          }
+        }
+      ],
+      "status": "qualified_native_source_read",
+      "source_unchanged": true
+    }
+  ],
+  "sources_unchanged": true,
+  "probe_unchanged": true,
+  "native_source_reading_qualified": true,
+  "unchanged_reference_read_parity_claimed": false,
+  "patched_reference_used": false
+}

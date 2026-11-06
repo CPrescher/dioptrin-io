@@ -263,6 +263,7 @@ def main():
     parser.add_argument("--upstream", type=pathlib.Path)
     parser.add_argument("--output", type=pathlib.Path)
     parser.add_argument("--independent-module-directory", type=pathlib.Path)
+    parser.add_argument("--cif1-only", action="store_true", help="Revalidate CIF 1.1 after a separately qualified CIF 2.0 capability upgrade")
     parser.add_argument("--reference-worker", type=pathlib.Path)
     parser.add_argument("--method", choices=("loadCIF", "readCIF"))
     parser.add_argument("--transport", choices=("path", "BytesIO"))
@@ -287,6 +288,8 @@ def main():
     actual = fingerprint(cbfimage.__file__)
     records = []
     for spec in manifest["fixtures"]:
+        if args.cif1_only and spec["input_condition"] == "unsupported_cif2":
+            continue
         path = DATA / spec["file"]
         if fingerprint(path)["sha256"] != spec["sha256"]:
             raise ValueError(f"fixture changed: {path}")
@@ -301,6 +304,9 @@ def main():
               "probe": fingerprint(args.probe), "inputs": before, "records": records,
               "inputs_unchanged": before == [fingerprint(p) for p in tracked],
               "supported_version": "CIF 1.1", "remaining_gap": "CIF 2.0 Unicode/composites/triple-quotes/text protocols explicitly UnsupportedVersion"}
+    if args.cif1_only:
+        report["scope"] = "CIF 1.1 revalidation only; CIF 2.0 capability is qualified in a separate continuation"
+        report["remaining_gap"] = "CIF 2.0 acceptance excluded from this CIF 1.1-only audit; historical unsupported-version fixture is retained unchanged"
     independent_sources = [source for r in records for source in
         ([r["independent"]["module"], *r["independent"]["native_modules"]] if "module" in r["independent"] else [])]
     report["independent_modules_unchanged"] = all(fingerprint(source["path"]) == source for source in independent_sources)

@@ -1,4 +1,18 @@
-# CIF grammar and legacy tables/profiles, 2026-11-06
+# CIF 2.0 and low-level readers, 2026-11-06
+
+The [reader continuation](2026-11-06-cif2-lowlevel.json) preserves all 626 input
+outcomes and 237 unchanged reference tests (zero failures/errors, one existing
+skip). Separate proofs qualify CIF 2.0, TIFF controls, Pilatus, NeXus and original
+encoded CBF bytes, retaining independent source/count checks and original FabIO
+failures. The real Pilatus CR-only/separator gap is closed. The earlier series,
+companion, table/profile and CIF 1.1 proofs also pass against the final executable.
+See [combined evidence](../CIF2_LOWLEVEL_PARITY.md) and
+[native checks](2026-11-06-cif2-lowlevel-native-checks.json): 331 Rust tests,
+100 Python controls, all required/no-default checks, 23 isolated features and
+the Rust 1.89 CBF build pass. Full FabIO reading parity remains unestablished
+for the documented layout/type/helper boundaries and qualified source differences.
+
+## Previous CIF grammar and legacy tables/profiles, retained
 
 The [reader continuation](2026-11-06-cif-legacy.json) preserves all 626 input
 outcomes and 237 unchanged reference tests (zero failures/errors, one existing

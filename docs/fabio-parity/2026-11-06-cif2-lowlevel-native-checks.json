@@ -1,0 +1,628 @@
+{
+  "date": "2026-11-06",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "native_implementation_commit": "488c888470442cf237d9b60e13f94973f8457def",
+  "pinned_reference_commit": "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece",
+  "scope": "CIF 2.0 syntax and explicit logical views, low-level TIFF metadata/data/view APIs, source-preserving Pilatus documents and cleaner, read-only NeXus source-graph queries and original encoded CBF payloads; independent source correctness and unchanged reference results remain separate",
+  "required_checks": [
+    {
+      "command": "cargo fmt --check",
+      "exit_code": 0,
+      "seconds": 0.46
+    },
+    {
+      "command": "cargo clippy --locked --all-targets --all-features -- -D warnings",
+      "exit_code": 0,
+      "seconds": 9.033
+    },
+    {
+      "command": "cargo test --locked --all-features",
+      "exit_code": 0,
+      "seconds": 99.569,
+      "tests_passed": 331
+    }
+  ],
+  "isolated_feature_checks": [
+    {
+      "command": "cargo check --locked --no-default-features",
+      "exit_code": 0,
+      "seconds": 1.092
+    },
+    {
+      "command": "cargo test --locked --no-default-features",
+      "exit_code": 0,
+      "seconds": 44.305,
+      "tests_passed": 8
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features bruker -- -D warnings",
+      "exit_code": 0,
+      "seconds": 5.087
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features cbf -- -D warnings",
+      "exit_code": 0,
+      "seconds": 4.885
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features containers -- -D warnings",
+      "exit_code": 0,
+      "seconds": 5.264
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features edf -- -D warnings",
+      "exit_code": 0,
+      "seconds": 4.194
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features esperanto -- -D warnings",
+      "exit_code": 0,
+      "seconds": 4.139
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features fit2d -- -D warnings",
+      "exit_code": 0,
+      "seconds": 4.131
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features fixed -- -D warnings",
+      "exit_code": 0,
+      "seconds": 4.226
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features hdf5 -- -D warnings",
+      "exit_code": 0,
+      "seconds": 4.926
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features jpeg -- -D warnings",
+      "exit_code": 0,
+      "seconds": 4.88
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features jpeg2000 -- -D warnings",
+      "exit_code": 0,
+      "seconds": 4.691
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features kcd -- -D warnings",
+      "exit_code": 0,
+      "seconds": 4.44
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features mar345 -- -D warnings",
+      "exit_code": 0,
+      "seconds": 4.19
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features mpa -- -D warnings",
+      "exit_code": 0,
+      "seconds": 4.409
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features native -- -D warnings",
+      "exit_code": 0,
+      "seconds": 4.327
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features oxford -- -D warnings",
+      "exit_code": 0,
+      "seconds": 4.223
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features raxis -- -D warnings",
+      "exit_code": 0,
+      "seconds": 4.115
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features sparse -- -D warnings",
+      "exit_code": 0,
+      "seconds": 4.611
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features tiff -- -D warnings",
+      "exit_code": 0,
+      "seconds": 5.356
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features wrappers -- -D warnings",
+      "exit_code": 0,
+      "seconds": 5.356
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features xsd -- -D warnings",
+      "exit_code": 0,
+      "seconds": 4.276
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features xcalibur -- -D warnings",
+      "exit_code": 0,
+      "seconds": 4.412
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features columnfile -- -D warnings",
+      "exit_code": 0,
+      "seconds": 4.223
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features chiplot -- -D warnings",
+      "exit_code": 0,
+      "seconds": 4.2
+    }
+  ],
+  "msrv_checks": [
+    {
+      "command": "cargo +1.89.0 check --locked --no-default-features --features cbf",
+      "exit_code": 0,
+      "seconds": 1.267
+    }
+  ],
+  "optional_features_checked": 23,
+  "python_controls": {
+    "command": "env DYLD_LIBRARY_PATH=/opt/homebrew/lib /tmp/dioptrin-io-fabio-suite-env/bin/python -m unittest discover -s scripts -p 'test_*.py'",
+    "exit_code": 0,
+    "tests_passed": 100,
+    "log_sha256": "08af69f6b811f03bb01d04f57f95aaf6be5d52fce009f9258ef1d2d740b3fb7b",
+    "bounded_nonregular_path_controls": "CIF/Pilatus/TIFF/encoded input commands checked under bounded subprocess timeouts"
+  },
+  "full_suite_report": "docs/fabio-parity/2026-11-06-cif2-lowlevel.json",
+  "full_suite_report_sha256": "4e7660f18ca8e4bf4b88c0b52cede3eeaab827d50640c2605c32f165982f914f",
+  "full_suite_exit_code": 1,
+  "full_suite_exit_reason": "All unchanged reference tests and measured source/input qualification gates pass; exact/full FabIO parity remains false for separately qualified reference defects, source views and unsupported grammar/layout/helper capabilities",
+  "full_suite_results": {
+    "run": 237,
+    "failures": [],
+    "errors": [],
+    "skipped": [
+      [
+        "fabio.test.codecs.test_mar345image.TestMar345.test_memoryleak",
+        "very slow test"
+      ]
+    ],
+    "input_module_tests": 24,
+    "codec_module_tests": 213
+  },
+  "input_api_summary": {
+    "read_events": 626,
+    "status": {
+      "qualified": 626
+    },
+    "native_stream": {
+      "match": 626
+    },
+    "discovery": {
+      "explicit_configuration_required": 2,
+      "match": 610,
+      "qualified_outer_integrity_rejection": 3,
+      "conservative_ambiguity": 4,
+      "source_qualified_container_alias": 1,
+      "container_alias": 6
+    },
+    "scopes": {
+      "complete_native_records": 600,
+      "metadata_only": 26
+    },
+    "reference_data_getter_errors": 1,
+    "all_events_qualified": true
+  },
+  "full_reading_parity": false,
+  "prior_report": "docs/fabio-parity/2026-11-06-cif-legacy.json",
+  "prior_read_events": 626,
+  "prior_count_reference_outcomes_unchanged": true,
+  "prior_metadata_summary_unchanged": true,
+  "prior_attribute_summary_unchanged": true,
+  "prior_summary_gates_unchanged": {
+    "summary": true,
+    "metadata_summary": true,
+    "attribute_summary": true,
+    "input_api_summary": true,
+    "header_only_summary": true,
+    "xcalibur_api_summary": true
+  },
+  "cross_run_source_hash_scope": "Upstream-generated files may embed timestamps; cross-run equality checks observed dtype/shape/count/hash outcomes, while every run independently fingerprints its own source bytes.",
+  "additional_reports": {
+    "docs/cif2/2026-11-06-cif2.json": {
+      "sha256": "6f3b82eed76193311b88ef7f741d725b673bfc2d4179b0e55a38e4b8a335d37a",
+      "gate": "qualified",
+      "qualified": true,
+      "probe_sha256": "db4cdd7765590b63c3b45da55cfb9e5969ed7e681478d344524fedc839e4cab2",
+      "immutability_and_reference_gates": {
+        "reference_matches_pinned": true,
+        "inputs_unchanged": true,
+        "independent_modules_unchanged": true
+      }
+    },
+    "docs/tiff-api/2026-11-06-read-apis.json": {
+      "sha256": "fa56141a2a6cdc4916b247319a883ffca3e9d80ff70a7ff07e693d404aa24ccb",
+      "gate": "all_qualified",
+      "qualified": true,
+      "probe_sha256": "db4cdd7765590b63c3b45da55cfb9e5969ed7e681478d344524fedc839e4cab2",
+      "immutability_and_reference_gates": {
+        "policy_sources_unchanged": true,
+        "sources_unchanged": true,
+        "probe_unchanged": true
+      }
+    },
+    "docs/lowlevel/2026-11-06-pilatus-nexus.json": {
+      "sha256": "6b939f2406c9d21b18053c5af1a71c584372b4700585cbcb0a28646eac326a5f",
+      "gate": "qualified",
+      "qualified": true,
+      "probe_sha256": "db4cdd7765590b63c3b45da55cfb9e5969ed7e681478d344524fedc839e4cab2",
+      "immutability_and_reference_gates": {
+        "sources_unchanged": true,
+        "probe_unchanged": true
+      }
+    },
+    "docs/cbf-encoded/2026-11-06-raw.json": {
+      "sha256": "0f04d59bce0d0428a30c91398e38498b11fd3b0ddf1bb153798f9096dc93fa48",
+      "gate": "all_qualified",
+      "qualified": true,
+      "probe_sha256": "db4cdd7765590b63c3b45da55cfb9e5969ed7e681478d344524fedc839e4cab2",
+      "immutability_and_reference_gates": {
+        "sources_unchanged": true,
+        "probe_unchanged": true
+      }
+    },
+    "docs/series/2026-11-06-cif2-lowlevel-regression.json": {
+      "sha256": "488227be4c9c83eb05ded86f2d324fb54ea9dd34a9b367aada1444a468770e5b",
+      "gate": "all_qualified",
+      "qualified": true,
+      "probe_sha256": "db4cdd7765590b63c3b45da55cfb9e5969ed7e681478d344524fedc839e4cab2",
+      "immutability_and_reference_gates": {
+        "sources_unchanged": true,
+        "probe_unchanged": true
+      }
+    },
+    "docs/companions/2026-11-06-cif2-lowlevel-run-regression.json": {
+      "sha256": "aca14eca336835225b97830d71d7e00ec7bc0e585547ace85b11af3eac28d8dd",
+      "gate": "all_qualified",
+      "qualified": true,
+      "probe_sha256": "db4cdd7765590b63c3b45da55cfb9e5969ed7e681478d344524fedc839e4cab2",
+      "immutability_and_reference_gates": {
+        "sources_unchanged": true,
+        "probe_unchanged": true
+      }
+    },
+    "docs/companions/2026-11-06-cif2-lowlevel-projection-regression.json": {
+      "sha256": "2c59e43feb322c3476918a9f907bd54ff03a554f9c167c562e0bf2fc6d30ce50",
+      "gate": "all_projections_qualified",
+      "qualified": true,
+      "probe_sha256": "db4cdd7765590b63c3b45da55cfb9e5969ed7e681478d344524fedc839e4cab2",
+      "immutability_and_reference_gates": {
+        "reference_matches_pinned": true,
+        "legacy_helper_modules_unchanged": true,
+        "sources_unchanged": true,
+        "probe_unchanged": true
+      }
+    },
+    "docs/cif-syntax/2026-11-06-cif2-cif1-regression.json": {
+      "sha256": "a9d0ca068fa9c81ae1e417e0837d43db273e0d8931c2d1fd2932e0800ad63ea3",
+      "gate": "qualified",
+      "qualified": true,
+      "probe_sha256": "db4cdd7765590b63c3b45da55cfb9e5969ed7e681478d344524fedc839e4cab2",
+      "immutability_and_reference_gates": {
+        "reference_matches_pinned": true,
+        "inputs_unchanged": true,
+        "independent_modules_unchanged": true
+      }
+    },
+    "docs/columnfile/2026-11-06-cif2-lowlevel-regression.json": {
+      "sha256": "64dc70fbcfc41d7ba145e59e2e87f836cbac3ee66ac07a1b9ad0279ed08f81b3",
+      "gate": "all_qualified",
+      "qualified": true,
+      "probe_sha256": "db4cdd7765590b63c3b45da55cfb9e5969ed7e681478d344524fedc839e4cab2",
+      "immutability_and_reference_gates": {
+        "sources_unchanged": true,
+        "probe_unchanged": true
+      }
+    },
+    "docs/chiplot/2026-11-06-cif2-lowlevel-regression.json": {
+      "sha256": "fcb917e6e65cc27ed499f1ada2b5c306545c08b83224fe48b0361ca2f7ae1d99",
+      "gate": "native_source_reading_qualified",
+      "qualified": true,
+      "probe_sha256": "db4cdd7765590b63c3b45da55cfb9e5969ed7e681478d344524fedc839e4cab2",
+      "immutability_and_reference_gates": {
+        "sources_unchanged": true,
+        "probe_unchanged": true
+      }
+    }
+  },
+  "api_probe_sha256": "db4cdd7765590b63c3b45da55cfb9e5969ed7e681478d344524fedc839e4cab2",
+  "parity_probe_sha256": "d542f2bf38010c50a444eaad217c41ad745ff14ada1663eb0d6ef84b002449bb",
+  "new_api_events": {
+    "cif2_exact_source_reads": 30,
+    "malformed_cif2_rejections": 51,
+    "valid_default_depth_bound_rejections": 3,
+    "unknown_version_rejections": 3,
+    "tiff_upstream_outer_read_events": 5,
+    "tiff_supplementary_events": 166,
+    "pilatus_document_reads": 27,
+    "nexus_actions": 42,
+    "encoded_payload_complete_captures": 11,
+    "encoded_incomplete_source_rejection": 1
+  },
+  "unchanged_reference_read_parity_claimed_for_failed_helpers": false,
+  "patched_reference_used": false,
+  "series_summary": {
+    "reference_tests": 37,
+    "reference_failures": 0,
+    "reference_errors": 0,
+    "reference_skips": 0,
+    "series_instances": 19,
+    "observed_series_requests": 49,
+    "observed_iterator_yields": 20,
+    "observed_series_successes": 40,
+    "observed_series_errors": 9,
+    "object_open_reads": 25,
+    "filename_helper_calls": 36,
+    "numbered_constructors": 8,
+    "unique_numbered_batches": 2,
+    "numbered_paths_compared": 10010,
+    "native_cursor_actions": 515
+  },
+  "full_suite_fingerprint_gates": {
+    "reference_input_sources_unchanged_during_run": true,
+    "probe_unchanged_during_run": true,
+    "sources_unchanged_during_run": true,
+    "vendored_sources_unchanged_during_run": true,
+    "native_sources_unchanged_during_run": true,
+    "build_files_unchanged_during_run": true,
+    "reference_component_library_unchanged_during_run": true,
+    "reference_pillow_libraries_unchanged_during_run": true,
+    "bridge_unchanged_during_run": true,
+    "explicit_policies_unchanged_during_run": true
+  },
+  "all_full_suite_fingerprints_unchanged": true,
+  "rust_sources_sha256": {
+    "src/binary.rs": "794ddd240ae8dfa3ef313b3392d46b47c8a33b8f825f2b5ad72183269c90bf88",
+    "src/bruker/common.rs": "58ebb4b8bc1e89dba4288caa1224cae78f02812bbce4d911ec3159983c7020bc",
+    "src/bruker/view.rs": "4fb7483ddf6e85120b4a08e959de7c2716ae02e5cebd98d50c2d798ce6d2e059",
+    "src/bruker.rs": "3b7d0ea45d1e418697b96015b38bce2f6dc2c02926b1bdb8cebb76386568d8e0",
+    "src/cbf/document.rs": "f0e6dd547ead39f785c86e7b76c7b6dc880f532c7d8bf0e0f23607624d139962",
+    "src/cbf/header.rs": "5713a8bef504b118dfd07eceff3749e170654f88ed247a4ba9fdcbfb91283766",
+    "src/cbf/syntax/cif2.rs": "427dcb6d2172c87e4c42163618c24425204d16a81e2f739201b4acbc2dd4955e",
+    "src/cbf/syntax.rs": "449cb3e9e9f4bf50134174b128a47d60449cf801b209a806897a5057128fff33",
+    "src/cbf.rs": "cd9249983ddc3142cd7dbaef569b8855f57d42b4a46f5c2d1eef86aa249d38f3",
+    "src/chiplot.rs": "a6b39507c21a231d7579cbd65ff31ffcae73b7b162484f68278851c80236d92d",
+    "src/columnfile.rs": "45bf335382c0d173a7daac9e55b3609ee91989de890df6287e8e14f61660c79b",
+    "src/detector_tiff/mar_schema.rs": "0d224ae8a52443423f144a61604176be37727deec320333fdb4c947581ffb819",
+    "src/detector_tiff.rs": "06cbc9b5a8db291196e6fa3bfab75baeb860c4948dba5dd21811a001160712fd",
+    "src/discovery.rs": "acfac305e21289355c6617c6d78ff0886fc79e852e1a069b0e11482fb269d7cd",
+    "src/dm3.rs": "a7b9ad01a2eac150156c92f2aec088587786ffa90e80c502f1628e0537747b93",
+    "src/edf/recovery.rs": "b8206c62dc3ca88c715f173803aec8c30af85a1f67f4ec39c1a3c1d27eab8cdb",
+    "src/edf.rs": "50efe2c4d2fe7d6783cf73afaaeabe5a53a68f7a0a047c9218d49c7350de942a",
+    "src/esperanto.rs": "d2bb2f34e02000e28810a62479b9f16958c9f7ebe6bc4a9400b41b1841abc8ed",
+    "src/fit2d.rs": "a3dfab6f09927651c98f9561fc497788d9f4736a0795be9c6c37de52de3c2004",
+    "src/ge.rs": "73ef7bbb055d7e90f7fb8ffcef887bd5382b5a82c818f1972558a51d522e4326",
+    "src/hdf5/attributes.rs": "78390402928bde88699434b6261d7f2e6ec8cca63050533c9fa94740b97c4264",
+    "src/hdf5/cache.rs": "2b2927c6cc7bcf4d8daae4add9a72c9fa2414b93dd51950cffb634beaf45c050",
+    "src/hdf5/discovery.rs": "d3fe9f5f5c6abf10084cbc3b7562b443b17359336e0fb102ff5aa28f6f1881aa",
+    "src/hdf5/nexus.rs": "1891400519701d99afde2b302eedb30eeb080234437f88a2f619b676f8b073ba",
+    "src/hdf5/raw.rs": "aa1c6fa0a31303cc769214393039fec9975bff9c1e1d54eca59808e98d3927fc",
+    "src/hdf5/sources.rs": "f79106332878717c9dae77373fcaf9f711e2c36fdf45a06bfaec087c8aa6ec54",
+    "src/hdf5/sparse/numeric.rs": "afb9cec3ca9a4932df277befb60df5a40e30d86395a5021bd5f37a4814defdac",
+    "src/hdf5/sparse/reconstruction.rs": "801f9c866a9e5796e7de966cad42f50e5c128183cf895660d155265cd99df364",
+    "src/hdf5/sparse.rs": "61dcae769a76d61ae84ba0906c54c88077ce8edb6078a53dbcf19ca021efbdcf",
+    "src/hdf5/typed.rs": "6042b1b05f900bfd405c25b86b879e9a29cf9d6bed4395d0315a102fda39b6d0",
+    "src/hdf5/vds.rs": "e8e82c3152e40d589e196a31a5165723f056ed7f2875deb235dc8f587dd68207",
+    "src/hdf5.rs": "5de3fc39ff82b2e562e120aee09ca5b3e321a80ceb0d69e2701a77189d41ba5e",
+    "src/jpeg.rs": "ab2e7dbea38cf2c876e4ad2a73ce74e4e2ee19c28a193365054b33082522f445",
+    "src/jpeg2000.rs": "be8ad6f74a6c161532e73aaae16dff9d37533f6c1181f66eae35fc5ff99ba7e3",
+    "src/kcd.rs": "fb532aa6e23648399ea52e0872edf0f57e45aacfe951c1284c1f46d3e12330e8",
+    "src/lib.rs": "bb092d882419e4c7dd472d0bbf0173ed7cefa3bf0715012fa028f649668a99a5",
+    "src/mar345.rs": "cf527509342046e1725b12ebe5ffbc4ad2f21f6c63b9d820e9c168c9818e16aa",
+    "src/mpa.rs": "6c81d70a3ef9b7f6a95a2f52a7add8aa14c70c15bd21c9ecb252e98b3e4cda9a",
+    "src/mrc.rs": "eb01640b8d6436f363b3b45531050de3ff06f42b4ecb4e3a120bce8ea16bca28",
+    "src/native.rs": "b526d517a3e35d9e020bfa26944b41f4198d5aa6347289d44710402d406f28c2",
+    "src/navigation.rs": "6fe155d07f11fefca9d9ba09c623a235688fcf4d17e6a3083ed88adc73901f68",
+    "src/oxford/ty5.rs": "1ca4411422d7b4ecc6ed574bdc8a5ac592d27f0a2baae0b77ded7a7e457e5136",
+    "src/oxford.rs": "134d222d921b9685483a486177e50984159afa6d91bb850d55f59ee1973c9a0d",
+    "src/pilatus.rs": "555a6fcdc75bef993131bf147ddd1f57d5046db089623c0ae176b69fb1784e02",
+    "src/pixels.rs": "89f9b646e2970e79c77c625529f367f5fe96bd35c9ecf73cad67bbb59dde3c12",
+    "src/pixi.rs": "2522bc7b5cfc0a70f4624d87193fade8075857b08c7cf34fb05ce9f0ddf5b7ee",
+    "src/raster.rs": "f27377deff1a475984240c548cc77890d8d1f53181245ac8654333fdd7a29c1f",
+    "src/raxis.rs": "c0bee389a94056c437a18948996c1449351aefcae9ea9191dd228ce1d63e11db",
+    "src/series.rs": "fd197478fa7206f11411627cb58c4f2bc5952a63173e0544536a813c5c564a64",
+    "src/source.rs": "afd15eef583ecfa7cc44528cb176188d2ec57916202f05aa5f1d01a2f5fc476f",
+    "src/spe.rs": "48849be1954fe507ed36d9eb7ae476b43b2810abe434dcf889165af7df71fb98",
+    "src/tiff/api.rs": "af9b46890c15339a8904064d997cba988cfb0266421b9232aed9ffaac7b720be",
+    "src/tiff/compatibility.rs": "ee3dc5bdd237f58bde81538c46ee6a393793b0632e9c921e867479f3c7a4e541",
+    "src/tiff/group3.rs": "ede0d60ba03fc62e6e707bd2a4f7a06d8fc272f83ba9d0bd1ab62943cb49f1da",
+    "src/tiff/header.rs": "eb73d259c05fea3b03e6d0524ba42d93abf58462db39a7831ed8f48b8113700d",
+    "src/tiff/ifd_view.rs": "75d7ac11299d65d1780a5f8bf1a43649a17f5fe17f95d52f9c00e48d0d21a77b",
+    "src/tiff/jpeg_components.rs": "8cc9ef27459a54f7a6e47ea6e594d5a51bdb0b0820d10c2c93a778f010014c53",
+    "src/tiff/ojpeg.rs": "27ea210bfa75c251d75a396fb949b1d466fe68c67b5e8201cb25f7a81296176a",
+    "src/tiff/thunderscan.rs": "7d299c5032402b5af16f79ec7f66d9609a03046a058fe91b9cc13206673fff2c",
+    "src/tiff/view.rs": "c4f32a6903c98c8030047a217ef572c6f03261e37fe4d4b0724315f5f4dbc2ed",
+    "src/tiff/view_jpeg.rs": "8f8df0d1a26d93e9f15715d9d238e47c7bd420afe8d3c7337004691c0af522e1",
+    "src/tiff/view_ycbcr.rs": "9fbb8713ae4739ef0433441e15412d54ad8920b297652caab687b14c57d9f583",
+    "src/tiff/ycbcr.rs": "12958c127df223a150ee186094d70126a2841d79ccccb68bd3a08d78e4cdaa19",
+    "src/tiff/ycbcr_jpeg.rs": "3a70a695fed2fca125b2609356989c669b3020eeaeaed6d86a4c1c3f2365e679",
+    "src/tiff.rs": "cf2e4d1f637842f4d52c7698c2da1f43c57c162999bd3c39b4f88d4480aa8b69",
+    "src/transport.rs": "9201e70f29c23ee027334f0db48e4965f32c7cbf04720b5d14d84087407c4aa3",
+    "src/wrapped/input.rs": "dfa3474eaa04ad8c00733165f4f104e572f673b8630750b027b724aff88ce337",
+    "src/wrapped.rs": "0d2ed07e6475d8763c6c994d33cafb5ef46436131be1143ec014ec0de6f76633",
+    "src/xcalibur/decomposition.rs": "b3d2d3e0decf3ae69fdfc742fc2ebe623459b98e817550a01efe774a4c886269",
+    "src/xcalibur/run.rs": "f0e998aa761d4cf1a6b93c1b24c13f8077baca0751ef030f3eeb914ab9fbc595",
+    "src/xcalibur.rs": "7a308e59ffd22c11f501e79f618b13bf1d4aa200cf90e23786682003352048d9",
+    "src/xsd.rs": "bcfe7328bc0d9d809dc6abda92d790039069e3829332abcfb300b0379e0ac601"
+  },
+  "build_files_sha256": {
+    "Cargo.toml": "354eebbd257aac3e63af355ab5929804eac219248132f6d324c1d5cc65f1917d",
+    "Cargo.lock": "8e9af361cf4eea8358b408d03af73d23769e286b4cf3dc6090d7e009577aab21",
+    "build.rs": "d2a7178ee320636f7cad875759fb90447e5969fb90737b0a1cf21233b3d2c982"
+  },
+  "bridge_sources_sha256": {
+    "scripts/fabio_suite_parity.py": "01c2e345c60c06dee32a2ed86c7ee5ef30c4d13396f21763a802ab6a9d57cd6b",
+    "scripts/input_reference.py": "5d8fa685b82d918d84c0dfd3a8beb1f49dcc4b1addec332b7390224d080f8115",
+    "scripts/test_input_reference.py": "20381984b08a471c89fa5729d984c650baec617224985d9186e9d1b95bc55709",
+    "scripts/tiff_component_reference.py": "74b7a9fa2900ed7cb143652314d912f0aa44d2b1c358be4d4509cde2a9db3fbe",
+    "scripts/edf_recovery_reference.py": "1d6f13ec7a567d34dd86eafd148a36fa49b5e0b03f5464bae1aeb4054b4f1091",
+    "scripts/thunderscan_reference.py": "d311a75653571d4c9dd7728b128f99bf74ba1e8a58c5dc93c74cd4cc532846d9",
+    "scripts/pillow_planar16_reference.py": "d4e6e41d35c914eeee066ebc466982af37251539eaa7132b5c8f05ad7f8ff5a1",
+    "scripts/metadata_parity.py": "36d190c08896f1dbe6f01659edc8c35cf6207fbf5bd5335e5972e2922e222231",
+    "scripts/test_metadata_parity.py": "4f3536409c38c7219e688e9d3357d52cc5885ef49d8a5b4432395b66fddf96bd",
+    "scripts/metadata_attributes.py": "6c6c4b51d6fdce1a412e4a6a6ab0b9b872381fd7e51fac489643a6d34010573e",
+    "scripts/test_metadata_attributes.py": "afbe0a91c24113fbd3611ae1b16b6f561c1bffb628c2f2b62a7b209e1c17abb2",
+    "scripts/header_reference.py": "1dea4d20e8136148d972efd4c971218a0891cf3b7bc0ff05703c059f15c44fbf",
+    "scripts/xcalibur_reference.py": "525c3f34bace525a4333eec0943f0422295a1522f879c1dc5309034b5e85a1d2",
+    "scripts/test_xcalibur_reference.py": "b0eef707252cc47355598985cc32fbd71972a0d64df1e4fbf8cb9ff6b26fdaec",
+    "scripts/generate_xcalibur_fixtures.py": "706537dd54674c91ae6dd3a78db0f883c9cb61e9e27428f825ec5f4da88dacbb",
+    "scripts/inventory_fabio.py": "639ef41a9367a5e0b322e27f95653b2c65cbf8f8bfb268a369156181185e5cc7",
+    "examples/parity_probe.rs": "33783be1a34371a633997bec651a8a31f74d68a585f44cac52844d139ff9250d",
+    "docs/fabio-2026.6.0-inventory.json": "8d3c118d876b9a6834890dafa736434409281267be0117b014848690d6719a57"
+  },
+  "new_api_test_fixture_license_sha256": {
+    ".gitattributes": "1485458ab503820f31957503dae5fb0096d7fa528563813258a3ece21b2006bd",
+    "examples/api_probe.rs": "f3f6f54c295ac27de9ec1ffe4cf01cf2b3de6c2473ee0a4b3580e3123fb73586",
+    "licenses/native-readers/CIF2-UNICODE-NOTICES.md": "2a6c784adce8dd022de7188d5cbe34f467a0ed105dedf69f9ca12375512de6f1",
+    "licenses/native-readers/FabIO-2026.6.0-copyright.txt": "aeb8c93d322314b41bc5d3315c7ccc7aac3af399e4faff336b0d4c3387e290df",
+    "licenses/native-readers/FabIO-Esperanto-AGI-MIT.txt": "8d4e40507de92fd0d844057849aa91c532149a97eb1dfb7480904a0919170ccb",
+    "licenses/native-readers/FabIO-GE-Pixi-MIT.txt": "bc433da2185654e824faa773e92fb853101576cfc07b9baaab32307bfb6104eb",
+    "licenses/native-readers/FabIO-MAR345-MIT.txt": "2101dae2134bbf929f59e2292810fdadaa58612343a06e7e8f8add021d0e4fc4",
+    "licenses/native-readers/FabIO-Xcalibur-MIT.txt": "49fa8677f8b81883b39109ecefc9681a63adcbf13fd8db83f89e6e16f68ccb6b",
+    "licenses/native-readers/FabIO-discovery-MIT.txt": "887e35b8866f8e4932309ffed38919c35df24f389347eaff1ed3661f4be102e1",
+    "licenses/native-readers/FabIO-series-MIT.txt": "0d149793912130670620e3a6cab8971de1f803c6f885b047ed354cdee6037ecb",
+    "licenses/native-readers/FabIO-sparse-MIT.txt": "2294621c1292ec273f3239586fcc7d3943a6b1d8d774872fa624682e14d08725",
+    "licenses/native-readers/bzip2-0.6.1-LICENSE-MIT.txt": "c8c6324cf2f0f076e3ed5dea4a21f00bd4dd6fce44f72b110bc52e7fe06f6e1e",
+    "licenses/native-readers/caseless-0.2.2-LICENSE.txt": "9a1284e016a7770f3c033a108662a94490419796001b422f5c6738c9ebf486d7",
+    "licenses/native-readers/data-encoding-LICENSE-MIT.txt": "b68ad1a3367b825447089e1f8d6829b97f47a89eb78d2f4ebaef4672f5606186",
+    "licenses/native-readers/jpeg-decoder-0.3.2-LICENSE-MIT": "22b83fb92a50418c7df9564b9c179fa2a0e74f293bc58b72dd7e218fc0902143",
+    "licenses/native-readers/legacy-layouts-MIT.txt": "8a7d23e3e2be6d427e25ce8d9720a165b98009b4e1b954d1dc1338d7c59285f6",
+    "licenses/native-readers/roxmltree-0.21.2-LICENSE-MIT.txt": "fffe218c1e349e1d482a05677f2ce850502f88298174d77f6ac7c04821db7899",
+    "licenses/native-readers/roxmltree-LICENSE-MIT.txt": "fffe218c1e349e1d482a05677f2ce850502f88298174d77f6ac7c04821db7899",
+    "licenses/native-readers/tempfile-3.27.0-LICENSE-MIT.txt": "8b427f5bc501764575e52ba4f9d95673cf8f6d80a86d0d06599852e1a9a20a36",
+    "licenses/native-readers/tinyvec-1.13.3-LICENSE-APACHE.md": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "licenses/native-readers/tinyvec-1.13.3-LICENSE-MIT.md": "fd80a26fbb3f644af1fa994134446702932968519797227e07a1368dea80f0bc",
+    "licenses/native-readers/tinyvec-1.13.3-LICENSE-ZLIB.md": "84b34dd7608f7fb9b17bd588a6bf392bf7de504e2716f024a77d89f1b145a151",
+    "licenses/native-readers/unicode-normalization-0.1.24-COPYRIGHT.txt": "23860c2a7b5d96b21569afedf033469bab9fe14a1b24a35068b8641c578ce24d",
+    "licenses/native-readers/unicode-normalization-0.1.24-LICENSE-APACHE.txt": "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2",
+    "licenses/native-readers/unicode-normalization-0.1.24-LICENSE-MIT.txt": "7b63ecd5f1902af1b63729947373683c32745c16a10e8e6292e2e2dcd7e90ae0",
+    "licenses/native-readers/weezl-0.1.12-LICENSE-MIT": "573f5227db835cd30bbdd3aed3f82615f80119a4d5c82b4daf642dbfe2b6afde",
+    "licenses/native-readers/zune-core-0.5.3-LICENSE-MIT": "d30047bca3b516639339a3c279bb84c3483124fb5a9dafe3c75056a85090e745",
+    "licenses/native-readers/zune-jpeg-0.5.15-LICENSE-MIT": "d30047bca3b516639339a3c279bb84c3483124fb5a9dafe3c75056a85090e745",
+    "scripts/cbf_encoded_reference.py": "bb3fec663e2343f72dcdd262f9d838d330d32f0ab52627bbd9f3e2d71ba1ff65",
+    "scripts/chiplot_reference.py": "a57517a579910c159ee61be38c7cdae2c8a2bd2064f3b71295ad18039472b521",
+    "scripts/cif2_reference.py": "d2fb501b630c65935fc4971817b9cec10f9997be0a791a006e0e3f5d6ceb6820",
+    "scripts/cif_syntax_reference.py": "ea46a1517ddc5a4ce0276a592eb57e3d8f1e4a8fc150144d35e2da4eea560aa1",
+    "scripts/columnfile_reference.py": "f3becebcda1d8968a9cbfb31074654e7601f917eae782df99fb3944b3d2935cb",
+    "scripts/generate_cbf_encoded_fixtures.py": "730edd10ff1700ac9d01d8b32e61d7b67d08b3eec3228cbb0f784cd0c867a550",
+    "scripts/generate_chiplot_fixtures.py": "5cf51a30c480780349bd9ddc225587d34ce220ec82a11befaf7c0f85b85d7664",
+    "scripts/generate_columnfile_fixtures.py": "a377c412c8d0611652f5b4d49e6840955ee391576a8ae75590d8a710926e3fe1",
+    "scripts/generate_tiff_api_fixtures.py": "f5da6518428e1bc88e33339d73c9a1b40844183b38bbef2af51146c9887af622",
+    "scripts/lowlevel_reference.py": "2dd1c1b44ae8bb65e3aca0d38ecdde97e4317f82c219c85ef739139d8e99d782",
+    "scripts/test_cbf_encoded_reference.py": "d2f1c4fb241510d805c187cc180e8c01d89a48b9c63b8a49374b5bcfecac1e8b",
+    "scripts/test_chiplot_reference.py": "185186a2f0a969e9750a4e118cd90de9613de5fccbef9d1a3294d58de5b48f31",
+    "scripts/test_cif2_reference.py": "84ddc1ae933a5f453c5e2ca306a963e670fc3df4d677c07fd70a08099191780a",
+    "scripts/test_cif_syntax_reference.py": "da5d78211d3efe71cdada6e7c92c36ebba006e7e771b48c2cdad268101aff877",
+    "scripts/test_columnfile_reference.py": "3ea493559b16dc1bcbd10b57601dc650ac47344b1336958086d3ccf955213d45",
+    "scripts/test_lowlevel_reference.py": "edb95fa62832ded12abdad89fcedb76fd3b24897b9bbc6cd8cebae1d4466b4da",
+    "scripts/test_tiff_api_reference.py": "fa48897fc118f86a992edcbd24616186522a6689e9492e66761686dfb09e55de",
+    "scripts/tiff_api_reference.py": "6a65f04e97ce74e66846a17a5954b09a44819d5b0e98bd1204684e241ac5ea4e",
+    "tests/cbf_encoded.rs": "ca8bff37d0daa67e05d48c85819d8bbaddcde5f4be376d86ec3a29e32667c560",
+    "tests/cif2_syntax.rs": "02d9b9ca587b0cf8f7065a61d820a7a30465a2fad989115edcbf3d4521759519",
+    "tests/cif_syntax.rs": "c8505cc6f7da819bd9245701aaf27a5bf5df6ce0420b29696f3f2109f59144b1",
+    "tests/data/cbf-encoded/big-endian-label.cbf": "f15e39ecf5a2da3cd692e3b5029aaa3cf055115f077b4bcee50dd3d1e456b969",
+    "tests/data/cbf-encoded/incomplete-escape.cbf": "58b7a3cf4287f1d57e8fc7a744a8ffb89239b4e00ff4b556ddcbc40f592e0acf",
+    "tests/data/cbf-encoded/no-checksum.cbf": "f492263a7c421364216ad4d079aad976819d11c988b7e77569cce3e369c44e36",
+    "tests/data/cbf-encoded/provenance.json": "258dd75070bde7ef91ebb6669fe0f6482377cd4800926707c8ba0d5be09a465d",
+    "tests/data/cbf-encoded/truncated.cbf": "a1bdc8b8e534bfc49307362b6f0f3ccdf05f39e354bebaa07ba4ab33af09f6af",
+    "tests/data/cbf-encoded/unsupported-conversion.cbf": "ac307ea80babc862b698f5d04cbf36ef1e681dff9b79520ce9c7c870139b244f",
+    "tests/data/cbf-encoded/valid.cbf": "e50b41327f3c429a436d2c89490dc01f13ce4c1d7f43bcfe629193da8b7a38ab",
+    "tests/data/cbf-encoded/wrong-checksum.cbf": "5effb41ee4e7198e0a2c502c7a95b4abda35f75fb1f7369c30faa1939ee02635",
+    "tests/data/cif2/LICENSE": "4c21aa73b2cd58976448e7e01f8b787bc67d811d1bfef44a14016be4693a88b6",
+    "tests/data/cif2/adjacent-lists.cif": "893bce97b38840e090691e3177d5a1fda7f97042a894d5aecdca7725cddced1e",
+    "tests/data/cif2/adjacent-values.cif": "df8fcff2d64e82ef49443fd4860d9b23b858310ad7bf9385c55b9143a7d07469",
+    "tests/data/cif2/bad-heading.cif": "1eaae620ba931319121bbff1c4b4515e2c537b864bbff59d4b451a9f9b571911",
+    "tests/data/cif2/bare-key.cif": "3b21b97ba5536aeeeca6c45d111992fc04f486e711f497030952050af57aa924",
+    "tests/data/cif2/comment-after-colon.cif": "73f842bc9d58dfa6bb80a308dc21272348e64c88a5b2d93bf720a0b5842d9ba4",
+    "tests/data/cif2/depth65.cif": "6121179027fb19b0be742a4f33d5aa4069cc29cf36b1ae2101cbc93a4f15696d",
+    "tests/data/cif2/duplicate-canonical-block.cif": "3ccab2557bd2b5bf71a89279955b6b78a91b50a4ad4579d7cc145dd5ce904d65",
+    "tests/data/cif2/duplicate-canonical-name.cif": "a4ca0c392536f5ed2b74b3700fe7a924b0e2bfcaf92fb43f5e47ba61b798b065",
+    "tests/data/cif2/duplicate-folded-name.cif": "5b8522738f3ecd01a856f777a3d3a9192924cee58fb256222ae1dcf3c9040d3b",
+    "tests/data/cif2/duplicate-table.cif": "8694d63b64cd5fff53c09657179b3a39bfc840cd4a6bec0fcdec053c10621e47",
+    "tests/data/cif2/forbidden-mid-bom.cif": "c9000bae7cbaab91db8232edfd1dc20aca9313983680fa84a47bf6678c1c870f",
+    "tests/data/cif2/forbidden-noncharacter.cif": "5b193906161a591789a71b648119b243110829a483568ac6bd9fa2c16dc58255",
+    "tests/data/cif2/header-only.cif": "489581b8efee886f0c109f3e161879604196089f40cc9c01aedd06eb07111c52",
+    "tests/data/cif2/invalid-utf8.cif": "1a9dfaa09fd43d9590f9bd948c005e37d9f032ca90ab03724f9ef94ef6d4a52a",
+    "tests/data/cif2/key-colon-space.cif": "7d1e0f917fb6ecd258994d0df5522cd8ff64858b68fc84a27c75559a77768a1f",
+    "tests/data/cif2/loops-frames.cif": "c45c0b9e7779da5b20ab9c9ba64c5a3a2f952357075fe2b85ef0498490b42c32",
+    "tests/data/cif2/missing-table-value.cif": "8aafc846544c3120217217b56f1b1b0a2511a10b5c800b5310beb21c09d1456c",
+    "tests/data/cif2/nested-frame.cif": "a507f247372f1de54dfb09051365207615d4034f821dd579e6a599b355d0c5c8",
+    "tests/data/cif2/nested-unicode.cif": "9fab18dc63eb4ef1e6e982de8718e103f733d6afe8930a82690c296380067aac",
+    "tests/data/cif2/protocol-cr.cif": "11afce74c0f942a801592efc52ac0814a64b57a0a85879b7fcb40a42716d8cd4",
+    "tests/data/cif2/protocol-crlf.cif": "326501fb6ba305fdb5294a3c87db6907b2ce7cf503fa50cf15280e944aff4fa7",
+    "tests/data/cif2/protocol-lf.cif": "3b0c48ba9260442e934adbf252595ea6c346fd2e4ac1ae79a5ba6057152010af",
+    "tests/data/cif2/provenance.json": "6299dd60fcbcca53c1d496aa01955704b56d600d43dde0b06c5dc97b3dbf08dd",
+    "tests/data/cif2/punctuation.cif": "0eef63fd1679dc1745924be6e4c850c7173740189f6ac64332f9713c94294063",
+    "tests/data/cif2/quote-embedding.cif": "a91b61c93574add8d47767b38bc6a7d2f32895bc9320dfc8866e2a6f5829dc3b",
+    "tests/data/cif2/unclosed-list.cif": "33092bdb13ecde0ea7cf35e4de3814263be97fe8151ea92731c153dc87f320e9",
+    "tests/data/cif2/unicode-long-names.cif": "39725e61f310a28bf8e58743971e025d0e22252eacc96f8a716ddfef7e722803",
+    "tests/data/cif2/unknown-version.cif": "0dbb0a4b780b14acd2941d5a53ab80387bf5b1b58f06979d1499019291101567",
+    "tests/data/cif2/wrong-closer.cif": "3e2022077f7058598d32ab42058b15d9ec92b239804be34b1ed27088cec16225",
+    "tests/data/lowlevel/master.h5": "b4143157cb84a905ddfaa67a16092c350d1abc94d6a53a6dc11d8c002780eee6",
+    "tests/data/lowlevel/nexus-unicode.h5": "04e1d1f4062701a1a9e8035139410e5fd04430cecd9b39cd39810c64d4654919",
+    "tests/data/lowlevel/nexus.h5": "19a178ad472f26a4014bf55502c68d87124ce6429ab039bcecde1c55db06af8d",
+    "tests/data/lowlevel/pilatus-continuation.txt": "047d2bc966dbcb3861d453ad0c8327c336bf9e7d9688677cbfd7af159c37571e",
+    "tests/data/lowlevel/pilatus-cr-continuation.txt": "081521d374317b393fc673646133b4c56589f7cde8e0e7955ea15590839fd9c8",
+    "tests/data/lowlevel/pilatus-cr-only.txt": "2fdf3debf5bbf7a15bab697b7defb637b18c4f2114d3f425697f78f18eeeac37",
+    "tests/data/lowlevel/pilatus-empty.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tests/data/lowlevel/pilatus-invalid.txt": "7b1cb97ab5a70d734669f3724603b68053dd0047cd8c69a787459de3e5976a23",
+    "tests/data/lowlevel/pilatus-one-token.txt": "cbebbc310788aeecfe6e0f1888ba029b5d396330a6525862bfc6d2e3183b1972",
+    "tests/data/lowlevel/pilatus-trailing-spaces.txt": "eeee2772b1e666f59b0cc2698590dadf55fb1c9ff073a098ab768a035cb22f81",
+    "tests/data/lowlevel/pilatus-universal-lines.txt": "4b86bb589580164b7628a928474bfc1eaa6166c4fa51e89bd273757b666267e1",
+    "tests/data/lowlevel/pilatus.txt": "283d20926b3e9742ac23ca39e2906f299cbd5b3aa93af0495960be0df00f21dc",
+    "tests/data/lowlevel/provenance.json": "2149d8ff5d78fd59ea58e40a93ca576cc441d9fa8b1195c9680115995bd19f06",
+    "tests/data/lowlevel/relay.h5": "b1b087d630a4c94c4bba80f3a0e71693cd3cb76d0fcacc6ee075ca3ac086781a",
+    "tests/data/tiff-api/empty-ifd.tif": "1ce397a187d135876fec3bfb2adeed0a66a8cc8c1ad76d36e6f0ab834f320fc6",
+    "tests/data/tiff-api/missing-bytecounts.tif": "f8726ad4e1fd45a81aebeab9dfe117fbd940a1f303569f0dc72c909410cbf1d1",
+    "tests/data/tiff-api/packbits-one.tif": "f54dc960f25e23af1909017f65af1be6322495d104c957ab8e7607964cb86f94",
+    "tests/data/tiff-api/palette8.tif": "70d19eacca3c206c3d74e658f327b21a1c6d9ff68c07a751898a962a99eb2944",
+    "tests/data/tiff-api/provenance.json": "3145078b9d3288d988782130b70dcffc028107008ed96e7725e1cf5c1c6b574e",
+    "tests/data/tiff-api/rgb-budget.tif": "2cb54ffa57f54c414fe6156e8df7d743efcf76506da49079e403bf1905e1c98b",
+    "tests/data/tiff-api/rgb8.tif": "952a5811eac9fb2d94f35221782b280246eac5efc1bed7a9b121ca1f7ecd495a",
+    "tests/data/tiff-api/stack-nonmonotonic.tif": "28291d7b354a84e56b20092892096e3bb145c4ef47b83a434b3ca0072c4c21f7",
+    "tests/data/tiff-api/strips.tif": "dc254c59bdef27b0f07443b676db6328f0a68c1ecffdd3067a4b522ba9bcf227",
+    "tests/data/tiff-api/white.tif": "f93500e78b5c6c4dc4d7eb661177e8581a4025f9687771052d260a0833ad0650",
+    "tests/nexus_api.rs": "c1489c12ec15ebd7244427dde082f81b23b63ee3370ca92fcc0939df374c6945",
+    "tests/pilatus_api.rs": "beadfe1a050058b147ca9b047ae6e89f9f8582ed17d759d7837b2b35c54eace8",
+    "tests/tiff_api.rs": "810f7a4c104bc9aef91bb74a6c8f3666feb8953259daa10075f0d47a0079e24c"
+  },
+  "external_manifest_environment": {
+    "CONTAINER_PARITY_MANIFEST": "/tmp/dioptrin-containers-upstream.json",
+    "FIXED_PARITY_MANIFEST": "/tmp/dioptrin-fixed-upstream.json",
+    "ESPERANTO_PARITY_MANIFEST": "/tmp/dioptrin-esperanto-upstream.json",
+    "MAR345_PARITY_MANIFEST": "/tmp/dioptrin-mar345-upstream.json"
+  },
+  "external_manifest_sha256": {
+    "/tmp/dioptrin-containers-upstream.json": "ef20a19a14847c2d1a39f49053d4657eda6f16d813ace5b73f4475c9b1c7ec8f",
+    "/tmp/dioptrin-fixed-upstream.json": "208b3e42e28126077f0f01ca7119f7a927eee5c68cbe4a05fbd44826a8a43a06",
+    "/tmp/dioptrin-esperanto-upstream.json": "ae0619810b4147f7101f0375b79c567bce21357d2d0b5cc39aeee6c69fcdab2f",
+    "/tmp/dioptrin-mar345-upstream.json": "5b107a4cd175c7c72630e6c63925baec91bba9d3938c48cb6017d152aba6d0b7"
+  },
+  "additional_tiff_reference_tests": {
+    "run": 3,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "ids": [
+      "fabio.test.test_tiffio.TestTiffIO.test_append",
+      "fabio.test.test_tiffio.TestTiffIO.test_read",
+      "fabio.test.test_tiffio.TestTiffIO.test_write"
+    ]
+  },
+  "additional_api_proof_summary": {
+    "cif2_sources": 29,
+    "cif2_native_calls": 87,
+    "tiff_metadata_queries": 530,
+    "tiff_independent_stored_array_checks": 58,
+    "tiff_independent_view_checks": 58,
+    "pilatus_sources": 9,
+    "nexus_completed_reference_matches": 21,
+    "nexus_separate_reference_failures": 18,
+    "nexus_independent_exact_image_reads": 3,
+    "cbf_encoded_reference_calls": 24
+  },
+  "qualification_contract": "Source correctness, explicit derived views, unsupported versions/layouts, resource-bound rejection, malformed source and original reference failure are distinct; no reference repair, fallback decode or failed-reference parity claim."
+}

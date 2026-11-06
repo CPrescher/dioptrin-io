@@ -1,0 +1,2005 @@
+{
+  "schema": 1,
+  "reference_commit": "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece",
+  "reference_version": "2026.6.0",
+  "contract": "Independent column-table audit: original C decoder, never a repaired cf_io.\n\nFabIO MIT C source is compiled unchanged outside the repository. Its unsafe\ndecoder receives only prevalidated tiny ASCII cases in resource-limited children.\nNo C runtime/dependency is incorporated into dioptrin-io. Binary cf_read_bin is\nan explicit unimplemented stub, not evidence of malformed binary input.\n",
+  "c_oracle": {
+    "sources": [
+      {
+        "path": "/private/tmp/dioptrin-io-fabio-2026.6.0/src/fabio/ext/src/columnfile.c",
+        "bytes": 6576,
+        "sha256": "611d2caf76266720bed9c42b4ef66d5da1f22cceee450a316a13f74b5b7cf7c0"
+      },
+      {
+        "path": "/private/tmp/dioptrin-io-fabio-2026.6.0/src/fabio/ext/include/columnfile.h",
+        "bytes": 1557,
+        "sha256": "1a83de5847afc53230daeaf8328ce101dda69b0300adac160e4e2127f1ff24ab"
+      },
+      {
+        "path": "/private/tmp/dioptrin-io-fabio-2026.6.0/copyright",
+        "bytes": 6398,
+        "sha256": "aeb8c93d322314b41bc5d3315c7ccc7aac3af399e4faff336b0d4c3387e290df"
+      }
+    ],
+    "wrapper": {
+      "path": "/private/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/dioptrin-column-c-oracle-jm2o42wp/oracle.c",
+      "bytes": 1561,
+      "sha256": "572b9e715ee6713a68a138bb194c63465a281e51377ab19d544ff5e90ae5e824"
+    },
+    "binary": {
+      "path": "/private/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/dioptrin-column-c-oracle-jm2o42wp/oracle",
+      "bytes": 51000,
+      "sha256": "21c5bb2339f01697e961f5f117cdbf899966bdbe614e29c9c2351db7cd14180f"
+    },
+    "command": [
+      "cc",
+      "-std=c99",
+      "-O0",
+      "-I",
+      "/tmp/dioptrin-io-fabio-2026.6.0/src/fabio/ext/include",
+      "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/dioptrin-column-c-oracle-jm2o42wp/oracle.c",
+      "/tmp/dioptrin-io-fabio-2026.6.0/src/fabio/ext/src/columnfile.c",
+      "-o",
+      "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/dioptrin-column-c-oracle-jm2o42wp/oracle"
+    ],
+    "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin\n",
+    "compiler_stderr": "",
+    "license": "MIT; FabIO authors/ESRF; pinned copyright manifest retained by hash",
+    "safety": "prevalidated <=31 labels, <=127 bytes/label, <=64 exact rows, <=2047 bytes/line, <=64KiB source; admitted C allocation requests total <3MiB (8192 rows, no growth); child CPU2s/fileoutput1MiB/core0/wall5s; AS256MiB attempted after exec and actual OS result recorded, not assumed"
+  },
+  "binary_capability": {
+    "classification": "unimplemented_reference_decoder_no_binary_schema",
+    "reference": {
+      "memory_limit": {
+        "attempted_bytes": 268435456,
+        "applied": false,
+        "errno": 22
+      },
+      "abi": {
+        "double_bytes": 8,
+        "int_bytes": 4,
+        "pointer_bytes": 8,
+        "endian": "little",
+        "ieee754_binary64": true
+      },
+      "status": "no_decoder_result"
+    },
+    "native": [
+      {
+        "api": "columnfile",
+        "result": {
+          "status": "error",
+          "stderr": "Error: Error(\"legacy columnfile binary schema is not implemented by the pinned reference; select ASCII explicitly\")\n"
+        }
+      },
+      {
+        "api": "columnfile-bytes",
+        "result": {
+          "status": "error",
+          "stderr": "Error: Error(\"legacy columnfile binary schema is not implemented by the pinned reference; select ASCII explicitly\")\n"
+        }
+      },
+      {
+        "api": "columnfile-stream",
+        "result": {
+          "status": "error",
+          "stderr": "Error: Error(\"legacy columnfile binary schema is not implemented by the pinned reference; select ASCII explicitly\")\n"
+        }
+      }
+    ]
+  },
+  "original_wrapper": {
+    "extension": {
+      "path": "/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/fabio/ext/cf_io.abi3.so",
+      "sha256": "3d873b44a9b953aa7d8a7eb7a0556b11d38d151ad86ce4b6c891f0f2cc96768d"
+    },
+    "reads": [
+      {
+        "api": "cf_io.read",
+        "mode": "a",
+        "status": "error",
+        "type": "OSError",
+        "errno": 9,
+        "error": "[Errno 9] Bad file descriptor"
+      },
+      {
+        "api": "cf_io.read",
+        "mode": "b",
+        "status": "error",
+        "type": "OSError",
+        "errno": 9,
+        "error": "[Errno 9] Bad file descriptor"
+      },
+      {
+        "api": "datIO.columnfile.read",
+        "status": "error",
+        "type": "Exception",
+        "error": "columnfile: read error, file /Users/clemens/Programming/dioptrin-io/tests/data/columnfile/matrix.dat possibly corrupt"
+      }
+    ]
+  },
+  "reference_imports": [
+    {
+      "module": "fabio.datIO",
+      "actual": {
+        "path": "/private/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/fabio/datIO.py",
+        "bytes": 3304,
+        "sha256": "c9bee7f0ebeb263c67aeaee4e7183dbae45aab7a280f6e5f8ea354944d32292a"
+      },
+      "pinned": {
+        "path": "/private/tmp/dioptrin-io-fabio-2026.6.0/src/fabio/datIO.py",
+        "bytes": 3304,
+        "sha256": "c9bee7f0ebeb263c67aeaee4e7183dbae45aab7a280f6e5f8ea354944d32292a"
+      },
+      "matches_pinned": true
+    }
+  ],
+  "reads": [
+    {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/matrix.dat",
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/matrix.dat",
+        "bytes": 57,
+        "sha256": "f563503d1dae96a3e4bf0b85d00f6e924344d4fae8af06ee4a148127f8d148ee"
+      },
+      "reads": [
+        {
+          "api": "columnfile",
+          "native": {
+            "status": "ok",
+            "table": {
+              "comments_hex": [
+                "2320616e676c6520696e74656e736974790a"
+              ],
+              "integer_exactness": [
+                true,
+                true,
+                false,
+                null,
+                null,
+                null
+              ],
+              "kind": "columnfile",
+              "labels_hex": [
+                "616e676c65",
+                "696e74656e73697479"
+              ],
+              "lexemes_hex": [
+                "30",
+                "2d30",
+                "39303037313939323534373430393933",
+                "312e3235652d32",
+                "696e66",
+                "2d696e66"
+              ],
+              "provenance": "PathSnapshot",
+              "representation": "DecodedFloat64View",
+              "shape": [
+                3,
+                2
+              ],
+              "source_bytes": 57,
+              "source_sha256": "f563503d1dae96a3e4bf0b85d00f6e924344d4fae8af06ee4a148127f8d148ee",
+              "value_bits": [
+                "0000000000000000",
+                "8000000000000000",
+                "4340000000000000",
+                "3f8999999999999a",
+                "7ff0000000000000",
+                "fff0000000000000"
+              ],
+              "value_sha256": "bffe0069f0a4eb223610de172317ca7dc1e62924ad3aec3bc590fab05a41480f"
+            }
+          },
+          "differences": []
+        },
+        {
+          "api": "columnfile-bytes",
+          "native": {
+            "status": "ok",
+            "table": {
+              "comments_hex": [
+                "2320616e676c6520696e74656e736974790a"
+              ],
+              "integer_exactness": [
+                true,
+                true,
+                false,
+                null,
+                null,
+                null
+              ],
+              "kind": "columnfile",
+              "labels_hex": [
+                "616e676c65",
+                "696e74656e73697479"
+              ],
+              "lexemes_hex": [
+                "30",
+                "2d30",
+                "39303037313939323534373430393933",
+                "312e3235652d32",
+                "696e66",
+                "2d696e66"
+              ],
+              "provenance": "Buffer",
+              "representation": "DecodedFloat64View",
+              "shape": [
+                3,
+                2
+              ],
+              "source_bytes": 57,
+              "source_sha256": "f563503d1dae96a3e4bf0b85d00f6e924344d4fae8af06ee4a148127f8d148ee",
+              "value_bits": [
+                "0000000000000000",
+                "8000000000000000",
+                "4340000000000000",
+                "3f8999999999999a",
+                "7ff0000000000000",
+                "fff0000000000000"
+              ],
+              "value_sha256": "bffe0069f0a4eb223610de172317ca7dc1e62924ad3aec3bc590fab05a41480f"
+            }
+          },
+          "differences": []
+        },
+        {
+          "api": "columnfile-stream",
+          "native": {
+            "status": "ok",
+            "table": {
+              "comments_hex": [
+                "2320616e676c6520696e74656e736974790a"
+              ],
+              "integer_exactness": [
+                true,
+                true,
+                false,
+                null,
+                null,
+                null
+              ],
+              "kind": "columnfile",
+              "labels_hex": [
+                "616e676c65",
+                "696e74656e73697479"
+              ],
+              "lexemes_hex": [
+                "30",
+                "2d30",
+                "39303037313939323534373430393933",
+                "312e3235652d32",
+                "696e66",
+                "2d696e66"
+              ],
+              "provenance": "Stream",
+              "representation": "DecodedFloat64View",
+              "shape": [
+                3,
+                2
+              ],
+              "source_bytes": 57,
+              "source_sha256": "f563503d1dae96a3e4bf0b85d00f6e924344d4fae8af06ee4a148127f8d148ee",
+              "value_bits": [
+                "0000000000000000",
+                "8000000000000000",
+                "4340000000000000",
+                "3f8999999999999a",
+                "7ff0000000000000",
+                "fff0000000000000"
+              ],
+              "value_sha256": "bffe0069f0a4eb223610de172317ca7dc1e62924ad3aec3bc590fab05a41480f"
+            }
+          },
+          "differences": []
+        }
+      ],
+      "c_oracle_scope": "unsafe malformed/wide/comment cases deliberately excluded",
+      "c_oracle": {
+        "memory_limit": {
+          "attempted_bytes": 268435456,
+          "applied": false,
+          "errno": 22
+        },
+        "abi": {
+          "double_bytes": 8,
+          "int_bytes": 4,
+          "pointer_bytes": 8,
+          "endian": "little",
+          "ieee754_binary64": true
+        },
+        "status": "decoded",
+        "shape": [
+          3,
+          2
+        ],
+        "labels_hex": [
+          "616e676c65",
+          "696e74656e73697479"
+        ],
+        "value_bits": [
+          "0000000000000000",
+          "8000000000000000",
+          "4340000000000000",
+          "3f8999999999999a",
+          "7ff0000000000000",
+          "fff0000000000000"
+        ]
+      },
+      "c_differences": [],
+      "source_unchanged": true
+    },
+    {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/opaque-comments.dat",
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/opaque-comments.dat",
+        "bytes": 58,
+        "sha256": "3efe03d82369c8342dafe6be5e506219baa4299726a3983428400e4a2fe0ba7a"
+      },
+      "reads": [
+        {
+          "api": "columnfile",
+          "native": {
+            "status": "ok",
+            "table": {
+              "comments_hex": [
+                "2320ff20636f756e747320636f756e74730d0a",
+                "202023206578706f7375726520fe0d0a"
+              ],
+              "integer_exactness": [
+                true,
+                true,
+                false
+              ],
+              "kind": "columnfile",
+              "labels_hex": [
+                "ff",
+                "636f756e7473",
+                "636f756e7473"
+              ],
+              "lexemes_hex": [
+                "30",
+                "2d30",
+                "39303037313939323534373430393933"
+              ],
+              "provenance": "PathSnapshot",
+              "representation": "DecodedFloat64View",
+              "shape": [
+                1,
+                3
+              ],
+              "source_bytes": 58,
+              "source_sha256": "3efe03d82369c8342dafe6be5e506219baa4299726a3983428400e4a2fe0ba7a",
+              "value_bits": [
+                "0000000000000000",
+                "8000000000000000",
+                "4340000000000000"
+              ],
+              "value_sha256": "5fe4d9fad1c2262fc0f15048f10d1b4e4e7d19f765a429d28e3233b4a0929485"
+            }
+          },
+          "differences": []
+        },
+        {
+          "api": "columnfile-bytes",
+          "native": {
+            "status": "ok",
+            "table": {
+              "comments_hex": [
+                "2320ff20636f756e747320636f756e74730d0a",
+                "202023206578706f7375726520fe0d0a"
+              ],
+              "integer_exactness": [
+                true,
+                true,
+                false
+              ],
+              "kind": "columnfile",
+              "labels_hex": [
+                "ff",
+                "636f756e7473",
+                "636f756e7473"
+              ],
+              "lexemes_hex": [
+                "30",
+                "2d30",
+                "39303037313939323534373430393933"
+              ],
+              "provenance": "Buffer",
+              "representation": "DecodedFloat64View",
+              "shape": [
+                1,
+                3
+              ],
+              "source_bytes": 58,
+              "source_sha256": "3efe03d82369c8342dafe6be5e506219baa4299726a3983428400e4a2fe0ba7a",
+              "value_bits": [
+                "0000000000000000",
+                "8000000000000000",
+                "4340000000000000"
+              ],
+              "value_sha256": "5fe4d9fad1c2262fc0f15048f10d1b4e4e7d19f765a429d28e3233b4a0929485"
+            }
+          },
+          "differences": []
+        },
+        {
+          "api": "columnfile-stream",
+          "native": {
+            "status": "ok",
+            "table": {
+              "comments_hex": [
+                "2320ff20636f756e747320636f756e74730d0a",
+                "202023206578706f7375726520fe0d0a"
+              ],
+              "integer_exactness": [
+                true,
+                true,
+                false
+              ],
+              "kind": "columnfile",
+              "labels_hex": [
+                "ff",
+                "636f756e7473",
+                "636f756e7473"
+              ],
+              "lexemes_hex": [
+                "30",
+                "2d30",
+                "39303037313939323534373430393933"
+              ],
+              "provenance": "Stream",
+              "representation": "DecodedFloat64View",
+              "shape": [
+                1,
+                3
+              ],
+              "source_bytes": 58,
+              "source_sha256": "3efe03d82369c8342dafe6be5e506219baa4299726a3983428400e4a2fe0ba7a",
+              "value_bits": [
+                "0000000000000000",
+                "8000000000000000",
+                "4340000000000000"
+              ],
+              "value_sha256": "5fe4d9fad1c2262fc0f15048f10d1b4e4e7d19f765a429d28e3233b4a0929485"
+            }
+          },
+          "differences": []
+        }
+      ],
+      "c_oracle_scope": "unsafe malformed/wide/comment cases deliberately excluded",
+      "source_unchanged": true
+    },
+    {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/header-only.dat",
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/header-only.dat",
+        "bytes": 6,
+        "sha256": "8be9c6a7765c8576458b187f446f8aac33adb5eb9b03935eeb4b3f47eb6927f0"
+      },
+      "reads": [
+        {
+          "api": "columnfile",
+          "native": {
+            "status": "ok",
+            "table": {
+              "comments_hex": [
+                "23207820790a"
+              ],
+              "integer_exactness": [],
+              "kind": "columnfile",
+              "labels_hex": [
+                "78",
+                "79"
+              ],
+              "lexemes_hex": [],
+              "provenance": "PathSnapshot",
+              "representation": "DecodedFloat64View",
+              "shape": [
+                0,
+                2
+              ],
+              "source_bytes": 6,
+              "source_sha256": "8be9c6a7765c8576458b187f446f8aac33adb5eb9b03935eeb4b3f47eb6927f0",
+              "value_bits": [],
+              "value_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          "differences": []
+        },
+        {
+          "api": "columnfile-bytes",
+          "native": {
+            "status": "ok",
+            "table": {
+              "comments_hex": [
+                "23207820790a"
+              ],
+              "integer_exactness": [],
+              "kind": "columnfile",
+              "labels_hex": [
+                "78",
+                "79"
+              ],
+              "lexemes_hex": [],
+              "provenance": "Buffer",
+              "representation": "DecodedFloat64View",
+              "shape": [
+                0,
+                2
+              ],
+              "source_bytes": 6,
+              "source_sha256": "8be9c6a7765c8576458b187f446f8aac33adb5eb9b03935eeb4b3f47eb6927f0",
+              "value_bits": [],
+              "value_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          "differences": []
+        },
+        {
+          "api": "columnfile-stream",
+          "native": {
+            "status": "ok",
+            "table": {
+              "comments_hex": [
+                "23207820790a"
+              ],
+              "integer_exactness": [],
+              "kind": "columnfile",
+              "labels_hex": [
+                "78",
+                "79"
+              ],
+              "lexemes_hex": [],
+              "provenance": "Stream",
+              "representation": "DecodedFloat64View",
+              "shape": [
+                0,
+                2
+              ],
+              "source_bytes": 6,
+              "source_sha256": "8be9c6a7765c8576458b187f446f8aac33adb5eb9b03935eeb4b3f47eb6927f0",
+              "value_bits": [],
+              "value_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          },
+          "differences": []
+        }
+      ],
+      "c_oracle_scope": "unsafe malformed/wide/comment cases deliberately excluded",
+      "c_oracle": {
+        "memory_limit": {
+          "attempted_bytes": 268435456,
+          "applied": false,
+          "errno": 22
+        },
+        "abi": {
+          "double_bytes": 8,
+          "int_bytes": 4,
+          "pointer_bytes": 8,
+          "endian": "little",
+          "ieee754_binary64": true
+        },
+        "status": "decoded",
+        "shape": [
+          0,
+          2
+        ],
+        "labels_hex": [
+          "78",
+          "79"
+        ],
+        "value_bits": []
+      },
+      "c_differences": [],
+      "source_unchanged": true
+    },
+    {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/integers.dat",
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/integers.dat",
+        "bytes": 131,
+        "sha256": "3625d02580c75aed48d920dc35e9ac6ec13de333d1799a81806ea394851d05f9"
+      },
+      "reads": [
+        {
+          "api": "columnfile",
+          "native": {
+            "status": "ok",
+            "table": {
+              "comments_hex": [
+                "2320696e74656765720a"
+              ],
+              "integer_exactness": [
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                false
+              ],
+              "kind": "columnfile",
+              "labels_hex": [
+                "696e7465676572"
+              ],
+              "lexemes_hex": [
+                "39323233333732303336383534373735383037",
+                "3138343436373434303733373039353531363135",
+                "2d39323233333732303336383534373735383038",
+                "3138343436373434303733373039353531363136",
+                "2b30303031",
+                "2d30303030",
+                "31303030303030303030303030303030303030303030303030"
+              ],
+              "provenance": "PathSnapshot",
+              "representation": "DecodedFloat64View",
+              "shape": [
+                7,
+                1
+              ],
+              "source_bytes": 131,
+              "source_sha256": "3625d02580c75aed48d920dc35e9ac6ec13de333d1799a81806ea394851d05f9",
+              "value_bits": [
+                "43e0000000000000",
+                "43f0000000000000",
+                "c3e0000000000000",
+                "43f0000000000000",
+                "3ff0000000000000",
+                "8000000000000000",
+                "44ea784379d99db4"
+              ],
+              "value_sha256": "32de243941394621e181925ec83959d0849979d2b043f65a862b292780f9184a"
+            }
+          },
+          "differences": []
+        },
+        {
+          "api": "columnfile-bytes",
+          "native": {
+            "status": "ok",
+            "table": {
+              "comments_hex": [
+                "2320696e74656765720a"
+              ],
+              "integer_exactness": [
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                false
+              ],
+              "kind": "columnfile",
+              "labels_hex": [
+                "696e7465676572"
+              ],
+              "lexemes_hex": [
+                "39323233333732303336383534373735383037",
+                "3138343436373434303733373039353531363135",
+                "2d39323233333732303336383534373735383038",
+                "3138343436373434303733373039353531363136",
+                "2b30303031",
+                "2d30303030",
+                "31303030303030303030303030303030303030303030303030"
+              ],
+              "provenance": "Buffer",
+              "representation": "DecodedFloat64View",
+              "shape": [
+                7,
+                1
+              ],
+              "source_bytes": 131,
+              "source_sha256": "3625d02580c75aed48d920dc35e9ac6ec13de333d1799a81806ea394851d05f9",
+              "value_bits": [
+                "43e0000000000000",
+                "43f0000000000000",
+                "c3e0000000000000",
+                "43f0000000000000",
+                "3ff0000000000000",
+                "8000000000000000",
+                "44ea784379d99db4"
+              ],
+              "value_sha256": "32de243941394621e181925ec83959d0849979d2b043f65a862b292780f9184a"
+            }
+          },
+          "differences": []
+        },
+        {
+          "api": "columnfile-stream",
+          "native": {
+            "status": "ok",
+            "table": {
+              "comments_hex": [
+                "2320696e74656765720a"
+              ],
+              "integer_exactness": [
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                false
+              ],
+              "kind": "columnfile",
+              "labels_hex": [
+                "696e7465676572"
+              ],
+              "lexemes_hex": [
+                "39323233333732303336383534373735383037",
+                "3138343436373434303733373039353531363135",
+                "2d39323233333732303336383534373735383038",
+                "3138343436373434303733373039353531363136",
+                "2b30303031",
+                "2d30303030",
+                "31303030303030303030303030303030303030303030303030"
+              ],
+              "provenance": "Stream",
+              "representation": "DecodedFloat64View",
+              "shape": [
+                7,
+                1
+              ],
+              "source_bytes": 131,
+              "source_sha256": "3625d02580c75aed48d920dc35e9ac6ec13de333d1799a81806ea394851d05f9",
+              "value_bits": [
+                "43e0000000000000",
+                "43f0000000000000",
+                "c3e0000000000000",
+                "43f0000000000000",
+                "3ff0000000000000",
+                "8000000000000000",
+                "44ea784379d99db4"
+              ],
+              "value_sha256": "32de243941394621e181925ec83959d0849979d2b043f65a862b292780f9184a"
+            }
+          },
+          "differences": []
+        }
+      ],
+      "c_oracle_scope": "unsafe malformed/wide/comment cases deliberately excluded",
+      "c_oracle": {
+        "memory_limit": {
+          "attempted_bytes": 268435456,
+          "applied": false,
+          "errno": 22
+        },
+        "abi": {
+          "double_bytes": 8,
+          "int_bytes": 4,
+          "pointer_bytes": 8,
+          "endian": "little",
+          "ieee754_binary64": true
+        },
+        "status": "decoded",
+        "shape": [
+          7,
+          1
+        ],
+        "labels_hex": [
+          "696e7465676572"
+        ],
+        "value_bits": [
+          "43e0000000000000",
+          "43f0000000000000",
+          "c3e0000000000000",
+          "43f0000000000000",
+          "3ff0000000000000",
+          "8000000000000000",
+          "44ea784379d99db4"
+        ]
+      },
+      "c_differences": [],
+      "source_unchanged": true
+    },
+    {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/unterminated-row.dat",
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/unterminated-row.dat",
+        "bytes": 10,
+        "sha256": "f95b64ee62b230efd0fd85dde9216314aca50a4109e210a291dfba69d805fc64"
+      },
+      "reads": [
+        {
+          "api": "columnfile",
+          "native": {
+            "status": "ok",
+            "table": {
+              "comments_hex": [
+                "23207820790a"
+              ],
+              "integer_exactness": [
+                true,
+                true
+              ],
+              "kind": "columnfile",
+              "labels_hex": [
+                "78",
+                "79"
+              ],
+              "lexemes_hex": [
+                "31",
+                "2d30"
+              ],
+              "provenance": "PathSnapshot",
+              "representation": "DecodedFloat64View",
+              "shape": [
+                1,
+                2
+              ],
+              "source_bytes": 10,
+              "source_sha256": "f95b64ee62b230efd0fd85dde9216314aca50a4109e210a291dfba69d805fc64",
+              "value_bits": [
+                "3ff0000000000000",
+                "8000000000000000"
+              ],
+              "value_sha256": "5e9d905ef08923718da5998eb8ae14dc75a714656224d3753b679523d5a268d9"
+            }
+          },
+          "differences": []
+        },
+        {
+          "api": "columnfile-bytes",
+          "native": {
+            "status": "ok",
+            "table": {
+              "comments_hex": [
+                "23207820790a"
+              ],
+              "integer_exactness": [
+                true,
+                true
+              ],
+              "kind": "columnfile",
+              "labels_hex": [
+                "78",
+                "79"
+              ],
+              "lexemes_hex": [
+                "31",
+                "2d30"
+              ],
+              "provenance": "Buffer",
+              "representation": "DecodedFloat64View",
+              "shape": [
+                1,
+                2
+              ],
+              "source_bytes": 10,
+              "source_sha256": "f95b64ee62b230efd0fd85dde9216314aca50a4109e210a291dfba69d805fc64",
+              "value_bits": [
+                "3ff0000000000000",
+                "8000000000000000"
+              ],
+              "value_sha256": "5e9d905ef08923718da5998eb8ae14dc75a714656224d3753b679523d5a268d9"
+            }
+          },
+          "differences": []
+        },
+        {
+          "api": "columnfile-stream",
+          "native": {
+            "status": "ok",
+            "table": {
+              "comments_hex": [
+                "23207820790a"
+              ],
+              "integer_exactness": [
+                true,
+                true
+              ],
+              "kind": "columnfile",
+              "labels_hex": [
+                "78",
+                "79"
+              ],
+              "lexemes_hex": [
+                "31",
+                "2d30"
+              ],
+              "provenance": "Stream",
+              "representation": "DecodedFloat64View",
+              "shape": [
+                1,
+                2
+              ],
+              "source_bytes": 10,
+              "source_sha256": "f95b64ee62b230efd0fd85dde9216314aca50a4109e210a291dfba69d805fc64",
+              "value_bits": [
+                "3ff0000000000000",
+                "8000000000000000"
+              ],
+              "value_sha256": "5e9d905ef08923718da5998eb8ae14dc75a714656224d3753b679523d5a268d9"
+            }
+          },
+          "differences": []
+        }
+      ],
+      "c_oracle_scope": "unsafe malformed/wide/comment cases deliberately excluded",
+      "c_oracle": {
+        "memory_limit": {
+          "attempted_bytes": 268435456,
+          "applied": false,
+          "errno": 22
+        },
+        "abi": {
+          "double_bytes": 8,
+          "int_bytes": 4,
+          "pointer_bytes": 8,
+          "endian": "little",
+          "ieee754_binary64": true
+        },
+        "status": "decoded",
+        "shape": [
+          0,
+          2
+        ],
+        "labels_hex": [
+          "78",
+          "79"
+        ],
+        "value_bits": []
+      },
+      "reference_difference": "Pinned C discards a complete final row without a newline because feof is checked after fgets",
+      "c_differences": [],
+      "source_unchanged": true
+    },
+    {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/wide.dat",
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/wide.dat",
+        "bytes": 213,
+        "sha256": "98a77967288e46394c9bda082957ae31e07a7acfc4bfd68a3beaefdbb8f992a7"
+      },
+      "reads": [
+        {
+          "api": "columnfile",
+          "native": {
+            "status": "ok",
+            "table": {
+              "comments_hex": [
+                "2320633020633120633220633320633420633520633620633720633820633920633130206331312063313220633133206331342063313520633136206331372063313820633139206332302063323120633232206332332063323420633235206332362063323720633238206332392063333020633331206333320a"
+              ],
+              "integer_exactness": [
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true
+              ],
+              "kind": "columnfile",
+              "labels_hex": [
+                "6330",
+                "6331",
+                "6332",
+                "6333",
+                "6334",
+                "6335",
+                "6336",
+                "6337",
+                "6338",
+                "6339",
+                "633130",
+                "633131",
+                "633132",
+                "633133",
+                "633134",
+                "633135",
+                "633136",
+                "633137",
+                "633138",
+                "633139",
+                "633230",
+                "633231",
+                "633232",
+                "633233",
+                "633234",
+                "633235",
+                "633236",
+                "633237",
+                "633238",
+                "633239",
+                "633330",
+                "633331",
+                "633332"
+              ],
+              "lexemes_hex": [
+                "30",
+                "31",
+                "32",
+                "33",
+                "34",
+                "35",
+                "36",
+                "37",
+                "38",
+                "39",
+                "3130",
+                "3131",
+                "3132",
+                "3133",
+                "3134",
+                "3135",
+                "3136",
+                "3137",
+                "3138",
+                "3139",
+                "3230",
+                "3231",
+                "3232",
+                "3233",
+                "3234",
+                "3235",
+                "3236",
+                "3237",
+                "3238",
+                "3239",
+                "3330",
+                "3331",
+                "3332"
+              ],
+              "provenance": "PathSnapshot",
+              "representation": "DecodedFloat64View",
+              "shape": [
+                1,
+                33
+              ],
+              "source_bytes": 213,
+              "source_sha256": "98a77967288e46394c9bda082957ae31e07a7acfc4bfd68a3beaefdbb8f992a7",
+              "value_bits": [
+                "0000000000000000",
+                "3ff0000000000000",
+                "4000000000000000",
+                "4008000000000000",
+                "4010000000000000",
+                "4014000000000000",
+                "4018000000000000",
+                "401c000000000000",
+                "4020000000000000",
+                "4022000000000000",
+                "4024000000000000",
+                "4026000000000000",
+                "4028000000000000",
+                "402a000000000000",
+                "402c000000000000",
+                "402e000000000000",
+                "4030000000000000",
+                "4031000000000000",
+                "4032000000000000",
+                "4033000000000000",
+                "4034000000000000",
+                "4035000000000000",
+                "4036000000000000",
+                "4037000000000000",
+                "4038000000000000",
+                "4039000000000000",
+                "403a000000000000",
+                "403b000000000000",
+                "403c000000000000",
+                "403d000000000000",
+                "403e000000000000",
+                "403f000000000000",
+                "4040000000000000"
+              ],
+              "value_sha256": "adea144801c3828f308f9f3c372514926edb3ad780906055f740b4e315a455a7"
+            }
+          },
+          "differences": []
+        },
+        {
+          "api": "columnfile-bytes",
+          "native": {
+            "status": "ok",
+            "table": {
+              "comments_hex": [
+                "2320633020633120633220633320633420633520633620633720633820633920633130206331312063313220633133206331342063313520633136206331372063313820633139206332302063323120633232206332332063323420633235206332362063323720633238206332392063333020633331206333320a"
+              ],
+              "integer_exactness": [
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true
+              ],
+              "kind": "columnfile",
+              "labels_hex": [
+                "6330",
+                "6331",
+                "6332",
+                "6333",
+                "6334",
+                "6335",
+                "6336",
+                "6337",
+                "6338",
+                "6339",
+                "633130",
+                "633131",
+                "633132",
+                "633133",
+                "633134",
+                "633135",
+                "633136",
+                "633137",
+                "633138",
+                "633139",
+                "633230",
+                "633231",
+                "633232",
+                "633233",
+                "633234",
+                "633235",
+                "633236",
+                "633237",
+                "633238",
+                "633239",
+                "633330",
+                "633331",
+                "633332"
+              ],
+              "lexemes_hex": [
+                "30",
+                "31",
+                "32",
+                "33",
+                "34",
+                "35",
+                "36",
+                "37",
+                "38",
+                "39",
+                "3130",
+                "3131",
+                "3132",
+                "3133",
+                "3134",
+                "3135",
+                "3136",
+                "3137",
+                "3138",
+                "3139",
+                "3230",
+                "3231",
+                "3232",
+                "3233",
+                "3234",
+                "3235",
+                "3236",
+                "3237",
+                "3238",
+                "3239",
+                "3330",
+                "3331",
+                "3332"
+              ],
+              "provenance": "Buffer",
+              "representation": "DecodedFloat64View",
+              "shape": [
+                1,
+                33
+              ],
+              "source_bytes": 213,
+              "source_sha256": "98a77967288e46394c9bda082957ae31e07a7acfc4bfd68a3beaefdbb8f992a7",
+              "value_bits": [
+                "0000000000000000",
+                "3ff0000000000000",
+                "4000000000000000",
+                "4008000000000000",
+                "4010000000000000",
+                "4014000000000000",
+                "4018000000000000",
+                "401c000000000000",
+                "4020000000000000",
+                "4022000000000000",
+                "4024000000000000",
+                "4026000000000000",
+                "4028000000000000",
+                "402a000000000000",
+                "402c000000000000",
+                "402e000000000000",
+                "4030000000000000",
+                "4031000000000000",
+                "4032000000000000",
+                "4033000000000000",
+                "4034000000000000",
+                "4035000000000000",
+                "4036000000000000",
+                "4037000000000000",
+                "4038000000000000",
+                "4039000000000000",
+                "403a000000000000",
+                "403b000000000000",
+                "403c000000000000",
+                "403d000000000000",
+                "403e000000000000",
+                "403f000000000000",
+                "4040000000000000"
+              ],
+              "value_sha256": "adea144801c3828f308f9f3c372514926edb3ad780906055f740b4e315a455a7"
+            }
+          },
+          "differences": []
+        },
+        {
+          "api": "columnfile-stream",
+          "native": {
+            "status": "ok",
+            "table": {
+              "comments_hex": [
+                "2320633020633120633220633320633420633520633620633720633820633920633130206331312063313220633133206331342063313520633136206331372063313820633139206332302063323120633232206332332063323420633235206332362063323720633238206332392063333020633331206333320a"
+              ],
+              "integer_exactness": [
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true
+              ],
+              "kind": "columnfile",
+              "labels_hex": [
+                "6330",
+                "6331",
+                "6332",
+                "6333",
+                "6334",
+                "6335",
+                "6336",
+                "6337",
+                "6338",
+                "6339",
+                "633130",
+                "633131",
+                "633132",
+                "633133",
+                "633134",
+                "633135",
+                "633136",
+                "633137",
+                "633138",
+                "633139",
+                "633230",
+                "633231",
+                "633232",
+                "633233",
+                "633234",
+                "633235",
+                "633236",
+                "633237",
+                "633238",
+                "633239",
+                "633330",
+                "633331",
+                "633332"
+              ],
+              "lexemes_hex": [
+                "30",
+                "31",
+                "32",
+                "33",
+                "34",
+                "35",
+                "36",
+                "37",
+                "38",
+                "39",
+                "3130",
+                "3131",
+                "3132",
+                "3133",
+                "3134",
+                "3135",
+                "3136",
+                "3137",
+                "3138",
+                "3139",
+                "3230",
+                "3231",
+                "3232",
+                "3233",
+                "3234",
+                "3235",
+                "3236",
+                "3237",
+                "3238",
+                "3239",
+                "3330",
+                "3331",
+                "3332"
+              ],
+              "provenance": "Stream",
+              "representation": "DecodedFloat64View",
+              "shape": [
+                1,
+                33
+              ],
+              "source_bytes": 213,
+              "source_sha256": "98a77967288e46394c9bda082957ae31e07a7acfc4bfd68a3beaefdbb8f992a7",
+              "value_bits": [
+                "0000000000000000",
+                "3ff0000000000000",
+                "4000000000000000",
+                "4008000000000000",
+                "4010000000000000",
+                "4014000000000000",
+                "4018000000000000",
+                "401c000000000000",
+                "4020000000000000",
+                "4022000000000000",
+                "4024000000000000",
+                "4026000000000000",
+                "4028000000000000",
+                "402a000000000000",
+                "402c000000000000",
+                "402e000000000000",
+                "4030000000000000",
+                "4031000000000000",
+                "4032000000000000",
+                "4033000000000000",
+                "4034000000000000",
+                "4035000000000000",
+                "4036000000000000",
+                "4037000000000000",
+                "4038000000000000",
+                "4039000000000000",
+                "403a000000000000",
+                "403b000000000000",
+                "403c000000000000",
+                "403d000000000000",
+                "403e000000000000",
+                "403f000000000000",
+                "4040000000000000"
+              ],
+              "value_sha256": "adea144801c3828f308f9f3c372514926edb3ad780906055f740b4e315a455a7"
+            }
+          },
+          "differences": []
+        }
+      ],
+      "c_oracle_scope": "unsafe malformed/wide/comment cases deliberately excluded",
+      "source_unchanged": true
+    },
+    {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/missing-value.dat",
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/missing-value.dat",
+        "bytes": 8,
+        "sha256": "c0dbb79883c2b4fd64c01c68786b0d9c09ddf9c97fcc344f074b85f5078dcfeb"
+      },
+      "reads": [
+        {
+          "api": "columnfile",
+          "native": {
+            "status": "error",
+            "stderr": "Error: Error(\"columnfile row has missing values\")\n"
+          },
+          "differences": []
+        },
+        {
+          "api": "columnfile-bytes",
+          "native": {
+            "status": "error",
+            "stderr": "Error: Error(\"columnfile row has missing values\")\n"
+          },
+          "differences": []
+        },
+        {
+          "api": "columnfile-stream",
+          "native": {
+            "status": "error",
+            "stderr": "Error: Error(\"columnfile row has missing values\")\n"
+          },
+          "differences": []
+        }
+      ],
+      "c_oracle_scope": "unsafe malformed/wide/comment cases deliberately excluded",
+      "source_unchanged": true
+    },
+    {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/invalid-number.dat",
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/invalid-number.dat",
+        "bytes": 16,
+        "sha256": "bfddd92053571e1616aea45dea4e1e358b1bf58d6efebb3b9025635a0b563933"
+      },
+      "reads": [
+        {
+          "api": "columnfile",
+          "native": {
+            "status": "error",
+            "stderr": "Error: Error(\"columnfile invalid float64 token\")\n"
+          },
+          "differences": []
+        },
+        {
+          "api": "columnfile-bytes",
+          "native": {
+            "status": "error",
+            "stderr": "Error: Error(\"columnfile invalid float64 token\")\n"
+          },
+          "differences": []
+        },
+        {
+          "api": "columnfile-stream",
+          "native": {
+            "status": "error",
+            "stderr": "Error: Error(\"columnfile invalid float64 token\")\n"
+          },
+          "differences": []
+        }
+      ],
+      "c_oracle_scope": "unsafe malformed/wide/comment cases deliberately excluded",
+      "source_unchanged": true
+    }
+  ],
+  "sources": {
+    "/Users/clemens/Programming/dioptrin-io/scripts/columnfile_reference.py": {
+      "path": "/Users/clemens/Programming/dioptrin-io/scripts/columnfile_reference.py",
+      "bytes": 14316,
+      "sha256": "f3becebcda1d8968a9cbfb31074654e7601f917eae782df99fb3944b3d2935cb"
+    },
+    "/Users/clemens/Programming/dioptrin-io/scripts/test_columnfile_reference.py": {
+      "path": "/Users/clemens/Programming/dioptrin-io/scripts/test_columnfile_reference.py",
+      "bytes": 3876,
+      "sha256": "3ea493559b16dc1bcbd10b57601dc650ac47344b1336958086d3ccf955213d45"
+    },
+    "/Users/clemens/Programming/dioptrin-io/scripts/generate_columnfile_fixtures.py": {
+      "path": "/Users/clemens/Programming/dioptrin-io/scripts/generate_columnfile_fixtures.py",
+      "bytes": 3114,
+      "sha256": "a377c412c8d0611652f5b4d49e6840955ee391576a8ae75590d8a710926e3fe1"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/columnfile.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/columnfile.rs",
+      "bytes": 12979,
+      "sha256": "45bf335382c0d173a7daac9e55b3609ee91989de890df6287e8e14f61660c79b"
+    },
+    "/Users/clemens/Programming/dioptrin-io/tests/columnfile.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/columnfile.rs",
+      "bytes": 8457,
+      "sha256": "da5340e1bb4e1d9ee116ba515ef9c279752bfaa2fcecb05855cbf835dfa0c289"
+    },
+    "/Users/clemens/Programming/dioptrin-io/Cargo.toml": {
+      "path": "/Users/clemens/Programming/dioptrin-io/Cargo.toml",
+      "bytes": 4245,
+      "sha256": "354eebbd257aac3e63af355ab5929804eac219248132f6d324c1d5cc65f1917d"
+    },
+    "/Users/clemens/Programming/dioptrin-io/Cargo.lock": {
+      "path": "/Users/clemens/Programming/dioptrin-io/Cargo.lock",
+      "bytes": 27876,
+      "sha256": "8e9af361cf4eea8358b408d03af73d23769e286b4cf3dc6090d7e009577aab21"
+    },
+    "/Users/clemens/Programming/dioptrin-io/examples/api_probe.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/examples/api_probe.rs",
+      "bytes": 40375,
+      "sha256": "f3f6f54c295ac27de9ec1ffe4cf01cf2b3de6c2473ee0a4b3580e3123fb73586"
+    },
+    "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/header-only.dat": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/header-only.dat",
+      "bytes": 6,
+      "sha256": "8be9c6a7765c8576458b187f446f8aac33adb5eb9b03935eeb4b3f47eb6927f0"
+    },
+    "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/integers.dat": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/integers.dat",
+      "bytes": 131,
+      "sha256": "3625d02580c75aed48d920dc35e9ac6ec13de333d1799a81806ea394851d05f9"
+    },
+    "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/invalid-number.dat": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/invalid-number.dat",
+      "bytes": 16,
+      "sha256": "bfddd92053571e1616aea45dea4e1e358b1bf58d6efebb3b9025635a0b563933"
+    },
+    "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/matrix.dat": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/matrix.dat",
+      "bytes": 57,
+      "sha256": "f563503d1dae96a3e4bf0b85d00f6e924344d4fae8af06ee4a148127f8d148ee"
+    },
+    "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/missing-value.dat": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/missing-value.dat",
+      "bytes": 8,
+      "sha256": "c0dbb79883c2b4fd64c01c68786b0d9c09ddf9c97fcc344f074b85f5078dcfeb"
+    },
+    "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/opaque-comments.dat": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/opaque-comments.dat",
+      "bytes": 58,
+      "sha256": "3efe03d82369c8342dafe6be5e506219baa4299726a3983428400e4a2fe0ba7a"
+    },
+    "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/provenance.json": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/provenance.json",
+      "bytes": 8778,
+      "sha256": "a4cc4dc50ae15024ced42195eb098fb76f784c4bcd521c4e26aa0f19bcb8a454"
+    },
+    "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/unterminated-row.dat": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/unterminated-row.dat",
+      "bytes": 10,
+      "sha256": "f95b64ee62b230efd0fd85dde9216314aca50a4109e210a291dfba69d805fc64"
+    },
+    "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/wide.dat": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/columnfile/wide.dat",
+      "bytes": 213,
+      "sha256": "98a77967288e46394c9bda082957ae31e07a7acfc4bfd68a3beaefdbb8f992a7"
+    },
+    "/tmp/dioptrin-io-fabio-2026.6.0/src/fabio/ext/cf_io.pyx": {
+      "path": "/private/tmp/dioptrin-io-fabio-2026.6.0/src/fabio/ext/cf_io.pyx",
+      "bytes": 4028,
+      "sha256": "2cc6f074376422420fe72d66ae4a2b6df792dea329b5ce84d7dcfcf3a930a2fa"
+    },
+    "/tmp/dioptrin-io-fabio-2026.6.0/src/fabio/datIO.py": {
+      "path": "/private/tmp/dioptrin-io-fabio-2026.6.0/src/fabio/datIO.py",
+      "bytes": 3304,
+      "sha256": "c9bee7f0ebeb263c67aeaee4e7183dbae45aab7a280f6e5f8ea354944d32292a"
+    },
+    "/tmp/dioptrin-io-fabio-2026.6.0/src/fabio/ext/src/columnfile.c": {
+      "path": "/private/tmp/dioptrin-io-fabio-2026.6.0/src/fabio/ext/src/columnfile.c",
+      "bytes": 6576,
+      "sha256": "611d2caf76266720bed9c42b4ef66d5da1f22cceee450a316a13f74b5b7cf7c0"
+    },
+    "/tmp/dioptrin-io-fabio-2026.6.0/src/fabio/ext/include/columnfile.h": {
+      "path": "/private/tmp/dioptrin-io-fabio-2026.6.0/src/fabio/ext/include/columnfile.h",
+      "bytes": 1557,
+      "sha256": "1a83de5847afc53230daeaf8328ce101dda69b0300adac160e4e2127f1ff24ab"
+    },
+    "/tmp/dioptrin-io-fabio-2026.6.0/copyright": {
+      "path": "/private/tmp/dioptrin-io-fabio-2026.6.0/copyright",
+      "bytes": 6398,
+      "sha256": "aeb8c93d322314b41bc5d3315c7ccc7aac3af399e4faff336b0d4c3387e290df"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/binary.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/binary.rs",
+      "bytes": 7425,
+      "sha256": "794ddd240ae8dfa3ef313b3392d46b47c8a33b8f825f2b5ad72183269c90bf88"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/bruker/common.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/bruker/common.rs",
+      "bytes": 2087,
+      "sha256": "58ebb4b8bc1e89dba4288caa1224cae78f02812bbce4d911ec3159983c7020bc"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/bruker/view.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/bruker/view.rs",
+      "bytes": 2513,
+      "sha256": "4fb7483ddf6e85120b4a08e959de7c2716ae02e5cebd98d50c2d798ce6d2e059"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/bruker.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/bruker.rs",
+      "bytes": 18441,
+      "sha256": "3b7d0ea45d1e418697b96015b38bce2f6dc2c02926b1bdb8cebb76386568d8e0"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/cbf/document.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/cbf/document.rs",
+      "bytes": 5905,
+      "sha256": "f0e6dd547ead39f785c86e7b76c7b6dc880f532c7d8bf0e0f23607624d139962"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/cbf/header.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/cbf/header.rs",
+      "bytes": 8727,
+      "sha256": "5713a8bef504b118dfd07eceff3749e170654f88ed247a4ba9fdcbfb91283766"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/cbf/syntax/cif2.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/cbf/syntax/cif2.rs",
+      "bytes": 15580,
+      "sha256": "427dcb6d2172c87e4c42163618c24425204d16a81e2f739201b4acbc2dd4955e"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/cbf/syntax.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/cbf/syntax.rs",
+      "bytes": 29570,
+      "sha256": "449cb3e9e9f4bf50134174b128a47d60449cf801b209a806897a5057128fff33"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/cbf.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/cbf.rs",
+      "bytes": 16726,
+      "sha256": "cd9249983ddc3142cd7dbaef569b8855f57d42b4a46f5c2d1eef86aa249d38f3"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/chiplot.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/chiplot.rs",
+      "bytes": 22862,
+      "sha256": "a6b39507c21a231d7579cbd65ff31ffcae73b7b162484f68278851c80236d92d"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/detector_tiff/mar_schema.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/detector_tiff/mar_schema.rs",
+      "bytes": 4999,
+      "sha256": "0d224ae8a52443423f144a61604176be37727deec320333fdb4c947581ffb819"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/detector_tiff.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/detector_tiff.rs",
+      "bytes": 7623,
+      "sha256": "06cbc9b5a8db291196e6fa3bfab75baeb860c4948dba5dd21811a001160712fd"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/discovery.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/discovery.rs",
+      "bytes": 17364,
+      "sha256": "acfac305e21289355c6617c6d78ff0886fc79e852e1a069b0e11482fb269d7cd"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/dm3.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/dm3.rs",
+      "bytes": 23777,
+      "sha256": "a7b9ad01a2eac150156c92f2aec088587786ffa90e80c502f1628e0537747b93"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/edf/recovery.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/edf/recovery.rs",
+      "bytes": 36548,
+      "sha256": "b8206c62dc3ca88c715f173803aec8c30af85a1f67f4ec39c1a3c1d27eab8cdb"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/edf.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/edf.rs",
+      "bytes": 32939,
+      "sha256": "50efe2c4d2fe7d6783cf73afaaeabe5a53a68f7a0a047c9218d49c7350de942a"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/esperanto.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/esperanto.rs",
+      "bytes": 19487,
+      "sha256": "d2bb2f34e02000e28810a62479b9f16958c9f7ebe6bc4a9400b41b1841abc8ed"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/fit2d.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/fit2d.rs",
+      "bytes": 13169,
+      "sha256": "a3dfab6f09927651c98f9561fc497788d9f4736a0795be9c6c37de52de3c2004"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/ge.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/ge.rs",
+      "bytes": 18063,
+      "sha256": "73ef7bbb055d7e90f7fb8ffcef887bd5382b5a82c818f1972558a51d522e4326"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/attributes.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/attributes.rs",
+      "bytes": 10331,
+      "sha256": "78390402928bde88699434b6261d7f2e6ec8cca63050533c9fa94740b97c4264"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/cache.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/cache.rs",
+      "bytes": 6940,
+      "sha256": "2b2927c6cc7bcf4d8daae4add9a72c9fa2414b93dd51950cffb634beaf45c050"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/discovery.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/discovery.rs",
+      "bytes": 11509,
+      "sha256": "d3fe9f5f5c6abf10084cbc3b7562b443b17359336e0fb102ff5aa28f6f1881aa"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/nexus.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/nexus.rs",
+      "bytes": 34110,
+      "sha256": "1891400519701d99afde2b302eedb30eeb080234437f88a2f619b676f8b073ba"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/raw.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/raw.rs",
+      "bytes": 17858,
+      "sha256": "aa1c6fa0a31303cc769214393039fec9975bff9c1e1d54eca59808e98d3927fc"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/sources.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/sources.rs",
+      "bytes": 16329,
+      "sha256": "f79106332878717c9dae77373fcaf9f711e2c36fdf45a06bfaec087c8aa6ec54"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse/numeric.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse/numeric.rs",
+      "bytes": 4551,
+      "sha256": "afb9cec3ca9a4932df277befb60df5a40e30d86395a5021bd5f37a4814defdac"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse/reconstruction.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse/reconstruction.rs",
+      "bytes": 7608,
+      "sha256": "801f9c866a9e5796e7de966cad42f50e5c128183cf895660d155265cd99df364"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse.rs",
+      "bytes": 28016,
+      "sha256": "61dcae769a76d61ae84ba0906c54c88077ce8edb6078a53dbcf19ca021efbdcf"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/typed.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/typed.rs",
+      "bytes": 27857,
+      "sha256": "6042b1b05f900bfd405c25b86b879e9a29cf9d6bed4395d0315a102fda39b6d0"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/vds.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/vds.rs",
+      "bytes": 26894,
+      "sha256": "e8e82c3152e40d589e196a31a5165723f056ed7f2875deb235dc8f587dd68207"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5.rs",
+      "bytes": 8813,
+      "sha256": "5de3fc39ff82b2e562e120aee09ca5b3e321a80ceb0d69e2701a77189d41ba5e"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/jpeg.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/jpeg.rs",
+      "bytes": 20027,
+      "sha256": "ab2e7dbea38cf2c876e4ad2a73ce74e4e2ee19c28a193365054b33082522f445"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/jpeg2000.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/jpeg2000.rs",
+      "bytes": 14778,
+      "sha256": "be8ad6f74a6c161532e73aaae16dff9d37533f6c1181f66eae35fc5ff99ba7e3"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/kcd.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/kcd.rs",
+      "bytes": 7516,
+      "sha256": "fb532aa6e23648399ea52e0872edf0f57e45aacfe951c1284c1f46d3e12330e8"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/lib.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/lib.rs",
+      "bytes": 2494,
+      "sha256": "bb092d882419e4c7dd472d0bbf0173ed7cefa3bf0715012fa028f649668a99a5"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/mar345.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/mar345.rs",
+      "bytes": 19721,
+      "sha256": "cf527509342046e1725b12ebe5ffbc4ad2f21f6c63b9d820e9c168c9818e16aa"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/mpa.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/mpa.rs",
+      "bytes": 14470,
+      "sha256": "6c81d70a3ef9b7f6a95a2f52a7add8aa14c70c15bd21c9ecb252e98b3e4cda9a"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/mrc.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/mrc.rs",
+      "bytes": 10019,
+      "sha256": "eb01640b8d6436f363b3b45531050de3ff06f42b4ecb4e3a120bce8ea16bca28"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/native.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/native.rs",
+      "bytes": 35783,
+      "sha256": "b526d517a3e35d9e020bfa26944b41f4198d5aa6347289d44710402d406f28c2"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/navigation.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/navigation.rs",
+      "bytes": 7700,
+      "sha256": "6fe155d07f11fefca9d9ba09c623a235688fcf4d17e6a3083ed88adc73901f68"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/oxford/ty5.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/oxford/ty5.rs",
+      "bytes": 3518,
+      "sha256": "1ca4411422d7b4ecc6ed574bdc8a5ac592d27f0a2baae0b77ded7a7e457e5136"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/oxford.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/oxford.rs",
+      "bytes": 19856,
+      "sha256": "134d222d921b9685483a486177e50984159afa6d91bb850d55f59ee1973c9a0d"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/pilatus.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/pilatus.rs",
+      "bytes": 16299,
+      "sha256": "555a6fcdc75bef993131bf147ddd1f57d5046db089623c0ae176b69fb1784e02"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/pixels.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/pixels.rs",
+      "bytes": 5522,
+      "sha256": "89f9b646e2970e79c77c625529f367f5fe96bd35c9ecf73cad67bbb59dde3c12"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/pixi.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/pixi.rs",
+      "bytes": 4380,
+      "sha256": "2522bc7b5cfc0a70f4624d87193fade8075857b08c7cf34fb05ce9f0ddf5b7ee"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/raster.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/raster.rs",
+      "bytes": 2453,
+      "sha256": "f27377deff1a475984240c548cc77890d8d1f53181245ac8654333fdd7a29c1f"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/raxis.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/raxis.rs",
+      "bytes": 14260,
+      "sha256": "c0bee389a94056c437a18948996c1449351aefcae9ea9191dd228ce1d63e11db"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/series.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/series.rs",
+      "bytes": 22464,
+      "sha256": "fd197478fa7206f11411627cb58c4f2bc5952a63173e0544536a813c5c564a64"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/source.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/source.rs",
+      "bytes": 3293,
+      "sha256": "afd15eef583ecfa7cc44528cb176188d2ec57916202f05aa5f1d01a2f5fc476f"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/spe.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/spe.rs",
+      "bytes": 22313,
+      "sha256": "48849be1954fe507ed36d9eb7ae476b43b2810abe434dcf889165af7df71fb98"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/api.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/api.rs",
+      "bytes": 13665,
+      "sha256": "af9b46890c15339a8904064d997cba988cfb0266421b9232aed9ffaac7b720be"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/compatibility.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/compatibility.rs",
+      "bytes": 11603,
+      "sha256": "ee3dc5bdd237f58bde81538c46ee6a393793b0632e9c921e867479f3c7a4e541"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/group3.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/group3.rs",
+      "bytes": 8117,
+      "sha256": "ede0d60ba03fc62e6e707bd2a4f7a06d8fc272f83ba9d0bd1ab62943cb49f1da"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/header.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/header.rs",
+      "bytes": 4268,
+      "sha256": "eb73d259c05fea3b03e6d0524ba42d93abf58462db39a7831ed8f48b8113700d"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/ifd_view.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/ifd_view.rs",
+      "bytes": 16989,
+      "sha256": "75d7ac11299d65d1780a5f8bf1a43649a17f5fe17f95d52f9c00e48d0d21a77b"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/jpeg_components.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/jpeg_components.rs",
+      "bytes": 4634,
+      "sha256": "8cc9ef27459a54f7a6e47ea6e594d5a51bdb0b0820d10c2c93a778f010014c53"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/ojpeg.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/ojpeg.rs",
+      "bytes": 14553,
+      "sha256": "27ea210bfa75c251d75a396fb949b1d466fe68c67b5e8201cb25f7a81296176a"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/thunderscan.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/thunderscan.rs",
+      "bytes": 9250,
+      "sha256": "7d299c5032402b5af16f79ec7f66d9609a03046a058fe91b9cc13206673fff2c"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/view.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/view.rs",
+      "bytes": 16361,
+      "sha256": "c4f32a6903c98c8030047a217ef572c6f03261e37fe4d4b0724315f5f4dbc2ed"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/view_jpeg.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/view_jpeg.rs",
+      "bytes": 9501,
+      "sha256": "8f8df0d1a26d93e9f15715d9d238e47c7bd420afe8d3c7337004691c0af522e1"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/view_ycbcr.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/view_ycbcr.rs",
+      "bytes": 7331,
+      "sha256": "9fbb8713ae4739ef0433441e15412d54ad8920b297652caab687b14c57d9f583"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/ycbcr.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/ycbcr.rs",
+      "bytes": 16472,
+      "sha256": "12958c127df223a150ee186094d70126a2841d79ccccb68bd3a08d78e4cdaa19"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/ycbcr_jpeg.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/ycbcr_jpeg.rs",
+      "bytes": 5864,
+      "sha256": "3a70a695fed2fca125b2609356989c669b3020eeaeaed6d86a4c1c3f2365e679"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff.rs",
+      "bytes": 42159,
+      "sha256": "cf2e4d1f637842f4d52c7698c2da1f43c57c162999bd3c39b4f88d4480aa8b69"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/transport.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/transport.rs",
+      "bytes": 6991,
+      "sha256": "9201e70f29c23ee027334f0db48e4965f32c7cbf04720b5d14d84087407c4aa3"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/wrapped/input.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/wrapped/input.rs",
+      "bytes": 12222,
+      "sha256": "dfa3474eaa04ad8c00733165f4f104e572f673b8630750b027b724aff88ce337"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/wrapped.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/wrapped.rs",
+      "bytes": 38868,
+      "sha256": "0d2ed07e6475d8763c6c994d33cafb5ef46436131be1143ec014ec0de6f76633"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/xcalibur/decomposition.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/xcalibur/decomposition.rs",
+      "bytes": 6743,
+      "sha256": "b3d2d3e0decf3ae69fdfc742fc2ebe623459b98e817550a01efe774a4c886269"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/xcalibur/run.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/xcalibur/run.rs",
+      "bytes": 8792,
+      "sha256": "f0e998aa761d4cf1a6b93c1b24c13f8077baca0751ef030f3eeb914ab9fbc595"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/xcalibur.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/xcalibur.rs",
+      "bytes": 16637,
+      "sha256": "7a308e59ffd22c11f501e79f618b13bf1d4aa200cf90e23786682003352048d9"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/xsd.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/xsd.rs",
+      "bytes": 11824,
+      "sha256": "bcfe7328bc0d9d809dc6abda92d790039069e3829332abcfb300b0379e0ac601"
+    },
+    "/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/fabio/datIO.py": {
+      "path": "/private/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/fabio/datIO.py",
+      "bytes": 3304,
+      "sha256": "c9bee7f0ebeb263c67aeaee4e7183dbae45aab7a280f6e5f8ea354944d32292a"
+    },
+    "/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/fabio/ext/cf_io.abi3.so": {
+      "path": "/private/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/fabio/ext/cf_io.abi3.so",
+      "bytes": 182864,
+      "sha256": "3d873b44a9b953aa7d8a7eb7a0556b11d38d151ad86ce4b6c891f0f2cc96768d"
+    }
+  },
+  "probe": {
+    "path": "/Users/clemens/Programming/dioptrin-io/target/release/examples/api_probe",
+    "bytes": 8268368,
+    "sha256": "db4cdd7765590b63c3b45da55cfb9e5969ed7e681478d344524fedc839e4cab2"
+  },
+  "sources_unchanged": true,
+  "probe_unchanged": true,
+  "all_qualified": true
+}

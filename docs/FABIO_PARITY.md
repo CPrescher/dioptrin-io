@@ -128,7 +128,7 @@ captures, with separate content-discovery and EDF header ledgers. A separate
 feature-disabled run distinguishes unavailable compilation features from missing
 readers. Every original registry entry remains in the ledger.
 
-Current evidence is recorded in `fabio-parity/2026-11-06-cif-legacy.json`;
+Current evidence is recorded in `fabio-parity/2026-11-06-cif2-lowlevel.json`;
 the earlier baseline and typed-HDF5 reports are retained. The current report is
 a failing full-parity gate, with exact native successes, unsupported layouts,
 reference differences and remaining readers kept separate.
@@ -311,3 +311,13 @@ CIF-parser observations have separately recorded results. Failed reference reads
 malformed upstream CIF input and unsupported CIF 2.0/binary-table capabilities
 remain distinct. The complete corpus and prior series/companion proofs are
 rerun against the frozen native sources and executables.
+
+## CIF 2.0 and low-level reader continuation
+
+The [CIF 2.0/low-level audit](CIF2_LOWLEVEL_PARITY.md) adds versioned UTF8
+syntax/composites/logical text, TIFF metadata and row/view controls, standalone
+Pilatus documents, read-only NeXus selection and original CBF encoded payloads.
+Native source/count correctness, derived display values, reference exceptions
+and malformed/resource-limited inputs retain separate gates. The existing
+codec/metadata/input corpus and earlier companion/series proofs are revalidated;
+historical artifacts are retained unchanged.

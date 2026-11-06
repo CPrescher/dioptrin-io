@@ -1,5 +1,10 @@
 # CIF grammar and legacy table/profile qualification
 
+The subsequent [CIF 2.0/low-level audit](CIF2_LOWLEVEL_PARITY.md) adds versioned
+CIF 2.0 and the low-level helper APIs discussed in this historical continuation. Its report
+results and source hashes below retain their original scope; unsupported format
+variants remain separately qualified.
+
 Native input now includes a source-preserving CIF 1.1 syntax tree, labeled
 ASCII column tables and FIT2D/CHIPLOT profiles. All three expose path snapshots,
 owned bytes and nonseekable streams with explicit resource/source contracts.
