@@ -91,6 +91,168 @@ fn detector_fields(header: &dioptrin_io::detector_tiff::Header) -> serde_json::V
     }
 }
 
+#[cfg(any(
+    feature = "fixed",
+    feature = "containers",
+    feature = "oxford",
+    feature = "raxis"
+))]
+fn header_bytes(bytes: &[u8]) -> serde_json::Value {
+    let mut value =
+        json!({"kind":"bytes","length":bytes.len(),"sha256":format!("{:x}",Sha256::digest(bytes))});
+    if bytes.len() <= 4096 {
+        value["hex"] = json!(bytes_hex(bytes));
+    }
+    value
+}
+
+fn header_float(value: f64) -> serde_json::Value {
+    if value.is_finite() {
+        json!(value)
+    } else {
+        json!({"kind":"float","value":if value.is_nan(){"nan"}else if value>0.0{"inf"}else{"-inf"}})
+    }
+}
+
+fn tiff_tag(value: &tiff::TagValue) -> serde_json::Value {
+    use tiff::TagValue as V;
+    match value {
+        V::Byte(v) => json!(v),
+        V::Short(v) => json!(v),
+        V::SignedByte(v) => json!(v),
+        V::SignedShort(v) => json!(v),
+        V::Signed(v) => json!(v),
+        V::SignedBig(v) => json!(v),
+        V::Unsigned(v) => json!(v),
+        V::UnsignedBig(v) => json!(v),
+        V::Float(v) => header_float(f64::from(*v)),
+        V::Double(v) => header_float(*v),
+        V::Ascii(v) => json!(v),
+        V::List(values) => json!(values.iter().map(tiff_tag).collect::<Vec<_>>()),
+        V::Rational(n, d) => json!({"kind":"rational","numerator":n,"denominator":d}),
+        V::SRational(n, d) => json!({"kind":"rational","numerator":n,"denominator":d}),
+        V::Ifd(v) => json!(v),
+        V::IfdBig(v) => json!(v),
+        _ => json!({"kind":"unsupported","native":format!("{value:?}")}),
+    }
+}
+
+fn tiff_fields(metadata: &tiff::Metadata) -> serde_json::Value {
+    json!({"tags":metadata.tags.iter().map(|(key,value)|(key.to_string(),tiff_tag(value))).collect::<serde_json::Map<_,_>>(),
+        "shape":metadata.shape,"channels":metadata.channels,"bits_per_sample":metadata.bits_per_sample,
+        "photometric":metadata.photometric_interpretation,"planar":metadata.planar_configuration,
+        "compression":metadata.compression,"orientation":metadata.orientation,"little_endian":metadata.little_endian,
+        "opaque_tags":metadata.opaque_tags.iter().map(|(k,v)|(k.to_string(),json!({"field_type":v.field_type,"count":v.count,"value_hex":bytes_hex(&v.value_bytes),"reason":v.reason}))).collect::<serde_json::Map<_,_>>()})
+}
+
+#[cfg(feature = "containers")]
+fn dm3_value(value: &dioptrin_io::dm3::TagValue<'_>) -> serde_json::Value {
+    use dioptrin_io::dm3::TagValue as V;
+    match value {
+        V::Numeric { values, scalar } => {
+            let record = frame_record(0, 1, [values.len()], values, json!({}), &[]);
+            let mut encoded = json!({"kind":"array","dtype":record["dtype"],"shape":[values.len()],"sha256":record["sample_sha256"]});
+            if values.len() <= 256 || *scalar {
+                macro_rules! items { ($($ty:ident),*) => {match values {$(PixelBuffer::$ty(v)=>json!(v),)* PixelBuffer::F32(v)=>json!(v.iter().map(|&n|header_float(f64::from(n))).collect::<Vec<_>>()),PixelBuffer::F64(v)=>json!(v.iter().map(|&n|header_float(n)).collect::<Vec<_>>()),_=>unreachable!()}}; }
+                encoded["values"] = items!(U8, U16, U32, U64, I8, I16, I32, I64);
+            }
+            json!({"numeric":encoded,"scalar":scalar})
+        }
+        V::Utf16(units) => json!({"utf16":units}),
+        V::Structure { name, fields } => {
+            json!({"name_hex":bytes_hex(name),"fields":fields.iter().map(|(name,value)|json!({"name_hex":bytes_hex(name),"value":dm3_value(value)})).collect::<Vec<_>>()})
+        }
+        V::Opaque(raw) => json!({"opaque":header_bytes(raw)}),
+    }
+}
+
+#[cfg(feature = "containers")]
+fn mrc_fields(m: &dioptrin_io::mrc::Metadata) -> serde_json::Value {
+    let p = &m.parsed;
+    let mut fields = json!({"NX":p.nx,"NY":p.ny,"NZ":p.nz,"MODE":p.mode,"NXSTART":p.nxstart,"NYSTART":p.nystart,"NZSTART":p.nzstart,
+        "MX":p.mx,"MY":p.my,"MZ":p.mz,"MAPC":p.mapc,"MAPR":p.mapr,"MAPS":p.maps,"ISPG":p.ispg,"NSYMBT":p.nsymbt,
+        "EXTRA":header_bytes(&p.extra),"ORIGIN":p.origin.map(|n|header_float(f64::from(n))),"MAP":String::from_utf8_lossy(&p.map),
+        "MACHST":header_bytes(&p.machst),"NLABL":p.nlabl,"extended":header_bytes(&m.extended_header)});
+    for (key, n) in [
+        ("CELL_A", p.xlen),
+        ("CELL_B", p.ylen),
+        ("CELL_C", p.zlen),
+        ("CELL_ALPHA", p.alpha),
+        ("CELL_BETA", p.beta),
+        ("CELL_GAMMA", p.gamma),
+        ("DMIN", p.dmin),
+        ("DMAX", p.dmax),
+        ("DMEAN", p.dmean),
+        ("RMS", p.rms),
+    ] {
+        fields[key] = header_float(f64::from(n));
+    }
+    for (index, label) in p.label.as_chunks::<80>().0.iter().enumerate() {
+        fields[format!("LABEL_{index:02}")] = json!(String::from_utf8_lossy(label).trim());
+    }
+    fields
+}
+
+fn metadata_details(metadata: wrapped::Metadata<'_>, _index: usize) -> serde_json::Value {
+    match metadata {
+        wrapped::Metadata::Native(m) => {
+            json!({"shape":m.shape,"header_hex":bytes_hex(&m.header),"format":format!("{:?}",m.format)})
+        }
+        #[cfg(feature = "bruker")]
+        wrapped::Metadata::Bruker(m) => json!({"header_bytes":m.header.len()}),
+        #[cfg(feature = "fixed")]
+        wrapped::Metadata::Ge(m) => {
+            json!({"kind":format!("{:?}",m.kind),"shape":m.shape,"frames":m.frames,"header_hex":bytes_hex(&m.header),"edf_fields":m.edf_fields})
+        }
+        #[cfg(feature = "fixed")]
+        wrapped::Metadata::Pixi(m) => {
+            json!({"shape":m.shape,"header_hex":bytes_hex(&m.headers[_index])})
+        }
+        #[cfg(feature = "mar345")]
+        wrapped::Metadata::Mar345(m) => {
+            json!({"binary_scalars":m.binary_scalars().into_iter().map(|(k,v)| {use dioptrin_io::mar345::HeaderValue as V;
+                (k, match v {V::Integer(n)=>json!(n),V::Float(n)=>header_float(n),V::Text(t)=>json!(t)})
+            }).collect::<std::collections::BTreeMap<_,_>>(),"text_scalars":m.text_scalars().collect::<Vec<_>>()})
+        }
+        #[cfg(feature = "esperanto")]
+        wrapped::Metadata::Esperanto(m) => {
+            json!({"version":m.version,"shape":m.shape,"parsed_fields":m.parsed_fields.iter().map(|(k,v)| { use dioptrin_io::esperanto::HeaderValue as V; (k.clone(),match v {V::Integer(n)=>json!(n),V::Float(n)=>header_float(*n),V::Text(t)=>json!(t),V::Invalid(t)=>json!({"invalid":t})}) }).collect::<serde_json::Map<_,_>>()})
+        }
+        #[cfg(feature = "containers")]
+        wrapped::Metadata::Spe(m) => {
+            json!({"shape":m.shape,"version":m.version,"data_type":m.data_type,"frames":m.frames,"x_calibration":m.x_calibration,"regions":m.regions.iter().map(|r|json!({"roi":r.roi,"shape":r.shape})).collect::<Vec<_>>()})
+        }
+        #[cfg(feature = "containers")]
+        wrapped::Metadata::Mrc(m) => {
+            json!({"header_hex":bytes_hex(&m.header),"little_endian":m.little_endian,"extended":header_bytes(&m.extended_header)})
+        }
+        #[cfg(feature = "containers")]
+        wrapped::Metadata::Dm3(m) => {
+            json!({"little_endian":m.little_endian,"tags":m.tags.iter().map(|tag|json!({"path":tag.path,"raw_name":bytes_hex(&tag.raw_name),"descriptor":tag.descriptor,"bytes":tag.bytes,
+                "value": match tag.decode_small_value(m.little_endian, 1024*1024) {Ok(Some(value))=>dm3_value(&value),Ok(None)=>json!(null),Err(error)=>json!({"error":error.to_string()})}
+            })).collect::<Vec<_>>()})
+        }
+        #[cfg(feature = "fit2d")]
+        wrapped::Metadata::Fit2d(m) => {
+            json!({"block_bytes":m.block_bytes,"header_hex":bytes_hex(&m.header),"arrays":m.arrays.iter().map(|array|json!({"name":array.name,"shape":array.shape,"pixel_type":format!("{:?}",array.pixel_type)})).collect::<Vec<_>>()})
+        }
+        #[cfg(feature = "mpa")]
+        wrapped::Metadata::Mpa(m) => json!({"header_hex":bytes_hex(&m.header)}),
+        #[cfg(feature = "oxford")]
+        wrapped::Metadata::Oxford(m) => {
+            json!({"shape":m.shape,"header_version":m.header_version,"compression":format!("{:?}",m.compression),"compression_label":header_bytes(&m.compression_label),"exception16":m.exception16,"exception32":m.exception32,"header_bytes":m.header.len(),"sections":m.sections.iter().map(|s|json!({"name":s.name,"offset":s.offset,"bytes":s.bytes})).collect::<Vec<_>>()})
+        }
+        #[cfg(feature = "jpeg")]
+        wrapped::Metadata::Jpeg(m) => {
+            json!({"jfif":m.jfif_headers().map(|j|json!({"version":j.version,"density_unit":j.density_unit,"density":j.density})).collect::<Vec<_>>()})
+        }
+        wrapped::Metadata::Cbf(m) => {
+            json!({"header_hex":bytes_hex(&m.header),"cif_fields":m.cif.fields,"cif_diagnostics":m.cif.diagnostics})
+        }
+        _ => json!({}),
+    }
+}
+
 fn tiff_view_record(
     index: usize,
     frames: usize,
@@ -541,6 +703,7 @@ fn run() -> Result<(), Box<dyn Error>> {
             json!(meta.fields),
             &reader.source_paths(),
         );
+        row["metadata_details"] = metadata_details(reader.metadata(0).unwrap(), 0);
         if meta
             .linear
             .is_some_and(|[slope, offset]| slope != 1.0 || offset != 0.0)
@@ -709,6 +872,7 @@ fn run() -> Result<(), Box<dyn Error>> {
             let wrapped::Metadata::Tiff(metadata) = reader.metadata(i).unwrap() else {
                 unreachable!()
             };
+            row["fields"] = tiff_fields(metadata);
             row["source_recovery"] = json!({"format":"tiff-thunderscan","declared_shape":available.shape(),
                 "source_bits":metadata.bits_per_sample,"source_pixel_type":format!("{:?}",metadata.pixel_type),
                 "source_orientation":metadata.orientation,"source_little_endian":metadata.little_endian,"source_compression":metadata.compression,
@@ -722,9 +886,10 @@ fn run() -> Result<(), Box<dyn Error>> {
         if let wrapped::Metadata::Tiff(metadata) = reader.metadata(i).unwrap()
             && metadata.uniform_sample_shape().is_none()
         {
+            let metadata_fields = tiff_fields(metadata);
             let mut components = tiff::ycbcr::Buffer::default();
             reader.read_tiff_ycbcr_into(i, &mut components)?;
-            let mut row = json!({"frame":i,"frames":reader.frames(),"fields":{},"sources":reader.source_paths(),"tiff_components":tiff_components_record(&components)});
+            let mut row = json!({"frame":i,"frames":reader.frames(),"fields":metadata_fields,"sources":reader.source_paths(),"tiff_components":tiff_components_record(&components)});
             #[cfg(feature = "jpeg")]
             if let Some(original) = reader.tiff_ojpeg_metadata(i) {
                 row["source_codec"] = json!({
@@ -760,14 +925,48 @@ fn run() -> Result<(), Box<dyn Error>> {
             #[cfg(feature = "esperanto")]
             wrapped::Metadata::Esperanto(m) => json!(m.fields),
             #[cfg(feature = "fit2d")]
-            wrapped::Metadata::Fit2d(_) => json!({}),
+            wrapped::Metadata::Fit2d(m) => json!(
+                m.fields
+                    .iter()
+                    .map(|(k, v)| {
+                        use dioptrin_io::fit2d::HeaderValue as V;
+                        (
+                            k.clone(),
+                            match v {
+                                V::Text(v) => json!(v),
+                                V::Integer(v) => json!(v),
+                                V::Float(v) => header_float(f64::from(*v)),
+                            },
+                        )
+                    })
+                    .collect::<serde_json::Map<_, _>>()
+            ),
             #[cfg(feature = "kcd")]
-            wrapped::Metadata::Kcd(_) => json!({}),
+            wrapped::Metadata::Kcd(m) => json!(m.fields),
             #[cfg(feature = "mpa")]
-            wrapped::Metadata::Mpa(_) => json!({}),
+            wrapped::Metadata::Mpa(m) => json!(m.fields),
             wrapped::Metadata::DetectorTiff(m) => detector_fields(m.header),
             #[cfg(feature = "fixed")]
-            wrapped::Metadata::Ge(_) | wrapped::Metadata::Pixi(_) => json!({}),
+            wrapped::Metadata::Ge(m) => json!(
+                m.fields
+                    .iter()
+                    .map(|(k, v)| {
+                        use dioptrin_io::ge::HeaderValue as V;
+                        (
+                            k.to_string(),
+                            match v {
+                                V::Bytes(v) => header_bytes(v),
+                                V::U16(v) => json!(v),
+                                V::U32(v) => json!(v),
+                                V::F32(v) => header_float(f64::from(*v)),
+                                V::F64(v) => header_float(*v),
+                            },
+                        )
+                    })
+                    .collect::<serde_json::Map<_, _>>()
+            ),
+            #[cfg(feature = "fixed")]
+            wrapped::Metadata::Pixi(_) => json!({}),
             #[cfg(feature = "jpeg")]
             wrapped::Metadata::Jpeg(_) => json!({}),
             #[cfg(feature = "jpeg2000")]
@@ -775,19 +974,52 @@ fn run() -> Result<(), Box<dyn Error>> {
             #[cfg(feature = "containers")]
             wrapped::Metadata::Spe(m) => json!(m.fields),
             #[cfg(feature = "containers")]
-            wrapped::Metadata::Mrc(_) | wrapped::Metadata::Dm3(_) => json!({}),
+            wrapped::Metadata::Mrc(m) => mrc_fields(m),
+            #[cfg(feature = "containers")]
+            wrapped::Metadata::Dm3(_) => json!({}),
             #[cfg(feature = "bruker")]
             wrapped::Metadata::Bruker(m) => json!(m.fields),
             #[cfg(feature = "oxford")]
-            wrapped::Metadata::Oxford(_) => json!({}),
+            wrapped::Metadata::Oxford(m) => json!(
+                m.fields
+                    .iter()
+                    .map(|(k, v)| {
+                        use dioptrin_io::oxford::HeaderValue as V;
+                        (
+                            k.clone(),
+                            match v {
+                                V::Bytes(v) => header_bytes(v),
+                                V::Unsigned(v) => json!(v),
+                                V::Signed(v) => json!(v),
+                                V::Float(v) => header_float(*v),
+                            },
+                        )
+                    })
+                    .collect::<serde_json::Map<_, _>>()
+            ),
             #[cfg(feature = "raxis")]
-            wrapped::Metadata::Raxis(_) => json!({}),
+            wrapped::Metadata::Raxis(m) => json!(
+                m.fields
+                    .iter()
+                    .map(|(k, v)| {
+                        use dioptrin_io::raxis::HeaderValue as V;
+                        (
+                            k.clone(),
+                            match v {
+                                V::Bytes(v) => header_bytes(v),
+                                V::Integer(v) => json!(v),
+                                V::Float(v) => header_float(f64::from(*v)),
+                            },
+                        )
+                    })
+                    .collect::<serde_json::Map<_, _>>()
+            ),
             #[cfg(feature = "xsd")]
             wrapped::Metadata::Xsd(_) => json!({}),
             wrapped::Metadata::Native(m) => json!(m.fields),
             wrapped::Metadata::Edf(m) => json!(m.fields),
             wrapped::Metadata::Cbf(m) => json!(m.binary_fields),
-            wrapped::Metadata::Tiff(_) => json!({}),
+            wrapped::Metadata::Tiff(m) => tiff_fields(m),
         };
         let mut row = frame_record(
             i,
@@ -797,6 +1029,29 @@ fn run() -> Result<(), Box<dyn Error>> {
             fields,
             &reader.source_paths(),
         );
+        row["metadata_details"] = metadata_details(reader.metadata(i).unwrap(), i);
+        #[cfg(feature = "fit2d")]
+        if let wrapped::Metadata::Fit2d(metadata) = reader.metadata(i).unwrap() {
+            let mut arrays = serde_json::Map::new();
+            let mut array_buffer = dioptrin_io::fit2d::FrameBuffer::default();
+            for (index, array) in metadata.arrays.iter().enumerate() {
+                if array.name == "data_array" {
+                    continue;
+                }
+                reader.read_fit2d_array_into(index, &mut array_buffer)?;
+                let record = frame_record(
+                    0,
+                    1,
+                    array.shape,
+                    array_buffer.pixels().unwrap(),
+                    json!({}),
+                    &reader.source_paths(),
+                );
+                arrays.insert(array.name.clone(), json!({"kind":"array","dtype":record["dtype"],"shape":array.shape,"sha256":record["sample_sha256"]}));
+            }
+            row["metadata_details"]["array_values"] = json!(arrays);
+        }
+
         if let wrapped::Metadata::Tiff(metadata) = reader.metadata(i).unwrap()
             && let Some(compatibility) = &metadata.compatibility
         {

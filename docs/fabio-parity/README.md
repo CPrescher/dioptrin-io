@@ -1,4 +1,15 @@
-# Planar TIFF fixes and qualified reference defects, 2026-11-06
+# Metadata parity pass, 2026-11-06
+
+The [format-by-format metadata audit](../metadata-parity/README.md) accounts for
+all compared `.header` fields across 34 codecs: 218,722 matching occurrences,
+3,289 qualified reference differences and zero unresolved compared fields.
+It closes native CBF, DM3, Esperanto, MAR345, JPEG, PNM, Oxford and wrapped
+FIT2D metadata gaps. The [current full report](2026-11-06-metadata.json) preserves
+the pixel outcomes below. Metadata equality remains false for documented FabIO
+behavior and unqualified header-only reads; empty headers prove no coverage.
+Validation now includes 196 Rust tests and all 20 isolated feature checks.
+
+## Previous pixel qualification, retained
 
 Both remaining display mismatches are now [independently qualified Pillow decoder defects](../pillow-planar16/README.md).
 Related native compressed-planar display and partial-edge tile gaps are fixed.

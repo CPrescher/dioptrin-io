@@ -13,8 +13,10 @@ outer-compressed files and stacks. All frames exposed by each matched reader
 are compared, including shape, scalar dtype and SHA256 of canonical
 little-endian sample bytes. Comparisons never coerce dtypes, use tolerances or
 mask reserved values to hide differences. Explicit consumer/reference views
-are selected and recorded separately as described below. The d*TREK and EDF
-text-header fields are also compared.
+are selected and recorded separately as described below. With `--metadata`, every reference `.header` field is compared separately
+using named native aliases, typed source values and explicit reference views.
+See the [metadata audit](metadata-parity/README.md) for its scope and qualified
+reference differences.
 
 The report records test IDs and source hashes, codec source hashes, source-file
 and download hashes, the Rust source hashes and executable hash, aliases,
@@ -25,9 +27,9 @@ full gate is incomplete; reference unittest success alone cannot make it green.
 
 This is a comparison bridge, not a Python API shim: Python unittest assertions
 still execute against reference objects, with native read results checked
-alongside them. Complete detector-specific header schemas, native discovery,
-direct stream APIs, read paths bypassing `.read`, and intentionally different
-malformed-file behavior remain explicitly unverified. A passing count comparison
+alongside them. Header-only reads, metadata attributes outside `.header`, native discovery,
+direct stream APIs, read paths bypassing `.read`, unsupported variants and
+intentionally different malformed-file behavior remain separately qualified. A passing count comparison
 must not be presented as passing those additional reading contracts. Writing,
 in-place Python object manipulation and numerical statistics are not production
 APIs of this I/O crate; writer tests still provide useful generated reader inputs.
@@ -49,6 +51,13 @@ an ordinary mismatch. These defects retain the measured differences and are
 excluded from complete-count/view matches and the full parity gate. The
 [planar16 audit](pillow-planar16/README.md) also records negative classifier tests
 and the independently verified Dioptrin fixes found during this investigation.
+
+Schema 7 adds `--metadata`, typed field/array identities, named projection
+schemas, qualified metadata differences and an independent metadata gate.
+The [metadata audit](metadata-parity/README.md) documents 218,722 matching field
+occurrences, 3,289 qualified reference differences, zero unresolved compared
+fields, and the still-unqualified no-pixel/header-only cases. Counts do not imply
+metadata parity, and qualified reference differences do not imply equality.
 
 ## Reproduction
 
@@ -108,7 +117,7 @@ container/legacy/image readers and detector TIFF acquisition headers. A separate
 feature-disabled run distinguishes unavailable compilation features from missing
 readers. Every original registry entry remains in the ledger.
 
-Current evidence is recorded in `fabio-parity/2026-11-06-tiff-codecs.json`;
+Current evidence is recorded in `fabio-parity/2026-11-06-metadata.json`;
 the earlier baseline and typed-HDF5 reports are retained. The current report is
 a failing full-parity gate, with exact native successes, unsupported layouts,
 reference differences and remaining readers kept separate.
@@ -122,14 +131,15 @@ form. The bridge selects an explicit `Pillow13` or `FabioTiffIo` display view fr
 the reference backend recorded on the successfully read object; it never retries
 a failed native decode through another backend. Bruker LINEAR uses a separate
 inverse float-encoding view. Reports retain raw signatures and transformation
-provenance. Two defective Pillow planar16 views remain mismatches. Bilevel bool
+provenance. Two defective Pillow planar16 views have independently qualified reference
+defects and remain outside successful matches. Bilevel bool
 comparisons use canonical logical 0/1 bytes and retain the reference physical
 backing hash separately; historical schema 2 reports are not rewritten.
 
 Pilatus semantic maps are compared directly. For MAR, the bridge explicitly
 invokes the pinned binary acquisition-header parser and normalizes only byte
-array representation, comparing every field. Complete semantic schemas for the
-other formats remain a separate gap. Successful EDF/HDF5 reads expose and hash
+array representation, comparing every field. Schema 7 adds field-by-field comparison for all intercepted codec headers;
+reference defects and header-only access remain separate from metadata equality. Successful EDF/HDF5 reads expose and hash
 all tracked source files in their manifests, including intermediate HDF5 links.
 
 The same-file corpus revealed real cases now supported: nested braces inside
@@ -196,8 +206,8 @@ same default configuration and available source. Reports distinguish matching
 input rejections, unsupported comparison configurations, process failures and
 deliberately disabled reference-backend tests. A monkeypatched missing Python
 JPEG backend is an environment difference, not a native input rejection.
-Direct stream APIs, complete semantic metadata, autodetection, neighboring-file
-series and unsupported variants remain in the full-parity gate.
+Direct stream APIs, header-only/other-attribute metadata, autodetection,
+neighboring-file series and unsupported variants remain in the full-parity gate.
 
 ## Rejection audit and captured test inputs
 

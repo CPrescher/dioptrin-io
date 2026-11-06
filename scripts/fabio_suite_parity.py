@@ -125,6 +125,7 @@ def main():
                         help="explicit source-hash or pinned-test recovery recipes; never an automatic decode retry")
     parser.add_argument("--vds-map", type=pathlib.Path,
                         help="explicit original-to-actual HDF5 VDS filename bindings")
+    parser.add_argument("--metadata", action="store_true", help="compare every reference header field separately from pixels")
     parser.add_argument("--reference-filters", choices=["bundled", "default"], default="bundled",
                         help="register the installed test-only hdf5plugin codecs explicitly (avoid host plugin ABI conflicts)")
     args = parser.parse_args()
@@ -184,7 +185,7 @@ def main():
         if {p.stem for p in paths} != requested:
             parser.error("unknown codec test module")
     ledger = json.loads((ROOT / "docs/fabio-2026.6.0-inventory.json").read_text())
-    report = {"schema": 6, "reference": ledger["reference"],
+    report = {"schema": 7, "reference": ledger["reference"],
               "selection": {"all_codec_modules": not bool(args.modules), "modules": []},
               "contract": "uniform count/dtype/shape and independent native component/unit comparisons, with separate explicit display views, at successful upstream .read calls; not Python API or full header parity",
               "recovery_contract": "explicit source recipes selected before decoding; independently verified partial spans/header-only access are separate from complete count parity and expected input errors",
@@ -216,6 +217,7 @@ def main():
     report["runtime_capabilities"] = capabilities
     report["explicit_policy_files"] = policy_files
     report["reference_filters"] = args.reference_filters
+    report["metadata_enabled"] = args.metadata
     report["rust_sources_sha256"] = {str(p.relative_to(ROOT)): sha_file(p) for p in sorted((ROOT/"src").rglob("*.rs"))}
     report["vendored_sources_sha256"] = {str(p.relative_to(ROOT)): sha_file(p)
         for p in sorted((ROOT/"vendor").rglob("*")) if p.is_file() and not {"target", ".git"}.intersection(p.relative_to(ROOT/"vendor").parts)}
@@ -224,7 +226,7 @@ def main():
     report["build_files_sha256"] = {name: sha_file(ROOT/name) for name in ["Cargo.toml", "Cargo.lock", "build.rs"] if (ROOT/name).is_file()}
     report["bridge_sources_sha256"] = {name: sha_file(ROOT/name) for name in [
         "scripts/fabio_suite_parity.py", "scripts/tiff_component_reference.py", "scripts/edf_recovery_reference.py",
-        "scripts/thunderscan_reference.py", "scripts/pillow_planar16_reference.py", "scripts/inventory_fabio.py", "examples/parity_probe.rs", "docs/fabio-2026.6.0-inventory.json"]}
+        "scripts/thunderscan_reference.py", "scripts/pillow_planar16_reference.py", "scripts/metadata_parity.py", "scripts/test_metadata_parity.py", "scripts/inventory_fabio.py", "examples/parity_probe.rs", "docs/fabio-2026.6.0-inventory.json"]}
     active = False
     current_test = None
 
@@ -288,6 +290,9 @@ def main():
         nonlocal current_test
         record = {"test": current_test, "codec": codec, "source": str(source) if isinstance(source, (str, os.PathLike)) else type(source).__name__}
         report["reads"].append(record)
+        if args.metadata:
+            from metadata_parity import encode
+            record["reference_header"] = encode(dict(image.header))
         # Keep file identity/provenance visible even before a codec has a native
         # adapter. A file::dataset selector still identifies one physical file.
         physical = pathlib.Path(str(source).split("::", 1)[0]) if isinstance(source, (str, os.PathLike)) else None
@@ -304,6 +309,8 @@ def main():
             record["reference"] = None
             if policy is None:
                 record.update(status="reference_no_pixels")
+                if args.metadata:
+                    record["metadata"] = [{"status":"not_compared", "reason":"reference read returned no pixels; header-only parity is not yet qualified", "reference_fields":len(image.header)}]
                 return
         else:
             record["reference"] = {"dtype": image.data.dtype.name, "shape": [int(n) for n in image.data.shape], "frames": int(image.nframes)}
@@ -409,6 +416,34 @@ def main():
                 if manifest:
                     record["source_manifest"] = manifest
                     report["source_files"].update(manifest)
+                if args.metadata:
+                    from metadata_parity import compare as compare_metadata, encode
+                    comparisons = []
+                    try:
+                        metadata_frames = frames[0]["source_recovery"]["images"] if codec == "edfimage" and "source_recovery" in frames[0] else frames
+                        for index, frame in enumerate(metadata_frames):
+                            if codec == "tifimage" and record.get("reference_backend") == "PIL" and len(frames) > 1:
+                                from PIL import Image
+                                with image._open(str(path), "rb") as header_source, Image.open(header_source) as page:
+                                    page.seek(index)
+                                    ref_header = image._read_header_from_pil(page)
+                                record["metadata_frame_policy"] = "pinned FabIO _read_header_from_pil on each Pillow page; public PIL getframe is unsupported"
+                            elif codec in {"speimage", "mrcimage"}:
+                                ref_image = type(image)().read(io.BytesIO(captured) if captured is not None else str(source), frame=index)
+                                ref_header = ref_image.header
+                            elif len(metadata_frames) == 1 or codec == "dtrekimage":
+                                ref_header = image.header
+                            else:
+                                ref_header = image.getframe(index).header
+                            if codec == "marccdimage":
+                                semantic = type(image)()
+                                with semantic._open(str(path), "rb") as header_source:
+                                    semantic._readheader(header_source)
+                                ref_header = semantic.header
+                            comparisons.append({"frame":index, **compare_metadata(encode(dict(ref_header)), frame, codec, record.get("reference_backend"))})
+                    except Exception as error:
+                        comparisons.append({"status":"comparison_error", "error":f"{type(error).__name__}: {error}"})
+                    record["metadata"] = comparisons
                 if any("source_recovery" in frame for frame in frames):
                     if policy is None:
                         raise ValueError("source recovery requires a recorded explicit read policy")
@@ -700,6 +735,22 @@ def main():
         and not report["gaps"] and all(r["status"] in matching_statuses | {"reference_no_pixels"}
             and not r.get("header_field_differences") for r in report["reads"])
         and all(x["matches_pinned_source"] for x in report["reference_codec_sources"].values()))
+    if args.metadata:
+        from metadata_parity import summarize, compact
+        report["metadata_summary"] = summarize(report["reads"])
+        report["metadata_parity"] = all(
+            record.get("metadata") and all(item["status"] in {"match", "reference_empty"} for item in record["metadata"])
+            for record in report["reads"])
+        allowed_metadata = {"match", "reference_empty", "qualified_reference_difference"}
+        pixel_reads = [r for r in report["reads"] if r.get("reference") is not None]
+        report["metadata_fields_accounted_for_pixel_reads"] = bool(pixel_reads) and all(
+            record.get("metadata") and all(item["status"] in allowed_metadata for item in record["metadata"])
+            for record in pixel_reads)
+        report["metadata_mapping_schemas"] = compact(report["reads"])
+        report["full_reading_parity"] &= report["metadata_parity"]
+    else:
+        report["metadata_parity"] = False
+        report["full_reading_parity"] = False
     report["download_base"] = args.download_base
     report["download_hashes"] = UtilsTest.resources.all_data
     report["probe_unchanged_during_run"] = report["probe_sha256"] == sha_file(probe_path)

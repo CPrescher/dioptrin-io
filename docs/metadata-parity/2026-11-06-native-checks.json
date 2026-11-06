@@ -1,0 +1,215 @@
+{
+  "date": "2026-11-06",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "scope": "Parsed detector metadata and explicit field-by-field FabIO header comparison; original count contracts retained; local macOS correctness only.",
+  "required_checks": [
+    {
+      "command": "cargo fmt --check",
+      "exit_code": 0,
+      "seconds": 0.293
+    },
+    {
+      "command": "cargo clippy --locked --all-targets --all-features -- -D warnings",
+      "exit_code": 0,
+      "seconds": 0.407
+    },
+    {
+      "command": "cargo test --locked --all-features",
+      "exit_code": 0,
+      "seconds": 55.027,
+      "tests_passed": 196
+    }
+  ],
+  "isolated_feature_checks": [
+    {
+      "command": "cargo check --locked --no-default-features",
+      "exit_code": 0,
+      "seconds": 0.377
+    },
+    {
+      "command": "cargo test --locked --no-default-features",
+      "exit_code": 0,
+      "seconds": 15.256,
+      "tests_passed": 0
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features bruker -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.6
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features cbf -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.432
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features containers -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.61
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features edf -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.416
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features esperanto -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.466
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features fit2d -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.445
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features fixed -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.443
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features hdf5 -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.58
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features jpeg -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.595
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features jpeg2000 -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.442
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features kcd -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.485
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features mar345 -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.609
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features mpa -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.443
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features native -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.364
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features oxford -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.486
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features raxis -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.394
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features sparse -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.576
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features tiff -- -D warnings",
+      "exit_code": 0,
+      "seconds": 0.206
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features wrappers -- -D warnings",
+      "exit_code": 0,
+      "seconds": 0.303
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features xsd -- -D warnings",
+      "exit_code": 0,
+      "seconds": 1.41
+    }
+  ],
+  "focused_rust_check": {
+    "command": "cargo test --locked --all-features --test metadata",
+    "exit_code": 0,
+    "seconds": 0.129,
+    "tests_passed": 5
+  },
+  "python_controls": {
+    "command": "/tmp/dioptrin-io-fabio-suite-env/bin/python scripts/test_metadata_parity.py",
+    "exit_code": 0,
+    "tests_passed": 8
+  },
+  "reference_defect_controls": {
+    "command": "/tmp/dioptrin-io-fabio-suite-env/bin/python scripts/audit_metadata_reference_defects.py --probe target/release/examples/parity_probe --report docs/metadata-parity/2026-11-06-reference-controls.json",
+    "exit_code": 0,
+    "cases": 5,
+    "negative_controls": 26
+  },
+  "rust_source_hashes": {
+    "src/binary.rs": "b2464ed8ac2a848116f44faa2280f25ac40c2f15b3d25720a2d3eb4cfd83e50d",
+    "src/bruker/common.rs": "58ebb4b8bc1e89dba4288caa1224cae78f02812bbce4d911ec3159983c7020bc",
+    "src/bruker/view.rs": "4fb7483ddf6e85120b4a08e959de7c2716ae02e5cebd98d50c2d798ce6d2e059",
+    "src/bruker.rs": "3b7d0ea45d1e418697b96015b38bce2f6dc2c02926b1bdb8cebb76386568d8e0",
+    "src/cbf/header.rs": "4033d5069486d0d8c8e6dc4022140652526b4641d98b351c80c1235a0d6a7f74",
+    "src/cbf.rs": "2a38e8d18eb2b18cb887004a6b91db32bef9297b514b448250b23e246468aab8",
+    "src/detector_tiff/mar_schema.rs": "0d224ae8a52443423f144a61604176be37727deec320333fdb4c947581ffb819",
+    "src/detector_tiff.rs": "5fea22e7a0ed5d01f4bad2f015fcef167ecf4e44dcda15f853e5c0d22af8751a",
+    "src/dm3.rs": "a7b9ad01a2eac150156c92f2aec088587786ffa90e80c502f1628e0537747b93",
+    "src/edf/recovery.rs": "83743b0cd404172389d599a271caf247aaa736efcf1bdcf535d1ac0e7a4fd34c",
+    "src/edf.rs": "625a552a6cc415eea291a32bdf99d798c43761bcc57bf23ba71303353f5f50c3",
+    "src/esperanto.rs": "d2bb2f34e02000e28810a62479b9f16958c9f7ebe6bc4a9400b41b1841abc8ed",
+    "src/fit2d.rs": "a3dfab6f09927651c98f9561fc497788d9f4736a0795be9c6c37de52de3c2004",
+    "src/ge.rs": "73ef7bbb055d7e90f7fb8ffcef887bd5382b5a82c818f1972558a51d522e4326",
+    "src/hdf5/cache.rs": "2b2927c6cc7bcf4d8daae4add9a72c9fa2414b93dd51950cffb634beaf45c050",
+    "src/hdf5/raw.rs": "aa1c6fa0a31303cc769214393039fec9975bff9c1e1d54eca59808e98d3927fc",
+    "src/hdf5/sources.rs": "be360972436d1322c16f34c1a4903de09a5068f6e3861d9a6a40790cab40cfa7",
+    "src/hdf5/sparse/numeric.rs": "9e842fc99100d24a6913d506dd86e7f63b0213eee695cea2a82515712be78433",
+    "src/hdf5/sparse/reconstruction.rs": "801f9c866a9e5796e7de966cad42f50e5c128183cf895660d155265cd99df364",
+    "src/hdf5/sparse.rs": "4040cd94500621d5e96129a7b2833b46336cf1dc8c500ea7e02260f602960233",
+    "src/hdf5/typed.rs": "8f9fc6e75624262f7aabc93a76f7b233cd6c4e101be0336c64d7ff6facaa8b6e",
+    "src/hdf5/vds.rs": "e8e82c3152e40d589e196a31a5165723f056ed7f2875deb235dc8f587dd68207",
+    "src/hdf5.rs": "17143e26bc1dbc3bd9df3c12c86f6bdbfe9c75199f11cdef7b30278576d2e0ec",
+    "src/jpeg.rs": "ab2e7dbea38cf2c876e4ad2a73ce74e4e2ee19c28a193365054b33082522f445",
+    "src/jpeg2000.rs": "be8ad6f74a6c161532e73aaae16dff9d37533f6c1181f66eae35fc5ff99ba7e3",
+    "src/kcd.rs": "fb532aa6e23648399ea52e0872edf0f57e45aacfe951c1284c1f46d3e12330e8",
+    "src/lib.rs": "2385c07eeff1fbf37c53fcf6e02b502bd3b2fbc5a1b356b82683677bfb799413",
+    "src/mar345.rs": "cf527509342046e1725b12ebe5ffbc4ad2f21f6c63b9d820e9c168c9818e16aa",
+    "src/mpa.rs": "6c81d70a3ef9b7f6a95a2f52a7add8aa14c70c15bd21c9ecb252e98b3e4cda9a",
+    "src/mrc.rs": "eb01640b8d6436f363b3b45531050de3ff06f42b4ecb4e3a120bce8ea16bca28",
+    "src/native.rs": "f74050fe0f4b690da53f99e613445431e3fd49aece0a5ea013d0e9fe54301c52",
+    "src/oxford/ty5.rs": "1ca4411422d7b4ecc6ed574bdc8a5ac592d27f0a2baae0b77ded7a7e457e5136",
+    "src/oxford.rs": "134d222d921b9685483a486177e50984159afa6d91bb850d55f59ee1973c9a0d",
+    "src/pixels.rs": "89f9b646e2970e79c77c625529f367f5fe96bd35c9ecf73cad67bbb59dde3c12",
+    "src/pixi.rs": "2522bc7b5cfc0a70f4624d87193fade8075857b08c7cf34fb05ce9f0ddf5b7ee",
+    "src/raster.rs": "f27377deff1a475984240c548cc77890d8d1f53181245ac8654333fdd7a29c1f",
+    "src/raxis.rs": "c0bee389a94056c437a18948996c1449351aefcae9ea9191dd228ce1d63e11db",
+    "src/source.rs": "956a62bf69093aa2f9544bc1476b1f03cd28548320353db96ae9987eb0853a02",
+    "src/spe.rs": "48849be1954fe507ed36d9eb7ae476b43b2810abe434dcf889165af7df71fb98",
+    "src/tiff/compatibility.rs": "ee3dc5bdd237f58bde81538c46ee6a393793b0632e9c921e867479f3c7a4e541",
+    "src/tiff/group3.rs": "ede0d60ba03fc62e6e707bd2a4f7a06d8fc272f83ba9d0bd1ab62943cb49f1da",
+    "src/tiff/ifd_view.rs": "2af7b49f6dd7b01faab8910c95d638192d2712b97a8a31c94fb649d84697c7f4",
+    "src/tiff/jpeg_components.rs": "8cc9ef27459a54f7a6e47ea6e594d5a51bdb0b0820d10c2c93a778f010014c53",
+    "src/tiff/ojpeg.rs": "27ea210bfa75c251d75a396fb949b1d466fe68c67b5e8201cb25f7a81296176a",
+    "src/tiff/thunderscan.rs": "7d299c5032402b5af16f79ec7f66d9609a03046a058fe91b9cc13206673fff2c",
+    "src/tiff/view.rs": "c4f32a6903c98c8030047a217ef572c6f03261e37fe4d4b0724315f5f4dbc2ed",
+    "src/tiff/view_jpeg.rs": "8f8df0d1a26d93e9f15715d9d238e47c7bd420afe8d3c7337004691c0af522e1",
+    "src/tiff/view_ycbcr.rs": "9fbb8713ae4739ef0433441e15412d54ad8920b297652caab687b14c57d9f583",
+    "src/tiff/ycbcr.rs": "12958c127df223a150ee186094d70126a2841d79ccccb68bd3a08d78e4cdaa19",
+    "src/tiff/ycbcr_jpeg.rs": "3a70a695fed2fca125b2609356989c669b3020eeaeaed6d86a4c1c3f2365e679",
+    "src/tiff.rs": "03be18fbcd8dc71995bad8140effafe735df949d77eff1fd444225588d2dc023",
+    "src/transport.rs": "16aab3b4c31947bc599a66bebfa0909653ec2bc13005c4255d933417b5630c30",
+    "src/wrapped.rs": "228c68ab01ad3158f3117ddce64821cf068c1b547a9569eec2fcf81f3e642eb7",
+    "src/xsd.rs": "bcfe7328bc0d9d809dc6abda92d790039069e3829332abcfb300b0379e0ac601"
+  },
+  "regression_source_hashes": {
+    "tests/metadata.rs": "869c549f732bd0db279c28bebf1ae3d01aa89c39e62172df243177c57292cca9",
+    "tests/wrapped.rs": "2d10745bab4420bcdfceb42dfc6c693aabee2c5fcb685bf979f580df80205343",
+    "scripts/test_metadata_parity.py": "4f3536409c38c7219e688e9d3357d52cc5885ef49d8a5b4432395b66fddf96bd"
+  }
+}
