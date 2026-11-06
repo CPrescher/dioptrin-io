@@ -19,10 +19,20 @@ pub enum TileTables {
     Declared,
     FromStripTags,
 }
+/// Caller-selected interpretation of ambiguous table-only old-JPEG tile resets.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub enum OjpegTiles {
+    /// Require geometry and restart interpretation established by source declarations.
+    #[default]
+    Declared,
+    /// The caller asserts that every tile is an independently reset JPEG chunk.
+    IndependentResetTiles,
+}
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct Options {
     pub uncompressed_windows: UncompressedWindows,
     pub tile_tables: TileTables,
+    pub ojpeg_tiles: OjpegTiles,
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SourceEntry {

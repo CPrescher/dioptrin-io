@@ -10,7 +10,7 @@
 use crate::{PixelBuffer, PixelType, source::Snapshot};
 pub mod api;
 pub mod compatibility;
-pub use compatibility::{Options, TileTables, UncompressedWindows};
+pub use compatibility::{OjpegTiles, Options, TileTables, UncompressedWindows};
 pub mod directories;
 mod group3;
 pub mod header;
@@ -162,6 +162,8 @@ pub struct Reader {
     ifd_offsets: Vec<u64>,
     #[cfg(feature = "jpeg")]
     ojpeg_pages: Vec<Option<ojpeg::SourceMetadata>>,
+    #[cfg(feature = "jpeg")]
+    ojpeg_options: Options,
     chunk_windows: Vec<ChunkWindows>,
     intermediate_bytes: usize,
     limits: Limits,
@@ -226,8 +228,8 @@ impl Reader {
         native.decoding_buffer_size = limits.frame_bytes;
         native.ifd_value_size = limits.metadata_bytes;
         native.intermediate_buffer_size = limits.intermediate_bytes;
-        // Decoder::new initially uses the upstream defaults while parsing the
-        // first IFD (1 MiB per tag); our tighter limits apply immediately after.
+        // Apply caller metadata/decoder limits before the initial or selected
+        // IFD is parsed; directory admission never uses wider backend defaults.
         let admission = if selected.is_some() {
             Admission::graph(file, limits, options)?
         } else {
@@ -314,7 +316,7 @@ impl Reader {
             #[cfg(feature = "jpeg")]
             {
                 let info = if page.compression == 6 {
-                    let info = ojpeg::inspect(&snapshot, &identity_handle, &page, limits)?;
+                    let info = ojpeg::inspect(&snapshot, &identity_handle, &page, limits, options)?;
                     metadata_bytes = metadata_bytes
                         .checked_add(info.retained_bytes)
                         .filter(|&n| n <= limits.metadata_bytes)
@@ -354,6 +356,8 @@ impl Reader {
             ifd_offsets,
             #[cfg(feature = "jpeg")]
             ojpeg_pages,
+            #[cfg(feature = "jpeg")]
+            ojpeg_options: options,
             chunk_windows,
             intermediate_bytes: limits.intermediate_bytes,
             limits,
@@ -413,7 +417,13 @@ impl Reader {
             #[cfg(feature = "jpeg")]
             {
                 let chunks = match page.compression {
-                    6 => ojpeg::decode(&self.snapshot, &self.identity_handle, page, self.limits)?,
+                    6 => ojpeg::decode(
+                        &self.snapshot,
+                        &self.identity_handle,
+                        page,
+                        self.limits,
+                        self.ojpeg_options,
+                    )?,
                     7 => ycbcr_jpeg::decode(
                         &self.snapshot,
                         &self.identity_handle,

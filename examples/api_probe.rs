@@ -348,8 +348,64 @@ fn vds_selection(s: &dioptrin_io::hdf5::typed::VdsSelection) -> Value {
     }
 }
 #[cfg(feature = "hdf5")]
+fn printf_mappings(
+    config: &Value,
+) -> Result<Vec<dioptrin_io::hdf5::typed::PrintfMapping>, Box<dyn Error>> {
+    let Some(entries) = config.get("printf_mappings") else {
+        return Ok(Vec::new());
+    };
+    entries
+        .as_array()
+        .ok_or("printf_mappings array required")?
+        .iter()
+        .map(|entry| {
+            let owner = entry
+                .get("source_file")
+                .ok_or("printf owner source_file must be explicit (null for root input)")?;
+            Ok(dioptrin_io::hdf5::typed::PrintfMapping {
+                source_file: if owner.is_null() {
+                    None
+                } else {
+                    Some(
+                        owner
+                            .as_str()
+                            .ok_or("printf source_file must be path string or null")?
+                            .into(),
+                    )
+                },
+                dataset: entry["dataset"]
+                    .as_str()
+                    .ok_or("printf owner dataset required")?
+                    .into(),
+                mapping_index: usize::try_from(
+                    entry["mapping_index"]
+                        .as_u64()
+                        .ok_or("printf mapping_index required")?,
+                )?,
+                stored_filename: entry["stored_filename"]
+                    .as_str()
+                    .ok_or("printf stored_filename required")?
+                    .into(),
+                declared_dataset: entry["declared_dataset"]
+                    .as_str()
+                    .ok_or("printf declared_dataset required")?
+                    .into(),
+                blocks: usize::try_from(entry["blocks"].as_u64().ok_or("printf blocks required")?)?,
+            })
+        })
+        .collect()
+}
+#[cfg(feature = "hdf5")]
+fn vds_value(p: &dioptrin_io::PixelBuffer) -> Value {
+    json!({"pixels":pixels(p),"value_hex":bytes_hex(&canonical_bytes(p))})
+}
+#[cfg(feature = "hdf5")]
+fn vds_mapping(m: &dioptrin_io::hdf5::typed::VdsMapping) -> Value {
+    json!({"stored_filename":m.stored_filename,"declared_dataset":m.declared_dataset,"source_file":m.source_file,"resolved_dataset":m.resolved_dataset,"source_shape":m.source_shape,"selection_layout":format!("{:?}",m.selection_layout),"source_bounding_shape":m.source_bounding_shape,"virtual_bounding_shape":m.virtual_bounding_shape,"selected_elements":m.selected_elements,"source_selection":vds_selection(&m.source_selection),"virtual_selection":vds_selection(&m.virtual_selection),"frozen_source_selection":vds_selection(&m.frozen_source_selection),"frozen_virtual_selection":vds_selection(&m.frozen_virtual_selection),"nested_node":m.nested_node,"printf_expansion":m.printf_expansion.as_ref().map(|e| {let d=&e.declaration;json!({"block_index":e.block_index,"declaration":{"source_file":d.source_file,"dataset":d.dataset,"mapping_index":d.mapping_index,"stored_filename":d.stored_filename,"declared_dataset":d.declared_dataset,"source_selection":vds_selection(&d.source_selection),"virtual_selection":vds_selection(&d.virtual_selection),"blocks":d.blocks,"plan":d.plan.as_ref().map(|p|json!({"source_file":p.source_file,"dataset":p.dataset,"mapping_index":p.mapping_index,"stored_filename":p.stored_filename,"declared_dataset":p.declared_dataset,"blocks":p.blocks}))}})}),"source_origin":m.source_origin,"virtual_origin":m.virtual_origin,"mapped_shape":m.mapped_shape,"source_pixel_type":format!("{:?}",m.source_pixel_type),"source_little_endian":m.source_little_endian,"source_layout":format!("{:?}",m.source_layout),"source_fill_value":m.source_fill_value.as_ref().map(vds_value),"source_fill_time":format!("{:?}",m.source_fill_time),"storage_allocated":m.storage_allocated,"filters":m.filters.iter().map(|f|format!("{f:?}")).collect::<Vec<_>>()})
+}
+#[cfg(feature = "hdf5")]
 fn vds_metadata(v: &dioptrin_io::hdf5::typed::VdsMetadata) -> Value {
-    json!({"declared_shape":v.declared_shape,"frozen_shape":v.frozen_shape,"master_max_shape":v.master_max_shape,"unmapped_regions":format!("{:?}",v.unmapped_regions),"unmapped_pixels_per_frame":v.unmapped_pixels_per_frame,"unmapped_pixels_by_frame":v.unmapped_pixels_by_frame,"mappings":v.mappings.iter().map(|m|json!({"stored_filename":m.stored_filename,"declared_dataset":m.declared_dataset,"source_file":m.source_file,"resolved_dataset":m.resolved_dataset,"source_shape":m.source_shape,"selection_layout":format!("{:?}",m.selection_layout),"source_bounding_shape":m.source_bounding_shape,"virtual_bounding_shape":m.virtual_bounding_shape,"selected_elements":m.selected_elements,"source_selection":vds_selection(&m.source_selection),"virtual_selection":vds_selection(&m.virtual_selection),"source_origin":m.source_origin,"virtual_origin":m.virtual_origin,"mapped_shape":m.mapped_shape,"source_pixel_type":format!("{:?}",m.source_pixel_type),"source_little_endian":m.source_little_endian,"source_layout":format!("{:?}",m.source_layout),"source_fill_value":m.source_fill_value.as_ref().map(|p|json!({"pixels":pixels(p),"value_hex":bytes_hex(&canonical_bytes(p))})),"source_fill_time":format!("{:?}",m.source_fill_time),"storage_allocated":m.storage_allocated,"filters":m.filters.iter().map(|f|format!("{f:?}")).collect::<Vec<_>>() })).collect::<Vec<_>>()})
+    json!({"node_id":v.node_id,"source_file":v.source_file,"dataset":v.dataset,"fill_value":v.fill_value.as_ref().map(vds_value),"declared_shape":v.declared_shape,"frozen_shape":v.frozen_shape,"master_max_shape":v.master_max_shape,"unmapped_regions":format!("{:?}",v.unmapped_regions),"unmapped_pixels_per_frame":v.unmapped_pixels_per_frame,"unmapped_pixels_by_frame":v.unmapped_pixels_by_frame,"mappings":v.mappings.iter().map(vds_mapping).collect::<Vec<_>>(),"nested_nodes":v.nested_nodes.iter().map(|n|json!({"node_id":n.node_id,"source_file":n.source_file,"dataset":n.dataset,"declared_shape":n.declared_shape,"frozen_shape":n.frozen_shape,"master_max_shape":n.master_max_shape,"mappings":n.mappings.iter().map(vds_mapping).collect::<Vec<_>>(),"fill_value":n.fill_value.as_ref().map(vds_value),"fill_time":format!("{:?}",n.fill_time),"unmapped_pixels_per_frame":n.unmapped_pixels_per_frame,"unmapped_pixels_by_frame":n.unmapped_pixels_by_frame})).collect::<Vec<_>>(),"effective_fill_regions":v.effective_fill_regions.iter().map(|r|json!({"origin_node":r.origin_node,"source_file":r.source_file,"dataset":r.dataset,"origin_selection":vds_selection(&r.origin_selection),"virtual_selection":vds_selection(&r.virtual_selection),"value":vds_value(&r.value)})).collect::<Vec<_>>()})
 }
 fn main() -> Result<(), Box<dyn Error>> {
     let args = std::env::args().collect::<Vec<_>>();
@@ -493,6 +549,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         };
         let raw_bindings = read_bindings("raw_filenames")?;
         let vds_bindings = read_bindings("vds_filenames")?;
+        let printf = printf_mappings(&c)?;
         let unmapped = match c["unmapped_regions"].as_str() {
             None | Some("reject") => UnmappedRegions::Reject,
             Some("declared_fill") => UnmappedRegions::DeclaredFill,
@@ -513,6 +570,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             vds_bindings.as_ref().map(|filenames| VdsOptions {
                 filenames,
                 unmapped_regions: unmapped,
+                printf_mappings: &printf,
             }),
             raw_bindings
                 .as_ref()
@@ -551,7 +609,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         reader.check_sources()?;
         println!(
             "{}",
-            json!({"kind":"hdf5_layout","frames":reader.frames(),"metadata":metadata,"images":images,"sources":reader.sources().iter().map(|s|json!({"path":s.path,"bytes":s.bytes})).collect::<Vec<_>>(),"source_bindings":reader.source_bindings().iter().map(|b|json!({"requested":b.requested,"resolved":b.resolved})).collect::<Vec<_>>(),"links":reader.links().iter().map(|l|json!({"source":l.source,"path":l.path,"external":l.external,"raw_hex":bytes_hex(&l.raw_value)})).collect::<Vec<_>>()})
+            json!({"kind":"hdf5_layout","native_hdf5_version":dioptrin_io::hdf5::library_version(),"frames":reader.frames(),"metadata":metadata,"images":images,"sources":reader.sources().iter().map(|s|json!({"path":s.path,"bytes":s.bytes})).collect::<Vec<_>>(),"source_bindings":reader.source_bindings().iter().map(|b|json!({"requested":b.requested,"resolved":b.resolved})).collect::<Vec<_>>(),"links":reader.links().iter().map(|l|json!({"source":l.source,"path":l.path,"external":l.external,"raw_hex":bytes_hex(&l.raw_value)})).collect::<Vec<_>>()})
         );
         return Ok(());
     }
@@ -741,6 +799,13 @@ fn main() -> Result<(), Box<dyn Error>> {
                 Some("from_strip_tags") => dioptrin_io::tiff::TileTables::FromStripTags,
                 None | Some("declared") => dioptrin_io::tiff::TileTables::Declared,
                 _ => return Err("unknown TIFF tile-table policy".into()),
+            },
+            ojpeg_tiles: match config["ojpeg_tiles"].as_str() {
+                None | Some("declared") => dioptrin_io::tiff::OjpegTiles::Declared,
+                Some("independent_reset_tiles") => {
+                    dioptrin_io::tiff::OjpegTiles::IndependentResetTiles
+                }
+                _ => return Err("unknown TIFF original-JPEG tile interpretation".into()),
             },
         };
         let mut reader = Reader::open_with_options(

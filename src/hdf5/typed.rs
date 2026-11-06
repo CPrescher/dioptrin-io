@@ -4,8 +4,9 @@ pub use super::sources::{Link, Source};
 #[path = "external_raw.rs"]
 mod external_raw;
 pub use super::vds::{
-    FilenameBinding, Mapping as VdsMapping, SelectionLayout, SelectionRecord as VdsSelection,
-    UnmappedRegions, VdsMetadata, VdsOptions,
+    FilenameBinding, FillRegion, Mapping as VdsMapping, PrintfDeclaration, PrintfExpansion,
+    PrintfMapping, SelectionLayout, SelectionRecord as VdsSelection, UnmappedRegions, VdsMetadata,
+    VdsNodeMetadata, VdsOptions,
 };
 pub use super::{Error, Filter};
 use super::{sources::Sources, vds};
@@ -328,6 +329,7 @@ impl Reader {
                 let bindings = bindings.as_mut().expect("initialized VDS binding policy");
                 let admission = vds::admit(
                     &dataset,
+                    (source, &path),
                     &mut sources,
                     bindings,
                     limits,

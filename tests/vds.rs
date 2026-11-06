@@ -43,6 +43,7 @@ fn open(
             external_links: ExternalLinks::FollowSnapshot,
         },
         VdsOptions {
+            printf_mappings: &[],
             filenames: maps,
             unmapped_regions: fill,
         },
@@ -332,6 +333,7 @@ fn unsupported_mapping_fill_and_metadata_layouts_are_explicit() {
             Selection::Lambda,
             Options::default(),
             VdsOptions {
+                printf_mappings: &[],
                 filenames: &maps,
                 unmapped_regions: UnmappedRegions::DeclaredFill
             }
@@ -389,6 +391,7 @@ fn regular_datasets_ignore_irrelevant_global_bindings_including_their_source_lim
             ..Options::default()
         },
         VdsOptions {
+            printf_mappings: &[],
             filenames: &maps,
             unmapped_regions: UnmappedRegions::DeclaredFill,
         },
@@ -410,6 +413,7 @@ fn complete_external_graph_and_source_replacements_invalidate_every_reused_frame
             Selection::Dataset("/data"),
             Options::default(),
             VdsOptions {
+                printf_mappings: &[],
                 filenames: &maps,
                 unmapped_regions: UnmappedRegions::DeclaredFill
             }
@@ -546,6 +550,7 @@ fn every_scalar_and_endian_preserves_nan_payloads_negative_zero_integer_extrema_
             Selection::Dataset(&format!("/{name}")),
             Options::default(),
             VdsOptions {
+                printf_mappings: &[],
                 filenames: &maps,
                 unmapped_regions: UnmappedRegions::DeclaredFill,
             },
@@ -600,6 +605,7 @@ fn growth_in_another_virtual_or_regular_part_invalidates_the_global_scan_index()
                 ..Options::default()
             },
             VdsOptions {
+                printf_mappings: &[],
                 filenames: &maps,
                 unmapped_regions: UnmappedRegions::Reject,
             },

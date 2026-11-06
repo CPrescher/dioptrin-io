@@ -1,0 +1,275 @@
+{
+  "schema": 1,
+  "license": "CC0-1.0",
+  "generator": "scripts/generate_nested_vds_fixtures.py",
+  "origin": "independent original typed words, exact fill words and sorted mathematical source/destination coordinate pairing; no reference VDS read generates expected image words",
+  "cases": {
+    "middle-u64": {
+      "master": "middle.h5",
+      "dataset": "/u64",
+      "bindings": [
+        "child.h5",
+        "source.h5"
+      ],
+      "shape": [
+        3,
+        3,
+        6
+      ],
+      "dtype": "<u8",
+      "frame_hex": [
+        "ffffffffffffffff01000000000000800100000000000080ffffffffffffffff010000000000008001000000000000800500000000000000010000000000008001000000000000800b0000000000000001000000000000800100000000000080ffffffffffffffff010000000000008001000000000000800e0000000000000001000000000000800100000000000080",
+        "ffffffffffffffff01000000000000800100000000000080ffffffffffffffff01000000000000800100000000000080150000000000000001000000000000800100000000000080ffffffffffffffff01000000000000800100000000000080180000000000000001000000000000800100000000000080ffffffffffffffff01000000000000800100000000000080",
+        "1f0000000000000001000000000000800100000000000080ffffffffffffffff01000000000000800100000000000080220000000000000001000000000000800100000000000080010000000000008001000000000000800100000000000080010000000000008001000000000000800100000000000080010000000000008001000000000000800100000000000080"
+      ],
+      "unmapped_regions": "declared_fill"
+    },
+    "grand-u64": {
+      "master": "grand.h5",
+      "dataset": "/u64",
+      "bindings": [
+        "middle.h5",
+        "child.h5",
+        "source.h5"
+      ],
+      "shape": [
+        2,
+        3,
+        4
+      ],
+      "dtype": "<u8",
+      "frame_hex": [
+        "ffffffffffffffffffffffffffffffff05000000000000000b00000000000000ffffffffffffffff0e00000000000000ffffffffffffffffffffffffffffffff1500000000000000ffffffffffffffff1800000000000000ffffffffffffffff",
+        "1f00000000000000ffffffffffffffff2200000000000000010000000000008001000000000020000100000000002000010000000000200001000000000020000100000000002000010000000000200001000000000020000100000000002000"
+      ],
+      "unmapped_regions": "declared_fill"
+    },
+    "middle-f16": {
+      "master": "middle.h5",
+      "dataset": "/f16",
+      "bindings": [
+        "child.h5",
+        "source.h5"
+      ],
+      "shape": [
+        3,
+        3,
+        6
+      ],
+      "dtype": "<f2",
+      "frame_hex": [
+        "0080557e557e0080557e557e00fc557e557e00fc557e557e0080557e557eaafe557e557e",
+        "0080557e557e0080557e557e0100557e557e0080557e557e0080557e557e0080557e557e",
+        "557e557e557e0080557e557e007c557e557e557e557e557e557e557e557e557e557e557e"
+      ],
+      "unmapped_regions": "declared_fill"
+    },
+    "grand-f16": {
+      "master": "grand.h5",
+      "dataset": "/f16",
+      "bindings": [
+        "middle.h5",
+        "child.h5",
+        "source.h5"
+      ],
+      "shape": [
+        2,
+        3,
+        4
+      ],
+      "dtype": "<f2",
+      "frame_hex": [
+        "0080008000fc00fc0080aafe008000800100008000800080",
+        "557e0080007c557eaafeaafeaafeaafeaafeaafeaafeaafe"
+      ],
+      "unmapped_regions": "declared_fill"
+    },
+    "middle-c32-be": {
+      "master": "middle.h5",
+      "dataset": "/c32-be",
+      "bindings": [
+        "child.h5",
+        "source.h5"
+      ],
+      "shape": [
+        3,
+        3,
+        6
+      ],
+      "dtype": ">c8",
+      "frame_hex": [
+        "000000804523c17f2143c57f000000802143c57f00000080000000804523c17f2143c57f000000802143c57f000000800000807f000080ff2143c57f000000802143c57f000000800000807f000080ff2143c57f000000802143c57f00000080000000804523c17f2143c57f000000802143c57f000000800000807f000080ff2143c57f000000802143c57f00000080",
+        "000000804523c17f2143c57f000000802143c57f00000080000000804523c17f2143c57f000000802143c57f00000080000000804523c17f2143c57f000000802143c57f00000080000000804523c17f2143c57f000000802143c57f00000080000000804523c17f2143c57f000000802143c57f00000080000000804523c17f2143c57f000000802143c57f00000080",
+        "2143c5ff010000002143c57f000000802143c57f00000080000000804523c17f2143c57f000000802143c57f000000802143c5ff010000002143c57f000000802143c57f000000802143c57f000000802143c57f000000802143c57f000000802143c57f000000802143c57f000000802143c57f000000802143c57f000000802143c57f000000802143c57f00000080"
+      ],
+      "unmapped_regions": "declared_fill"
+    },
+    "grand-c32-be": {
+      "master": "grand.h5",
+      "dataset": "/c32-be",
+      "bindings": [
+        "middle.h5",
+        "child.h5",
+        "source.h5"
+      ],
+      "shape": [
+        2,
+        3,
+        4
+      ],
+      "dtype": ">c8",
+      "frame_hex": [
+        "000000804523c17f000000804523c17f0000807f000080ff0000807f000080ff000000804523c17f0000807f000080ff000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f000000804523c17f",
+        "2143c5ff01000000000000804523c17f2143c5ff010000002143c57f00000080000080ff4523c17f000080ff4523c17f000080ff4523c17f000080ff4523c17f000080ff4523c17f000080ff4523c17f000080ff4523c17f000080ff4523c17f"
+      ],
+      "unmapped_regions": "declared_fill"
+    },
+    "middle-bool": {
+      "master": "middle.h5",
+      "dataset": "/bool",
+      "bindings": [
+        "child.h5",
+        "source.h5"
+      ],
+      "shape": [
+        3,
+        3,
+        6
+      ],
+      "dtype": "|b1",
+      "frame_hex": [
+        "007f7f027f7fff7f7fff7f7f027f7f027f7f",
+        "027f7f027f7f7f7f7f027f7f007f7f027f7f",
+        "017f7f027f7f807f7f7f7f7f7f7f7f7f7f7f"
+      ],
+      "unmapped_regions": "declared_fill"
+    },
+    "grand-bool": {
+      "master": "grand.h5",
+      "dataset": "/bool",
+      "bindings": [
+        "middle.h5",
+        "child.h5",
+        "source.h5"
+      ],
+      "shape": [
+        2,
+        3,
+        4
+      ],
+      "dtype": "|b1",
+      "frame_hex": [
+        "0002ffff020202027f020002",
+        "0102807fffffffffffffffff"
+      ],
+      "unmapped_regions": "declared_fill"
+    },
+    "measured-only-undefined-child": {
+      "master": "views.h5",
+      "dataset": "/measured-only",
+      "bindings": [
+        "undefined.h5",
+        "source.h5"
+      ],
+      "shape": [
+        2,
+        2,
+        2
+      ],
+      "dtype": "<u8",
+      "frame_hex": [
+        "ffffffffffffffff05000000000000000b000000000000000e00000000000000",
+        "150000000000000018000000000000001f000000000000002200000000000000"
+      ],
+      "unmapped_regions": "reject",
+      "effective_fill_regions": 0
+    },
+    "physical-node-hard-alias-dag": {
+      "master": "dag.h5",
+      "dataset": "/data",
+      "bindings": [
+        "child.h5",
+        "source.h5"
+      ],
+      "shape": [
+        2,
+        2,
+        2
+      ],
+      "dtype": "<u8",
+      "frame_hex": [
+        "ffffffffffffffffffffffffffffffff05000000000000000b00000000000000",
+        "ffffffffffffffff1f00000000000000ffffffffffffffff2200000000000000"
+      ],
+      "unmapped_regions": "declared_fill",
+      "nested_nodes": 1
+    }
+  },
+  "invalid": {
+    "undefined_used": {
+      "master": "views.h5",
+      "dataset": "/undefined-used",
+      "bindings": [
+        "undefined.h5",
+        "source.h5"
+      ]
+    },
+    "cycle": {
+      "master": "cycle.h5",
+      "dataset": "/data",
+      "bindings": []
+    },
+    "depth": {
+      "master": "depth.h5",
+      "dataset": "/n0",
+      "bindings": []
+    },
+    "dag_expansion": {
+      "master": "dag-expansion.h5",
+      "dataset": "/n17",
+      "bindings": []
+    }
+  },
+  "files": {
+    "child.h5": {
+      "bytes": 24629,
+      "sha256": "a7a7873c8e142227a9bd3e52b37404e57718c6e7914aee4fddc17cdf9030a2a7"
+    },
+    "cycle.h5": {
+      "bytes": 6144,
+      "sha256": "1efb77f91d0c4656d0977a62bd701d57bede2b07b2b6f714447da0e8490f02a8"
+    },
+    "dag-expansion.h5": {
+      "bytes": 11336,
+      "sha256": "55d5bc3ef4355f80f58624d7c48d2fa85bd14990b04ef9bcbf40a738d7946f55"
+    },
+    "dag.h5": {
+      "bytes": 6144,
+      "sha256": "044c9d8f36f491466c2c03eba2e14486fcdba751ff14621b366d07297c6a758e"
+    },
+    "depth.h5": {
+      "bytes": 17352,
+      "sha256": "e490b5d47c8283543f5b4567822310dfc325d23342262fc1e85c8eb5eb418a1b"
+    },
+    "grand.h5": {
+      "bytes": 24576,
+      "sha256": "97c50eb0b68510478c9fe9bbfce5dd86a1bdaee14eb4f4dbb115bf312cbb061f"
+    },
+    "middle.h5": {
+      "bytes": 24576,
+      "sha256": "5cb6b9ab215b467d21d62b711131f3d63a3d6a4b069f25264c3e870c04052def"
+    },
+    "source.h5": {
+      "bytes": 16848,
+      "sha256": "6cc21363c9034d5c8f958d426975298621f5f0808dd1c7936317d754c7bae470"
+    },
+    "undefined.h5": {
+      "bytes": 6144,
+      "sha256": "7b4a31f1094c750a4ebdd71c61cc4404b1b44f928c13ce4484ba5a887d16fbbf"
+    },
+    "views.h5": {
+      "bytes": 12288,
+      "sha256": "1de576e75c1f401ddbe0533079ee3374e0bd95e4b2cbbc653b0faebf069976a9"
+    }
+  }
+}

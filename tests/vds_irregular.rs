@@ -69,6 +69,7 @@ fn open(
         Selection::Dataset("/data"),
         options,
         VdsOptions {
+            printf_mappings: &[],
             filenames: maps,
             unmapped_regions: fill,
         },

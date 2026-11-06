@@ -1,0 +1,8 @@
+SPDX-License-Identifier: CC0-1.0
+
+These independent synthetic component arrays, TIFF containers and native decoded
+source-word goldens are dedicated to the public domain under CC0 1.0 Universal:
+https://creativecommons.org/publicdomain/zero/1.0/
+
+No external detector or upstream image content is included. Exact native
+encoder/decoder binary hashes and generator source are retained in provenance.

@@ -1,0 +1,798 @@
+{
+  "license": "CC0-1.0",
+  "generator": "scripts/generate_printf_vds_fixtures.py",
+  "origin": "Independent authored scalar storage words and explicit HDF5 DCPL mappings; expected words assembled from source bytes without VDS reads",
+  "h5py_version": "3.15.1",
+  "hdf5_version": "1.14.6",
+  "cases": {
+    "files-u64": {
+      "master": "files-u64.h5",
+      "dataset": "/data",
+      "kind": "u64",
+      "dtype": "<u8",
+      "shape": [
+        6,
+        2,
+        3
+      ],
+      "frame_hex": [
+        "ffffffffffffffff00000000000000800100000000002000000000000000000001000000000000000200000000000000",
+        "000000000000000001000000000000000200000000000000030000000000000004000000000000000500000000000000",
+        "ffffffffffffffff00000000000000800100000000002000000000000000000001000000000000000200000000000000",
+        "640000000000000065000000000000006600000000000000670000000000000068000000000000006900000000000000",
+        "ffffffffffffffff00000000000000800100000000002000000000000000000001000000000000000200000000000000",
+        "c800000000000000c900000000000000ca00000000000000cb00000000000000cc00000000000000cd00000000000000"
+      ],
+      "bindings": [
+        {
+          "stored_filename": "files-u64-0.h5",
+          "actual_file": "files-u64-0.h5"
+        },
+        {
+          "stored_filename": "files-u64-1.h5",
+          "actual_file": "files-u64-1.h5"
+        },
+        {
+          "stored_filename": "files-u64-2.h5",
+          "actual_file": "files-u64-2.h5"
+        }
+      ],
+      "printf_mappings": [
+        {
+          "source_file": null,
+          "dataset": "/data",
+          "mapping_index": 0,
+          "stored_filename": "files-u64-%b.h5",
+          "declared_dataset": "/data",
+          "blocks": 3
+        }
+      ],
+      "unmapped_regions": "reject",
+      "source_files": [
+        "files-u64-0.h5",
+        "files-u64-1.h5",
+        "files-u64-2.h5"
+      ],
+      "axis": 0,
+      "block_start": 0,
+      "source_selection_start": 0,
+      "original_declared_unlimited_axis": 0
+    },
+    "predeclared-prefix": {
+      "master": "predeclared-prefix.h5",
+      "dataset": "/data",
+      "kind": "u64",
+      "dtype": "<u8",
+      "shape": [
+        6,
+        2,
+        3
+      ],
+      "frame_hex": [
+        "ffffffffffffffff00000000000000800100000000002000000000000000000001000000000000000200000000000000",
+        "000000000000000001000000000000000200000000000000030000000000000004000000000000000500000000000000",
+        "ffffffffffffffff00000000000000800100000000002000000000000000000001000000000000000200000000000000",
+        "640000000000000065000000000000006600000000000000670000000000000068000000000000006900000000000000",
+        "ffffffffffffffff00000000000000800100000000002000000000000000000001000000000000000200000000000000",
+        "c800000000000000c900000000000000ca00000000000000cb00000000000000cc00000000000000cd00000000000000"
+      ],
+      "bindings": [
+        {
+          "stored_filename": "predeclared-prefix-0.h5",
+          "actual_file": "predeclared-prefix-0.h5"
+        },
+        {
+          "stored_filename": "predeclared-prefix-1.h5",
+          "actual_file": "predeclared-prefix-1.h5"
+        },
+        {
+          "stored_filename": "predeclared-prefix-2.h5",
+          "actual_file": "predeclared-prefix-2.h5"
+        }
+      ],
+      "printf_mappings": [
+        {
+          "source_file": null,
+          "dataset": "/data",
+          "mapping_index": 0,
+          "stored_filename": "predeclared-prefix-%b.h5",
+          "declared_dataset": "/data",
+          "blocks": 3
+        }
+      ],
+      "unmapped_regions": "reject",
+      "source_files": [
+        "predeclared-prefix-0.h5",
+        "predeclared-prefix-1.h5",
+        "predeclared-prefix-2.h5"
+      ],
+      "axis": 0,
+      "block_start": 0,
+      "source_selection_start": 0,
+      "original_declared_unlimited_axis": 100
+    },
+    "files-u64-be": {
+      "master": "files-u64-be.h5",
+      "dataset": "/data",
+      "kind": "u64-be",
+      "dtype": ">u8",
+      "shape": [
+        4,
+        2,
+        3
+      ],
+      "frame_hex": [
+        "ffffffffffffffff00000000000000800100000000002000000000000000000001000000000000000200000000000000",
+        "000000000000000001000000000000000200000000000000030000000000000004000000000000000500000000000000",
+        "ffffffffffffffff00000000000000800100000000002000000000000000000001000000000000000200000000000000",
+        "640000000000000065000000000000006600000000000000670000000000000068000000000000006900000000000000"
+      ],
+      "bindings": [
+        {
+          "stored_filename": "files-u64-be-0.h5",
+          "actual_file": "files-u64-be-0.h5"
+        },
+        {
+          "stored_filename": "files-u64-be-1.h5",
+          "actual_file": "files-u64-be-1.h5"
+        }
+      ],
+      "printf_mappings": [
+        {
+          "source_file": null,
+          "dataset": "/data",
+          "mapping_index": 0,
+          "stored_filename": "files-u64-be-%b.h5",
+          "declared_dataset": "/data",
+          "blocks": 2
+        }
+      ],
+      "unmapped_regions": "reject",
+      "source_files": [
+        "files-u64-be-0.h5",
+        "files-u64-be-1.h5"
+      ],
+      "axis": 0,
+      "block_start": 0,
+      "source_selection_start": 0,
+      "original_declared_unlimited_axis": 0
+    },
+    "self-datasets": {
+      "master": "self-datasets.h5",
+      "dataset": "/data",
+      "kind": "u64",
+      "dtype": "<u8",
+      "shape": [
+        6,
+        2,
+        3
+      ],
+      "frame_hex": [
+        "ffffffffffffffff00000000000000800100000000002000000000000000000001000000000000000200000000000000",
+        "000000000000000001000000000000000200000000000000030000000000000004000000000000000500000000000000",
+        "ffffffffffffffff00000000000000800100000000002000000000000000000001000000000000000200000000000000",
+        "640000000000000065000000000000006600000000000000670000000000000068000000000000006900000000000000",
+        "ffffffffffffffff00000000000000800100000000002000000000000000000001000000000000000200000000000000",
+        "c800000000000000c900000000000000ca00000000000000cb00000000000000cc00000000000000cd00000000000000"
+      ],
+      "bindings": [],
+      "printf_mappings": [
+        {
+          "source_file": null,
+          "dataset": "/data",
+          "mapping_index": 0,
+          "stored_filename": ".",
+          "declared_dataset": "/part-%b",
+          "blocks": 3
+        }
+      ],
+      "unmapped_regions": "reject",
+      "source_files": [],
+      "axis": 0,
+      "block_start": 0,
+      "source_selection_start": 0,
+      "original_declared_unlimited_axis": 0
+    },
+    "both-escaped": {
+      "master": "both-escaped.h5",
+      "dataset": "/data",
+      "kind": "f16",
+      "dtype": "<f2",
+      "shape": [
+        4,
+        2,
+        3
+      ],
+      "frame_hex": [
+        "0080557eaafe0100007c00fc",
+        "0080557eaafe0100007c00fc",
+        "0080557eaafe0100007c00fc",
+        "0080557eaafe0100007c00fc"
+      ],
+      "bindings": [
+        {
+          "stored_filename": "percent%-0.h5",
+          "actual_file": "percent%-0.h5"
+        },
+        {
+          "stored_filename": "percent%-1.h5",
+          "actual_file": "percent%-1.h5"
+        }
+      ],
+      "printf_mappings": [
+        {
+          "source_file": null,
+          "dataset": "/data",
+          "mapping_index": 0,
+          "stored_filename": "percent%%-%b.h5",
+          "declared_dataset": "/data%%_%b",
+          "blocks": 2
+        }
+      ],
+      "unmapped_regions": "reject",
+      "source_files": [
+        "percent%-0.h5",
+        "percent%-1.h5"
+      ],
+      "axis": 0,
+      "block_start": 0,
+      "source_selection_start": 0,
+      "original_declared_unlimited_axis": 0
+    },
+    "repeated": {
+      "master": "repeated.h5",
+      "dataset": "/data",
+      "kind": "i16",
+      "dtype": "<i2",
+      "shape": [
+        4,
+        2,
+        3
+      ],
+      "frame_hex": [
+        "0080ff7fffff000000000700",
+        "000001000200030004000500",
+        "0080ff7fffff000001000700",
+        "640065006600670068006900"
+      ],
+      "bindings": [
+        {
+          "stored_filename": "repeat-0-0.h5",
+          "actual_file": "repeat-0-0.h5"
+        },
+        {
+          "stored_filename": "repeat-1-1.h5",
+          "actual_file": "repeat-1-1.h5"
+        }
+      ],
+      "printf_mappings": [
+        {
+          "source_file": null,
+          "dataset": "/data",
+          "mapping_index": 0,
+          "stored_filename": "repeat-%b-%b.h5",
+          "declared_dataset": "/part-%b-%b",
+          "blocks": 2
+        }
+      ],
+      "unmapped_regions": "reject",
+      "source_files": [
+        "repeat-0-0.h5",
+        "repeat-1-1.h5"
+      ],
+      "axis": 0,
+      "block_start": 0,
+      "source_selection_start": 0,
+      "original_declared_unlimited_axis": 0
+    },
+    "strided": {
+      "master": "strided.h5",
+      "dataset": "/data",
+      "kind": "u64",
+      "dtype": "<u8",
+      "shape": [
+        6,
+        2,
+        3
+      ],
+      "frame_hex": [
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "ffffffffffffffff00000000000000800100000000002000000000000000000001000000000000000200000000000000",
+        "000000000000000001000000000000000200000000000000030000000000000004000000000000000500000000000000",
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "ffffffffffffffff00000000000000800100000000002000000000000000000001000000000000000200000000000000",
+        "640000000000000065000000000000006600000000000000670000000000000068000000000000006900000000000000"
+      ],
+      "bindings": [
+        {
+          "stored_filename": "strided-0.h5",
+          "actual_file": "strided-0.h5"
+        },
+        {
+          "stored_filename": "strided-1.h5",
+          "actual_file": "strided-1.h5"
+        }
+      ],
+      "printf_mappings": [
+        {
+          "source_file": null,
+          "dataset": "/data",
+          "mapping_index": 0,
+          "stored_filename": "strided-%b.h5",
+          "declared_dataset": "/data",
+          "blocks": 2
+        }
+      ],
+      "unmapped_regions": "declared_fill",
+      "source_files": [
+        "strided-0.h5",
+        "strided-1.h5"
+      ],
+      "axis": 0,
+      "block_start": 1,
+      "source_selection_start": 0,
+      "original_declared_unlimited_axis": 0
+    },
+    "spatial": {
+      "master": "spatial.h5",
+      "dataset": "/data",
+      "kind": "u64",
+      "dtype": "<u8",
+      "shape": [
+        2,
+        2,
+        6
+      ],
+      "frame_hex": [
+        "ffffffffffffffff00000000000000800100000000002000ffffffffffffffff00000000000000800100000000002000000000000000000001000000000000000200000000000000000000000000000001000000000000000200000000000000",
+        "000000000000000001000000000000000200000000000000640000000000000065000000000000006600000000000000030000000000000004000000000000000500000000000000670000000000000068000000000000006900000000000000"
+      ],
+      "bindings": [
+        {
+          "stored_filename": "spatial-0.h5",
+          "actual_file": "spatial-0.h5"
+        },
+        {
+          "stored_filename": "spatial-1.h5",
+          "actual_file": "spatial-1.h5"
+        }
+      ],
+      "printf_mappings": [
+        {
+          "source_file": null,
+          "dataset": "/data",
+          "mapping_index": 0,
+          "stored_filename": "spatial-%b.h5",
+          "declared_dataset": "/data",
+          "blocks": 2
+        }
+      ],
+      "unmapped_regions": "reject",
+      "source_files": [
+        "spatial-0.h5",
+        "spatial-1.h5"
+      ],
+      "axis": 2,
+      "block_start": 0,
+      "source_selection_start": 0,
+      "original_declared_unlimited_axis": 0
+    },
+    "source-selection": {
+      "master": "source-selection.h5",
+      "dataset": "/data",
+      "kind": "i64",
+      "dtype": "<i8",
+      "shape": [
+        4,
+        2,
+        3
+      ],
+      "frame_hex": [
+        "000000000000000001000000000000000200000000000000030000000000000004000000000000000500000000000000",
+        "06000000000000000700000000000000080000000000000009000000000000000a000000000000000b00000000000000",
+        "640000000000000065000000000000006600000000000000670000000000000068000000000000006900000000000000",
+        "6a000000000000006b000000000000006c000000000000006d000000000000006e000000000000006f00000000000000"
+      ],
+      "bindings": [
+        {
+          "stored_filename": "source-selection-0.h5",
+          "actual_file": "source-selection-0.h5"
+        },
+        {
+          "stored_filename": "source-selection-1.h5",
+          "actual_file": "source-selection-1.h5"
+        }
+      ],
+      "printf_mappings": [
+        {
+          "source_file": null,
+          "dataset": "/data",
+          "mapping_index": 0,
+          "stored_filename": "source-selection-%b.h5",
+          "declared_dataset": "/data",
+          "blocks": 2
+        }
+      ],
+      "unmapped_regions": "reject",
+      "source_files": [
+        "source-selection-0.h5",
+        "source-selection-1.h5"
+      ],
+      "axis": 0,
+      "block_start": 0,
+      "source_selection_start": 1,
+      "original_declared_unlimited_axis": 0
+    },
+    "files-f16": {
+      "master": "files-f16.h5",
+      "dataset": "/data",
+      "kind": "f16",
+      "dtype": "<f2",
+      "shape": [
+        4,
+        2,
+        3
+      ],
+      "frame_hex": [
+        "0080557eaafe0100007c00fc",
+        "0080557eaafe0100007c00fc",
+        "0080557eaafe0100007c00fc",
+        "0080557eaafe0100007c00fc"
+      ],
+      "bindings": [
+        {
+          "stored_filename": "files-f16-0.h5",
+          "actual_file": "files-f16-0.h5"
+        },
+        {
+          "stored_filename": "files-f16-1.h5",
+          "actual_file": "files-f16-1.h5"
+        }
+      ],
+      "printf_mappings": [
+        {
+          "source_file": null,
+          "dataset": "/data",
+          "mapping_index": 0,
+          "stored_filename": "files-f16-%b.h5",
+          "declared_dataset": "/data",
+          "blocks": 2
+        }
+      ],
+      "unmapped_regions": "reject",
+      "source_files": [
+        "files-f16-0.h5",
+        "files-f16-1.h5"
+      ],
+      "axis": 0,
+      "block_start": 0,
+      "source_selection_start": 0,
+      "original_declared_unlimited_axis": 0
+    },
+    "files-bool": {
+      "master": "files-bool.h5",
+      "dataset": "/data",
+      "kind": "bool",
+      "dtype": "|b1",
+      "shape": [
+        4,
+        2,
+        3
+      ],
+      "frame_hex": [
+        "0001027f80ff",
+        "0001027f80ff",
+        "0001027f80ff",
+        "0001027f80ff"
+      ],
+      "bindings": [
+        {
+          "stored_filename": "files-bool-0.h5",
+          "actual_file": "files-bool-0.h5"
+        },
+        {
+          "stored_filename": "files-bool-1.h5",
+          "actual_file": "files-bool-1.h5"
+        }
+      ],
+      "printf_mappings": [
+        {
+          "source_file": null,
+          "dataset": "/data",
+          "mapping_index": 0,
+          "stored_filename": "files-bool-%b.h5",
+          "declared_dataset": "/data",
+          "blocks": 2
+        }
+      ],
+      "unmapped_regions": "reject",
+      "source_files": [
+        "files-bool-0.h5",
+        "files-bool-1.h5"
+      ],
+      "axis": 0,
+      "block_start": 0,
+      "source_selection_start": 0,
+      "original_declared_unlimited_axis": 0
+    },
+    "files-c32": {
+      "master": "files-c32.h5",
+      "dataset": "/data",
+      "kind": "c32",
+      "dtype": "<c8",
+      "shape": [
+        4,
+        2,
+        3
+      ],
+      "frame_hex": [
+        "000000804523c17f2143c5ff010000000000807f000080ff000000804523c17f2143c5ff010000000000807f000080ff",
+        "000000804523c17f2143c5ff010000000000807f000080ff000000804523c17f2143c5ff010000000000807f000080ff",
+        "000000804523c17f2143c5ff010000000000807f000080ff000000804523c17f2143c5ff010000000000807f000080ff",
+        "000000804523c17f2143c5ff010000000000807f000080ff000000804523c17f2143c5ff010000000000807f000080ff"
+      ],
+      "bindings": [
+        {
+          "stored_filename": "files-c32-0.h5",
+          "actual_file": "files-c32-0.h5"
+        },
+        {
+          "stored_filename": "files-c32-1.h5",
+          "actual_file": "files-c32-1.h5"
+        }
+      ],
+      "printf_mappings": [
+        {
+          "source_file": null,
+          "dataset": "/data",
+          "mapping_index": 0,
+          "stored_filename": "files-c32-%b.h5",
+          "declared_dataset": "/data",
+          "blocks": 2
+        }
+      ],
+      "unmapped_regions": "reject",
+      "source_files": [
+        "files-c32-0.h5",
+        "files-c32-1.h5"
+      ],
+      "axis": 0,
+      "block_start": 0,
+      "source_selection_start": 0,
+      "original_declared_unlimited_axis": 0
+    },
+    "escaped-literal": {
+      "master": "escaped-literal.h5",
+      "dataset": "/data",
+      "kind": "u64",
+      "dtype": "<u8",
+      "shape": [
+        2,
+        2,
+        3
+      ],
+      "frame_hex": [
+        "ffffffffffffffff00000000000000800100000000002000000000000000000001000000000000000200000000000000",
+        "000000000000000001000000000000000200000000000000030000000000000004000000000000000500000000000000"
+      ],
+      "bindings": [
+        {
+          "stored_filename": "literal%.h5",
+          "actual_file": "literal%.h5"
+        }
+      ],
+      "printf_mappings": [],
+      "unmapped_regions": "reject",
+      "source_files": [
+        "literal%.h5"
+      ]
+    },
+    "nested-owner": {
+      "master": "nested-owner.h5",
+      "dataset": "/data",
+      "kind": "u64",
+      "dtype": "<u8",
+      "shape": [
+        4,
+        2,
+        3
+      ],
+      "frame_hex": [
+        "ffffffffffffffff00000000000000800100000000002000000000000000000001000000000000000200000000000000",
+        "000000000000000001000000000000000200000000000000030000000000000004000000000000000500000000000000",
+        "ffffffffffffffff00000000000000800100000000002000000000000000000001000000000000000200000000000000",
+        "640000000000000065000000000000006600000000000000670000000000000068000000000000006900000000000000"
+      ],
+      "bindings": [
+        {
+          "stored_filename": "nested-child.h5",
+          "actual_file": "nested-child.h5"
+        }
+      ],
+      "printf_mappings": [
+        {
+          "source_file": "nested-child.h5",
+          "dataset": "/data",
+          "mapping_index": 0,
+          "stored_filename": ".",
+          "declared_dataset": "/part-%b",
+          "blocks": 2
+        }
+      ],
+      "unmapped_regions": "reject",
+      "source_files": [
+        "nested-child.h5"
+      ]
+    }
+  },
+  "files": {
+    "both-escaped.h5": {
+      "bytes": 6144,
+      "sha256": "006d682229c2cab1d43bcea977a9ca8307789ef18fabf628a6f27aa5fe9d34ca"
+    },
+    "escaped-literal.h5": {
+      "bytes": 6144,
+      "sha256": "ed8f2b428dc182923e20d57560e2c7304f5e24fd26a7a556fe24c9912ce9faed"
+    },
+    "exhausted-prefixes.h5": {
+      "bytes": 6144,
+      "sha256": "784b4742873564ba4532d7d178e28433dfbec261030f3ac35f415d1f80c6df58"
+    },
+    "files-bool-0.h5": {
+      "bytes": 4564,
+      "sha256": "766a7a3b7c8a38457925d5a481a24c9522125a41ef532407c56284785dce5599"
+    },
+    "files-bool-1.h5": {
+      "bytes": 4564,
+      "sha256": "766a7a3b7c8a38457925d5a481a24c9522125a41ef532407c56284785dce5599"
+    },
+    "files-bool.h5": {
+      "bytes": 6144,
+      "sha256": "16ba0bf74c4e84a4b008eea203fb25303a0b00c7addf680b9d9d799a51b5e3da"
+    },
+    "files-c32-0.h5": {
+      "bytes": 4682,
+      "sha256": "1c3bcfab7f9c1c4b000f3edec67716b52db8b96e4d00c241c05714e89e4dd90b"
+    },
+    "files-c32-1.h5": {
+      "bytes": 4682,
+      "sha256": "1c3bcfab7f9c1c4b000f3edec67716b52db8b96e4d00c241c05714e89e4dd90b"
+    },
+    "files-c32.h5": {
+      "bytes": 6144,
+      "sha256": "75cc38c93ca9f01d564b677913c0e8905a447ca005a03e890998feb0917fb6de"
+    },
+    "files-f16-0.h5": {
+      "bytes": 4576,
+      "sha256": "d3d8f238380e66a064c1929069a57bc083dd00536a2dc97765b2dbdbc9ada09d"
+    },
+    "files-f16-1.h5": {
+      "bytes": 4576,
+      "sha256": "d3d8f238380e66a064c1929069a57bc083dd00536a2dc97765b2dbdbc9ada09d"
+    },
+    "files-f16.h5": {
+      "bytes": 6144,
+      "sha256": "61537e21efe5cb15f9fa192065c9dd033e076a2ace48e01b004df91543a2fd9e"
+    },
+    "files-u64-0.h5": {
+      "bytes": 4578,
+      "sha256": "78aa51cddf6bf79e4175a5b98608049c193021e1862aaf762662844a40daefd4"
+    },
+    "files-u64-1.h5": {
+      "bytes": 4578,
+      "sha256": "3e7c6679a363910dd86ca559cceafc5ada49cf2ad8541878aeb7b52dad5db0ed"
+    },
+    "files-u64-2.h5": {
+      "bytes": 4578,
+      "sha256": "d89b1e555a44380e91194c81489d116046f1236766ad7674cbdc9f0b00054ace"
+    },
+    "files-u64-be-0.h5": {
+      "bytes": 4578,
+      "sha256": "a21de86cb8107b3860bbb10356af560b42a1144656666f2c6b4b4dc87801a9ea"
+    },
+    "files-u64-be-1.h5": {
+      "bytes": 4579,
+      "sha256": "dcec7a5aee5b5104197c038d1806fe2342b486cdad4021ee872728f1bc24a12c"
+    },
+    "files-u64-be.h5": {
+      "bytes": 6144,
+      "sha256": "6bbde6f367178346748bda47d57eb4d2603dcb4048a0d399e121fca2744f65c4"
+    },
+    "files-u64.h5": {
+      "bytes": 6144,
+      "sha256": "4bb7c2f131dcee85cfee6a00da2b1834dd972baf10b300bd261c47e230cb1d6b"
+    },
+    "interleaved-prefixes.h5": {
+      "bytes": 6144,
+      "sha256": "b023592e7d1c26260ed9df4fbfd7a95ed6c435c7f0b1f97ae749eff6b0c4d163"
+    },
+    "literal%.h5": {
+      "bytes": 4578,
+      "sha256": "ce1450e49d9b69010f2fbbf304e9b8342226e531f0a54d0290217c49bd7ca471"
+    },
+    "nested-child.h5": {
+      "bytes": 6228,
+      "sha256": "ac2bd1e1afbb6ec3562ffcd005e31f190d38fc2d69744b55613d5f92f751daec"
+    },
+    "nested-owner.h5": {
+      "bytes": 6144,
+      "sha256": "eee8fde4b93379a510a765a7267a2aee8f8159503616ab4dcdf8c4e31fc5db67"
+    },
+    "percent%-0.h5": {
+      "bytes": 4576,
+      "sha256": "592dd54391a482c77dd172de3397922ca5f5af8c96c0a5af085d8cca11bfe9b2"
+    },
+    "percent%-1.h5": {
+      "bytes": 4576,
+      "sha256": "dedb2f7a0fd92ec8d536e4bf2f95137bc62dd867eede0dc825b25aaaf68b7ef1"
+    },
+    "predeclared-prefix-0.h5": {
+      "bytes": 4578,
+      "sha256": "78aa51cddf6bf79e4175a5b98608049c193021e1862aaf762662844a40daefd4"
+    },
+    "predeclared-prefix-1.h5": {
+      "bytes": 4578,
+      "sha256": "3e7c6679a363910dd86ca559cceafc5ada49cf2ad8541878aeb7b52dad5db0ed"
+    },
+    "predeclared-prefix-2.h5": {
+      "bytes": 4578,
+      "sha256": "d89b1e555a44380e91194c81489d116046f1236766ad7674cbdc9f0b00054ace"
+    },
+    "predeclared-prefix.h5": {
+      "bytes": 6144,
+      "sha256": "e9c78a8f98170df7892d976b2ea8b0c5e221d6e18edac0bdcc769bfdcff73375"
+    },
+    "repeat-0-0.h5": {
+      "bytes": 4571,
+      "sha256": "7864f0d59fe97446023f12444c1a1483ada5ce17b1272faa1ea7463ef6b3fa09"
+    },
+    "repeat-1-1.h5": {
+      "bytes": 4572,
+      "sha256": "cff5938ce26ad49c6b7bd605a6b93619c0cd90bac3d7862f159343d8b86b5052"
+    },
+    "repeated.h5": {
+      "bytes": 6144,
+      "sha256": "2d713bc0144cdb696e1bcb01a9d4f5bd0c903aa2838d51408eec6dfc802b935f"
+    },
+    "self-datasets.h5": {
+      "bytes": 10240,
+      "sha256": "681f08d2214212e69ddaa05ca4bade8e763a30ebb3470a20900bf634a0116d17"
+    },
+    "source-selection-0.h5": {
+      "bytes": 4596,
+      "sha256": "e409cc8e5ab4fb70d8088ad6150cbc1278adf096c96789983854ef600797b968"
+    },
+    "source-selection-1.h5": {
+      "bytes": 4596,
+      "sha256": "c75b128508fee3ea569c32a3b95e2fa080c0366cd12c2793b29533014a7a3683"
+    },
+    "source-selection.h5": {
+      "bytes": 6144,
+      "sha256": "5acddd11d33ce38d93ea1404ba7dc449c8cff06f4cb0123c9ae8773d17589793"
+    },
+    "spatial-0.h5": {
+      "bytes": 4578,
+      "sha256": "78aa51cddf6bf79e4175a5b98608049c193021e1862aaf762662844a40daefd4"
+    },
+    "spatial-1.h5": {
+      "bytes": 4578,
+      "sha256": "3e7c6679a363910dd86ca559cceafc5ada49cf2ad8541878aeb7b52dad5db0ed"
+    },
+    "spatial.h5": {
+      "bytes": 6144,
+      "sha256": "d6c57bfb11c4ffcc921199835006e062400aa2418250946086800e4bd6816652"
+    },
+    "strided-0.h5": {
+      "bytes": 4578,
+      "sha256": "78aa51cddf6bf79e4175a5b98608049c193021e1862aaf762662844a40daefd4"
+    },
+    "strided-1.h5": {
+      "bytes": 4578,
+      "sha256": "3e7c6679a363910dd86ca559cceafc5ada49cf2ad8541878aeb7b52dad5db0ed"
+    },
+    "strided.h5": {
+      "bytes": 6144,
+      "sha256": "1c778ebf97b87970fb82632ff60b6f13d223ec7c22f3dff3cc708f94cab00480"
+    }
+  }
+}

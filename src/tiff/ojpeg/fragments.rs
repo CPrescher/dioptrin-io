@@ -1,8 +1,8 @@
 //! Declared-window OJPEG fragment assembly. TIFF restart interpretation follows
 //! libtiff OJPEGReadHeaderInfo/OJPEGWriteStreamRst; Huffman/IDCT stay in libjpeg.
 use super::{
-    Fragment, FrameSpec, Prepared, Reconstruction, SourceMetadata, SourceWindow, io, marker, read,
-    scalar, table_header,
+    Fragment, FrameSpec, Partition, Prepared, Reconstruction, SourceMetadata, SourceWindow, io,
+    marker, read, scalar, table_header,
 };
 use crate::{
     source::Snapshot,
@@ -120,6 +120,7 @@ pub(super) fn prepare(
             index,
             source_offset: offset,
             source_bytes: bytes,
+            header_bytes: 0,
             entropy_offset: offset,
             entropy_bytes: bytes,
             origin: [index / across * rows, index % across * width],
@@ -297,6 +298,7 @@ pub(super) fn prepare(
                 ));
             }
             let consumed = entropy - prefix_bytes;
+            fragments[0].header_bytes = consumed;
             fragments[0].entropy_offset += consumed as u64;
             fragments[0].entropy_bytes -= consumed;
             encoded = input[..entropy].to_vec();
@@ -370,6 +372,9 @@ pub(super) fn prepare(
             restart_interval: restart,
             restart_markers_inserted: if complete { 0 } else { count - 1 },
             fragments,
+            partition: Partition::RasterAligned,
+            scan_sources: Vec::new(),
+            tile_policy: super::super::OjpegTiles::Declared,
         },
     })
 }

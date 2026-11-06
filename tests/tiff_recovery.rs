@@ -20,6 +20,7 @@ fn options() -> Options {
     Options {
         uncompressed_windows: UncompressedWindows::FromShape,
         tile_tables: TileTables::FromStripTags,
+        ..Default::default()
     }
 }
 fn file(bytes: &[u8]) -> tempfile::NamedTempFile {

@@ -15,3 +15,7 @@ tests/data/mar345-v2/* -text -whitespace
 tests/data/ojpeg-fragments/* -text -whitespace
 tests/data/vds-irregular/* -text -whitespace
 tests/data/mar345-v2-original/* -text -whitespace
+tests/data/vds-printf/* -text -whitespace
+tests/data/ojpeg-advanced/* -text -whitespace
+tests/data/vds-nested/* -text -whitespace
+tests/data/vds-unlimited/* -text -whitespace

@@ -36,6 +36,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Some("compat") => tiff::Options {
             uncompressed_windows: tiff::UncompressedWindows::FromShape,
             tile_tables: tiff::TileTables::FromStripTags,
+            ..Default::default()
         },
         _ => return Err("unknown policy".into()),
     };

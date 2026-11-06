@@ -5,7 +5,9 @@ use std::{
     fs::File,
     io::{Read, Seek, SeekFrom},
 };
+mod advanced;
 mod fragments;
+mod independent;
 /// Original declared legacy JPEG source window. Tables have intrinsic lengths
 /// (64 quantizers or 16 Huffman counts plus their exact number of symbols).
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -20,6 +22,24 @@ pub enum Reconstruction {
     TableDefinedSingleChunk,
     TableDefinedFragments,
     FragmentedInterchange,
+    GlobalStream,
+    PlanarScans,
+    TableDefinedIndependentChunks,
+}
+/// Whether source byte windows correspond directly to logical raster chunks.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Partition {
+    RasterAligned,
+    GlobalStream,
+    PlanarScans,
+    IndependentChunks,
+}
+/// Original byte ranges for a separately coded source component scan.
+#[derive(Debug, Clone)]
+pub struct ScanSource {
+    pub component: super::ycbcr::Component,
+    pub header_windows: Vec<SourceWindow>,
+    pub entropy_windows: Vec<SourceWindow>,
 }
 /// One original declared encoded chunk and its contribution to the stream.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -27,6 +47,7 @@ pub struct Fragment {
     pub index: usize,
     pub source_offset: u64,
     pub source_bytes: usize,
+    pub header_bytes: usize,
     pub entropy_offset: u64,
     pub entropy_bytes: usize,
     pub origin: [usize; 2],
@@ -54,6 +75,9 @@ pub struct SourceMetadata {
     pub restart_interval: u16,
     pub restart_markers_inserted: usize,
     pub fragments: Vec<Fragment>,
+    pub partition: Partition,
+    pub scan_sources: Vec<ScanSource>,
+    pub tile_policy: super::OjpegTiles,
 }
 struct Prepared {
     encoded: Vec<u8>,
@@ -65,23 +89,30 @@ pub(super) fn inspect(
     identity: &File,
     page: &Metadata,
     limits: Limits,
+    options: super::Options,
 ) -> Result<SourceMetadata, Error> {
-    Ok(prepare(snapshot, identity, page, limits)?.metadata)
+    Ok(prepare(snapshot, identity, page, limits, options)?.metadata)
 }
 pub(super) fn decode(
     snapshot: &Snapshot,
     identity: &File,
     page: &Metadata,
     limits: Limits,
+    options: super::Options,
 ) -> Result<Vec<Chunk>, Error> {
-    let prepared = prepare(snapshot, identity, page, limits)?;
-    if prepared.metadata.fragments.len() > 1 {
+    let prepared = prepare(snapshot, identity, page, limits, options)?;
+    if prepared.metadata.partition == Partition::IndependentChunks {
+        return independent::decode(snapshot, identity, page, limits, &prepared.metadata);
+    }
+    if !prepared.metadata.fragments.is_empty()
+        || prepared.metadata.partition == Partition::PlanarScans
+    {
         fragments::check_decode_budget(&prepared.metadata, prepared.encoded.len(), limits)?;
     }
     let chunk = decode_jpeg(
         &prepared.encoded,
         [0, 0],
-        if prepared.metadata.fragments.len() > 1 {
+        if !prepared.metadata.fragments.is_empty() {
             prepared.metadata.encoded_shape
         } else {
             page.shape
@@ -91,7 +122,7 @@ pub(super) fn decode(
         limits,
     )?;
     snapshot.check_handle(identity).map_err(Error)?;
-    if prepared.metadata.fragments.len() > 1 {
+    if !prepared.metadata.fragments.is_empty() {
         fragments::split(chunk, &prepared.metadata.fragments, limits)
     } else {
         Ok(vec![chunk])
@@ -102,22 +133,34 @@ fn prepare(
     identity: &File,
     page: &Metadata,
     limits: Limits,
+    options: super::Options,
 ) -> Result<Prepared, Error> {
     snapshot.check_handle(identity).map_err(Error)?;
     if page.compression != 6
         || page.photometric_interpretation != 6
         || page.bits_per_sample != 8
         || page.channels != 3
-        || page.planar_configuration != 1
+        || ![1, 2].contains(&page.planar_configuration)
         || scalar(page, 512, 1)? != 1
     {
         return Err(Error(
-            "old JPEG TIFF requires baseline8 contiguousYCbCr without restart declarations".into(),
+            "old JPEG TIFF requires supported8-bit sequentialYCbCr source declarations".into(),
         ));
+    }
+    if options.ojpeg_tiles == super::OjpegTiles::IndependentResetTiles {
+        return independent::prepare(snapshot, identity, page, limits);
     }
     let tiled = page.tags.contains_key(&324);
     let offsets = vector(page, if tiled { 324 } else { 273 })?;
     let lengths = vector(page, if tiled { 325 } else { 279 })?;
+    if let Some(prepared) =
+        advanced::prepare_if_recognized(snapshot, identity, page, limits, &offsets, &lengths)?
+    {
+        return Ok(prepared);
+    }
+    if page.planar_configuration != 1 {
+        return Err(Error("unsupported OJPEG planar source profile".into()));
+    }
     if offsets.len() > 1 {
         return fragments::prepare(snapshot, identity, page, limits, offsets, lengths);
     }
@@ -303,6 +346,9 @@ fn prepare(
             restart_interval: 0,
             restart_markers_inserted: 0,
             fragments: Vec::new(),
+            partition: Partition::RasterAligned,
+            scan_sources: Vec::new(),
+            tile_policy: options.ojpeg_tiles,
         },
     })
 }

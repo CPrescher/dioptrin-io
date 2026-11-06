@@ -299,6 +299,7 @@ fn complex_vds_retains_original_fill_component_bits() {
         VdsOptions {
             filenames: &maps,
             unmapped_regions: UnmappedRegions::DeclaredFill,
+            ..Default::default()
         },
     )
     .unwrap();

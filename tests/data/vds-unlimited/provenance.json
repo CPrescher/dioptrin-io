@@ -1,0 +1,2042 @@
+{
+  "license": "CC0-1.0",
+  "origin": "Authored U64 words with coordinate-enumerated source and target selections, never expected values from VDS reads",
+  "generator": "scripts/generate_vds_unlimited_fixtures.py",
+  "h5py_version": "3.15.1",
+  "hdf5_version": "1.14.6",
+  "cases": {
+    "contiguous": {
+      "master": "contiguous.h5",
+      "dataset": "/data",
+      "dtype": "<u8",
+      "shape": [
+        5,
+        2,
+        3
+      ],
+      "frame_hex": [
+        "ffffffffffffffff02000000000000800300000000000080040000000000008005000000000000800600000000000080",
+        "0700000000000080080000000000008009000000000000800a000000000000800b000000000000800c00000000000080",
+        "0d000000000000800e000000000000800f00000000000080100000000000008011000000000000801200000000000080",
+        "130000000000008014000000000000801500000000000080160000000000008017000000000000801800000000000080",
+        "19000000000000801a000000000000801b000000000000801c000000000000801d000000000000801e00000000000080"
+      ],
+      "bindings": [
+        {
+          "stored_filename": "contiguous-0.h5",
+          "actual_file": "contiguous-0.h5"
+        }
+      ],
+      "printf_mappings": [],
+      "unmapped_regions": "reject",
+      "mappings": [
+        {
+          "file": "contiguous-0.h5",
+          "source_shape": [
+            5,
+            2,
+            3
+          ],
+          "source": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              2,
+              3
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "virtual": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              2,
+              3
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "selected_source_coordinates": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              1,
+              1
+            ],
+            [
+              0,
+              1,
+              2
+            ],
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              2
+            ],
+            [
+              2,
+              0,
+              0
+            ],
+            [
+              2,
+              0,
+              1
+            ],
+            [
+              2,
+              0,
+              2
+            ],
+            [
+              2,
+              1,
+              0
+            ],
+            [
+              2,
+              1,
+              1
+            ],
+            [
+              2,
+              1,
+              2
+            ],
+            [
+              3,
+              0,
+              0
+            ],
+            [
+              3,
+              0,
+              1
+            ],
+            [
+              3,
+              0,
+              2
+            ],
+            [
+              3,
+              1,
+              0
+            ],
+            [
+              3,
+              1,
+              1
+            ],
+            [
+              3,
+              1,
+              2
+            ],
+            [
+              4,
+              0,
+              0
+            ],
+            [
+              4,
+              0,
+              1
+            ],
+            [
+              4,
+              0,
+              2
+            ],
+            [
+              4,
+              1,
+              0
+            ],
+            [
+              4,
+              1,
+              1
+            ],
+            [
+              4,
+              1,
+              2
+            ]
+          ],
+          "stored_source": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "stored_virtual": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ]
+        }
+      ],
+      "expect": "exact"
+    },
+    "offset-stride": {
+      "master": "offset-stride.h5",
+      "dataset": "/data",
+      "dtype": "<u8",
+      "shape": [
+        8,
+        2,
+        3
+      ],
+      "frame_hex": [
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "2000000000000080220000000000008024000000000000802c000000000000802e000000000000803000000000000080",
+        "38000000000000803a000000000000803c00000000000080440000000000008046000000000000804800000000000080",
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "68000000000000806a000000000000806c00000000000080740000000000008076000000000000807800000000000080",
+        "8000000000000080820000000000008084000000000000808c000000000000808e000000000000809000000000000080",
+        "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "b000000000000080b200000000000080b400000000000080bc00000000000080be00000000000080c000000000000080"
+      ],
+      "bindings": [
+        {
+          "stored_filename": "offset-stride-0.h5",
+          "actual_file": "offset-stride-0.h5"
+        }
+      ],
+      "printf_mappings": [],
+      "unmapped_regions": "declared_fill",
+      "mappings": [
+        {
+          "file": "offset-stride-0.h5",
+          "source_shape": [
+            8,
+            4,
+            6
+          ],
+          "source": [
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              3,
+              2,
+              2
+            ],
+            [
+              18446744073709551615,
+              2,
+              3
+            ],
+            [
+              2,
+              1,
+              1
+            ]
+          ],
+          "virtual": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              3,
+              2,
+              3
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              2,
+              2,
+              3
+            ]
+          ],
+          "selected_source_coordinates": [
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              3
+            ],
+            [
+              1,
+              1,
+              5
+            ],
+            [
+              1,
+              3,
+              1
+            ],
+            [
+              1,
+              3,
+              3
+            ],
+            [
+              1,
+              3,
+              5
+            ],
+            [
+              2,
+              1,
+              1
+            ],
+            [
+              2,
+              1,
+              3
+            ],
+            [
+              2,
+              1,
+              5
+            ],
+            [
+              2,
+              3,
+              1
+            ],
+            [
+              2,
+              3,
+              3
+            ],
+            [
+              2,
+              3,
+              5
+            ],
+            [
+              4,
+              1,
+              1
+            ],
+            [
+              4,
+              1,
+              3
+            ],
+            [
+              4,
+              1,
+              5
+            ],
+            [
+              4,
+              3,
+              1
+            ],
+            [
+              4,
+              3,
+              3
+            ],
+            [
+              4,
+              3,
+              5
+            ],
+            [
+              5,
+              1,
+              1
+            ],
+            [
+              5,
+              1,
+              3
+            ],
+            [
+              5,
+              1,
+              5
+            ],
+            [
+              5,
+              3,
+              1
+            ],
+            [
+              5,
+              3,
+              3
+            ],
+            [
+              5,
+              3,
+              5
+            ],
+            [
+              7,
+              1,
+              1
+            ],
+            [
+              7,
+              1,
+              3
+            ],
+            [
+              7,
+              1,
+              5
+            ],
+            [
+              7,
+              3,
+              1
+            ],
+            [
+              7,
+              3,
+              3
+            ],
+            [
+              7,
+              3,
+              5
+            ]
+          ],
+          "stored_source": [
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              3,
+              2,
+              2
+            ],
+            [
+              18446744073709551615,
+              2,
+              3
+            ],
+            [
+              2,
+              1,
+              1
+            ]
+          ],
+          "stored_virtual": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              3,
+              1,
+              1
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              2,
+              2,
+              3
+            ]
+          ]
+        }
+      ],
+      "expect": "exact"
+    },
+    "partial-block": {
+      "master": "partial-block.h5",
+      "dataset": "/data",
+      "dtype": "<u8",
+      "shape": [
+        3,
+        2,
+        3
+      ],
+      "frame_hex": [
+        "ffffffffffffffff02000000000000800300000000000080040000000000008005000000000000800600000000000080",
+        "0700000000000080080000000000008009000000000000800a000000000000800b000000000000800c00000000000080",
+        "130000000000008014000000000000801500000000000080160000000000008017000000000000801800000000000080"
+      ],
+      "bindings": [
+        {
+          "stored_filename": "partial-block-0.h5",
+          "actual_file": "partial-block-0.h5"
+        }
+      ],
+      "printf_mappings": [],
+      "unmapped_regions": "reject",
+      "mappings": [
+        {
+          "file": "partial-block-0.h5",
+          "source_shape": [
+            4,
+            2,
+            3
+          ],
+          "source": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              3,
+              2,
+              3
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              2,
+              2,
+              3
+            ]
+          ],
+          "virtual": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              2,
+              2,
+              3
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              2,
+              2,
+              3
+            ]
+          ],
+          "selected_source_coordinates": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              1,
+              1
+            ],
+            [
+              0,
+              1,
+              2
+            ],
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              2
+            ],
+            [
+              3,
+              0,
+              0
+            ],
+            [
+              3,
+              0,
+              1
+            ],
+            [
+              3,
+              0,
+              2
+            ],
+            [
+              3,
+              1,
+              0
+            ],
+            [
+              3,
+              1,
+              1
+            ],
+            [
+              3,
+              1,
+              2
+            ]
+          ],
+          "stored_source": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              3,
+              1,
+              1
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              2,
+              2,
+              3
+            ]
+          ],
+          "stored_virtual": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              2,
+              1,
+              1
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              2,
+              2,
+              3
+            ]
+          ]
+        }
+      ],
+      "expect": "exact"
+    },
+    "spatial-stride": {
+      "master": "spatial-stride.h5",
+      "dataset": "/data",
+      "dtype": "<u8",
+      "shape": [
+        3,
+        2,
+        3
+      ],
+      "frame_hex": [
+        "ffffffffffffffff030000000000008005000000000000800d000000000000800f000000000000801100000000000080",
+        "19000000000000801b000000000000801d00000000000080250000000000008027000000000000802900000000000080",
+        "3100000000000080330000000000008035000000000000803d000000000000803f000000000000804100000000000080"
+      ],
+      "bindings": [
+        {
+          "stored_filename": "spatial-stride-0.h5",
+          "actual_file": "spatial-stride-0.h5"
+        }
+      ],
+      "printf_mappings": [],
+      "unmapped_regions": "reject",
+      "mappings": [
+        {
+          "file": "spatial-stride-0.h5",
+          "source_shape": [
+            3,
+            4,
+            6
+          ],
+          "source": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              2,
+              2
+            ],
+            [
+              18446744073709551615,
+              2,
+              3
+            ],
+            [
+              1,
+              1,
+              1
+            ]
+          ],
+          "virtual": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              2,
+              3
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "selected_source_coordinates": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              0,
+              4
+            ],
+            [
+              0,
+              2,
+              0
+            ],
+            [
+              0,
+              2,
+              2
+            ],
+            [
+              0,
+              2,
+              4
+            ],
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              1,
+              2,
+              0
+            ],
+            [
+              1,
+              2,
+              2
+            ],
+            [
+              1,
+              2,
+              4
+            ],
+            [
+              2,
+              0,
+              0
+            ],
+            [
+              2,
+              0,
+              2
+            ],
+            [
+              2,
+              0,
+              4
+            ],
+            [
+              2,
+              2,
+              0
+            ],
+            [
+              2,
+              2,
+              2
+            ],
+            [
+              2,
+              2,
+              4
+            ]
+          ],
+          "stored_source": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              2,
+              2
+            ],
+            [
+              18446744073709551615,
+              2,
+              3
+            ],
+            [
+              1,
+              1,
+              1
+            ]
+          ],
+          "stored_virtual": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ]
+        }
+      ],
+      "expect": "exact"
+    },
+    "virtual-spatial-stride": {
+      "master": "virtual-spatial-stride.h5",
+      "dataset": "/data",
+      "dtype": "<u8",
+      "shape": [
+        3,
+        4,
+        6
+      ],
+      "frame_hex": [
+        "ffffffffffffffffffffffffffffffffffffffffffffffff0200000000000080ffffffffffffffff0300000000000080ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0400000000000080ffffffffffffffff0500000000000080ffffffffffffffff0600000000000080ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "ffffffffffffffff0700000000000080ffffffffffffffff0800000000000080ffffffffffffffff0900000000000080ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0a00000000000080ffffffffffffffff0b00000000000080ffffffffffffffff0c00000000000080ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "ffffffffffffffff0d00000000000080ffffffffffffffff0e00000000000080ffffffffffffffff0f00000000000080ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1000000000000080ffffffffffffffff1100000000000080ffffffffffffffff1200000000000080ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+      ],
+      "bindings": [
+        {
+          "stored_filename": "virtual-spatial-stride-0.h5",
+          "actual_file": "virtual-spatial-stride-0.h5"
+        }
+      ],
+      "printf_mappings": [],
+      "unmapped_regions": "declared_fill",
+      "mappings": [
+        {
+          "file": "virtual-spatial-stride-0.h5",
+          "source_shape": [
+            3,
+            2,
+            3
+          ],
+          "source": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              2,
+              3
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "virtual": [
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              1,
+              2,
+              2
+            ],
+            [
+              18446744073709551615,
+              2,
+              3
+            ],
+            [
+              1,
+              1,
+              1
+            ]
+          ],
+          "selected_source_coordinates": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              1,
+              1
+            ],
+            [
+              0,
+              1,
+              2
+            ],
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              2
+            ],
+            [
+              2,
+              0,
+              0
+            ],
+            [
+              2,
+              0,
+              1
+            ],
+            [
+              2,
+              0,
+              2
+            ],
+            [
+              2,
+              1,
+              0
+            ],
+            [
+              2,
+              1,
+              1
+            ],
+            [
+              2,
+              1,
+              2
+            ]
+          ],
+          "stored_source": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "stored_virtual": [
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              1,
+              2,
+              2
+            ],
+            [
+              18446744073709551615,
+              2,
+              3
+            ],
+            [
+              1,
+              1,
+              1
+            ]
+          ]
+        }
+      ],
+      "expect": "exact"
+    },
+    "interleaved": {
+      "master": "interleaved.h5",
+      "dataset": "/data",
+      "dtype": "<u8",
+      "shape": [
+        5,
+        2,
+        3
+      ],
+      "frame_hex": [
+        "ffffffffffffffff02000000000000800300000000000080040000000000008005000000000000800600000000000080",
+        "ffffffffffffffffea03000000000080eb03000000000080ec03000000000080ed03000000000080ee03000000000080",
+        "0700000000000080080000000000008009000000000000800a000000000000800b000000000000800c00000000000080",
+        "ef03000000000080f003000000000080f103000000000080f203000000000080f303000000000080f403000000000080",
+        "0d000000000000800e000000000000800f00000000000080100000000000008011000000000000801200000000000080"
+      ],
+      "bindings": [
+        {
+          "stored_filename": "interleaved-0.h5",
+          "actual_file": "interleaved-0.h5"
+        },
+        {
+          "stored_filename": "interleaved-1.h5",
+          "actual_file": "interleaved-1.h5"
+        }
+      ],
+      "printf_mappings": [],
+      "unmapped_regions": "reject",
+      "mappings": [
+        {
+          "file": "interleaved-0.h5",
+          "source_shape": [
+            3,
+            2,
+            3
+          ],
+          "source": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              2,
+              3
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "virtual": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              2,
+              2,
+              3
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "selected_source_coordinates": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              1,
+              1
+            ],
+            [
+              0,
+              1,
+              2
+            ],
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              2
+            ],
+            [
+              2,
+              0,
+              0
+            ],
+            [
+              2,
+              0,
+              1
+            ],
+            [
+              2,
+              0,
+              2
+            ],
+            [
+              2,
+              1,
+              0
+            ],
+            [
+              2,
+              1,
+              1
+            ],
+            [
+              2,
+              1,
+              2
+            ]
+          ],
+          "stored_source": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "stored_virtual": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              2,
+              1,
+              1
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ]
+        },
+        {
+          "file": "interleaved-1.h5",
+          "source_shape": [
+            2,
+            2,
+            3
+          ],
+          "source": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              2,
+              3
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "virtual": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              2,
+              2,
+              3
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "selected_source_coordinates": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              1,
+              1
+            ],
+            [
+              0,
+              1,
+              2
+            ],
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              2
+            ]
+          ],
+          "stored_source": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "stored_virtual": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              2,
+              1,
+              1
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ]
+        }
+      ],
+      "expect": "exact"
+    },
+    "exhausted-maps": {
+      "master": "exhausted-maps.h5",
+      "dataset": "/data",
+      "dtype": "<u8",
+      "shape": [
+        3,
+        2,
+        6
+      ],
+      "frame_hex": [
+        "ffffffffffffffff02000000000000800300000000000080ffffffffffffffffea03000000000080eb03000000000080040000000000008005000000000000800600000000000080ec03000000000080ed03000000000080ee03000000000080",
+        "070000000000008008000000000000800900000000000080ef03000000000080f003000000000080f1030000000000800a000000000000800b000000000000800c00000000000080f203000000000080f303000000000080f403000000000080",
+        "0d000000000000800e000000000000800f00000000000080ffffffffffffffffffffffffffffffffffffffffffffffff100000000000008011000000000000801200000000000080ffffffffffffffffffffffffffffffffffffffffffffffff"
+      ],
+      "bindings": [
+        {
+          "stored_filename": "exhausted-maps-0.h5",
+          "actual_file": "exhausted-maps-0.h5"
+        },
+        {
+          "stored_filename": "exhausted-maps-1.h5",
+          "actual_file": "exhausted-maps-1.h5"
+        }
+      ],
+      "printf_mappings": [],
+      "unmapped_regions": "reject",
+      "mappings": [
+        {
+          "file": "exhausted-maps-0.h5",
+          "source_shape": [
+            3,
+            2,
+            3
+          ],
+          "source": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              2,
+              3
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "virtual": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              2,
+              3
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "selected_source_coordinates": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              1,
+              1
+            ],
+            [
+              0,
+              1,
+              2
+            ],
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              2
+            ],
+            [
+              2,
+              0,
+              0
+            ],
+            [
+              2,
+              0,
+              1
+            ],
+            [
+              2,
+              0,
+              2
+            ],
+            [
+              2,
+              1,
+              0
+            ],
+            [
+              2,
+              1,
+              1
+            ],
+            [
+              2,
+              1,
+              2
+            ]
+          ],
+          "stored_source": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "stored_virtual": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ]
+        },
+        {
+          "file": "exhausted-maps-1.h5",
+          "source_shape": [
+            2,
+            2,
+            3
+          ],
+          "source": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              2,
+              3
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "virtual": [
+            [
+              0,
+              0,
+              3
+            ],
+            [
+              1,
+              2,
+              3
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "selected_source_coordinates": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              2
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              1,
+              1
+            ],
+            [
+              0,
+              1,
+              2
+            ],
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              2
+            ]
+          ],
+          "stored_source": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "stored_virtual": [
+            [
+              0,
+              0,
+              3
+            ],
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              18446744073709551615,
+              1,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ]
+        }
+      ],
+      "expect": "reject"
+    }
+  },
+  "producer_controls": [
+    {
+      "name": "reshape",
+      "result": "producer_rejected",
+      "error": "Invalid mapping selections (numbers of elements in the non-unlimited dimensions is different for source and virtual spaces)"
+    },
+    {
+      "name": "partial-plane",
+      "result": "producer_rejected",
+      "error": "Invalid mapping selections (numbers of elements in the non-unlimited dimensions is different for source and virtual spaces)"
+    }
+  ],
+  "files": {
+    "contiguous-0.h5": {
+      "bytes": 4634,
+      "sha256": "35217691aad91b7c1773b0969171ff575d540241e014bc396d0c920093fe7612"
+    },
+    "contiguous.h5": {
+      "bytes": 6144,
+      "sha256": "57d6d944a7564e189b745d256354df708df825635d95697de2df425d743ca50b"
+    },
+    "exhausted-maps-0.h5": {
+      "bytes": 4596,
+      "sha256": "a491a2322199e631dfb1dcba7f9698e29cab60c69fc972e2841a84212fd91337"
+    },
+    "exhausted-maps-1.h5": {
+      "bytes": 4584,
+      "sha256": "97867ed3d7d79f6d1788a9bf3a92261b881e350f682be36787cc32a46ca7347e"
+    },
+    "exhausted-maps.h5": {
+      "bytes": 6144,
+      "sha256": "d38730c0d93eab2b5c473e1542ad4097123a9681950aef50a16ec8005ed86cdf"
+    },
+    "interleaved-0.h5": {
+      "bytes": 4596,
+      "sha256": "a491a2322199e631dfb1dcba7f9698e29cab60c69fc972e2841a84212fd91337"
+    },
+    "interleaved-1.h5": {
+      "bytes": 4584,
+      "sha256": "97867ed3d7d79f6d1788a9bf3a92261b881e350f682be36787cc32a46ca7347e"
+    },
+    "interleaved.h5": {
+      "bytes": 6144,
+      "sha256": "382665bb8e429c20a1513b2fd7958dea1ed445f4d4f2c1bb56f39b781bd5c9d7"
+    },
+    "offset-stride-0.h5": {
+      "bytes": 4849,
+      "sha256": "6806af7fb3c85f6ee019b17e480fe156012ad76e6281233f6bcb9c1238e9bb33"
+    },
+    "offset-stride.h5": {
+      "bytes": 6144,
+      "sha256": "9f55184048a5660bb7b71d0c40c3f1c2b46a60fe5809365948788be648175ddf"
+    },
+    "partial-block-0.h5": {
+      "bytes": 4615,
+      "sha256": "518daeab954e5b92ac954d664256ca8946724bbca37240ca0c1c4ab3882d9498"
+    },
+    "partial-block.h5": {
+      "bytes": 6144,
+      "sha256": "5cb17965876652ae342f21b6631f38e5a3fcc20a95b1e739d0841215adbb6aec"
+    },
+    "reshape-0.h5": {
+      "bytes": 4602,
+      "sha256": "b4b4b917719447300cb37dbf8c20d0102ed7edf202b2e5e7872ac8229afd1038"
+    },
+    "spatial-stride-0.h5": {
+      "bytes": 4653,
+      "sha256": "b1450bb5155438a180f4ff354fb1ad664420df22d6ff51466ae2c128d839aabe"
+    },
+    "spatial-stride.h5": {
+      "bytes": 6144,
+      "sha256": "38ff2ca9c5618fce839067acf39d0424474900db508895c0e64f99b8293199cc"
+    },
+    "virtual-spatial-stride-0.h5": {
+      "bytes": 4596,
+      "sha256": "a491a2322199e631dfb1dcba7f9698e29cab60c69fc972e2841a84212fd91337"
+    },
+    "virtual-spatial-stride.h5": {
+      "bytes": 6144,
+      "sha256": "331fd82626f1b9ab089d5a804d7b8b7aea41d553c46d0ee9b140902387b9d3cb"
+    }
+  }
+}

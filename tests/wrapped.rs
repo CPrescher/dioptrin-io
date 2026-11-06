@@ -54,6 +54,7 @@ fn same_files_through_both_wrappers_keep_counts_headers_and_stacks() {
             Format::TiffWithOptions(tiff::Options {
                 uncompressed_windows: tiff::UncompressedWindows::FromShape,
                 tile_tables: tiff::TileTables::Declared,
+                ..Default::default()
             }),
         ),
         #[cfg(feature = "mar345")]

@@ -58,6 +58,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         VdsOptions {
             filenames: &bindings,
             unmapped_regions: UnmappedRegions::DeclaredFill,
+            ..Default::default()
         },
     )?;
     let mut output = typed::FrameBuffer::default();
