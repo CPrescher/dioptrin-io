@@ -1,0 +1,1276 @@
+{
+  "schema": 1,
+  "environment": {
+    "python": "3.13.5 (main, Jun 12 2025, 12:22:43) [Clang 20.1.4 ]",
+    "fabio": "2026.6.0"
+  },
+  "contract": "separate nonimage companion read APIs; no source counts, writers or statistics qualification",
+  "reference_commit": "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece",
+  "reference_source_matches_pinned": true,
+  "probe": {
+    "path": "/Users/clemens/Programming/dioptrin-io/target/release/examples/api_probe",
+    "bytes": 7532048,
+    "sha256": "c3ebb85e1996f3052824230cde6cd6dbfb5864fc567a4a45c59f5b14c7e6106d"
+  },
+  "sources": {
+    "/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/fabio/xcaliburimage.py": {
+      "path": "/private/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/fabio/xcaliburimage.py",
+      "bytes": 47456,
+      "sha256": "f8bf057585d3ae26bde5139ea0bb5ae4b594e8b3d729e35fff0e4eec87dfd611"
+    },
+    "/tmp/dioptrin-io-fabio-2026.6.0/src/fabio/xcaliburimage.py": {
+      "path": "/private/tmp/dioptrin-io-fabio-2026.6.0/src/fabio/xcaliburimage.py",
+      "bytes": 47456,
+      "sha256": "f8bf057585d3ae26bde5139ea0bb5ae4b594e8b3d729e35fff0e4eec87dfd611"
+    },
+    "/Users/clemens/Programming/dioptrin-io/scripts/companion_reference.py": {
+      "path": "/Users/clemens/Programming/dioptrin-io/scripts/companion_reference.py",
+      "bytes": 11904,
+      "sha256": "e2c0fc1b8042925feebca895c782121c66269803624d67c91872273487fa6952"
+    },
+    "/Users/clemens/Programming/dioptrin-io/scripts/test_companion_reference.py": {
+      "path": "/Users/clemens/Programming/dioptrin-io/scripts/test_companion_reference.py",
+      "bytes": 4101,
+      "sha256": "9e6e54dbe82b4a65a463438024a1007a40653839c3d53b73c4bb998898a3560c"
+    },
+    "/Users/clemens/Programming/dioptrin-io/scripts/generate_xcalibur_run_fixtures.py": {
+      "path": "/Users/clemens/Programming/dioptrin-io/scripts/generate_xcalibur_run_fixtures.py",
+      "bytes": 2767,
+      "sha256": "12c59dc4a735233811fdbe382df87a9e627c876b32607f5f8075003c8b7c079f"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/xcalibur/run.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/xcalibur/run.rs",
+      "bytes": 8792,
+      "sha256": "f0e998aa761d4cf1a6b93c1b24c13f8077baca0751ef030f3eeb914ab9fbc595"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/xcalibur.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/xcalibur.rs",
+      "bytes": 16637,
+      "sha256": "7a308e59ffd22c11f501e79f618b13bf1d4aa200cf90e23786682003352048d9"
+    },
+    "/Users/clemens/Programming/dioptrin-io/tests/xcalibur_run.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/xcalibur_run.rs",
+      "bytes": 7275,
+      "sha256": "892ac958c36a6f756b4fb79c247886a449d0ba1dd2c075e4f2436250cacf1a34"
+    },
+    "/Users/clemens/Programming/dioptrin-io/tests/data/xcalibur/run-provenance.json": {
+      "path": "/Users/clemens/Programming/dioptrin-io/tests/data/xcalibur/run-provenance.json",
+      "bytes": 823,
+      "sha256": "bbaaff549722c8c1ddc454b6444c07bf1080c23cab08b4c786b2c12b86bd56ce"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/binary.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/binary.rs",
+      "bytes": 7091,
+      "sha256": "b2464ed8ac2a848116f44faa2280f25ac40c2f15b3d25720a2d3eb4cfd83e50d"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/bruker/common.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/bruker/common.rs",
+      "bytes": 2087,
+      "sha256": "58ebb4b8bc1e89dba4288caa1224cae78f02812bbce4d911ec3159983c7020bc"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/bruker/view.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/bruker/view.rs",
+      "bytes": 2513,
+      "sha256": "4fb7483ddf6e85120b4a08e959de7c2716ae02e5cebd98d50c2d798ce6d2e059"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/bruker.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/bruker.rs",
+      "bytes": 18441,
+      "sha256": "3b7d0ea45d1e418697b96015b38bce2f6dc2c02926b1bdb8cebb76386568d8e0"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/cbf/document.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/cbf/document.rs",
+      "bytes": 5905,
+      "sha256": "f0e6dd547ead39f785c86e7b76c7b6dc880f532c7d8bf0e0f23607624d139962"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/cbf/header.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/cbf/header.rs",
+      "bytes": 8727,
+      "sha256": "5713a8bef504b118dfd07eceff3749e170654f88ed247a4ba9fdcbfb91283766"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/cbf/syntax.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/cbf/syntax.rs",
+      "bytes": 23973,
+      "sha256": "c09de996dec59f8b0833518582ad8fcd42524e66bfef222d46fb43a8f6736c37"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/cbf.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/cbf.rs",
+      "bytes": 12708,
+      "sha256": "6414758c37f2babe448d241025acec61eafdbe7834d4226715b1e0ea7aecf1b8"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/chiplot.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/chiplot.rs",
+      "bytes": 22862,
+      "sha256": "a6b39507c21a231d7579cbd65ff31ffcae73b7b162484f68278851c80236d92d"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/columnfile.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/columnfile.rs",
+      "bytes": 12979,
+      "sha256": "45bf335382c0d173a7daac9e55b3609ee91989de890df6287e8e14f61660c79b"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/detector_tiff/mar_schema.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/detector_tiff/mar_schema.rs",
+      "bytes": 4999,
+      "sha256": "0d224ae8a52443423f144a61604176be37727deec320333fdb4c947581ffb819"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/detector_tiff.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/detector_tiff.rs",
+      "bytes": 7623,
+      "sha256": "06cbc9b5a8db291196e6fa3bfab75baeb860c4948dba5dd21811a001160712fd"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/discovery.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/discovery.rs",
+      "bytes": 17364,
+      "sha256": "acfac305e21289355c6617c6d78ff0886fc79e852e1a069b0e11482fb269d7cd"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/dm3.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/dm3.rs",
+      "bytes": 23777,
+      "sha256": "a7b9ad01a2eac150156c92f2aec088587786ffa90e80c502f1628e0537747b93"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/edf/recovery.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/edf/recovery.rs",
+      "bytes": 36548,
+      "sha256": "b8206c62dc3ca88c715f173803aec8c30af85a1f67f4ec39c1a3c1d27eab8cdb"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/edf.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/edf.rs",
+      "bytes": 32939,
+      "sha256": "50efe2c4d2fe7d6783cf73afaaeabe5a53a68f7a0a047c9218d49c7350de942a"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/esperanto.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/esperanto.rs",
+      "bytes": 19487,
+      "sha256": "d2bb2f34e02000e28810a62479b9f16958c9f7ebe6bc4a9400b41b1841abc8ed"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/fit2d.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/fit2d.rs",
+      "bytes": 13169,
+      "sha256": "a3dfab6f09927651c98f9561fc497788d9f4736a0795be9c6c37de52de3c2004"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/ge.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/ge.rs",
+      "bytes": 18063,
+      "sha256": "73ef7bbb055d7e90f7fb8ffcef887bd5382b5a82c818f1972558a51d522e4326"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/cache.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/cache.rs",
+      "bytes": 6940,
+      "sha256": "2b2927c6cc7bcf4d8daae4add9a72c9fa2414b93dd51950cffb634beaf45c050"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/discovery.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/discovery.rs",
+      "bytes": 11509,
+      "sha256": "d3fe9f5f5c6abf10084cbc3b7562b443b17359336e0fb102ff5aa28f6f1881aa"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/raw.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/raw.rs",
+      "bytes": 17858,
+      "sha256": "aa1c6fa0a31303cc769214393039fec9975bff9c1e1d54eca59808e98d3927fc"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/sources.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/sources.rs",
+      "bytes": 16329,
+      "sha256": "f79106332878717c9dae77373fcaf9f711e2c36fdf45a06bfaec087c8aa6ec54"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse/numeric.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse/numeric.rs",
+      "bytes": 13760,
+      "sha256": "9e842fc99100d24a6913d506dd86e7f63b0213eee695cea2a82515712be78433"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse/reconstruction.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse/reconstruction.rs",
+      "bytes": 7608,
+      "sha256": "801f9c866a9e5796e7de966cad42f50e5c128183cf895660d155265cd99df364"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/sparse.rs",
+      "bytes": 28570,
+      "sha256": "86365e54f3448047f7dbae439b19efaa22bc47fd641f6ca423512556f35bce54"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/typed.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/typed.rs",
+      "bytes": 27857,
+      "sha256": "6042b1b05f900bfd405c25b86b879e9a29cf9d6bed4395d0315a102fda39b6d0"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5/vds.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5/vds.rs",
+      "bytes": 26894,
+      "sha256": "e8e82c3152e40d589e196a31a5165723f056ed7f2875deb235dc8f587dd68207"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/hdf5.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/hdf5.rs",
+      "bytes": 8778,
+      "sha256": "49be9fa8a2f36cdac7f1fcb9d7737b173b5c9074b1d820acbfd264028a33dddc"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/jpeg.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/jpeg.rs",
+      "bytes": 20027,
+      "sha256": "ab2e7dbea38cf2c876e4ad2a73ce74e4e2ee19c28a193365054b33082522f445"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/jpeg2000.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/jpeg2000.rs",
+      "bytes": 14778,
+      "sha256": "be8ad6f74a6c161532e73aaae16dff9d37533f6c1181f66eae35fc5ff99ba7e3"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/kcd.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/kcd.rs",
+      "bytes": 7516,
+      "sha256": "fb532aa6e23648399ea52e0872edf0f57e45aacfe951c1284c1f46d3e12330e8"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/lib.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/lib.rs",
+      "bytes": 2476,
+      "sha256": "84c8867441fa38a233ccc699e323f954894aecc5e6724fbe74e3e5914a383c60"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/mar345.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/mar345.rs",
+      "bytes": 19721,
+      "sha256": "cf527509342046e1725b12ebe5ffbc4ad2f21f6c63b9d820e9c168c9818e16aa"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/mpa.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/mpa.rs",
+      "bytes": 14470,
+      "sha256": "6c81d70a3ef9b7f6a95a2f52a7add8aa14c70c15bd21c9ecb252e98b3e4cda9a"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/mrc.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/mrc.rs",
+      "bytes": 10019,
+      "sha256": "eb01640b8d6436f363b3b45531050de3ff06f42b4ecb4e3a120bce8ea16bca28"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/native.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/native.rs",
+      "bytes": 35783,
+      "sha256": "b526d517a3e35d9e020bfa26944b41f4198d5aa6347289d44710402d406f28c2"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/navigation.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/navigation.rs",
+      "bytes": 7700,
+      "sha256": "6fe155d07f11fefca9d9ba09c623a235688fcf4d17e6a3083ed88adc73901f68"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/oxford/ty5.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/oxford/ty5.rs",
+      "bytes": 3518,
+      "sha256": "1ca4411422d7b4ecc6ed574bdc8a5ac592d27f0a2baae0b77ded7a7e457e5136"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/oxford.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/oxford.rs",
+      "bytes": 19856,
+      "sha256": "134d222d921b9685483a486177e50984159afa6d91bb850d55f59ee1973c9a0d"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/pilatus.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/pilatus.rs",
+      "bytes": 6378,
+      "sha256": "f87ab50599b638171c46f8ac16df4b0f1efaec4dfba580cefcd45071dbc9a436"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/pixels.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/pixels.rs",
+      "bytes": 5522,
+      "sha256": "89f9b646e2970e79c77c625529f367f5fe96bd35c9ecf73cad67bbb59dde3c12"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/pixi.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/pixi.rs",
+      "bytes": 4380,
+      "sha256": "2522bc7b5cfc0a70f4624d87193fade8075857b08c7cf34fb05ce9f0ddf5b7ee"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/raster.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/raster.rs",
+      "bytes": 2453,
+      "sha256": "f27377deff1a475984240c548cc77890d8d1f53181245ac8654333fdd7a29c1f"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/raxis.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/raxis.rs",
+      "bytes": 14260,
+      "sha256": "c0bee389a94056c437a18948996c1449351aefcae9ea9191dd228ce1d63e11db"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/series.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/series.rs",
+      "bytes": 22464,
+      "sha256": "fd197478fa7206f11411627cb58c4f2bc5952a63173e0544536a813c5c564a64"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/source.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/source.rs",
+      "bytes": 3229,
+      "sha256": "cb034be18672cba6d92b3b35071b584d435f29507aa9bb9603fd59b03a41b30a"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/spe.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/spe.rs",
+      "bytes": 22313,
+      "sha256": "48849be1954fe507ed36d9eb7ae476b43b2810abe434dcf889165af7df71fb98"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/compatibility.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/compatibility.rs",
+      "bytes": 11603,
+      "sha256": "ee3dc5bdd237f58bde81538c46ee6a393793b0632e9c921e867479f3c7a4e541"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/group3.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/group3.rs",
+      "bytes": 8117,
+      "sha256": "ede0d60ba03fc62e6e707bd2a4f7a06d8fc272f83ba9d0bd1ab62943cb49f1da"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/header.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/header.rs",
+      "bytes": 4047,
+      "sha256": "d0c018ff4ed229641c7e12c60bdf49681b0f4e10c4cd872123cc1b7dc917871d"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/ifd_view.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/ifd_view.rs",
+      "bytes": 16989,
+      "sha256": "75d7ac11299d65d1780a5f8bf1a43649a17f5fe17f95d52f9c00e48d0d21a77b"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/jpeg_components.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/jpeg_components.rs",
+      "bytes": 4634,
+      "sha256": "8cc9ef27459a54f7a6e47ea6e594d5a51bdb0b0820d10c2c93a778f010014c53"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/ojpeg.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/ojpeg.rs",
+      "bytes": 14553,
+      "sha256": "27ea210bfa75c251d75a396fb949b1d466fe68c67b5e8201cb25f7a81296176a"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/thunderscan.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/thunderscan.rs",
+      "bytes": 9250,
+      "sha256": "7d299c5032402b5af16f79ec7f66d9609a03046a058fe91b9cc13206673fff2c"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/view.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/view.rs",
+      "bytes": 16361,
+      "sha256": "c4f32a6903c98c8030047a217ef572c6f03261e37fe4d4b0724315f5f4dbc2ed"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/view_jpeg.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/view_jpeg.rs",
+      "bytes": 9501,
+      "sha256": "8f8df0d1a26d93e9f15715d9d238e47c7bd420afe8d3c7337004691c0af522e1"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/view_ycbcr.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/view_ycbcr.rs",
+      "bytes": 7331,
+      "sha256": "9fbb8713ae4739ef0433441e15412d54ad8920b297652caab687b14c57d9f583"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/ycbcr.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/ycbcr.rs",
+      "bytes": 16472,
+      "sha256": "12958c127df223a150ee186094d70126a2841d79ccccb68bd3a08d78e4cdaa19"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff/ycbcr_jpeg.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff/ycbcr_jpeg.rs",
+      "bytes": 5864,
+      "sha256": "3a70a695fed2fca125b2609356989c669b3020eeaeaed6d86a4c1c3f2365e679"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/tiff.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/tiff.rs",
+      "bytes": 41459,
+      "sha256": "e3090d8f9315ae9e95869f41730bdc0f7eb2e5499de1e8b37df1e46bd38eef56"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/transport.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/transport.rs",
+      "bytes": 6991,
+      "sha256": "9201e70f29c23ee027334f0db48e4965f32c7cbf04720b5d14d84087407c4aa3"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/wrapped/input.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/wrapped/input.rs",
+      "bytes": 12222,
+      "sha256": "dfa3474eaa04ad8c00733165f4f104e572f673b8630750b027b724aff88ce337"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/wrapped.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/wrapped.rs",
+      "bytes": 38868,
+      "sha256": "0d2ed07e6475d8763c6c994d33cafb5ef46436131be1143ec014ec0de6f76633"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/xcalibur/decomposition.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/xcalibur/decomposition.rs",
+      "bytes": 6743,
+      "sha256": "b3d2d3e0decf3ae69fdfc742fc2ebe623459b98e817550a01efe774a4c886269"
+    },
+    "/Users/clemens/Programming/dioptrin-io/src/xsd.rs": {
+      "path": "/Users/clemens/Programming/dioptrin-io/src/xsd.rs",
+      "bytes": 11824,
+      "sha256": "bcfe7328bc0d9d809dc6abda92d790039069e3829332abcfb300b0379e0ac601"
+    },
+    "/Users/clemens/Programming/dioptrin-io/Cargo.toml": {
+      "path": "/Users/clemens/Programming/dioptrin-io/Cargo.toml",
+      "bytes": 4084,
+      "sha256": "6f442ad6b967d10c2799f5cb670d2bbb622269344298e552bd9345635ed11ee0"
+    },
+    "/Users/clemens/Programming/dioptrin-io/Cargo.lock": {
+      "path": "/Users/clemens/Programming/dioptrin-io/Cargo.lock",
+      "bytes": 27171,
+      "sha256": "e0206f1f8defd7d6c31232193928691a191fb2d1495aa0aa3450e12d708dba29"
+    }
+  },
+  "reads": [
+    {
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/xcalibur/records.run",
+        "bytes": 724,
+        "sha256": "80f87a92dd48a6706f09b99f892fde1738cb99a37f2954254a4fad447e567e91"
+      },
+      "status": "qualified",
+      "reference": {
+        "fields": {
+          "cprefix": "run_\u00e4\u0000embedded",
+          "cfolder": "/unavailable/original/output",
+          "inumofsweeps": 2,
+          "dunknown": -0.0,
+          "pssweep": [
+            {
+              "iscanindex": 7,
+              "iscantype": 43981,
+              "dwunknown1": 4275878552,
+              "domega": -0.0,
+              "dtheta": 1.25,
+              "dkappa": -2.5,
+              "dphi": 3.5,
+              "dstart": 4.5,
+              "dend": 5.5,
+              "dwidth": 0.1,
+              "dunknown2": -0.25,
+              "iunknown3": 0,
+              "iunknown4": 65535,
+              "iunknown5": 4660,
+              "iunknown6": 32768,
+              "dexposure": 10.5
+            },
+            {
+              "iscanindex": 65535,
+              "iscantype": 43981,
+              "dwunknown1": 4275878552,
+              "domega": 10.5,
+              "dtheta": -0.25,
+              "dkappa": 0.1,
+              "dphi": 5.5,
+              "dstart": 4.5,
+              "dend": 3.5,
+              "dwidth": -2.5,
+              "dunknown2": 1.25,
+              "iunknown3": 0,
+              "iunknown4": 65535,
+              "iunknown5": 4660,
+              "iunknown6": 32768,
+              "dexposure": -0.0
+            }
+          ]
+        },
+        "status": "match",
+        "read_loads_differences": [],
+        "roundtrip": {
+          "status": "fields_preserved",
+          "differences": [],
+          "source_bytes_preserved": false,
+          "serialized_bytes": 704,
+          "serialized_sha256": "977e8e21db960c4ff5aa74d2475fe1b0fb6a26948a2d613587ae41be61b60fde",
+          "qualification": "reference serialization is diagnostic only; source padding/trailers remain native original bytes"
+        },
+        "sweeps": [
+          {
+            "index": 0,
+            "fields": {
+              "iscanindex": 7,
+              "iscantype": 43981,
+              "dwunknown1": 4275878552,
+              "domega": -0.0,
+              "dtheta": 1.25,
+              "dkappa": -2.5,
+              "dphi": 3.5,
+              "dstart": 4.5,
+              "dend": 5.5,
+              "dwidth": 0.1,
+              "dunknown2": -0.25,
+              "iunknown3": 0,
+              "iunknown4": 65535,
+              "iunknown5": 4660,
+              "iunknown6": 32768,
+              "dexposure": 10.5
+            },
+            "float_bits": {
+              "domega": "8000000000000000",
+              "dtheta": "3ff4000000000000",
+              "dkappa": "c004000000000000",
+              "dphi": "400c000000000000",
+              "dstart": "4012000000000000",
+              "dend": "4016000000000000",
+              "dwidth": "3fb999999999999a",
+              "dunknown2": "bfd0000000000000",
+              "dexposure": "4025000000000000"
+            },
+            "roundtrip_source_bytes_preserved": true
+          },
+          {
+            "index": 1,
+            "fields": {
+              "iscanindex": 65535,
+              "iscantype": 43981,
+              "dwunknown1": 4275878552,
+              "domega": 10.5,
+              "dtheta": -0.25,
+              "dkappa": 0.1,
+              "dphi": 5.5,
+              "dstart": 4.5,
+              "dend": 3.5,
+              "dwidth": -2.5,
+              "dunknown2": 1.25,
+              "iunknown3": 0,
+              "iunknown4": 65535,
+              "iunknown5": 4660,
+              "iunknown6": 32768,
+              "dexposure": -0.0
+            },
+            "float_bits": {
+              "domega": "4025000000000000",
+              "dtheta": "bfd0000000000000",
+              "dkappa": "3fb999999999999a",
+              "dphi": "4016000000000000",
+              "dstart": "4012000000000000",
+              "dend": "400c000000000000",
+              "dwidth": "c004000000000000",
+              "dunknown2": "3ff4000000000000",
+              "dexposure": "8000000000000000"
+            },
+            "roundtrip_source_bytes_preserved": true
+          }
+        ]
+      },
+      "apis": [
+        {
+          "adapter": "xcalibur-run",
+          "exit_code": 0,
+          "provenance": "PathSnapshot",
+          "status": "match",
+          "differences": [],
+          "native": {
+            "fields": {
+              "cfolder": "/unavailable/original/output",
+              "cprefix": "run_\u00e4\u0000embedded",
+              "dunknown": -0.0,
+              "inumofsweeps": 2,
+              "pssweep": [
+                {
+                  "dend": 5.5,
+                  "dexposure": 10.5,
+                  "dkappa": -2.5,
+                  "domega": -0.0,
+                  "dphi": 3.5,
+                  "dstart": 4.5,
+                  "dtheta": 1.25,
+                  "dunknown2": -0.25,
+                  "dwidth": 0.1,
+                  "dwunknown1": 4275878552,
+                  "iscanindex": 7,
+                  "iscantype": 43981,
+                  "iunknown3": 0,
+                  "iunknown4": 65535,
+                  "iunknown5": 4660,
+                  "iunknown6": 32768
+                },
+                {
+                  "dend": 3.5,
+                  "dexposure": -0.0,
+                  "dkappa": 0.1,
+                  "domega": 10.5,
+                  "dphi": 5.5,
+                  "dstart": 4.5,
+                  "dtheta": -0.25,
+                  "dunknown2": 1.25,
+                  "dwidth": -2.5,
+                  "dwunknown1": 4275878552,
+                  "iscanindex": 65535,
+                  "iscantype": 43981,
+                  "iunknown3": 0,
+                  "iunknown4": 65535,
+                  "iunknown5": 4660,
+                  "iunknown6": 32768
+                }
+              ]
+            },
+            "float_bits": {
+              "dunknown": "8000000000000000",
+              "pssweep": [
+                {
+                  "dend": "4016000000000000",
+                  "dexposure": "4025000000000000",
+                  "dkappa": "c004000000000000",
+                  "domega": "8000000000000000",
+                  "dphi": "400c000000000000",
+                  "dstart": "4012000000000000",
+                  "dtheta": "3ff4000000000000",
+                  "dunknown2": "bfd0000000000000",
+                  "dwidth": "3fb999999999999a"
+                },
+                {
+                  "dend": "400c000000000000",
+                  "dexposure": "8000000000000000",
+                  "dkappa": "3fb999999999999a",
+                  "domega": "4025000000000000",
+                  "dphi": "4016000000000000",
+                  "dstart": "4012000000000000",
+                  "dtheta": "bfd0000000000000",
+                  "dunknown2": "3ff4000000000000",
+                  "dwidth": "c004000000000000"
+                }
+              ]
+            },
+            "kind": "xcalibur_run",
+            "parsed_bytes": 704,
+            "provenance": "PathSnapshot",
+            "raw_text_hex": {
+              "cfolder": "2f756e617661696c61626c652f6f726967696e616c2f6f7574707574000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+              "cprefix": "0072756e5fc3a400656d626564646564000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+            },
+            "source_bytes": 724,
+            "source_sha256": "80f87a92dd48a6706f09b99f892fde1738cb99a37f2954254a4fad447e567e91",
+            "sweep_sha256": [
+              "1a2a1d265631fab332e1c2fb97544ebb251e884ac6c68ff45d3811cd2ce78475",
+              "c041b33309f367047dd2d92826e1332cfe41e4268dd5688e47097b39e0a8a782"
+            ],
+            "trailer_hex": "6f70617175652072756e20747261696c657200ff",
+            "trailer_sha256": "2d1aa5b6721cab639d67d101d532ebd1b2b191aed99a1432b621d9a5e6336376"
+          }
+        },
+        {
+          "adapter": "xcalibur-run-bytes",
+          "exit_code": 0,
+          "provenance": "Buffer",
+          "status": "match",
+          "differences": [],
+          "native": {
+            "fields": {
+              "cfolder": "/unavailable/original/output",
+              "cprefix": "run_\u00e4\u0000embedded",
+              "dunknown": -0.0,
+              "inumofsweeps": 2,
+              "pssweep": [
+                {
+                  "dend": 5.5,
+                  "dexposure": 10.5,
+                  "dkappa": -2.5,
+                  "domega": -0.0,
+                  "dphi": 3.5,
+                  "dstart": 4.5,
+                  "dtheta": 1.25,
+                  "dunknown2": -0.25,
+                  "dwidth": 0.1,
+                  "dwunknown1": 4275878552,
+                  "iscanindex": 7,
+                  "iscantype": 43981,
+                  "iunknown3": 0,
+                  "iunknown4": 65535,
+                  "iunknown5": 4660,
+                  "iunknown6": 32768
+                },
+                {
+                  "dend": 3.5,
+                  "dexposure": -0.0,
+                  "dkappa": 0.1,
+                  "domega": 10.5,
+                  "dphi": 5.5,
+                  "dstart": 4.5,
+                  "dtheta": -0.25,
+                  "dunknown2": 1.25,
+                  "dwidth": -2.5,
+                  "dwunknown1": 4275878552,
+                  "iscanindex": 65535,
+                  "iscantype": 43981,
+                  "iunknown3": 0,
+                  "iunknown4": 65535,
+                  "iunknown5": 4660,
+                  "iunknown6": 32768
+                }
+              ]
+            },
+            "float_bits": {
+              "dunknown": "8000000000000000",
+              "pssweep": [
+                {
+                  "dend": "4016000000000000",
+                  "dexposure": "4025000000000000",
+                  "dkappa": "c004000000000000",
+                  "domega": "8000000000000000",
+                  "dphi": "400c000000000000",
+                  "dstart": "4012000000000000",
+                  "dtheta": "3ff4000000000000",
+                  "dunknown2": "bfd0000000000000",
+                  "dwidth": "3fb999999999999a"
+                },
+                {
+                  "dend": "400c000000000000",
+                  "dexposure": "8000000000000000",
+                  "dkappa": "3fb999999999999a",
+                  "domega": "4025000000000000",
+                  "dphi": "4016000000000000",
+                  "dstart": "4012000000000000",
+                  "dtheta": "bfd0000000000000",
+                  "dunknown2": "3ff4000000000000",
+                  "dwidth": "c004000000000000"
+                }
+              ]
+            },
+            "kind": "xcalibur_run",
+            "parsed_bytes": 704,
+            "provenance": "Buffer",
+            "raw_text_hex": {
+              "cfolder": "2f756e617661696c61626c652f6f726967696e616c2f6f7574707574000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+              "cprefix": "0072756e5fc3a400656d626564646564000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+            },
+            "source_bytes": 724,
+            "source_sha256": "80f87a92dd48a6706f09b99f892fde1738cb99a37f2954254a4fad447e567e91",
+            "sweep_sha256": [
+              "1a2a1d265631fab332e1c2fb97544ebb251e884ac6c68ff45d3811cd2ce78475",
+              "c041b33309f367047dd2d92826e1332cfe41e4268dd5688e47097b39e0a8a782"
+            ],
+            "trailer_hex": "6f70617175652072756e20747261696c657200ff",
+            "trailer_sha256": "2d1aa5b6721cab639d67d101d532ebd1b2b191aed99a1432b621d9a5e6336376"
+          }
+        },
+        {
+          "adapter": "xcalibur-run-stream",
+          "exit_code": 0,
+          "provenance": "StreamCapture",
+          "status": "match",
+          "differences": [],
+          "native": {
+            "fields": {
+              "cfolder": "/unavailable/original/output",
+              "cprefix": "run_\u00e4\u0000embedded",
+              "dunknown": -0.0,
+              "inumofsweeps": 2,
+              "pssweep": [
+                {
+                  "dend": 5.5,
+                  "dexposure": 10.5,
+                  "dkappa": -2.5,
+                  "domega": -0.0,
+                  "dphi": 3.5,
+                  "dstart": 4.5,
+                  "dtheta": 1.25,
+                  "dunknown2": -0.25,
+                  "dwidth": 0.1,
+                  "dwunknown1": 4275878552,
+                  "iscanindex": 7,
+                  "iscantype": 43981,
+                  "iunknown3": 0,
+                  "iunknown4": 65535,
+                  "iunknown5": 4660,
+                  "iunknown6": 32768
+                },
+                {
+                  "dend": 3.5,
+                  "dexposure": -0.0,
+                  "dkappa": 0.1,
+                  "domega": 10.5,
+                  "dphi": 5.5,
+                  "dstart": 4.5,
+                  "dtheta": -0.25,
+                  "dunknown2": 1.25,
+                  "dwidth": -2.5,
+                  "dwunknown1": 4275878552,
+                  "iscanindex": 65535,
+                  "iscantype": 43981,
+                  "iunknown3": 0,
+                  "iunknown4": 65535,
+                  "iunknown5": 4660,
+                  "iunknown6": 32768
+                }
+              ]
+            },
+            "float_bits": {
+              "dunknown": "8000000000000000",
+              "pssweep": [
+                {
+                  "dend": "4016000000000000",
+                  "dexposure": "4025000000000000",
+                  "dkappa": "c004000000000000",
+                  "domega": "8000000000000000",
+                  "dphi": "400c000000000000",
+                  "dstart": "4012000000000000",
+                  "dtheta": "3ff4000000000000",
+                  "dunknown2": "bfd0000000000000",
+                  "dwidth": "3fb999999999999a"
+                },
+                {
+                  "dend": "400c000000000000",
+                  "dexposure": "8000000000000000",
+                  "dkappa": "3fb999999999999a",
+                  "domega": "4025000000000000",
+                  "dphi": "4016000000000000",
+                  "dstart": "4012000000000000",
+                  "dtheta": "bfd0000000000000",
+                  "dunknown2": "3ff4000000000000",
+                  "dwidth": "c004000000000000"
+                }
+              ]
+            },
+            "kind": "xcalibur_run",
+            "parsed_bytes": 704,
+            "provenance": "StreamCapture",
+            "raw_text_hex": {
+              "cfolder": "2f756e617661696c61626c652f6f726967696e616c2f6f7574707574000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+              "cprefix": "0072756e5fc3a400656d626564646564000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+            },
+            "source_bytes": 724,
+            "source_sha256": "80f87a92dd48a6706f09b99f892fde1738cb99a37f2954254a4fad447e567e91",
+            "sweep_sha256": [
+              "1a2a1d265631fab332e1c2fb97544ebb251e884ac6c68ff45d3811cd2ce78475",
+              "c041b33309f367047dd2d92826e1332cfe41e4268dd5688e47097b39e0a8a782"
+            ],
+            "trailer_hex": "6f70617175652072756e20747261696c657200ff",
+            "trailer_sha256": "2d1aa5b6721cab639d67d101d532ebd1b2b191aed99a1432b621d9a5e6336376"
+          }
+        }
+      ],
+      "source_after": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/xcalibur/records.run",
+        "bytes": 724,
+        "sha256": "80f87a92dd48a6706f09b99f892fde1738cb99a37f2954254a4fad447e567e91"
+      },
+      "source_unchanged": true,
+      "scope": "all pinnedRunDescription.read/loads fields plus native raw preservation"
+    },
+    {
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/xcalibur/zero-sweeps.run",
+        "bytes": 528,
+        "sha256": "8889eb3cdd3d0ac94711b47ce78b430d8e23a7b31ecc994c56d0c3310c87674a"
+      },
+      "status": "qualified",
+      "reference": {
+        "fields": {
+          "cprefix": "",
+          "cfolder": "",
+          "inumofsweeps": 0,
+          "dunknown": 0.0,
+          "pssweep": []
+        },
+        "status": "match",
+        "read_loads_differences": [],
+        "roundtrip": {
+          "status": "fields_preserved",
+          "differences": [],
+          "source_bytes_preserved": true,
+          "serialized_bytes": 528,
+          "serialized_sha256": "8889eb3cdd3d0ac94711b47ce78b430d8e23a7b31ecc994c56d0c3310c87674a",
+          "qualification": "reference serialization is diagnostic only; source padding/trailers remain native original bytes"
+        },
+        "sweeps": []
+      },
+      "apis": [
+        {
+          "adapter": "xcalibur-run",
+          "exit_code": 0,
+          "provenance": "PathSnapshot",
+          "status": "match",
+          "differences": [],
+          "native": {
+            "fields": {
+              "cfolder": "",
+              "cprefix": "",
+              "dunknown": 0.0,
+              "inumofsweeps": 0,
+              "pssweep": []
+            },
+            "float_bits": {
+              "dunknown": "0000000000000000",
+              "pssweep": []
+            },
+            "kind": "xcalibur_run",
+            "parsed_bytes": 528,
+            "provenance": "PathSnapshot",
+            "raw_text_hex": {
+              "cfolder": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+              "cprefix": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+            },
+            "source_bytes": 528,
+            "source_sha256": "8889eb3cdd3d0ac94711b47ce78b430d8e23a7b31ecc994c56d0c3310c87674a",
+            "sweep_sha256": [],
+            "trailer_hex": "",
+            "trailer_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "adapter": "xcalibur-run-bytes",
+          "exit_code": 0,
+          "provenance": "Buffer",
+          "status": "match",
+          "differences": [],
+          "native": {
+            "fields": {
+              "cfolder": "",
+              "cprefix": "",
+              "dunknown": 0.0,
+              "inumofsweeps": 0,
+              "pssweep": []
+            },
+            "float_bits": {
+              "dunknown": "0000000000000000",
+              "pssweep": []
+            },
+            "kind": "xcalibur_run",
+            "parsed_bytes": 528,
+            "provenance": "Buffer",
+            "raw_text_hex": {
+              "cfolder": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+              "cprefix": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+            },
+            "source_bytes": 528,
+            "source_sha256": "8889eb3cdd3d0ac94711b47ce78b430d8e23a7b31ecc994c56d0c3310c87674a",
+            "sweep_sha256": [],
+            "trailer_hex": "",
+            "trailer_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "adapter": "xcalibur-run-stream",
+          "exit_code": 0,
+          "provenance": "StreamCapture",
+          "status": "match",
+          "differences": [],
+          "native": {
+            "fields": {
+              "cfolder": "",
+              "cprefix": "",
+              "dunknown": 0.0,
+              "inumofsweeps": 0,
+              "pssweep": []
+            },
+            "float_bits": {
+              "dunknown": "0000000000000000",
+              "pssweep": []
+            },
+            "kind": "xcalibur_run",
+            "parsed_bytes": 528,
+            "provenance": "StreamCapture",
+            "raw_text_hex": {
+              "cfolder": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+              "cprefix": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+            },
+            "source_bytes": 528,
+            "source_sha256": "8889eb3cdd3d0ac94711b47ce78b430d8e23a7b31ecc994c56d0c3310c87674a",
+            "sweep_sha256": [],
+            "trailer_hex": "",
+            "trailer_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ],
+      "source_after": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/xcalibur/zero-sweeps.run",
+        "bytes": 528,
+        "sha256": "8889eb3cdd3d0ac94711b47ce78b430d8e23a7b31ecc994c56d0c3310c87674a"
+      },
+      "source_unchanged": true,
+      "scope": "all pinnedRunDescription.read/loads fields plus native raw preservation"
+    },
+    {
+      "source": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/xcalibur/raw-text-floats.run",
+        "bytes": 616,
+        "sha256": "774081bd582a9c8ae549a066ef864d9fea3517e3726c1e811cf512cfe15d2417"
+      },
+      "status": "qualified",
+      "reference": {
+        "fields": null,
+        "status": "reference_text_rejection",
+        "error": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+        "qualification": "native keeps raw fixed text; no successful RunDescription reference field/read claim for undecodable text",
+        "sweeps": [
+          {
+            "index": 0,
+            "fields": {
+              "iscanindex": 7,
+              "iscantype": 43981,
+              "dwunknown1": 4275878552,
+              "domega": 5e-324,
+              "dtheta": {
+                "kind": "float",
+                "value": "inf"
+              },
+              "dkappa": {
+                "kind": "float",
+                "value": "-inf"
+              },
+              "dphi": {
+                "kind": "float",
+                "value": "nan"
+              },
+              "dstart": {
+                "kind": "float",
+                "value": "nan"
+              },
+              "dend": 5.5,
+              "dwidth": 0.1,
+              "dunknown2": -0.25,
+              "iunknown3": 0,
+              "iunknown4": 65535,
+              "iunknown5": 4660,
+              "iunknown6": 32768,
+              "dexposure": 10.5
+            },
+            "float_bits": {
+              "domega": "0000000000000001",
+              "dtheta": "7ff0000000000000",
+              "dkappa": "fff0000000000000",
+              "dphi": "7ff8000000000042",
+              "dstart": "7ff0000000000001",
+              "dend": "4016000000000000",
+              "dwidth": "3fb999999999999a",
+              "dunknown2": "bfd0000000000000",
+              "dexposure": "4025000000000000"
+            },
+            "roundtrip_source_bytes_preserved": true
+          }
+        ]
+      },
+      "apis": [
+        {
+          "adapter": "xcalibur-run",
+          "exit_code": 0,
+          "provenance": "PathSnapshot",
+          "status": "match",
+          "differences": [],
+          "native": {
+            "fields": {
+              "cfolder": "/unavailable/original/output",
+              "cprefix": null,
+              "dunknown": {
+                "kind": "float",
+                "value": "nan"
+              },
+              "inumofsweeps": 1,
+              "pssweep": [
+                {
+                  "dend": 5.5,
+                  "dexposure": 10.5,
+                  "dkappa": {
+                    "kind": "float",
+                    "value": "-inf"
+                  },
+                  "domega": 5e-324,
+                  "dphi": {
+                    "kind": "float",
+                    "value": "nan"
+                  },
+                  "dstart": {
+                    "kind": "float",
+                    "value": "nan"
+                  },
+                  "dtheta": {
+                    "kind": "float",
+                    "value": "inf"
+                  },
+                  "dunknown2": -0.25,
+                  "dwidth": 0.1,
+                  "dwunknown1": 4275878552,
+                  "iscanindex": 7,
+                  "iscantype": 43981,
+                  "iunknown3": 0,
+                  "iunknown4": 65535,
+                  "iunknown5": 4660,
+                  "iunknown6": 32768
+                }
+              ]
+            },
+            "float_bits": {
+              "dunknown": "7ff8000000000042",
+              "pssweep": [
+                {
+                  "dend": "4016000000000000",
+                  "dexposure": "4025000000000000",
+                  "dkappa": "fff0000000000000",
+                  "domega": "0000000000000001",
+                  "dphi": "7ff8000000000042",
+                  "dstart": "7ff0000000000001",
+                  "dtheta": "7ff0000000000000",
+                  "dunknown2": "bfd0000000000000",
+                  "dwidth": "3fb999999999999a"
+                }
+              ]
+            },
+            "kind": "xcalibur_run",
+            "parsed_bytes": 616,
+            "provenance": "PathSnapshot",
+            "raw_text_hex": {
+              "cfolder": "2f756e617661696c61626c652f6f726967696e616c2f6f7574707574000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+              "cprefix": "ff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+            },
+            "source_bytes": 616,
+            "source_sha256": "774081bd582a9c8ae549a066ef864d9fea3517e3726c1e811cf512cfe15d2417",
+            "sweep_sha256": [
+              "fcb5ce1d9e6b859999b4846e84f637a12a92b80130163aa5571195d6638a549b"
+            ],
+            "trailer_hex": "",
+            "trailer_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "adapter": "xcalibur-run-bytes",
+          "exit_code": 0,
+          "provenance": "Buffer",
+          "status": "match",
+          "differences": [],
+          "native": {
+            "fields": {
+              "cfolder": "/unavailable/original/output",
+              "cprefix": null,
+              "dunknown": {
+                "kind": "float",
+                "value": "nan"
+              },
+              "inumofsweeps": 1,
+              "pssweep": [
+                {
+                  "dend": 5.5,
+                  "dexposure": 10.5,
+                  "dkappa": {
+                    "kind": "float",
+                    "value": "-inf"
+                  },
+                  "domega": 5e-324,
+                  "dphi": {
+                    "kind": "float",
+                    "value": "nan"
+                  },
+                  "dstart": {
+                    "kind": "float",
+                    "value": "nan"
+                  },
+                  "dtheta": {
+                    "kind": "float",
+                    "value": "inf"
+                  },
+                  "dunknown2": -0.25,
+                  "dwidth": 0.1,
+                  "dwunknown1": 4275878552,
+                  "iscanindex": 7,
+                  "iscantype": 43981,
+                  "iunknown3": 0,
+                  "iunknown4": 65535,
+                  "iunknown5": 4660,
+                  "iunknown6": 32768
+                }
+              ]
+            },
+            "float_bits": {
+              "dunknown": "7ff8000000000042",
+              "pssweep": [
+                {
+                  "dend": "4016000000000000",
+                  "dexposure": "4025000000000000",
+                  "dkappa": "fff0000000000000",
+                  "domega": "0000000000000001",
+                  "dphi": "7ff8000000000042",
+                  "dstart": "7ff0000000000001",
+                  "dtheta": "7ff0000000000000",
+                  "dunknown2": "bfd0000000000000",
+                  "dwidth": "3fb999999999999a"
+                }
+              ]
+            },
+            "kind": "xcalibur_run",
+            "parsed_bytes": 616,
+            "provenance": "Buffer",
+            "raw_text_hex": {
+              "cfolder": "2f756e617661696c61626c652f6f726967696e616c2f6f7574707574000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+              "cprefix": "ff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+            },
+            "source_bytes": 616,
+            "source_sha256": "774081bd582a9c8ae549a066ef864d9fea3517e3726c1e811cf512cfe15d2417",
+            "sweep_sha256": [
+              "fcb5ce1d9e6b859999b4846e84f637a12a92b80130163aa5571195d6638a549b"
+            ],
+            "trailer_hex": "",
+            "trailer_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "adapter": "xcalibur-run-stream",
+          "exit_code": 0,
+          "provenance": "StreamCapture",
+          "status": "match",
+          "differences": [],
+          "native": {
+            "fields": {
+              "cfolder": "/unavailable/original/output",
+              "cprefix": null,
+              "dunknown": {
+                "kind": "float",
+                "value": "nan"
+              },
+              "inumofsweeps": 1,
+              "pssweep": [
+                {
+                  "dend": 5.5,
+                  "dexposure": 10.5,
+                  "dkappa": {
+                    "kind": "float",
+                    "value": "-inf"
+                  },
+                  "domega": 5e-324,
+                  "dphi": {
+                    "kind": "float",
+                    "value": "nan"
+                  },
+                  "dstart": {
+                    "kind": "float",
+                    "value": "nan"
+                  },
+                  "dtheta": {
+                    "kind": "float",
+                    "value": "inf"
+                  },
+                  "dunknown2": -0.25,
+                  "dwidth": 0.1,
+                  "dwunknown1": 4275878552,
+                  "iscanindex": 7,
+                  "iscantype": 43981,
+                  "iunknown3": 0,
+                  "iunknown4": 65535,
+                  "iunknown5": 4660,
+                  "iunknown6": 32768
+                }
+              ]
+            },
+            "float_bits": {
+              "dunknown": "7ff8000000000042",
+              "pssweep": [
+                {
+                  "dend": "4016000000000000",
+                  "dexposure": "4025000000000000",
+                  "dkappa": "fff0000000000000",
+                  "domega": "0000000000000001",
+                  "dphi": "7ff8000000000042",
+                  "dstart": "7ff0000000000001",
+                  "dtheta": "7ff0000000000000",
+                  "dunknown2": "bfd0000000000000",
+                  "dwidth": "3fb999999999999a"
+                }
+              ]
+            },
+            "kind": "xcalibur_run",
+            "parsed_bytes": 616,
+            "provenance": "StreamCapture",
+            "raw_text_hex": {
+              "cfolder": "2f756e617661696c61626c652f6f726967696e616c2f6f7574707574000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+              "cprefix": "ff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+            },
+            "source_bytes": 616,
+            "source_sha256": "774081bd582a9c8ae549a066ef864d9fea3517e3726c1e811cf512cfe15d2417",
+            "sweep_sha256": [
+              "fcb5ce1d9e6b859999b4846e84f637a12a92b80130163aa5571195d6638a549b"
+            ],
+            "trailer_hex": "",
+            "trailer_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ],
+      "source_after": {
+        "path": "/Users/clemens/Programming/dioptrin-io/tests/data/xcalibur/raw-text-floats.run",
+        "bytes": 616,
+        "sha256": "774081bd582a9c8ae549a066ef864d9fea3517e3726c1e811cf512cfe15d2417"
+      },
+      "source_unchanged": true,
+      "scope": "native raw preservation plus pinnedSweep fields; pinnedRunDescription rejects text"
+    }
+  ],
+  "sources_unchanged": true,
+  "probe_unchanged": true,
+  "all_qualified": true
+}

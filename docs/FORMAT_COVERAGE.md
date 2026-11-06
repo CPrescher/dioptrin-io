@@ -4,6 +4,12 @@ Reference: [FabIO 2026.6.0, tag v2026.06](https://github.com/silx-kit/fabio/tree
 
 Machine-readable subformats, compression, stacks, provenance and validation are in [the inventory](fabio-2026.6.0-inventory.json). Regenerate with `python scripts/inventory_fabio.py /path/to/pinned/fabio`.
 
+Companion formats outside the image-codec registry now include strict CIF 1.1
+documents (`cbf::syntax`), labeled ASCII tables (`columnfile`) and FIT2D/CHIPLOT
+profiles (`chiplot`). Their [separate audit](CIF_LEGACY_PARITY.md) distinguishes
+source correctness, malformed fixtures, failed FabIO helpers and unsupported
+CIF 2.0/binary-table capabilities; image-count parity does not imply these APIs.
+
 | Reader | Subformats / source types | Compression | Stack | Current status |
 |---|---|---|---|---|
 | [edfimage](https://github.com/silx-kit/fabio/blob/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece/src/fabio/edfimage.py) | EDF 0/1/2/3; concatenated frames; general headers; inline/external binary; 2D/volume; integer/float aliases including optional float128 | none; internal gzip/zlib/bzip2; optional byte-offset; outer gzip/bzip2 | concatenated frames | partial: 2D ten scalar types, both byte orders, general inheritance/raw repeats and exact closing boundaries; bounded inline/outer gzip/zlib/bzip2 with explicit padding; external snapshots/relocation/counterparts require options; default Exact external windows stay strict, explicit UpToDeclared compatibility records declared/effective bytes and still requires complete samples/codecs; explicit parsed-boundary Size windows and exact-label stored-raw policies retain original declarations; dense reads reject truncated counts, separate typed-prefix/header/member-integrity recovery available; volume/float128/offset pending |

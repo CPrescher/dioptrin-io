@@ -128,7 +128,7 @@ captures, with separate content-discovery and EDF header ledgers. A separate
 feature-disabled run distinguishes unavailable compilation features from missing
 readers. Every original registry entry remains in the ledger.
 
-Current evidence is recorded in `fabio-parity/2026-11-06-series-companions.json`;
+Current evidence is recorded in `fabio-parity/2026-11-06-cif-legacy.json`;
 the earlier baseline and typed-HDF5 reports are retained. The current report is
 a failing full-parity gate, with exact native successes, unsupported layouts,
 reference differences and remaining readers kept separate.
@@ -300,3 +300,14 @@ table/profile helpers fail on independent valid inputs; no absent reference
 result is counted as parity. The complete existing 237-test/626-input run is
 retained in the new reader continuation, with separate native validation and
 reference source fingerprints.
+
+## CIF grammar and legacy table/profile continuation
+
+The [CIF/table/profile audit](CIF_LEGACY_PARITY.md) adds a strict source-preserving
+CIF 1.1 tree, labeled ASCII tables and documented FIT2D/CHIPLOT profiles. Native
+source comparisons use independent fixtures and exact lexical/scalar identities.
+Unchanged FabIO helpers, the untouched C ASCII decoder and optional independent
+CIF-parser observations have separately recorded results. Failed reference reads,
+malformed upstream CIF input and unsupported CIF 2.0/binary-table capabilities
+remain distinct. The complete corpus and prior series/companion proofs are
+rerun against the frozen native sources and executables.

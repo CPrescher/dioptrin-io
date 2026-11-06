@@ -1,4 +1,18 @@
-# Series, navigation and companions, 2026-11-06
+# CIF grammar and legacy tables/profiles, 2026-11-06
+
+The [reader continuation](2026-11-06-cif-legacy.json) preserves all 626 input
+outcomes and 237 unchanged reference tests (zero failures/errors, one existing
+slow-test skip). Separate proofs add strict CIF 1.1 syntax, labeled ASCII tables
+and source-preserving CHIPLOT profiles, while distinguishing FabIO defects,
+malformed input and unsupported CIF 2.0/binary-table capabilities. The previous
+37-test series audit and both companion proofs also pass against the final
+executable. See [combined evidence](../CIF_LEGACY_PARITY.md) and
+[native checks](2026-11-06-cif-legacy-native-checks.json): 293 Rust tests,
+72 Python controls, no-default checks and 23 isolated features pass. Full reading
+parity remains false for the qualified differences and remaining version/layout
+and helper scope.
+
+## Previous series, navigation and companions, retained
 
 The [reader continuation](2026-11-06-series-companions.json) preserves all 626
 input outcomes and 237 reference tests. A separate 37-test series audit verifies

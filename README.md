@@ -19,9 +19,11 @@ Every format dependency is optional; default features are empty.
 | `hdf5` | Typed 2D/3D images/stacks with ten standard scalar types, both byte orders, Eiger/LImA/Lambda discovery, explicit external-file snapshots and bound regular VDS mosaics; original u32 compatibility reader; opt-in indexed raw u16/u32 chunks and bounded parallel consumers | Nested/printf/irregular VDS, raw external storage, complex/custom/float16 samples, arbitrary metadata and live refresh; raw fast path retains its narrower contract |
 | `tiff` | Scalar/packed/WhiteIsZero/palette/CFA/color/planar TIFF and BigTIFF; primary IFD pages, strips/tiles, lossless codecs, Group3 1D/Group4, legacy LZW, native YCbCr grids/units, modern JPEG and bounded OJPEG; explicit legacy metadata policies; ThunderScan complete/available-row reads; Pilatus/MAR headers | OJPEG/JPEG component reads need `jpeg`; SubIFD/other layouts remain gaps; F16 widening and reference views qualified |
 | `jpeg`, `jpeg2000` | Mature libjpeg-turbo/OpenJPEG backends; lossless high-precision JPEG; original channels, precision, lossy provenance and headers | Unsupported precision/component layouts fail explicitly; see image contracts |
-| `cbf` | Eight integer types, explicit byte-offset dialects, Content-MD5 and raw CIF headers | Semantic CIF/Pilatus maps and multiple sections |
+| `cbf` | Eight integer types, explicit byte-offset dialects, Content-MD5, raw CIF headers and a separate source-preserving CIF 1.1 syntax tree | CIF 2.0, dictionary semantics and multiple binary sections |
 | `edf` | Ten scalar types, stacks/general headers, internal/outer compression and bounded padding, explicit external-source snapshots, explicit legacy layout/label policies and typed-prefix recovery | Volumes, float128, byte-offset; complete-image APIs stay strict; recovery exposes missing spans and member integrity separately |
 | `native` | NPY v1/2/3 scalars/complex arrays, C/Fortran storage; d*TREK/ADSC, Fit2D masks/spreadsheets, HiPiC, PNM and explicit raw input | Remaining dtype/dimension variants; general discovery is available through `wrapped::Input` |
+| `columnfile` | Separate labeled ASCII tables, exact labels/comments/numeric tokens and explicit float64 values | Binary decoder is a stub in pinned FabIO; no binary schema is inferred |
+| `chiplot` | Separate FIT2D/CHIPLOT profiles, stored X coordinates, multiple Y curves and exact numeric tokens | Unspecified uncertainty layouts and declaration flags fail explicitly |
 | `containers` | SPE v2/v3/ROI/frames, typed MRC stacks and nested DM3 image/tag selection | Unsupported layouts/types; pinned reference quirks documented |
 | `bruker`, `oxford`, `raxis` | Bruker86/100 tables/baselines, Oxford raw/TY1/TY5, R-AXIS words and explicit expanded-intensity view | Bruker LINEAR float encoding has an explicit decoded view; unknown record layouts fail |
 | `fixed` | GE intact/blank/EDF-prefixed headers and Pixi fixed frame records | Explicit source manifests and fixed-layout variants outside the corpus |
@@ -39,8 +41,8 @@ registry entries (35 distinct codecs), subformats, compression and stack targets
 independent fixtures and remaining work. Generic TIFF/HDF5 success does not
 establish detector-specific metadata or master-file coverage.
 
-The [current pinned corpus run](docs/fabio-parity/README.md) has 542 matching
-complete read events and 11 independently verified partial-source cases, with
+The [current pinned corpus run](docs/fabio-parity/README.md) qualifies all 626
+observed input events, including metadata-only and 11 partial-source cases, with
 no native rejection of a successful reference read. Expected failures and missing
 counts remain explicit. The [two Pillow display differences](docs/pillow-planar16/README.md)
 are independently qualified decoder defects. Related compressed-planar display
@@ -194,6 +196,11 @@ CBF dialect or backend substitution.
 
 See [file series, navigation and companions](docs/SERIES_COMPANIONS_PARITY.md)
 for frozen manifests, checked global/local frame mapping and acquisition records.
+
+See [CIF grammar and legacy tables/profiles](docs/CIF_LEGACY_PARITY.md) for
+strict CIF 1.1 scopes, optional ASCII table/profile readers, exact source-token
+preservation and independently qualified FabIO defects. These are separate
+document/table/profile APIs, rather than detector images or implicit discovery.
 
 See [content discovery and stream input](docs/INPUT_APIS.md) for bounded
 nonseekable reads, explicit relative origins and conservative format decisions.

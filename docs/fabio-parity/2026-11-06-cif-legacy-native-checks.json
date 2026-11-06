@@ -1,0 +1,497 @@
+{
+  "date": "2026-11-06",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "native_implementation_commit": "f98677298fc130180d26d3140233f6422313188f",
+  "pinned_reference_commit": "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece",
+  "scope": "Strict source-preserving CIF 1.1 syntax, labeled ASCII column tables and FIT2D/CHIPLOT profiles; independent source correctness versus unchanged reference bugs and unsupported capabilities",
+  "required_checks": [
+    {
+      "command": "cargo fmt --check",
+      "exit_code": 0,
+      "seconds": 0.384
+    },
+    {
+      "command": "cargo clippy --locked --all-targets --all-features -- -D warnings",
+      "exit_code": 0,
+      "seconds": 4.282
+    },
+    {
+      "command": "cargo test --locked --all-features",
+      "exit_code": 0,
+      "seconds": 72.144,
+      "tests_passed": 293
+    }
+  ],
+  "isolated_feature_checks": [
+    {
+      "command": "cargo check --locked --no-default-features",
+      "exit_code": 0,
+      "seconds": 0.382
+    },
+    {
+      "command": "cargo test --locked --no-default-features",
+      "exit_code": 0,
+      "seconds": 32.545,
+      "tests_passed": 8
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features bruker -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.267
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features cbf -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.22
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features containers -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.19
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features edf -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.236
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features esperanto -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.177
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features fit2d -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.125
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features fixed -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.193
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features hdf5 -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.356
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features jpeg -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.132
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features jpeg2000 -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.103
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features kcd -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.122
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features mar345 -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.248
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features mpa -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.192
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features native -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.122
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features oxford -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.176
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features raxis -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.18
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features sparse -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.694
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features tiff -- -D warnings",
+      "exit_code": 0,
+      "seconds": 0.175
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features wrappers -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.449
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features xsd -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.117
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features xcalibur -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.148
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features columnfile -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.097
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features chiplot -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.134
+    }
+  ],
+  "optional_features_checked": 23,
+  "python_controls": {
+    "command": "env DYLD_LIBRARY_PATH=/opt/homebrew/lib /tmp/dioptrin-io-fabio-suite-env/bin/python -m unittest discover -s scripts -p 'test_*.py'",
+    "exit_code": 0,
+    "tests_passed": 72,
+    "log_sha256": "cb7148e1917e915f32de1441fe5aacaf97f89ef070c98060dc779066453e1f0c",
+    "bounded_nonregular_path_controls": 4
+  },
+  "full_suite_report": "docs/fabio-parity/2026-11-06-cif-legacy.json",
+  "full_suite_report_sha256": "d999201ae509a1dfc40c9c12f8d8dde97ba0ea64eceafde6e76358231742fbe2",
+  "full_suite_exit_code": 1,
+  "full_suite_exit_reason": "All unchanged reference tests and measured source/input qualification gates pass; exact/full FabIO parity remains false for separately qualified reference defects, source views and unsupported grammar/layout/helper capabilities",
+  "full_suite_results": {
+    "run": 237,
+    "failures": [],
+    "errors": [],
+    "skipped": [
+      [
+        "fabio.test.codecs.test_mar345image.TestMar345.test_memoryleak",
+        "very slow test"
+      ]
+    ],
+    "input_module_tests": 24,
+    "codec_module_tests": 213
+  },
+  "input_api_summary": {
+    "read_events": 626,
+    "status": {
+      "qualified": 626
+    },
+    "native_stream": {
+      "match": 626
+    },
+    "discovery": {
+      "explicit_configuration_required": 2,
+      "match": 610,
+      "qualified_outer_integrity_rejection": 3,
+      "conservative_ambiguity": 4,
+      "source_qualified_container_alias": 1,
+      "container_alias": 6
+    },
+    "scopes": {
+      "complete_native_records": 600,
+      "metadata_only": 26
+    },
+    "reference_data_getter_errors": 1,
+    "all_events_qualified": true
+  },
+  "full_reading_parity": false,
+  "prior_report": "docs/fabio-parity/2026-11-06-series-companions.json",
+  "prior_read_events": 626,
+  "prior_count_reference_outcomes_unchanged": true,
+  "prior_metadata_summary_unchanged": true,
+  "prior_attribute_summary_unchanged": true,
+  "prior_summary_gates_unchanged": {
+    "summary": true,
+    "metadata_summary": true,
+    "attribute_summary": true,
+    "input_api_summary": true,
+    "header_only_summary": true,
+    "xcalibur_api_summary": true
+  },
+  "cross_run_source_hash_scope": "Upstream-generated files may embed timestamps; cross-run equality checks observed dtype/shape/count/hash outcomes, while every run independently fingerprints its own source bytes.",
+  "additional_reports": {
+    "docs/cif-syntax/2026-11-06-cif11.json": {
+      "sha256": "fd69829ab4e006a8a069f5da9d7fa862b91989687561b6c2450f7c38188dc828",
+      "gate": "qualified",
+      "qualified": true,
+      "probe_sha256": "c3ebb85e1996f3052824230cde6cd6dbfb5864fc567a4a45c59f5b14c7e6106d",
+      "immutability_and_reference_gates": {
+        "reference_matches_pinned": true,
+        "inputs_unchanged": true,
+        "independent_modules_unchanged": true
+      }
+    },
+    "docs/columnfile/2026-11-06-ascii.json": {
+      "sha256": "67fd2116c82ad5f0bd0d9b77053651e726ac7d7fa88c5eecfd872d45ae11ba9f",
+      "gate": "all_qualified",
+      "qualified": true,
+      "probe_sha256": "c3ebb85e1996f3052824230cde6cd6dbfb5864fc567a4a45c59f5b14c7e6106d",
+      "immutability_and_reference_gates": {
+        "sources_unchanged": true,
+        "probe_unchanged": true
+      }
+    },
+    "docs/chiplot/2026-11-06-profiles.json": {
+      "sha256": "0f66d78072c631e1056b97236468e391fc74a7b00f28d4e5a19f26172476a35c",
+      "gate": "native_source_reading_qualified",
+      "qualified": true,
+      "probe_sha256": "c3ebb85e1996f3052824230cde6cd6dbfb5864fc567a4a45c59f5b14c7e6106d",
+      "immutability_and_reference_gates": {
+        "sources_unchanged": true,
+        "probe_unchanged": true
+      }
+    },
+    "docs/series/2026-11-06-cif-legacy-regression.json": {
+      "sha256": "732b2fba50c592d1b48e1b282d7eb82560e78af35f3e8e6345ab8b61666679e5",
+      "gate": "all_qualified",
+      "qualified": true,
+      "probe_sha256": "c3ebb85e1996f3052824230cde6cd6dbfb5864fc567a4a45c59f5b14c7e6106d",
+      "immutability_and_reference_gates": {
+        "sources_unchanged": true,
+        "probe_unchanged": true
+      }
+    },
+    "docs/companions/2026-11-06-cif-legacy-run-regression.json": {
+      "sha256": "4fb11a29f238f9aece662acb88cee4c5e9872ac5830ac448f55d4293095ac508",
+      "gate": "all_qualified",
+      "qualified": true,
+      "probe_sha256": "c3ebb85e1996f3052824230cde6cd6dbfb5864fc567a4a45c59f5b14c7e6106d",
+      "immutability_and_reference_gates": {
+        "sources_unchanged": true,
+        "probe_unchanged": true
+      }
+    },
+    "docs/companions/2026-11-06-cif-legacy-projection-regression.json": {
+      "sha256": "b854b09a08ba0d39b29cef307a6c194de38c6592cbf9052081823df5f0dcdf32",
+      "gate": "all_projections_qualified",
+      "qualified": true,
+      "probe_sha256": "c3ebb85e1996f3052824230cde6cd6dbfb5864fc567a4a45c59f5b14c7e6106d",
+      "immutability_and_reference_gates": {
+        "reference_matches_pinned": true,
+        "legacy_helper_modules_unchanged": true,
+        "sources_unchanged": true,
+        "probe_unchanged": true
+      }
+    }
+  },
+  "api_probe_sha256": "c3ebb85e1996f3052824230cde6cd6dbfb5864fc567a4a45c59f5b14c7e6106d",
+  "parity_probe_sha256": "05a2b5c4a3314b52ff56c646773ece68da14e3cb3b8be6eec507a9a3efaa6f38",
+  "new_api_events": {
+    "cif11_exact_reads": 15,
+    "malformed_cif11_rejections": 21,
+    "cif2_unsupported_version_rejections": 3,
+    "ascii_table_reads": 18,
+    "malformed_table_rejections": 6,
+    "binary_table_unsupported_capability_rejections": 3,
+    "chiplot_exact_source_reads": 27
+  },
+  "unchanged_reference_read_parity_claimed_for_failed_helpers": false,
+  "patched_reference_used": false,
+  "series_summary": {
+    "reference_tests": 37,
+    "reference_failures": 0,
+    "reference_errors": 0,
+    "reference_skips": 0,
+    "series_instances": 19,
+    "observed_series_requests": 49,
+    "observed_iterator_yields": 20,
+    "observed_series_successes": 40,
+    "observed_series_errors": 9,
+    "object_open_reads": 25,
+    "filename_helper_calls": 36,
+    "numbered_constructors": 8,
+    "unique_numbered_batches": 2,
+    "numbered_paths_compared": 10010,
+    "native_cursor_actions": 515
+  },
+  "full_suite_fingerprint_gates": {
+    "reference_input_sources_unchanged_during_run": true,
+    "probe_unchanged_during_run": true,
+    "sources_unchanged_during_run": true,
+    "vendored_sources_unchanged_during_run": true,
+    "native_sources_unchanged_during_run": true,
+    "build_files_unchanged_during_run": true,
+    "reference_component_library_unchanged_during_run": true,
+    "reference_pillow_libraries_unchanged_during_run": true,
+    "bridge_unchanged_during_run": true,
+    "explicit_policies_unchanged_during_run": true
+  },
+  "all_full_suite_fingerprints_unchanged": true,
+  "rust_sources_sha256": {
+    "src/binary.rs": "b2464ed8ac2a848116f44faa2280f25ac40c2f15b3d25720a2d3eb4cfd83e50d",
+    "src/bruker/common.rs": "58ebb4b8bc1e89dba4288caa1224cae78f02812bbce4d911ec3159983c7020bc",
+    "src/bruker/view.rs": "4fb7483ddf6e85120b4a08e959de7c2716ae02e5cebd98d50c2d798ce6d2e059",
+    "src/bruker.rs": "3b7d0ea45d1e418697b96015b38bce2f6dc2c02926b1bdb8cebb76386568d8e0",
+    "src/cbf/document.rs": "f0e6dd547ead39f785c86e7b76c7b6dc880f532c7d8bf0e0f23607624d139962",
+    "src/cbf/header.rs": "5713a8bef504b118dfd07eceff3749e170654f88ed247a4ba9fdcbfb91283766",
+    "src/cbf/syntax.rs": "c09de996dec59f8b0833518582ad8fcd42524e66bfef222d46fb43a8f6736c37",
+    "src/cbf.rs": "6414758c37f2babe448d241025acec61eafdbe7834d4226715b1e0ea7aecf1b8",
+    "src/chiplot.rs": "a6b39507c21a231d7579cbd65ff31ffcae73b7b162484f68278851c80236d92d",
+    "src/columnfile.rs": "45bf335382c0d173a7daac9e55b3609ee91989de890df6287e8e14f61660c79b",
+    "src/detector_tiff/mar_schema.rs": "0d224ae8a52443423f144a61604176be37727deec320333fdb4c947581ffb819",
+    "src/detector_tiff.rs": "06cbc9b5a8db291196e6fa3bfab75baeb860c4948dba5dd21811a001160712fd",
+    "src/discovery.rs": "acfac305e21289355c6617c6d78ff0886fc79e852e1a069b0e11482fb269d7cd",
+    "src/dm3.rs": "a7b9ad01a2eac150156c92f2aec088587786ffa90e80c502f1628e0537747b93",
+    "src/edf/recovery.rs": "b8206c62dc3ca88c715f173803aec8c30af85a1f67f4ec39c1a3c1d27eab8cdb",
+    "src/edf.rs": "50efe2c4d2fe7d6783cf73afaaeabe5a53a68f7a0a047c9218d49c7350de942a",
+    "src/esperanto.rs": "d2bb2f34e02000e28810a62479b9f16958c9f7ebe6bc4a9400b41b1841abc8ed",
+    "src/fit2d.rs": "a3dfab6f09927651c98f9561fc497788d9f4736a0795be9c6c37de52de3c2004",
+    "src/ge.rs": "73ef7bbb055d7e90f7fb8ffcef887bd5382b5a82c818f1972558a51d522e4326",
+    "src/hdf5/cache.rs": "2b2927c6cc7bcf4d8daae4add9a72c9fa2414b93dd51950cffb634beaf45c050",
+    "src/hdf5/discovery.rs": "d3fe9f5f5c6abf10084cbc3b7562b443b17359336e0fb102ff5aa28f6f1881aa",
+    "src/hdf5/raw.rs": "aa1c6fa0a31303cc769214393039fec9975bff9c1e1d54eca59808e98d3927fc",
+    "src/hdf5/sources.rs": "f79106332878717c9dae77373fcaf9f711e2c36fdf45a06bfaec087c8aa6ec54",
+    "src/hdf5/sparse/numeric.rs": "9e842fc99100d24a6913d506dd86e7f63b0213eee695cea2a82515712be78433",
+    "src/hdf5/sparse/reconstruction.rs": "801f9c866a9e5796e7de966cad42f50e5c128183cf895660d155265cd99df364",
+    "src/hdf5/sparse.rs": "86365e54f3448047f7dbae439b19efaa22bc47fd641f6ca423512556f35bce54",
+    "src/hdf5/typed.rs": "6042b1b05f900bfd405c25b86b879e9a29cf9d6bed4395d0315a102fda39b6d0",
+    "src/hdf5/vds.rs": "e8e82c3152e40d589e196a31a5165723f056ed7f2875deb235dc8f587dd68207",
+    "src/hdf5.rs": "49be9fa8a2f36cdac7f1fcb9d7737b173b5c9074b1d820acbfd264028a33dddc",
+    "src/jpeg.rs": "ab2e7dbea38cf2c876e4ad2a73ce74e4e2ee19c28a193365054b33082522f445",
+    "src/jpeg2000.rs": "be8ad6f74a6c161532e73aaae16dff9d37533f6c1181f66eae35fc5ff99ba7e3",
+    "src/kcd.rs": "fb532aa6e23648399ea52e0872edf0f57e45aacfe951c1284c1f46d3e12330e8",
+    "src/lib.rs": "84c8867441fa38a233ccc699e323f954894aecc5e6724fbe74e3e5914a383c60",
+    "src/mar345.rs": "cf527509342046e1725b12ebe5ffbc4ad2f21f6c63b9d820e9c168c9818e16aa",
+    "src/mpa.rs": "6c81d70a3ef9b7f6a95a2f52a7add8aa14c70c15bd21c9ecb252e98b3e4cda9a",
+    "src/mrc.rs": "eb01640b8d6436f363b3b45531050de3ff06f42b4ecb4e3a120bce8ea16bca28",
+    "src/native.rs": "b526d517a3e35d9e020bfa26944b41f4198d5aa6347289d44710402d406f28c2",
+    "src/navigation.rs": "6fe155d07f11fefca9d9ba09c623a235688fcf4d17e6a3083ed88adc73901f68",
+    "src/oxford/ty5.rs": "1ca4411422d7b4ecc6ed574bdc8a5ac592d27f0a2baae0b77ded7a7e457e5136",
+    "src/oxford.rs": "134d222d921b9685483a486177e50984159afa6d91bb850d55f59ee1973c9a0d",
+    "src/pilatus.rs": "f87ab50599b638171c46f8ac16df4b0f1efaec4dfba580cefcd45071dbc9a436",
+    "src/pixels.rs": "89f9b646e2970e79c77c625529f367f5fe96bd35c9ecf73cad67bbb59dde3c12",
+    "src/pixi.rs": "2522bc7b5cfc0a70f4624d87193fade8075857b08c7cf34fb05ce9f0ddf5b7ee",
+    "src/raster.rs": "f27377deff1a475984240c548cc77890d8d1f53181245ac8654333fdd7a29c1f",
+    "src/raxis.rs": "c0bee389a94056c437a18948996c1449351aefcae9ea9191dd228ce1d63e11db",
+    "src/series.rs": "fd197478fa7206f11411627cb58c4f2bc5952a63173e0544536a813c5c564a64",
+    "src/source.rs": "cb034be18672cba6d92b3b35071b584d435f29507aa9bb9603fd59b03a41b30a",
+    "src/spe.rs": "48849be1954fe507ed36d9eb7ae476b43b2810abe434dcf889165af7df71fb98",
+    "src/tiff/compatibility.rs": "ee3dc5bdd237f58bde81538c46ee6a393793b0632e9c921e867479f3c7a4e541",
+    "src/tiff/group3.rs": "ede0d60ba03fc62e6e707bd2a4f7a06d8fc272f83ba9d0bd1ab62943cb49f1da",
+    "src/tiff/header.rs": "d0c018ff4ed229641c7e12c60bdf49681b0f4e10c4cd872123cc1b7dc917871d",
+    "src/tiff/ifd_view.rs": "75d7ac11299d65d1780a5f8bf1a43649a17f5fe17f95d52f9c00e48d0d21a77b",
+    "src/tiff/jpeg_components.rs": "8cc9ef27459a54f7a6e47ea6e594d5a51bdb0b0820d10c2c93a778f010014c53",
+    "src/tiff/ojpeg.rs": "27ea210bfa75c251d75a396fb949b1d466fe68c67b5e8201cb25f7a81296176a",
+    "src/tiff/thunderscan.rs": "7d299c5032402b5af16f79ec7f66d9609a03046a058fe91b9cc13206673fff2c",
+    "src/tiff/view.rs": "c4f32a6903c98c8030047a217ef572c6f03261e37fe4d4b0724315f5f4dbc2ed",
+    "src/tiff/view_jpeg.rs": "8f8df0d1a26d93e9f15715d9d238e47c7bd420afe8d3c7337004691c0af522e1",
+    "src/tiff/view_ycbcr.rs": "9fbb8713ae4739ef0433441e15412d54ad8920b297652caab687b14c57d9f583",
+    "src/tiff/ycbcr.rs": "12958c127df223a150ee186094d70126a2841d79ccccb68bd3a08d78e4cdaa19",
+    "src/tiff/ycbcr_jpeg.rs": "3a70a695fed2fca125b2609356989c669b3020eeaeaed6d86a4c1c3f2365e679",
+    "src/tiff.rs": "e3090d8f9315ae9e95869f41730bdc0f7eb2e5499de1e8b37df1e46bd38eef56",
+    "src/transport.rs": "9201e70f29c23ee027334f0db48e4965f32c7cbf04720b5d14d84087407c4aa3",
+    "src/wrapped/input.rs": "dfa3474eaa04ad8c00733165f4f104e572f673b8630750b027b724aff88ce337",
+    "src/wrapped.rs": "0d2ed07e6475d8763c6c994d33cafb5ef46436131be1143ec014ec0de6f76633",
+    "src/xcalibur/decomposition.rs": "b3d2d3e0decf3ae69fdfc742fc2ebe623459b98e817550a01efe774a4c886269",
+    "src/xcalibur/run.rs": "f0e998aa761d4cf1a6b93c1b24c13f8077baca0751ef030f3eeb914ab9fbc595",
+    "src/xcalibur.rs": "7a308e59ffd22c11f501e79f618b13bf1d4aa200cf90e23786682003352048d9",
+    "src/xsd.rs": "bcfe7328bc0d9d809dc6abda92d790039069e3829332abcfb300b0379e0ac601"
+  },
+  "build_files_sha256": {
+    "Cargo.toml": "6f442ad6b967d10c2799f5cb670d2bbb622269344298e552bd9345635ed11ee0",
+    "Cargo.lock": "e0206f1f8defd7d6c31232193928691a191fb2d1495aa0aa3450e12d708dba29",
+    "build.rs": "d2a7178ee320636f7cad875759fb90447e5969fb90737b0a1cf21233b3d2c982"
+  },
+  "bridge_sources_sha256": {
+    "scripts/fabio_suite_parity.py": "01c2e345c60c06dee32a2ed86c7ee5ef30c4d13396f21763a802ab6a9d57cd6b",
+    "scripts/input_reference.py": "5d8fa685b82d918d84c0dfd3a8beb1f49dcc4b1addec332b7390224d080f8115",
+    "scripts/test_input_reference.py": "20381984b08a471c89fa5729d984c650baec617224985d9186e9d1b95bc55709",
+    "scripts/tiff_component_reference.py": "74b7a9fa2900ed7cb143652314d912f0aa44d2b1c358be4d4509cde2a9db3fbe",
+    "scripts/edf_recovery_reference.py": "1d6f13ec7a567d34dd86eafd148a36fa49b5e0b03f5464bae1aeb4054b4f1091",
+    "scripts/thunderscan_reference.py": "d311a75653571d4c9dd7728b128f99bf74ba1e8a58c5dc93c74cd4cc532846d9",
+    "scripts/pillow_planar16_reference.py": "d4e6e41d35c914eeee066ebc466982af37251539eaa7132b5c8f05ad7f8ff5a1",
+    "scripts/metadata_parity.py": "36d190c08896f1dbe6f01659edc8c35cf6207fbf5bd5335e5972e2922e222231",
+    "scripts/test_metadata_parity.py": "4f3536409c38c7219e688e9d3357d52cc5885ef49d8a5b4432395b66fddf96bd",
+    "scripts/metadata_attributes.py": "6c6c4b51d6fdce1a412e4a6a6ab0b9b872381fd7e51fac489643a6d34010573e",
+    "scripts/test_metadata_attributes.py": "afbe0a91c24113fbd3611ae1b16b6f561c1bffb628c2f2b62a7b209e1c17abb2",
+    "scripts/header_reference.py": "1dea4d20e8136148d972efd4c971218a0891cf3b7bc0ff05703c059f15c44fbf",
+    "scripts/xcalibur_reference.py": "525c3f34bace525a4333eec0943f0422295a1522f879c1dc5309034b5e85a1d2",
+    "scripts/test_xcalibur_reference.py": "b0eef707252cc47355598985cc32fbd71972a0d64df1e4fbf8cb9ff6b26fdaec",
+    "scripts/generate_xcalibur_fixtures.py": "706537dd54674c91ae6dd3a78db0f883c9cb61e9e27428f825ec5f4da88dacbb",
+    "scripts/inventory_fabio.py": "639ef41a9367a5e0b322e27f95653b2c65cbf8f8bfb268a369156181185e5cc7",
+    "examples/parity_probe.rs": "33783be1a34371a633997bec651a8a31f74d68a585f44cac52844d139ff9250d",
+    "docs/fabio-2026.6.0-inventory.json": "8d3c118d876b9a6834890dafa736434409281267be0117b014848690d6719a57"
+  },
+  "new_api_test_fixture_license_sha256": {
+    "examples/api_probe.rs": "0af2d13fb1a338d91cb729cc29493756e5076ba7f70d999bf076f358de15456e",
+    "licenses/native-readers/FabIO-2026.6.0-copyright.txt": "aeb8c93d322314b41bc5d3315c7ccc7aac3af399e4faff336b0d4c3387e290df",
+    "licenses/native-readers/FabIO-Esperanto-AGI-MIT.txt": "8d4e40507de92fd0d844057849aa91c532149a97eb1dfb7480904a0919170ccb",
+    "licenses/native-readers/FabIO-GE-Pixi-MIT.txt": "bc433da2185654e824faa773e92fb853101576cfc07b9baaab32307bfb6104eb",
+    "licenses/native-readers/FabIO-MAR345-MIT.txt": "2101dae2134bbf929f59e2292810fdadaa58612343a06e7e8f8add021d0e4fc4",
+    "licenses/native-readers/FabIO-Xcalibur-MIT.txt": "49fa8677f8b81883b39109ecefc9681a63adcbf13fd8db83f89e6e16f68ccb6b",
+    "licenses/native-readers/FabIO-discovery-MIT.txt": "887e35b8866f8e4932309ffed38919c35df24f389347eaff1ed3661f4be102e1",
+    "licenses/native-readers/FabIO-series-MIT.txt": "0d149793912130670620e3a6cab8971de1f803c6f885b047ed354cdee6037ecb",
+    "licenses/native-readers/FabIO-sparse-MIT.txt": "2294621c1292ec273f3239586fcc7d3943a6b1d8d774872fa624682e14d08725",
+    "licenses/native-readers/bzip2-0.6.1-LICENSE-MIT.txt": "c8c6324cf2f0f076e3ed5dea4a21f00bd4dd6fce44f72b110bc52e7fe06f6e1e",
+    "licenses/native-readers/data-encoding-LICENSE-MIT.txt": "b68ad1a3367b825447089e1f8d6829b97f47a89eb78d2f4ebaef4672f5606186",
+    "licenses/native-readers/jpeg-decoder-0.3.2-LICENSE-MIT": "22b83fb92a50418c7df9564b9c179fa2a0e74f293bc58b72dd7e218fc0902143",
+    "licenses/native-readers/legacy-layouts-MIT.txt": "8a7d23e3e2be6d427e25ce8d9720a165b98009b4e1b954d1dc1338d7c59285f6",
+    "licenses/native-readers/roxmltree-0.21.2-LICENSE-MIT.txt": "fffe218c1e349e1d482a05677f2ce850502f88298174d77f6ac7c04821db7899",
+    "licenses/native-readers/roxmltree-LICENSE-MIT.txt": "fffe218c1e349e1d482a05677f2ce850502f88298174d77f6ac7c04821db7899",
+    "licenses/native-readers/tempfile-3.27.0-LICENSE-MIT.txt": "8b427f5bc501764575e52ba4f9d95673cf8f6d80a86d0d06599852e1a9a20a36",
+    "licenses/native-readers/weezl-0.1.12-LICENSE-MIT": "573f5227db835cd30bbdd3aed3f82615f80119a4d5c82b4daf642dbfe2b6afde",
+    "licenses/native-readers/zune-core-0.5.3-LICENSE-MIT": "d30047bca3b516639339a3c279bb84c3483124fb5a9dafe3c75056a85090e745",
+    "licenses/native-readers/zune-jpeg-0.5.15-LICENSE-MIT": "d30047bca3b516639339a3c279bb84c3483124fb5a9dafe3c75056a85090e745",
+    "scripts/chiplot_reference.py": "a57517a579910c159ee61be38c7cdae2c8a2bd2064f3b71295ad18039472b521",
+    "scripts/cif_syntax_reference.py": "ffaa159e5e755686f23ab1445ed6da1ca3f4f39c82aa3e899ef42427e16e2410",
+    "scripts/columnfile_reference.py": "f3becebcda1d8968a9cbfb31074654e7601f917eae782df99fb3944b3d2935cb",
+    "scripts/generate_chiplot_fixtures.py": "5cf51a30c480780349bd9ddc225587d34ce220ec82a11befaf7c0f85b85d7664",
+    "scripts/generate_columnfile_fixtures.py": "a377c412c8d0611652f5b4d49e6840955ee391576a8ae75590d8a710926e3fe1",
+    "scripts/test_chiplot_reference.py": "185186a2f0a969e9750a4e118cd90de9613de5fccbef9d1a3294d58de5b48f31",
+    "scripts/test_cif_syntax_reference.py": "da5d78211d3efe71cdada6e7c92c36ebba006e7e771b48c2cdad268101aff877",
+    "scripts/test_columnfile_reference.py": "3ea493559b16dc1bcbd10b57601dc650ac47344b1336958086d3ccf955213d45",
+    "tests/chiplot.rs": "bbb44bfc83b1968b0718117de8eb01ed4ab4b6e6127d6e24a9d472524f6654d8",
+    "tests/cif_syntax.rs": "c5b659f72ce05f23eee4d51a49dc15751118c1d7430d822f460583404cbfcb94",
+    "tests/columnfile.rs": "da5340e1bb4e1d9ee116ba515ef9c279752bfaa2fcecb05855cbf835dfa0c289",
+    "tests/data/chiplot/ascending.chi": "a491b30415c2945d052c55671ca59ce34633abe24b8211ae8c0ca7324ab101f6",
+    "tests/data/chiplot/comments-crlf.chi": "f168251336086ef79158361cce7b5a5b3276db59c7b24b1ead9b2d2ea5bc9a26",
+    "tests/data/chiplot/descending.chi": "5025bea70a14f4ea3a718f3e17012f94fa8e6eb158c00315d6ebb3252de8789a",
+    "tests/data/chiplot/multi-curve.chi": "fdad043cc9454d7e199bac6bd56f7348dd51978df82d321f5c8f9387fa99be47",
+    "tests/data/chiplot/nonfinite.chi": "bd4e98a169f6ec1ca56a27d8a0ef75bb8426796e064e753ed8f5dd73507ebad1",
+    "tests/data/chiplot/nonuniform.chi": "b1c62c616541d93e6db60b1b051efade4b2eb17d5e3a11bb972c461170d5d368",
+    "tests/data/chiplot/one.chi": "f96bfe87551b3ed519b9ffd8d01d3f1f5a34d4e687257a06c7f99907121b34a3",
+    "tests/data/chiplot/precision.chi": "b218caf7dec3d49c85055c4a8204cf99edb8f7992e67cd978b04cf903d728267",
+    "tests/data/chiplot/provenance.json": "72e9f85c6b09495870243a2cc26ed0e9cba1c77242d3eea81140dbeb44420a75",
+    "tests/data/chiplot/zero.chi": "f3d5b906a0331bde0776191a9cdc1c9f32fe68d22be2816ff6b78557e4c1e403",
+    "tests/data/cif-syntax/LICENSE": "4fdb04bbf0fe23d1a54b674916ec577d7f63d80bd17afb608d9f0b561754bc61",
+    "tests/data/cif-syntax/cif2.cif": "62b6315b710b15528fbab390b6165c0283589ce1db506dae60ba470808cce3a4",
+    "tests/data/cif-syntax/duplicate-case.cif": "55cc3f796a1e3e9810986af5a5a20e3c9b2a32e1a38b05984bd24586dc618fcf",
+    "tests/data/cif-syntax/duplicate-loop.cif": "d67091d8f24ecc7b73553d6ad20836ef5b3c2023dfc33992009b0e6a2bda89a6",
+    "tests/data/cif-syntax/empty-save.cif": "e7601064bb9825056b94133ec662db8e23b0969276051e4328f643ae2e5ca3ee",
+    "tests/data/cif-syntax/global.cif": "acc00bab303ed5eea5ac32e195ab680bf1104a9964743f937fe6925cef068121",
+    "tests/data/cif-syntax/incomplete-loop.cif": "0e892dd52c6039c4ff4908f96d3690ed0f60bee8971bd611cb80e55cb7a684d5",
+    "tests/data/cif-syntax/lexical-cr.cif": "ba764402a49b86c23fe25a434431f43d3a5ea926dceeb191085ec36b01ea4780",
+    "tests/data/cif-syntax/lexical-crlf.cif": "444cdb40bdb760cf08b8f5fde70ca994bc3a989ccfb47fece349df37eca0fc7b",
+    "tests/data/cif-syntax/lexical-lf.cif": "e64ed740361ff77f7e3f978bf10446c629d66c6bb3ab4107df615a64462514f6",
+    "tests/data/cif-syntax/nested-save.cif": "20cc82620268a60c142e6e5e47170a19852f7527ad40bed60cc9c473360b74a1",
+    "tests/data/cif-syntax/provenance.json": "9d0c36c0f84610d5959993bcce52a422aeac629003194083013705741d5fa162",
+    "tests/data/cif-syntax/scopes.cif": "e848aea709fc8b4431bdc8e6c05821c39e671bcec802e5fbf90fb9fe6a43c67c",
+    "tests/data/cif-syntax/simple-loop.cif": "17846e1658859030158abe4bb4fe0b2ea8785e569429fd02fdced3538ef59a0a",
+    "tests/data/columnfile/header-only.dat": "8be9c6a7765c8576458b187f446f8aac33adb5eb9b03935eeb4b3f47eb6927f0",
+    "tests/data/columnfile/integers.dat": "3625d02580c75aed48d920dc35e9ac6ec13de333d1799a81806ea394851d05f9",
+    "tests/data/columnfile/invalid-number.dat": "bfddd92053571e1616aea45dea4e1e358b1bf58d6efebb3b9025635a0b563933",
+    "tests/data/columnfile/matrix.dat": "f563503d1dae96a3e4bf0b85d00f6e924344d4fae8af06ee4a148127f8d148ee",
+    "tests/data/columnfile/missing-value.dat": "c0dbb79883c2b4fd64c01c68786b0d9c09ddf9c97fcc344f074b85f5078dcfeb",
+    "tests/data/columnfile/opaque-comments.dat": "3efe03d82369c8342dafe6be5e506219baa4299726a3983428400e4a2fe0ba7a",
+    "tests/data/columnfile/provenance.json": "a4cc4dc50ae15024ced42195eb098fb76f784c4bcd521c4e26aa0f19bcb8a454",
+    "tests/data/columnfile/unterminated-row.dat": "f95b64ee62b230efd0fd85dde9216314aca50a4109e210a291dfba69d805fc64",
+    "tests/data/columnfile/wide.dat": "98a77967288e46394c9bda082957ae31e07a7acfc4bfd68a3beaefdbb8f992a7"
+  },
+  "external_manifest_environment": {
+    "CONTAINER_PARITY_MANIFEST": "/tmp/dioptrin-containers-upstream.json",
+    "FIXED_PARITY_MANIFEST": "/tmp/dioptrin-fixed-upstream.json",
+    "ESPERANTO_PARITY_MANIFEST": "/tmp/dioptrin-esperanto-upstream.json",
+    "MAR345_PARITY_MANIFEST": "/tmp/dioptrin-mar345-upstream.json"
+  },
+  "external_manifest_sha256": {
+    "/tmp/dioptrin-containers-upstream.json": "ef20a19a14847c2d1a39f49053d4657eda6f16d813ace5b73f4475c9b1c7ec8f",
+    "/tmp/dioptrin-fixed-upstream.json": "208b3e42e28126077f0f01ca7119f7a927eee5c68cbe4a05fbd44826a8a43a06",
+    "/tmp/dioptrin-esperanto-upstream.json": "ae0619810b4147f7101f0375b79c567bce21357d2d0b5cc39aeee6c69fcdab2f",
+    "/tmp/dioptrin-mar345-upstream.json": "5b107a4cd175c7c72630e6c63925baec91bba9d3938c48cb6017d152aba6d0b7"
+  }
+}

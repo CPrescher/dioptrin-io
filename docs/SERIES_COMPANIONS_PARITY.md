@@ -1,5 +1,10 @@
 # File series, navigation and companion qualification
 
+The subsequent [CIF/table/profile audit](CIF_LEGACY_PARITY.md) closes the CIF 1.1
+scope and native ASCII table/profile gaps discussed below, and reruns this
+navigation/projection proof against the new executable. Historical results below
+retain their original scope.
+
 Native file-series and navigation APIs now reuse the existing readers, with
 explicit frozen source manifests and source-checked frame access. Acquisition
 companions now include Xcalibur run descriptions and a standalone CIF header

@@ -1,5 +1,9 @@
 # Xcalibur run descriptions
 
+The subsequent [CIF/table/profile continuation](CIF_LEGACY_PARITY.md) adds strict
+CIF 1.1 syntax, ASCII column tables and CHIPLOT profiles. The historical
+projection/helper results below remain scoped to their original audit.
+
 The optional `xcalibur` feature exposes `xcalibur::run::{RunDescription, Sweep,
 Reader, Provenance}`. These are acquisition metadata, with no image or pixel
 representation. The schema comes from the MIT-licensed FabIO 2026.6.0
