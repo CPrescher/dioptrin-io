@@ -13,9 +13,10 @@ Windows snapshots and decoded-count cache stamps include the volume serial and
 File replacement must invalidate a snapshot even when size and timestamps match.
 Failure to obtain identity is an explicit source-check error. Native HDF5 on
 Windows can prevent writes, renames and replacement while a source is open.
-Tests verify either successful mutation followed by snapshot invalidation, or
-an explicit Windows sharing/lock error with unchanged source bytes and valid
-original reads. The Windows same-metadata replacement regression independently
+Tests verify successful mutation followed by snapshot invalidation. A failed
+Windows write can already have truncated the file before returning a locking
+error; that changed source must invalidate the snapshot too. A sharing/lock
+error that leaves source bytes unchanged must retain valid original reads. The Windows same-metadata replacement regression independently
 checks invalidation for files whose sharing mode permits replacement.
 The raw fast-path restrictions below are separate from the broader typed reader.
 
