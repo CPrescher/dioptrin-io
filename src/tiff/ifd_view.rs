@@ -210,19 +210,18 @@ impl Admission {
                     }
                 }
             }
-            if options != Options::default() {
-                if let Some(value) =
+            if options != Options::default()
+                && let Some(value) =
                     compatibility::propose(&mut file, next, records, little, options, limits)?
-                {
-                    retained = value
-                        .retained_bytes()
-                        .and_then(|n| retained.checked_add(n))
-                        .filter(|&n| n <= limits.metadata_bytes)
-                        .ok_or_else(|| {
-                            Error("TIFF compatibility provenance exceeds metadata budget".into())
-                        })?;
-                    interpretations.insert(next, value);
-                }
+            {
+                retained = value
+                    .retained_bytes()
+                    .and_then(|n| retained.checked_add(n))
+                    .filter(|&n| n <= limits.metadata_bytes)
+                    .ok_or_else(|| {
+                        Error("TIFF compatibility provenance exceeds metadata budget".into())
+                    })?;
+                interpretations.insert(next, value);
             }
             let mut offset = [0; 8];
             read_at(&mut file, end, &mut offset[..offset_bytes as usize])?;
