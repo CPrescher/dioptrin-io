@@ -80,20 +80,20 @@ fn classic_and_big_tiff_headers_are_independent_of_codec_and_sample_availability
     use dioptrin_io::tiff::{self, Limits, TagValue};
     for little in [true, false] {
         for big in [false, true] {
-            let file = tempfile::NamedTempFile::new().unwrap();
+            let file = tempfile::NamedTempFile::new().unwrap().into_temp_path();
             let bytes = header_tiff(little, big);
-            std::fs::write(file.path(), &bytes).unwrap();
-            let reader = tiff::header::Reader::open(file.path(), Limits::default()).unwrap();
+            std::fs::write(&file, &bytes).unwrap();
+            let reader = tiff::header::Reader::open(&file, Limits::default()).unwrap();
             let pages = reader.pages().unwrap();
             assert_eq!(pages.len(), 1);
             assert_eq!(pages[0].tags[&256], TagValue::Unsigned(3));
             assert_eq!(pages[0].tags[&258], TagValue::Short(12));
             assert_eq!(pages[0].tags[&259], TagValue::Short(34712));
             assert_eq!(pages[0].tags[&262], TagValue::Short(32845));
-            assert!(tiff::Reader::open(file.path(), Limits::default()).is_err());
+            assert!(tiff::Reader::open(&file, Limits::default()).is_err());
             assert!(
                 tiff::header::Reader::open(
-                    file.path(),
+                    &file,
                     Limits {
                         metadata_bytes: 1,
                         ..Limits::default()
@@ -104,8 +104,8 @@ fn classic_and_big_tiff_headers_are_independent_of_codec_and_sample_availability
             let mut unknown = bytes.clone();
             let field_type = if big { 26 } else { 12 };
             unknown[field_type..field_type + 2].copy_from_slice(&[255, 255]);
-            std::fs::write(file.path(), unknown).unwrap();
-            assert!(tiff::header::Reader::open(file.path(), Limits::default()).is_err());
+            std::fs::write(&file, unknown).unwrap();
+            assert!(tiff::header::Reader::open(&file, Limits::default()).is_err());
             let mut cyclic = bytes.clone();
             let n = cyclic.len();
             let pointer = if big { 16u64 } else { 8 };
@@ -120,9 +120,9 @@ fn classic_and_big_tiff_headers_are_independent_of_codec_and_sample_availability
             } else {
                 &encoded[8 - size..]
             });
-            std::fs::write(file.path(), cyclic).unwrap();
+            std::fs::write(&file, cyclic).unwrap();
             assert!(reader.pages().is_err());
-            assert!(tiff::header::Reader::open(file.path(), Limits::default()).is_err());
+            assert!(tiff::header::Reader::open(&file, Limits::default()).is_err());
         }
     }
 }

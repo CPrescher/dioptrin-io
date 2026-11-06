@@ -1,4 +1,5 @@
 #![cfg(feature = "hdf5")]
+mod common;
 use dioptrin_io::{
     PixelBuffer, PixelType,
     hdf5::typed::{
@@ -434,9 +435,9 @@ fn complete_external_graph_and_source_replacements_invalidate_every_reused_frame
     let relay = dir.path().join("link-relay.h5");
     let mut bytes = std::fs::read(&relay).unwrap();
     bytes.push(0);
-    std::fs::write(relay, bytes).unwrap();
-    assert!(reader.read_frame_into(0, &mut frame).is_err());
-    assert!(frame.pixels().is_none());
+    let changed = common::mutate_source(&relay, || std::fs::write(&relay, bytes));
+    assert_eq!(reader.read_frame_into(0, &mut frame).is_err(), changed);
+    assert_eq!(frame.pixels().is_none(), changed);
     let dir = copied();
     let maps = bindings(
         dir.path().join("module-a.h5"),
@@ -451,13 +452,12 @@ fn complete_external_graph_and_source_replacements_invalidate_every_reused_frame
     .unwrap();
     reader.read_frame_into(0, &mut frame).unwrap();
     std::fs::copy(fixture("module-b.h5"), dir.path().join("replacement.h5")).unwrap();
-    std::fs::rename(
-        dir.path().join("replacement.h5"),
-        dir.path().join("module-b.h5"),
-    )
-    .unwrap();
-    assert!(reader.read_frame_into(0, &mut frame).is_err());
-    assert!(frame.pixels().is_none());
+    let target = dir.path().join("module-b.h5");
+    let changed = common::mutate_source(&target, || {
+        std::fs::rename(dir.path().join("replacement.h5"), &target)
+    });
+    assert_eq!(reader.read_frame_into(0, &mut frame).is_err(), changed);
+    assert_eq!(frame.pixels().is_none(), changed);
 }
 #[test]
 fn growing_concrete_source_invalidates_frozen_extent_before_any_counts_are_exposed() {

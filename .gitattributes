@@ -19,3 +19,6 @@ tests/data/vds-printf/* -text -whitespace
 tests/data/ojpeg-advanced/* -text -whitespace
 tests/data/vds-nested/* -text -whitespace
 tests/data/vds-unlimited/* -text -whitespace
+
+# Detector fixtures retain exact bytes, including ASCII headers and whitespace.
+tests/data/** -text -whitespace

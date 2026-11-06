@@ -1,4 +1,6 @@
 #![cfg(feature = "wrappers")]
+#[cfg(feature = "hdf5")]
+mod common;
 use dioptrin_io::{
     discovery::Codec,
     native, tiff,
@@ -640,12 +642,16 @@ fn hdf5_nested_stream_links_anchor_each_source_and_track_intermediate_and_leaf_r
         assert_eq!(sources.links().len(), 2);
         assert!(sources.links().iter().all(|l| l.external));
         let old = changed.with_extension("old");
-        std::fs::rename(changed, &old).unwrap();
-        std::fs::copy(&old, changed).unwrap();
-        assert!(reader.read_frame_into(0, &mut frame).is_err());
-        assert!(frame.pixels().is_none());
+        let replaced = common::mutate_source(changed, || {
+            std::fs::rename(changed, &old)?;
+            std::fs::copy(&old, changed).map(|_| ())
+        });
+        assert_eq!(reader.read_frame_into(0, &mut frame).is_err(), replaced);
+        assert_eq!(frame.pixels().is_none(), replaced);
         drop(reader);
-        std::fs::remove_file(old).unwrap();
+        if replaced {
+            std::fs::remove_file(old).unwrap();
+        }
     }
 }
 
@@ -704,8 +710,10 @@ fn vds_streams_require_explicit_bindings_and_detect_replaced_bound_sources_witho
     let mut frame = FrameBuffer::default();
     reader.read_frame_into(0, &mut frame).unwrap();
     let old = dir.path().join("prior-module-a.h5");
-    std::fs::rename(&a, &old).unwrap();
-    std::fs::copy(&old, &a).unwrap();
-    assert!(reader.read_frame_into(0, &mut frame).is_err());
-    assert!(frame.pixels().is_none());
+    let replaced = common::mutate_source(&a, || {
+        std::fs::rename(&a, &old)?;
+        std::fs::copy(&old, &a).map(|_| ())
+    });
+    assert_eq!(reader.read_frame_into(0, &mut frame).is_err(), replaced);
+    assert_eq!(frame.pixels().is_none(), replaced);
 }

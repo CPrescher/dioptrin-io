@@ -1,4 +1,5 @@
 #![cfg(feature = "hdf5")]
+mod common;
 use dioptrin_io::{
     PixelBuffer,
     hdf5::{
@@ -224,8 +225,8 @@ fn external_graph_requires_policy_and_tracks_every_file() {
     .unwrap();
     assert_eq!(reader.sources().len(), 2);
     assert!(reader.get_entry("entry").unwrap().is_some());
-    std::fs::write(&target, b"changed").unwrap();
-    assert!(reader.get_entries().is_err());
+    let changed = common::mutate_source(&target, || std::fs::write(&target, b"changed"));
+    assert_eq!(reader.get_entries().is_err(), changed);
 }
 
 #[test]

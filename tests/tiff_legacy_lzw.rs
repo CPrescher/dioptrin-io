@@ -267,7 +267,8 @@ fn legacy_scratch_limits_source_identity_and_failed_buffers_are_explicit() {
     let f = file(&source);
     let mut r = Reader::open(f.path(), Limits::default()).unwrap();
     let replacement = file(&source);
-    replacement.persist(f.path()).unwrap();
+    let replacement = replacement.into_temp_path();
+    std::fs::rename(&replacement, f.path()).unwrap();
     assert!(r.read_frame_into(0, &mut b).is_err());
     assert!(b.pixels().is_none());
 }

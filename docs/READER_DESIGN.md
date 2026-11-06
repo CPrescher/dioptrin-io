@@ -11,7 +11,12 @@ Current backlog and release boundaries are classified in [READING_GAPS.md](READI
 Windows snapshots and decoded-count cache stamps include the volume serial and
 128-bit file ID from [FileIdInfo](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_id_info).
 File replacement must invalidate a snapshot even when size and timestamps match.
-Failure to obtain identity is an explicit source-check error.
+Failure to obtain identity is an explicit source-check error. Native HDF5 on
+Windows can prevent writes, renames and replacement while a source is open.
+Tests verify either successful mutation followed by snapshot invalidation, or
+an explicit Windows sharing/lock error with unchanged source bytes and valid
+original reads. The Windows same-metadata replacement regression independently
+checks invalidation for files whose sharing mode permits replacement.
 The raw fast-path restrictions below are separate from the broader typed reader.
 
 ## HDF5 general reader and raw snapshots

@@ -1,4 +1,5 @@
 #![cfg(feature = "sparse")]
+mod common;
 use dioptrin_io::{PixelBuffer, PixelType, sparse::*};
 use sha2::{Digest, Sha256};
 use std::path::{Path, PathBuf};
@@ -301,10 +302,15 @@ fn intermediate_external_links_require_opt_in_and_every_original_source_stays_tr
     assert_eq!(frame.intensity(), Some(&PixelBuffer::U16(vec![11, 22])));
     // Replacing an intermediate link file cannot silently redirect later reads.
     let relay = temp.path().join("external-relay.h5");
-    std::fs::rename(&relay, temp.path().join("old-relay.h5")).unwrap();
-    std::fs::copy(temp.path().join("old-relay.h5"), &relay).unwrap();
-    assert!(reader.read_sparse_frame_into(0, &mut frame).is_err());
-    assert!(frame.index().is_none());
+    let changed = common::mutate_source(&relay, || {
+        std::fs::rename(&relay, temp.path().join("old-relay.h5"))?;
+        std::fs::copy(temp.path().join("old-relay.h5"), &relay).map(|_| ())
+    });
+    assert_eq!(
+        reader.read_sparse_frame_into(0, &mut frame).is_err(),
+        changed
+    );
+    assert_eq!(frame.index().is_none(), changed);
 }
 #[test]
 fn parallel_sparse_reads_use_independent_output_without_stale_dense_caches() {

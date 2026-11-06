@@ -1,4 +1,5 @@
 #![cfg(feature = "hdf5")]
+mod common;
 use dioptrin_io::{
     PixelBuffer,
     hdf5::typed::{
@@ -324,10 +325,10 @@ fn all_indexed_sources_are_frozen_even_for_a_read_from_another_block() {
     let target = directory.path().join("files-u64-2.h5");
     let replacement = directory.path().join("replacement.h5");
     fs::copy(&target, &replacement).unwrap();
-    fs::rename(replacement, target).unwrap();
-    assert!(reader.read_frame_into(0, &mut buffer).is_err());
-    assert!(buffer.pixels().is_none());
-    assert!(buffer.shape().is_none());
+    let changed = common::mutate_source(&target, || fs::rename(replacement, &target));
+    assert_eq!(reader.read_frame_into(0, &mut buffer).is_err(), changed);
+    assert_eq!(buffer.pixels().is_none(), changed);
+    assert_eq!(buffer.shape().is_none(), changed);
     let directory = copied();
     let source = hdf5_backend::File::open_rw(directory.path().join("files-u64-0.h5")).unwrap();
     let data = source.dataset("/data").unwrap();

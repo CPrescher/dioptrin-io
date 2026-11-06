@@ -1,4 +1,5 @@
 #![cfg(feature = "hdf5")]
+mod common;
 use dioptrin_io::{
     PixelBuffer,
     hdf5::typed::{
@@ -190,15 +191,18 @@ fn every_bound_source_is_frozen_and_growth_or_replacement_invalidates_prior_outp
         let reader = open(case, dir.path()).unwrap();
         let mut buffer = FrameBuffer::default();
         reader.read_frame_into(0, &mut buffer).unwrap();
-        if let Some(file) = mutable.as_ref() {
+        let changed = if let Some(file) = mutable.as_ref() {
             file.dataset("/data").unwrap().resize((3, 2, 3)).unwrap();
+            true
         } else {
-            fs::rename(&target, target.with_extension("old")).unwrap();
-            fs::copy(dir.path().join("interleaved-0.h5"), &target).unwrap();
-        }
-        assert!(reader.read_frame_into(0, &mut buffer).is_err());
-        assert!(buffer.pixels().is_none());
-        assert!(buffer.shape().is_none());
+            common::mutate_source(&target, || {
+                fs::rename(&target, target.with_extension("old"))?;
+                fs::copy(dir.path().join("interleaved-0.h5"), &target).map(|_| ())
+            })
+        };
+        assert_eq!(reader.read_frame_into(0, &mut buffer).is_err(), changed);
+        assert_eq!(buffer.pixels().is_none(), changed);
+        assert_eq!(buffer.shape().is_none(), changed);
     }
 }
 #[test]
