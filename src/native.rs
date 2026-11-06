@@ -712,7 +712,22 @@ fn pnm(file: &mut File, limits: Limits) -> Result<(Metadata, Storage), Error> {
             "SUBFORMAT".into(),
             String::from_utf8(format.clone()).unwrap(),
         ),
-        ("MAXVAL".into(), max.to_string()),
+        (
+            "WIDTH".into(),
+            String::from_utf8(values[1].clone()).unwrap(),
+        ),
+        (
+            "HEIGHT".into(),
+            String::from_utf8(values[2].clone()).unwrap(),
+        ),
+        (
+            "MAXVAL".into(),
+            if format == b"P1" {
+                "1".into()
+            } else {
+                String::from_utf8(values[3].clone()).unwrap()
+            },
+        ),
     ]
     .into();
     Ok((

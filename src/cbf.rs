@@ -1,11 +1,14 @@
 //! Bounded CBF single-image byte-offset input, preserving signed/unsigned counts.
-//! CIF/Pilatus text is retained verbatim; only MIME binary fields are interpreted.
+//! CIF text is retained verbatim with bounded scalar/loop metadata; MIME fields
+//! define the binary payload. Optional text syntax diagnostics never alter counts.
 pub use crate::binary::{Error, FrameBuffer, Limits};
+mod header;
 use crate::{
     PixelType,
     binary::{byte_offset, resize_bytes},
     source::Snapshot,
 };
+pub use header::{CifHeader, CifLoop};
 use md5::{Digest, Md5};
 use std::{
     collections::BTreeMap,
@@ -21,6 +24,9 @@ pub struct Metadata {
     /// All source text bytes before the binary marker, including CIF headers.
     pub header: Vec<u8>,
     pub binary_fields: BTreeMap<String, String>,
+    /// Parsed scalar/loop CIF metadata. Original text remains in header and
+    /// unsupported/malformed syntax is reported in diagnostics.
+    pub cif: CifHeader,
 }
 /// Explicit handling of incompatible byte-offset escape dialects.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -195,6 +201,11 @@ impl Reader {
         {
             return Err(Error("CBF metadata exceeds limit".into()));
         }
+        let used = header
+            .len()
+            .saturating_mul(2)
+            .saturating_add(fields.len().saturating_mul(128));
+        let cif = header::parse(&header[..start], limits.metadata_bytes.saturating_sub(used))?;
         let mut trailer = Vec::new();
         input.seek(SeekFrom::Start(end))?;
         input
@@ -220,6 +231,7 @@ impl Reader {
                 pixel_type,
                 header,
                 binary_fields: fields,
+                cif,
             },
             offset,
             bytes,

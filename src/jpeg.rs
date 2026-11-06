@@ -14,6 +14,31 @@ pub struct Segment {
     pub marker: u8,
     pub payload: Vec<u8>,
 }
+/// Source JFIF APP0 density, without converting units or resampling pixels.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Jfif {
+    pub version: [u8; 2],
+    /// 0: aspect ratio only, 1: dots/inch, 2: dots/cm; other codes retained.
+    pub density_unit: u8,
+    pub density: [u16; 2],
+    pub thumbnail_shape: [u8; 2],
+}
+impl Jfif {
+    fn parse(payload: &[u8]) -> Option<Self> {
+        if payload.len() < 14 || !payload.starts_with(b"JFIF\0") {
+            return None;
+        }
+        Some(Self {
+            version: [payload[5], payload[6]],
+            density_unit: payload[7],
+            density: [
+                u16::from_be_bytes([payload[8], payload[9]]),
+                u16::from_be_bytes([payload[10], payload[11]]),
+            ],
+            thumbnail_shape: [payload[13], payload[12]],
+        })
+    }
+}
 #[derive(Clone, Debug)]
 pub struct Metadata {
     pub shape: [usize; 2],
@@ -32,6 +57,15 @@ pub struct Metadata {
     pub decoded_color_space: String,
 }
 impl Metadata {
+    /// All complete JFIF APP0 density declarations in source order. Short APP0
+    /// payloads and every original byte remain available through segments.
+    pub fn jfif_headers(&self) -> impl Iterator<Item = Jfif> + '_ {
+        self.segments
+            .iter()
+            .filter(|s| s.marker == 0xe0)
+            .filter_map(|s| Jfif::parse(&s.payload))
+    }
+
     #[must_use]
     pub fn sample_shape(&self) -> Vec<usize> {
         if self.channels == 1 {
@@ -464,5 +498,23 @@ fn dct_end(input: &mut impl Read, limit: usize) -> Result<(), Error> {
                 return Err(Error("JPEG exceeds scan limit".into()));
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod metadata_tests {
+    use super::*;
+    #[test]
+    fn jfif_density_uses_big_endian_and_retains_unknown_units() {
+        let raw = b"JFIF\0\x01\x02\x07\x01\x2c\x02\x58\x03\x04";
+        let parsed = Jfif::parse(raw).unwrap();
+        assert_eq!(parsed.version, [1, 2]);
+        assert_eq!(parsed.density_unit, 7);
+        assert_eq!(parsed.density, [300, 600]);
+        assert_eq!(parsed.thumbnail_shape, [4, 3]);
+        for end in 0..14 {
+            assert!(Jfif::parse(&raw[..end]).is_none());
+        }
+        assert!(Jfif::parse(b"Exif\0\0abcdefghijkl").is_none());
     }
 }

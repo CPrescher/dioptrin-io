@@ -34,6 +34,8 @@ pub struct Metadata {
     pub source_type: Option<PixelType>,
     pub little_endian: bool,
     pub compression: Compression,
+    /// Exact three-byte ASCII selector, including source padding.
+    pub compression_label: [u8; 3],
     pub exception16: usize,
     pub exception32: usize,
     /// Original TY5 little-endian byte offsets into the inline difference stream.
@@ -90,6 +92,7 @@ impl Reader {
             Some(b"TY5") => Compression::Ty5,
             _ => return Err(Error("unsupported Oxford compression selector".into())),
         };
+        let compression_label = lines[1][12..15].try_into().unwrap();
         let supplements = number_at(lines[4], 12, 19)?;
         if supplements != 0 {
             return Err(Error(
@@ -187,6 +190,9 @@ impl Reader {
             offset = sum(offset, bytes)?;
         }
         let mut fields = BTreeMap::new();
+        if let Some(time) = lines[5].get(5..29) {
+            fields.insert("Time".into(), HeaderValue::Bytes(time.to_vec()));
+        }
         for (key, offset) in [
             ("Binning x", 0),
             ("Binning y", 2),
@@ -198,6 +204,22 @@ impl Reader {
             unsigned16(&header, &sections[0], offset, key, &mut fields)?;
         }
         unsigned32(&header, &sections[0], 36, "Number of pixels", &mut fields)?;
+        for (key, offset) in [
+            ("Overflow flag", 464),
+            ("Overflow after remeasure flag", 466),
+        ] {
+            fields.insert(
+                key.into(),
+                HeaderValue::Signed(
+                    i16::from_le_bytes(
+                        section_bytes(&header, &sections[1], offset, 2)?
+                            .try_into()
+                            .unwrap(),
+                    )
+                    .into(),
+                ),
+            );
+        }
         for (key, offset) in [
             ("Gain", 56),
             ("Exposure time seconds", 480),
@@ -346,6 +368,7 @@ impl Reader {
                 },
                 little_endian: true,
                 compression,
+                compression_label,
                 exception16,
                 exception32,
                 row_offsets,

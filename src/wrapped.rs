@@ -655,3 +655,30 @@ impl Reader {
         Ok(())
     }
 }
+
+#[cfg(feature = "fit2d")]
+impl Reader {
+    /// Read one original FIT2D data/mask/axis array from the indexed backend,
+    /// including through an outer compressed source. No arrays are combined.
+    /// # Errors
+    /// Non-FIT2D backend, invalid index, resource limits or changed sources.
+    pub fn read_fit2d_array_into(
+        &self,
+        index: usize,
+        buffer: &mut crate::fit2d::FrameBuffer,
+    ) -> Result<(), Error> {
+        buffer.shape = None;
+        self.source.check()?;
+        let Backend::Fit2d(reader) = &self.backend else {
+            return Err(Error(
+                "FIT2D array access requires the FIT2D backend".into(),
+            ));
+        };
+        reader.read_array_into(index, buffer)?;
+        if let Err(error) = self.source.check() {
+            buffer.shape = None;
+            return Err(error);
+        }
+        Ok(())
+    }
+}

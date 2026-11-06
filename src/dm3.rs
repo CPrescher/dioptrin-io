@@ -422,6 +422,142 @@ impl Reader {
         Ok(bytes)
     }
 }
+/// Parsed small tag values. Strings retain UTF-16 code units, names retain
+/// source bytes, numeric values retain their scalar type. Complex arrays stay
+/// opaque instead of being flattened or silently discarded.
+#[derive(Debug)]
+pub enum TagValue<'a> {
+    Numeric {
+        values: PixelBuffer,
+        scalar: bool,
+    },
+    Utf16(Vec<u16>),
+    Structure {
+        name: &'a [u8],
+        fields: Vec<(&'a [u8], TagValue<'a>)>,
+    },
+    Opaque(&'a [u8]),
+}
+impl Tag {
+    /// Decode a retained small payload, under a separate output-allocation
+    /// budget. None means a large source reference; read_tag_raw/frame APIs
+    /// remain available for those values. This never rereads a mutable source.
+    /// # Errors
+    /// Invalid descriptor/payload or output allocation exceeding the budget.
+    pub fn decode_small_value(
+        &self,
+        little_endian: bool,
+        max_output_bytes: usize,
+    ) -> Result<Option<TagValue<'_>>, Error> {
+        let Some(raw) = self.raw.as_deref() else {
+            return Ok(None);
+        };
+        let mut raw = raw;
+        let mut budget = max_output_bytes;
+        let value = decode_value(
+            &parse_type(&self.descriptor)?,
+            &mut raw,
+            little_endian,
+            &mut budget,
+        )?;
+        if !raw.is_empty() {
+            return Err(Error("extra DM3 tag payload bytes".into()));
+        }
+        Ok(Some(value))
+    }
+}
+fn value_charge(budget: &mut usize, bytes: usize) -> Result<(), Error> {
+    *budget = budget
+        .checked_sub(bytes)
+        .ok_or_else(|| Error("DM3 decoded tag exceeds output budget".into()))?;
+    Ok(())
+}
+fn value_take<'a>(raw: &mut &'a [u8], bytes: usize) -> Result<&'a [u8], Error> {
+    let (value, rest) = raw
+        .split_at_checked(bytes)
+        .ok_or_else(|| Error("short DM3 tag payload".into()))?;
+    *raw = rest;
+    Ok(value)
+}
+fn decode_value<'a>(
+    ty: &Type,
+    raw: &mut &'a [u8],
+    little: bool,
+    budget: &mut usize,
+) -> Result<TagValue<'a>, Error> {
+    let numeric = match ty {
+        Type::Scalar(ty) => Some((*ty, 1, true)),
+        Type::Array(ty, n) => {
+            if let Type::Scalar(ty) = **ty {
+                Some((ty, *n, false))
+            } else {
+                None
+            }
+        }
+        _ => None,
+    };
+    if let Some((ty, count, scalar)) = numeric {
+        let bytes = count
+            .checked_mul(ty.bytes())
+            .ok_or_else(|| Error("DM3 numeric tag size overflow".into()))?;
+        value_charge(budget, bytes)?;
+        let mut values = PixelBuffer::default();
+        values.resize(ty, count).map_err(Error)?;
+        copy_samples(value_take(raw, bytes)?, &mut values, little)?;
+        return Ok(TagValue::Numeric { values, scalar });
+    }
+    match ty {
+        Type::String(count) => {
+            value_charge(
+                budget,
+                count
+                    .checked_mul(2)
+                    .ok_or_else(|| Error("DM3 string size overflow".into()))?,
+            )?;
+            let bytes = value_take(raw, count * 2)?;
+            let units = bytes
+                .as_chunks::<2>()
+                .0
+                .iter()
+                .map(|&word| {
+                    if little {
+                        u16::from_le_bytes(word)
+                    } else {
+                        u16::from_be_bytes(word)
+                    }
+                })
+                .collect();
+            Ok(TagValue::Utf16(units))
+        }
+        Type::Struct(name, descriptors) => {
+            value_charge(
+                budget,
+                descriptors
+                    .len()
+                    .checked_mul(std::mem::size_of::<(&[u8], TagValue<'_>)>())
+                    .ok_or_else(|| Error("DM3 structure size overflow".into()))?,
+            )?;
+            let name = value_take(raw, *name)?;
+            let mut fields = Vec::new();
+            fields
+                .try_reserve_exact(descriptors.len())
+                .map_err(|e| Error(e.to_string()))?;
+            for (name, ty) in descriptors {
+                fields.push((
+                    value_take(raw, *name)?,
+                    decode_value(ty, raw, little, budget)?,
+                ));
+            }
+            Ok(TagValue::Structure { name, fields })
+        }
+        _ => Ok(TagValue::Opaque(value_take(
+            raw,
+            ty.bytes()
+                .ok_or_else(|| Error("DM3 tag size overflow".into()))?,
+        )?)),
+    }
+}
+
 fn parse_type(info: &[u32]) -> Result<Type, Error> {
     fn parse(info: &[u32], position: &mut usize, depth: usize) -> Result<Type, Error> {
         if depth > 32 {

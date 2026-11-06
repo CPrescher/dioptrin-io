@@ -223,3 +223,35 @@ fn wrapped_thunderscan_preserves_holes_and_invalidates_on_original_mutation() {
         assert!(!available.complete());
     }
 }
+
+#[cfg(feature = "fit2d")]
+#[test]
+fn compressed_fit2d_auxiliary_arrays_keep_counts_and_invalidate_on_source_change() {
+    let source = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("tests/data/records/fit2d-512-big.f2d");
+    let bytes = std::fs::read(&source).unwrap();
+    let direct = dioptrin_io::fit2d::Reader::open(&source, native::Limits::default()).unwrap();
+    for compression in [Compression::Gzip, Compression::Bzip2] {
+        let file = tempfile::NamedTempFile::new().unwrap();
+        std::fs::write(file.path(), encoded(&bytes, compression)).unwrap();
+        let wrapped = open(file.path(), Format::Fit2d).unwrap();
+        let mut expected = dioptrin_io::fit2d::FrameBuffer::default();
+        let mut actual = dioptrin_io::fit2d::FrameBuffer::default();
+        for index in 0..direct.metadata().arrays.len() {
+            direct.read_array_into(index, &mut expected).unwrap();
+            wrapped.read_fit2d_array_into(index, &mut actual).unwrap();
+            assert_eq!(actual.shape(), expected.shape());
+            assert_eq!(actual.pixels(), expected.pixels());
+        }
+        assert!(
+            wrapped
+                .read_fit2d_array_into(usize::MAX, &mut actual)
+                .is_err()
+        );
+        assert!(actual.pixels().is_none());
+        wrapped.read_fit2d_array_into(0, &mut actual).unwrap();
+        std::fs::write(file.path(), b"changed original outer source").unwrap();
+        assert!(wrapped.read_fit2d_array_into(0, &mut actual).is_err());
+        assert!(actual.pixels().is_none());
+    }
+}

@@ -18,6 +18,62 @@ pub enum Encoding {
     Long32,
     AgiBitfield,
 }
+/// Typed scalar values alongside the original grouped header text.
+#[derive(Clone, Debug, PartialEq)]
+pub enum HeaderValue {
+    Integer(i64),
+    Float(f64),
+    Text(String),
+    Invalid(String),
+}
+const SCALAR_GROUPS: &[(&str, &str)] = &[
+    ("IMAGE", "lnx lny lbx lby spixelformat"),
+    (
+        "SPECIAL_CCD_1",
+        "delectronsperadu ldarkcorrectionswitch lfloodfieldcorrectionswitch/mode dsystemdcdb2gain ddarksignal dreadnoiserms",
+    ),
+    (
+        "SPECIAL_CCD_2",
+        "ioverflowflag ioverflowafterremeasureflag inumofdarkcurrentimages inumofmultipleimages loverflowthreshold",
+    ),
+    (
+        "SPECIAL_CCD_3",
+        "ldetector_descriptor lisskipcorrelation lremeasureturbomode bfsoftbinningflag bflownoisemodeflag",
+    ),
+    (
+        "SPECIAL_CCD_4",
+        "lremeasureinturbo_done lisoverflowthresholdchanged loverflowthresholdfromimage lisdarksignalchanged lisreadnoisermschanged lisdarkdone lisremeasurewithskipcorrelation lcorrelationshift",
+    ),
+    (
+        "SPECIAL_CCD_5",
+        "dblessingrej ddarksignalfromimage dreadnoisermsfromimage dtrueimagegain",
+    ),
+    (
+        "TIME",
+        "dexposuretimeinsec doverflowtimeinsec doverflowfilter",
+    ),
+    ("MONITOR", "lmon1 lmon2 lmon3 lmon4"),
+    (
+        "PIXELSIZE",
+        "drealpixelsizex drealpixelsizey dsithicknessmmforpixeldetector",
+    ),
+    ("TIMESTAMP", "timestampstring"),
+    ("GRIDPATTERN", "filename"),
+    ("STARTANGLESINDEG", "dom_s dth_s dka_s dph_s"),
+    ("ENDANGLESINDEG", "dom_e dth_e dka_e dph_e"),
+    (
+        "GONIOMODEL_1",
+        "dbeam2indeg dbeam3indeg detectorrotindeg_x detectorrotindeg_y detectorrotindeg_z dxorigininpix dyorigininpix dalphaindeg dbetaindeg ddistanceinmm",
+    ),
+    (
+        "GONIOMODEL_2",
+        "dzerocorrectionsoftindeg_om dzerocorrectionsoftindeg_th dzerocorrectionsoftindeg_ka dzerocorrectionsoftindeg_ph",
+    ),
+    ("WAVELENGTH", "dalpha1 dalpha2 dalpha12 dbeta1"),
+    ("MONOCHROMATOR", "ddvalue-prepolfac orientation-type"),
+    ("ABSTORUN", "labstorunscale"),
+    ("HISTORY", "historystring"),
+];
 #[derive(Clone, Debug)]
 pub struct Metadata {
     pub shape: [usize; 2],
@@ -31,6 +87,9 @@ pub struct Metadata {
     pub header: Vec<u8>,
     /// Original header assignments; unknown keys/values are retained.
     pub fields: BTreeMap<String, String>,
+    /// Named scalars, with Invalid retaining malformed optional scalar tokens.
+    /// Original grouped assignments and all padding remain in fields/header.
+    pub parsed_fields: BTreeMap<String, HeaderValue>,
     pub data_bytes: usize,
     /// Original AGI row byte offsets, relative to the encoded data block.
     pub row_offsets: Vec<u32>,
@@ -115,6 +174,22 @@ impl Reader {
                 return Err(Error("duplicate Esperanto header key".into()));
             }
         }
+        let parsed_fields = scalar_fields(&fields);
+        let parsed_cost: usize = parsed_fields
+            .iter()
+            .map(|(key, value)| {
+                key.len()
+                    + 128
+                    + match value {
+                        HeaderValue::Text(s) | HeaderValue::Invalid(s) => s.len(),
+                        _ => 0,
+                    }
+            })
+            .sum();
+        let header_cost = header_cost
+            .checked_add(parsed_cost)
+            .filter(|&n| n <= limits.metadata_bytes)
+            .ok_or_else(|| Error("Esperanto parsed fields exceed metadata budget".into()))?;
         let image = fields
             .get("IMAGE")
             .ok_or_else(|| Error("missing Esperanto IMAGE declaration".into()))?;
@@ -211,6 +286,7 @@ impl Reader {
                 header_lines,
                 header,
                 fields,
+                parsed_fields,
                 data_bytes,
                 row_offsets,
                 padding_bytes,
@@ -348,4 +424,63 @@ fn decode_row(
         ));
     }
     Ok(())
+}
+
+fn scalar_fields(fields: &BTreeMap<String, String>) -> BTreeMap<String, HeaderValue> {
+    let mut result = BTreeMap::new();
+    for &(group, names) in SCALAR_GROUPS {
+        let Some(source) = fields.get(group) else {
+            continue;
+        };
+        if !names.contains(' ') && !matches!(names.as_bytes()[0], b'l' | b'i' | b'b' | b'd') {
+            result.insert(
+                names.into(),
+                HeaderValue::Text(source.trim_matches('"').into()),
+            );
+            continue;
+        }
+        for (name, value) in names
+            .split_ascii_whitespace()
+            .zip(source.split_ascii_whitespace())
+        {
+            let invalid = || HeaderValue::Invalid(value.into());
+            let value = match name.as_bytes()[0] {
+                b'l' | b'i' | b'b' => value
+                    .parse()
+                    .map_or_else(|_| invalid(), HeaderValue::Integer),
+                b'd' => value.parse().map_or_else(|_| invalid(), HeaderValue::Float),
+                _ => HeaderValue::Text(value.trim_matches('"').into()),
+            };
+            result.insert(name.into(), value);
+        }
+    }
+    result
+}
+#[cfg(test)]
+mod metadata_tests {
+    use super::*;
+    #[test]
+    fn scalar_units_strings_and_malformed_optional_values_preserve_source() {
+        let fields = BTreeMap::from([
+            ("IMAGE".into(), "4 8 1 2 \"4BYTE_LONG\"".into()),
+            ("TIME".into(), "0.5 invalid 1.0".into()),
+            ("HISTORY".into(), "\"words with spaces\"".into()),
+        ]);
+        let values = scalar_fields(&fields);
+        assert_eq!(values["lnx"], HeaderValue::Integer(4));
+        assert_eq!(
+            values["spixelformat"],
+            HeaderValue::Text("4BYTE_LONG".into())
+        );
+        assert_eq!(values["dexposuretimeinsec"], HeaderValue::Float(0.5));
+        assert_eq!(
+            values["doverflowtimeinsec"],
+            HeaderValue::Invalid("invalid".into())
+        );
+        assert_eq!(
+            values["historystring"],
+            HeaderValue::Text("words with spaces".into())
+        );
+        assert_eq!(fields["TIME"], "0.5 invalid 1.0");
+    }
 }

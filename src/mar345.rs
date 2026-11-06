@@ -44,6 +44,70 @@ pub struct Metadata {
     pub marker: Vec<u8>,
     pub encoded_bytes: usize,
 }
+/// Parsed binary scalars in their documented units; all 16 source words remain
+/// available independently, including the exact scaled integer encodings.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum HeaderValue {
+    Integer(i32),
+    Float(f64),
+    Text(&'static str),
+}
+impl Metadata {
+    #[must_use]
+    pub fn binary_scalars(&self) -> [(&'static str, HeaderValue); 14] {
+        use HeaderValue::{Float as F, Integer as I, Text as T};
+        let w = self.binary_words;
+        [
+            ("NumHigh", I(w[2])),
+            ("Format", T(if w[3] == 1 { "compressed" } else { "spiral" })),
+            ("Mode", T(if w[4] == 0 { "Dose" } else { "Time" })),
+            ("NumPixels", I(w[5])),
+            ("PixelLength", F(f64::from(w[6]) / 1000.)),
+            ("PixelHeight", F(f64::from(w[7]) / 1000.)),
+            ("Wavelength", F(f64::from(w[8]) / 1_000_000.)),
+            ("Distance", F(f64::from(w[9]) / 1000.)),
+            ("StartPhi", F(f64::from(w[10]) / 1000.)),
+            ("EndPhi", F(f64::from(w[11]) / 1000.)),
+            ("StartOmega", F(f64::from(w[12]) / 1000.)),
+            ("EndOmega", F(f64::from(w[13]) / 1000.)),
+            ("Chi", F(f64::from(w[14]) / 1000.)),
+            ("TwoTheta", F(f64::from(w[15]) / 1000.)),
+        ]
+    }
+    /// Named text subfields in source order, including repeated COUNTS groups.
+    /// Unknown groups stay accessible through entries/fields. Malformed pairs
+    /// are not invented; the original grouped text remains unchanged.
+    pub fn text_scalars(&self) -> impl Iterator<Item = (String, &str)> {
+        self.entries.iter().flat_map(|(group, text)| {
+            let mut words = text.split_ascii_whitespace();
+            let mut index = 0;
+            std::iter::from_fn(move || {
+                if group == "FORMAT" {
+                    let name = ["DIM", "FORMAT_TYPE", "NO_PIXELS"].get(index)?;
+                    index += 1;
+                    Some(((*name).into(), words.next()?))
+                } else if [
+                    "PIXEL",
+                    "OFFSET",
+                    "PHI",
+                    "OMEGA",
+                    "COUNTS",
+                    "CENTER",
+                    "INTENSITY",
+                    "HISTOGRAM",
+                    "COLLIMATOR",
+                ]
+                .contains(&group.as_str())
+                {
+                    let name = words.next()?;
+                    Some((format!("{group}_{name}"), words.next()?))
+                } else {
+                    None
+                }
+            })
+        })
+    }
+}
 pub struct Reader {
     snapshot: Snapshot,
     file: File,
@@ -141,7 +205,8 @@ impl Reader {
             if text.is_empty() || text == "mar research" {
                 continue;
             }
-            if let Some((key, value)) = text.split_once(char::is_whitespace) {
+            {
+                let (key, value) = text.split_once(char::is_whitespace).unwrap_or((text, ""));
                 metadata_used = metadata_used
                     .checked_add(
                         key.len()
