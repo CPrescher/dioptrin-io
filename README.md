@@ -10,6 +10,20 @@ integer and floating samples in their native types, without a full-frame f64
 conversion. Worker buffers reuse allocations and invalidate their public data
 when a read fails.
 
+## Inspiration and acknowledgments
+
+[FabIO](https://github.com/silx-kit/fabio) is our inspiration and a central
+reference for this project. Its broad format support, readers, test suite and
+reference files provide an invaluable foundation for understanding and checking
+scientific detector-file input. We gratefully acknowledge the FabIO authors
+and contributors for that work.
+
+Our aim is to be as reliable and useful as FabIO for reading detector files,
+through a native Rust reader. We use FabIO to guide format coverage and compare
+reading behavior while preserving original samples and metadata. Adapted code
+and format-specific reference work retain their attribution and license notices
+under [licenses/native-readers](licenses/native-readers).
+
 ## Current reading coverage
 
 Every format dependency is optional; default features are empty.
