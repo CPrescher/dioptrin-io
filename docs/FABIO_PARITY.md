@@ -59,6 +59,15 @@ occurrences, 3,289 qualified reference differences, zero unresolved compared
 fields, and the still-unqualified no-pixel/header-only cases. Counts do not imply
 metadata parity, and qualified reference differences do not imply equality.
 
+Schema 8 adds header-only d*TREK/TIFF access and inventories source attributes
+outside `.header`, with file handles/working state explicitly classified.
+The [current audit](metadata-parity/HEADER_ATTRIBUTES.md) qualifies all 25
+no-pixel events and accounts for all 145 observed codec-specific source attribute
+names, including common shape/type/frame properties. It independently compares 408 original TIFF primary-IFD tag occurrences,
+complete NumPy dataset bytes, source dataset descriptors, CBF Pilatus fields,
+EDF general metadata and other format attributes. Metadata coverage is separate
+from exact reference equality, sample availability and the full reading gate.
+
 ## Reproduction
 
 Use a test-only Python environment. Exact packages used for this run are in
@@ -117,7 +126,7 @@ container/legacy/image readers and detector TIFF acquisition headers. A separate
 feature-disabled run distinguishes unavailable compilation features from missing
 readers. Every original registry entry remains in the ledger.
 
-Current evidence is recorded in `fabio-parity/2026-11-06-metadata.json`;
+Current evidence is recorded in `fabio-parity/2026-11-06-headers-attributes.json`;
 the earlier baseline and typed-HDF5 reports are retained. The current report is
 a failing full-parity gate, with exact native successes, unsupported layouts,
 reference differences and remaining readers kept separate.

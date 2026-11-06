@@ -1,4 +1,17 @@
-# Metadata parity pass, 2026-11-06
+# Header-only and attribute coverage, 2026-11-06
+
+The [current audit](../metadata-parity/HEADER_ATTRIBUTES.md) closes all 25
+previously unqualified header-only events and accounts for all observed source
+attributes outside `.header`: 2,591 matching comparisons, 133 qualified reference/presentation
+differences, 43 unspecified properties and zero unresolved attributes. The
+[schema 8 full report](2026-11-06-headers-attributes.json) preserves every pixel
+outcome below. All 213 upstream tests run without failures/errors (one existing
+skip); 202 Rust tests and all 20 isolated feature checks pass. Exact metadata and
+full reading/API parity remain false for the measured differences and separate
+API qualification boundaries documented in the audit.
+
+## Previous metadata pass, retained
+
 
 The [format-by-format metadata audit](../metadata-parity/README.md) accounts for
 all compared `.header` fields across 34 codecs: 218,722 matching occurrences,

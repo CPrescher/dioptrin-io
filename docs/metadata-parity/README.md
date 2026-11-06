@@ -1,5 +1,10 @@
 # FabIO metadata comparison, 2026-11-06
 
+This page retains the first metadata pass. The [header-only and attribute
+continuation](HEADER_ATTRIBUTES.md) closes its 25 unqualified no-pixel cases and
+accounts for source metadata outside `.header`, with 202 passing Rust tests.
+The original schema 7 numbers below describe that earlier snapshot.
+
 The same pinned FabIO corpus now has an explicit field-by-field `.header`
 comparison, independently of pixel results. Across 34 intercepted codecs and
 2,589 native frames or available-source headers, **218,722 field occurrences
@@ -20,7 +25,7 @@ bridge and explicit-policy fingerprints remain unchanged throughout the run.
 
 **This does not establish identical metadata or full reading/API parity.**
 `metadata_fields_accounted_for_pixel_reads` is true; `metadata_parity` and
-`full_reading_parity` remain false. Twenty-five no-pixel reads are explicitly
+`full_reading_parity` remain false. In that snapshot, twenty-five no-pixel reads were explicitly
 unqualified for header-only access: 24 have empty TIFF headers, while the empty
 d*TREK writer test has six fields and zero declared dimensions. Xcalibur's
 separate mask API, metadata attributes outside `.header`, unsupported variants,

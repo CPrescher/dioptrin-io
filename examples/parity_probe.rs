@@ -4,23 +4,14 @@ use serde_json::json;
 use sha2::{Digest, Sha256};
 use std::error::Error;
 
-fn frame_record(
-    index: usize,
-    frames: usize,
-    shape: impl Into<Vec<usize>>,
-    pixels: &PixelBuffer,
-    fields: serde_json::Value,
-    sources: &[&std::path::Path],
-) -> serde_json::Value {
-    let shape = shape.into();
-    let mut hash = Sha256::new();
+fn sample_dtype_and_hash(pixels: &PixelBuffer, hash: &mut Sha256) -> &'static str {
     macro_rules! digest { ($($variant:ident,$name:literal);*) => {
         match pixels { $(PixelBuffer::$variant(values) => {
             for v in values { hash.update(v.to_le_bytes()); } $name
         }),*,_=>unreachable!() }
     }; }
     // Canonical little-endian scalar bytes, including floating bit patterns.
-    let dtype = match pixels {
+    match pixels {
         PixelBuffer::C32(v) => {
             for pair in v {
                 for x in pair {
@@ -48,7 +39,19 @@ fn frame_record(
         _ => {
             digest!(U8,"uint8";U16,"uint16";U32,"uint32";U64,"uint64";I8,"int8";I16,"int16";I32,"int32";I64,"int64";F32,"float32";F64,"float64")
         }
-    };
+    }
+}
+fn frame_record(
+    index: usize,
+    frames: usize,
+    shape: impl Into<Vec<usize>>,
+    pixels: &PixelBuffer,
+    fields: serde_json::Value,
+    sources: &[&std::path::Path],
+) -> serde_json::Value {
+    let shape = shape.into();
+    let mut hash = Sha256::new();
+    let dtype = sample_dtype_and_hash(pixels, &mut hash);
     json!({"frame":index,"frames":frames,"shape":shape,"dtype":dtype,
         "sample_sha256":format!("{:x}",hash.finalize()),"fields":fields,"sources":sources})
 }
@@ -193,13 +196,35 @@ fn mrc_fields(m: &dioptrin_io::mrc::Metadata) -> serde_json::Value {
     fields
 }
 
+fn pilatus_value(value: &dioptrin_io::pilatus::Value) -> serde_json::Value {
+    use dioptrin_io::pilatus::Value as V;
+    match value {
+        V::Text(v) => json!(v),
+        V::Integer(v) => json!(v),
+        V::Float(v) => header_float(*v),
+        V::Sequence(v) => json!(v.iter().map(pilatus_value).collect::<Vec<_>>()),
+        V::Invalid(v) => json!({"invalid":v}),
+    }
+}
+fn pilatus_fields(header: &dioptrin_io::pilatus::Header) -> serde_json::Value {
+    json!(
+        header
+            .typed_fields
+            .iter()
+            .map(|(key, value)| (key.clone(), pilatus_value(value)))
+            .collect::<serde_json::Map<_, _>>()
+    )
+}
 fn metadata_details(metadata: wrapped::Metadata<'_>, _index: usize) -> serde_json::Value {
     match metadata {
+        wrapped::Metadata::DetectorTiff(m) => json!({"image":tiff_fields(m.image)}),
         wrapped::Metadata::Native(m) => {
-            json!({"shape":m.shape,"header_hex":bytes_hex(&m.header),"format":format!("{:?}",m.format)})
+            json!({"shape":m.shape,"header_hex":bytes_hex(&m.header),"format":format!("{:?}",m.format),"source_shape":m.source_shape})
         }
         #[cfg(feature = "bruker")]
-        wrapped::Metadata::Bruker(m) => json!({"header_bytes":m.header.len()}),
+        wrapped::Metadata::Bruker(m) => {
+            json!({"header_bytes":m.header.len(),"version":match m.version {dioptrin_io::bruker::Version::V86=>86,dioptrin_io::bruker::Version::V100=>100}})
+        }
         #[cfg(feature = "fixed")]
         wrapped::Metadata::Ge(m) => {
             json!({"kind":format!("{:?}",m.kind),"shape":m.shape,"frames":m.frames,"header_hex":bytes_hex(&m.header),"edf_fields":m.edf_fields})
@@ -210,17 +235,17 @@ fn metadata_details(metadata: wrapped::Metadata<'_>, _index: usize) -> serde_jso
         }
         #[cfg(feature = "mar345")]
         wrapped::Metadata::Mar345(m) => {
-            json!({"binary_scalars":m.binary_scalars().into_iter().map(|(k,v)| {use dioptrin_io::mar345::HeaderValue as V;
+            json!({"little_endian":m.little_endian,"binary_scalars":m.binary_scalars().into_iter().map(|(k,v)| {use dioptrin_io::mar345::HeaderValue as V;
                 (k, match v {V::Integer(n)=>json!(n),V::Float(n)=>header_float(n),V::Text(t)=>json!(t)})
             }).collect::<std::collections::BTreeMap<_,_>>(),"text_scalars":m.text_scalars().collect::<Vec<_>>()})
         }
         #[cfg(feature = "esperanto")]
         wrapped::Metadata::Esperanto(m) => {
-            json!({"version":m.version,"shape":m.shape,"parsed_fields":m.parsed_fields.iter().map(|(k,v)| { use dioptrin_io::esperanto::HeaderValue as V; (k.clone(),match v {V::Integer(n)=>json!(n),V::Float(n)=>header_float(*n),V::Text(t)=>json!(t),V::Invalid(t)=>json!({"invalid":t})}) }).collect::<serde_json::Map<_,_>>()})
+            json!({"version":m.version,"header_lines":m.header_lines,"encoding":format!("{:?}",m.encoding),"shape":m.shape,"parsed_fields":m.parsed_fields.iter().map(|(k,v)| { use dioptrin_io::esperanto::HeaderValue as V; (k.clone(),match v {V::Integer(n)=>json!(n),V::Float(n)=>header_float(*n),V::Text(t)=>json!(t),V::Invalid(t)=>json!({"invalid":t})}) }).collect::<serde_json::Map<_,_>>()})
         }
         #[cfg(feature = "containers")]
         wrapped::Metadata::Spe(m) => {
-            json!({"shape":m.shape,"version":m.version,"data_type":m.data_type,"frames":m.frames,"x_calibration":m.x_calibration,"regions":m.regions.iter().map(|r|json!({"roi":r.roi,"shape":r.shape})).collect::<Vec<_>>()})
+            json!({"xml_offset":u64::from_le_bytes(m.header[678..686].try_into().unwrap()),"shape":m.shape,"version":m.version,"data_type":m.data_type,"frames":m.frames,"x_calibration":m.x_calibration,"regions":m.regions.iter().map(|r|json!({"roi":r.roi,"shape":r.shape})).collect::<Vec<_>>()})
         }
         #[cfg(feature = "containers")]
         wrapped::Metadata::Mrc(m) => {
@@ -228,7 +253,7 @@ fn metadata_details(metadata: wrapped::Metadata<'_>, _index: usize) -> serde_jso
         }
         #[cfg(feature = "containers")]
         wrapped::Metadata::Dm3(m) => {
-            json!({"little_endian":m.little_endian,"tags":m.tags.iter().map(|tag|json!({"path":tag.path,"raw_name":bytes_hex(&tag.raw_name),"descriptor":tag.descriptor,"bytes":tag.bytes,
+            json!({"declared_bytes":m.declared_bytes,"little_endian":m.little_endian,"tags":m.tags.iter().map(|tag|json!({"path":tag.path,"raw_name":bytes_hex(&tag.raw_name),"descriptor":tag.descriptor,"bytes":tag.bytes,
                 "value": match tag.decode_small_value(m.little_endian, 1024*1024) {Ok(Some(value))=>dm3_value(&value),Ok(None)=>json!(null),Err(error)=>json!({"error":error.to_string()})}
             })).collect::<Vec<_>>()})
         }
@@ -246,8 +271,14 @@ fn metadata_details(metadata: wrapped::Metadata<'_>, _index: usize) -> serde_jso
         wrapped::Metadata::Jpeg(m) => {
             json!({"jfif":m.jfif_headers().map(|j|json!({"version":j.version,"density_unit":j.density_unit,"density":j.density})).collect::<Vec<_>>()})
         }
+        #[cfg(feature = "raxis")]
+        wrapped::Metadata::Raxis(m) => json!({"little_endian":m.little_endian}),
+        #[cfg(feature = "xsd")]
+        wrapped::Metadata::Xsd(m) => {
+            json!({"coding":format!("{:?}",m.coding).to_lowercase(),"md5":m.md5,"elements":m.shape[0]*m.shape[1]})
+        }
         wrapped::Metadata::Cbf(m) => {
-            json!({"header_hex":bytes_hex(&m.header),"cif_fields":m.cif.fields,"cif_diagnostics":m.cif.diagnostics})
+            json!({"header_hex":bytes_hex(&m.header),"cif_fields":m.cif.fields,"cif_diagnostics":m.cif.diagnostics,"cif_loops":m.cif.loops.iter().map(|group|json!({"columns":group.columns,"rows":group.rows})).collect::<Vec<_>>(),"pilatus":m.pilatus.as_ref().map(pilatus_fields)})
         }
         _ => json!({}),
     }
@@ -357,6 +388,8 @@ fn run() -> Result<(), Box<dyn Error>> {
         let mut adapters = vec![
             "npy",
             "dtrek",
+            "dtrek-header",
+            "tiff-header",
             "adsc",
             "mask",
             "hipic",
@@ -424,6 +457,45 @@ fn run() -> Result<(), Box<dyn Error>> {
         return Err("usage: parity_probe FORMAT PATH [WIDTH HEIGHT OFFSET DTYPE ENDIAN]".into());
     }
     let path = &args[2];
+    if args[1] == "dtrek-header" {
+        let reader = wrapped::HeaderReader::open(
+            path,
+            wrapped::HeaderFormat::Dtrek,
+            wrapped::Limits::default(),
+            native::Limits::default(),
+            tiff::Limits::default(),
+        )?;
+        let wrapped::HeaderMetadata::Dtrek(m) = reader.metadata()? else {
+            unreachable!()
+        };
+        println!(
+            "{}",
+            json!({"header_only":true,"fields":m.fields,"declared_shape":m.source_shape,"pixels_available":false})
+        );
+        return Ok(());
+    }
+    if args[1] == "tiff-header" {
+        let reader = wrapped::HeaderReader::open(
+            path,
+            wrapped::HeaderFormat::Tiff,
+            wrapped::Limits::default(),
+            native::Limits::default(),
+            tiff::Limits::default(),
+        )?;
+        let prefix = reader.source_prefix()?;
+        let wrapped::HeaderMetadata::Tiff(pages) = reader.metadata()? else {
+            unreachable!()
+        };
+        for (index, page) in pages.iter().enumerate() {
+            println!(
+                "{}",
+                json!({"header_only":true,"frame":index,"fields":{"tags":page.tags.iter().map(|(k,v)|(k.to_string(),tiff_tag(v))).collect::<serde_json::Map<_,_>>()},"ifd_offset":page.ifd_offset,"source_prefix_hex":bytes_hex(&prefix),
+                "opaque_tags":page.opaque_tags.iter().map(|(k,v)|(k.to_string(),json!({"field_type":v.field_type,"count":v.count,"value_hex":bytes_hex(&v.value_bytes)}))).collect::<serde_json::Map<_,_>>(),"pixels_available":false})
+            );
+        }
+        return Ok(());
+    }
+
     if args[1] == "edf" && args.iter().any(|value| value.starts_with("--edf-")) {
         use dioptrin_io::edf::{self, InlineLayout, PayloadInterpretation};
         let mut options = edf::Options {
@@ -510,6 +582,7 @@ fn run() -> Result<(), Box<dyn Error>> {
                     json!(reader.metadata(i).unwrap().fields),
                     &paths,
                 );
+                row["metadata_details"] = json!({"general_headers":reader.general_headers().iter().map(|h|json!(h.fields)).collect::<Vec<_>>(),"incomplete_data":false});
                 row["payload_window"] = edf_window(reader.metadata(i).unwrap());
                 println!("{row}");
             }
@@ -548,6 +621,18 @@ fn run() -> Result<(), Box<dyn Error>> {
                     json!({}),
                     &paths,
                 );
+                if component.pixels().unwrap().len() == 1 {
+                    let scalar = match component.pixels().unwrap() {
+                        PixelBuffer::F32(v) => header_float(f64::from(v[0])),
+                        PixelBuffer::F64(v) => header_float(v[0]),
+                        PixelBuffer::U32(v) => json!(v[0]),
+                        PixelBuffer::I32(v) => json!(v[0]),
+                        PixelBuffer::U16(v) => json!(v[0]),
+                        PixelBuffer::U8(v) => json!(v[0]),
+                        _ => json!(null),
+                    };
+                    info["scalar_value"] = scalar;
+                }
                 info["name"] = json!(source.name);
                 info["dataset"] = json!(source.dataset);
                 info["source_file"] = json!(source.source_file);
@@ -575,6 +660,7 @@ fn run() -> Result<(), Box<dyn Error>> {
                 "intensity":frame_record(index,reader.frames(),vec![count],events.intensity().unwrap(),json!({}),&paths)});
             if index == 0 {
                 row["source_components"] = json!(components);
+                row["metadata_details"] = json!({"components":components,"component_inventory":reader.metadata().components.iter().map(|c|json!({"name":c.name,"text":c.text,"dataset":c.dataset})).collect::<Vec<_>>(),"group_inventory":reader.metadata().attributes.iter().map(|a|json!(a.path)).collect::<Vec<_>>()});
             }
             println!("{row}");
         }
@@ -656,6 +742,8 @@ fn run() -> Result<(), Box<dyn Error>> {
                 json!(reader.fields()),
                 &paths,
             );
+            let m = reader.metadata(i).unwrap();
+            row["metadata_details"] = json!({"source_file":m.source_file,"dataset":m.dataset,"source_shape":m.virtual_dataset.as_ref().map_or(m.source_shape.clone(),|v|v.frozen_shape.to_vec())});
             if let Some(vds) = &reader.metadata(i).unwrap().virtual_dataset {
                 row["virtual_dataset"] = json!({
                     "declared_shape":vds.declared_shape,"frozen_shape":vds.frozen_shape,
@@ -854,6 +942,7 @@ fn run() -> Result<(), Box<dyn Error>> {
         tiff::Limits::default(),
     )?;
     let mut buffer = wrapped::FrameBuffer::default();
+    let mut dataset_hash = Sha256::new();
     for i in 0..reader.frames() {
         if args.iter().any(|value| value == "--tiff-available")
             && matches!(reader.metadata(i), Some(wrapped::Metadata::Tiff(metadata)) if metadata.compression == 32809)
@@ -1030,6 +1119,13 @@ fn run() -> Result<(), Box<dyn Error>> {
             &reader.source_paths(),
         );
         row["metadata_details"] = metadata_details(reader.metadata(i).unwrap(), i);
+        if args[1] == "npy" {
+            sample_dtype_and_hash(buffer.pixels().unwrap(), &mut dataset_hash);
+            if i + 1 == reader.frames() {
+                row["metadata_details"]["dataset_sha256"] =
+                    json!(format!("{:x}", dataset_hash.clone().finalize()));
+            }
+        }
         #[cfg(feature = "fit2d")]
         if let wrapped::Metadata::Fit2d(metadata) = reader.metadata(i).unwrap() {
             let mut arrays = serde_json::Map::new();
@@ -1066,6 +1162,7 @@ fn run() -> Result<(), Box<dyn Error>> {
                 "windows":compatibility.windows.iter().map(|window|json!({"offset":window.offset,"bytes":window.bytes})).collect::<Vec<_>>()});
         }
         if let wrapped::Metadata::Edf(metadata) = reader.metadata(i).unwrap() {
+            row["metadata_details"] = json!({"general_headers":reader.edf_general_headers()?.iter().map(|h|json!(h.fields)).collect::<Vec<_>>(),"incomplete_data":false});
             row["payload_window"] = edf_window(metadata);
         }
         #[cfg(feature = "oxford")]

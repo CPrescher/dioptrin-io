@@ -185,7 +185,7 @@ def main():
         if {p.stem for p in paths} != requested:
             parser.error("unknown codec test module")
     ledger = json.loads((ROOT / "docs/fabio-2026.6.0-inventory.json").read_text())
-    report = {"schema": 7, "reference": ledger["reference"],
+    report = {"schema": 8, "reference": ledger["reference"],
               "selection": {"all_codec_modules": not bool(args.modules), "modules": []},
               "contract": "uniform count/dtype/shape and independent native component/unit comparisons, with separate explicit display views, at successful upstream .read calls; not Python API or full header parity",
               "recovery_contract": "explicit source recipes selected before decoding; independently verified partial spans/header-only access are separate from complete count parity and expected input errors",
@@ -226,7 +226,7 @@ def main():
     report["build_files_sha256"] = {name: sha_file(ROOT/name) for name in ["Cargo.toml", "Cargo.lock", "build.rs"] if (ROOT/name).is_file()}
     report["bridge_sources_sha256"] = {name: sha_file(ROOT/name) for name in [
         "scripts/fabio_suite_parity.py", "scripts/tiff_component_reference.py", "scripts/edf_recovery_reference.py",
-        "scripts/thunderscan_reference.py", "scripts/pillow_planar16_reference.py", "scripts/metadata_parity.py", "scripts/test_metadata_parity.py", "scripts/inventory_fabio.py", "examples/parity_probe.rs", "docs/fabio-2026.6.0-inventory.json"]}
+        "scripts/thunderscan_reference.py", "scripts/pillow_planar16_reference.py", "scripts/metadata_parity.py", "scripts/test_metadata_parity.py", "scripts/metadata_attributes.py", "scripts/test_metadata_attributes.py", "scripts/header_reference.py", "scripts/inventory_fabio.py", "examples/parity_probe.rs", "docs/fabio-2026.6.0-inventory.json"]}
     active = False
     current_test = None
 
@@ -293,6 +293,8 @@ def main():
         if args.metadata:
             from metadata_parity import encode
             record["reference_header"] = encode(dict(image.header))
+            from metadata_attributes import inventory
+            record["reference_attributes"] = inventory(codec,image)
         # Keep file identity/provenance visible even before a codec has a native
         # adapter. A file::dataset selector still identifies one physical file.
         physical = pathlib.Path(str(source).split("::", 1)[0]) if isinstance(source, (str, os.PathLike)) else None
@@ -310,7 +312,33 @@ def main():
             if policy is None:
                 record.update(status="reference_no_pixels")
                 if args.metadata:
-                    record["metadata"] = [{"status":"not_compared", "reason":"reference read returned no pixels; header-only parity is not yet qualified", "reference_fields":len(image.header)}]
+                    with tempfile.TemporaryDirectory(prefix="dioptrin-header-only-") as directory:
+                        header_path = physical
+                        if captured is not None:
+                            header_path = pathlib.Path(directory)/"header.bin"
+                            header_path.write_bytes(captured)
+                        command = {"dtrekimage":"dtrek-header","tifimage":"tiff-header"}.get(codec)
+                        if command is None or header_path is None:
+                            record["header_only"] = {"status":"unsupported_header_adapter"}
+                        else:
+                            result = subprocess.run([str(probe_path),command,str(header_path)],capture_output=True,text=True,timeout=args.probe_timeout)
+                            if result.returncode:
+                                record["header_only"] = {"status":"native_rejected","error":result.stderr[:2000]}
+                            else:
+                                header_frames = [json.loads(line) for line in result.stdout.splitlines()]
+                                from metadata_parity import compare as compare_metadata
+                                if codec=="dtrekimage":
+                                    record["metadata"] = [{"frame":0,**compare_metadata(encode(dict(image.header)),header_frames[0],codec)}]
+                                    record["header_only"] = {"status":record["metadata"][0]["status"],"declared_shape":header_frames[0]["declared_shape"],"pixels_available":False}
+                                else:
+                                    from header_reference import compare as compare_headers
+                                    record["header_only"] = {**compare_headers(header_path,header_frames),"pixels_available":False}
+                                    record["metadata"] = [{"frame":0,**compare_metadata(encode(dict(image.header)),header_frames[0],codec,record.get("reference_backend"))}]
+                                record["header_only"]["native_headers"] = header_frames
+                                record["_attribute_frames"] = header_frames
+                                record["_source_bits"] = record["header_only"].get("first_bits")
+                if args.metadata and "metadata" not in record:
+                    record["metadata"] = [{"status":"not_compared","reference_fields":len(image.header)}]
                 return
         else:
             record["reference"] = {"dtype": image.data.dtype.name, "shape": [int(n) for n in image.data.shape], "frames": int(image.nframes)}
@@ -408,6 +436,22 @@ def main():
                 return
             try:
                 frames = [json.loads(line) for line in native.stdout.splitlines()]
+                if args.metadata:
+                    record["_attribute_frames"] = frames
+                    if codec in {"tifimage","pilatusimage","marccdimage"}:
+                        with image._open(str(path),"rb") as prefix_source:
+                            record["_source_prefix_hex"] = prefix_source.read(64).hex()
+                            prefix_source.seek(0)
+                            import tifffile
+                            with tifffile.TiffFile(prefix_source) as tiff_source:
+                                from header_reference import tag_value
+                                record["_source_bits"] = tag_value(tiff_source.pages[0].tags[258],prefix_source,tiff_source.byteorder)
+                if args.metadata and codec=="edfimage" and frames and "payload_window" in frames[-1] and frames[-1]["payload_window"]["source"]==0:
+                    window=frames[-1]["payload_window"]
+                    with image._open(str(path),"rb") as padding_source:
+                        padding_source.seek(window["offset"]+window["effective_bytes"])
+                        tail=padding_source.read(512)
+                    record["metadata_integrity_evidence"]={"decoded_tail_offset":window["offset"]+window["effective_bytes"],"tail_hex":tail.hex(),"read_limit":512}
                 manifest = {}
                 source_paths = {pathlib.Path(name) for frame in frames for name in frame.get("sources", [])}
                 for source_path in sorted(source_paths):
@@ -692,6 +736,14 @@ def main():
                         compare_rejection(codec, source, positional, keywords, captured, error)
                         raise
                     compare(codec, image, source, positional, keywords, captured)
+                    if args.metadata:
+                        from metadata_attributes import compare_attributes
+                        record=report["reads"][-1]
+                        attribute_frames=record.pop("_attribute_frames",[])
+                        prefix=record.pop("_source_prefix_hex",None)
+                        source_bits=record.pop("_source_bits",None)
+                        try:record["attribute_comparison"]=compare_attributes(record,attribute_frames,prefix,source_bits)
+                        except Exception as error:record["attribute_comparison"]={"status":"comparison_error","error":f"{type(error).__name__}: {error}"}
                     return result
                 finally:
                     active = False
@@ -746,6 +798,14 @@ def main():
         report["metadata_fields_accounted_for_pixel_reads"] = bool(pixel_reads) and all(
             record.get("metadata") and all(item["status"] in allowed_metadata for item in record["metadata"])
             for record in pixel_reads)
+        from metadata_attributes import summarize_attributes
+        report["attribute_summary"] = summarize_attributes(report["reads"])
+        report["metadata_attributes_accounted_for"] = all(record.get("attribute_comparison",{}).get("status")=="accounted" for record in report["reads"])
+        header_only_reads=[record for record in report["reads"] if record["status"]=="reference_no_pixels"]
+        report["header_only_parity"] = bool(header_only_reads) and all(record.get("header_only",{}).get("status")=="match" for record in header_only_reads)
+        report["header_only_summary"] = {"read_events":len(header_only_reads),"status":dict(collections.Counter(record.get("header_only",{}).get("status","not_compared") for record in header_only_reads)),
+            "tiff_tag_occurrences":sum(record.get("header_only",{}).get("tag_occurrences",0) for record in header_only_reads)}
+        report["full_reading_parity"] &= report["metadata_attributes_accounted_for"] and report["header_only_parity"]
         report["metadata_mapping_schemas"] = compact(report["reads"])
         report["full_reading_parity"] &= report["metadata_parity"]
     else:
