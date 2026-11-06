@@ -60,7 +60,7 @@ def main():
         env.setdefault('CARGO_TARGET_DIR', str(ROOT / 'target'))
         command = ['cargo', 'run', '--manifest-path', str(path / 'Cargo.toml'), '--', str(ROOT / 'tests/data/tiff-layouts')]
         subprocess.run(command, check=True, env=env)
-        metadata = json.loads(subprocess.check_output(['cargo', 'metadata', '--manifest-path', str(path / 'Cargo.toml'), '--format-version', '1'], env=env, text=True))
+        metadata = json.loads(subprocess.check_output(['cargo', 'metadata', '--manifest-path', str(path / 'Cargo.toml'), '--format-version', '1'], env=env, text=True, encoding='utf-8'))
         backends = []
         for name, version in [('fax', '0.2.7'), ('tiff', '0.11.3')]:
             matches = [p for p in metadata['packages'] if p['name'] == name]
