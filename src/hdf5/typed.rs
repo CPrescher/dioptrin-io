@@ -395,6 +395,17 @@ impl Reader {
     pub fn frames(&self) -> usize {
         self.frames
     }
+    /// Original path aliases, retained independently of open dataset handles.
+    #[must_use]
+    pub fn source_bindings(&self) -> &[crate::SourceBinding] {
+        &self.sources.bindings
+    }
+    /// # Errors
+    /// Any source/alias or admitted virtual graph changed after indexing.
+    pub fn check_sources(&self) -> Result<(), Error> {
+        self.sources.check()?;
+        check_virtual_graph(&self.parts)
+    }
     #[must_use]
     pub fn sources(&self) -> &[Source] {
         &self.sources.records

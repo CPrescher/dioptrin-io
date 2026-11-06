@@ -6,6 +6,7 @@ pub use crate::binary::{Error, Limits};
 use crate::{PixelType, source::Snapshot};
 use std::{fs::File, io::Read, path::Path};
 mod decomposition;
+pub mod run;
 pub use decomposition::{Decomposition, decompose};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]

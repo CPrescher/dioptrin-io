@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "license": "CC0-1.0",
+  "origin": "independently authored plain text, no reference writer or experimental data; column/profile files are minimal helper-probe inputs inferred from pinned source, not claimed format acceptance fixtures",
+  "files": [
+    {
+      "path": "column-table.flt",
+      "bytes": 26,
+      "sha256": "e6d81d980fb927c1061fa95e237837f8548d2414081cf361df0702c12662a0fb"
+    },
+    {
+      "path": "diagnostics.cif",
+      "bytes": 211,
+      "sha256": "f35ee9f18d7be92af3914557b27c1b735a2a7b0f6aec54650c8cc995ac00153c"
+    },
+    {
+      "path": "duplicates.cif",
+      "bytes": 94,
+      "sha256": "c9917725dbfbae96fc2ca9731742f6108c353ad3646ecc96418c1ada4ca72afd"
+    },
+    {
+      "path": "profile.chi",
+      "bytes": 55,
+      "sha256": "ec34173cd0794f41b5825fcacad0c931917f4dc9e636131a1537d6c18448a5d5"
+    },
+    {
+      "path": "scalars-loops.cif",
+      "bytes": 259,
+      "sha256": "9a6039c82453ee8edb48616f11d225ba9755142f8c7ed0c458fd63a6897014e1"
+    }
+  ]
+}

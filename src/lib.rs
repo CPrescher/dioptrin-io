@@ -95,3 +95,18 @@ pub mod pilatus;
 
 #[cfg(feature = "xcalibur")]
 pub mod xcalibur;
+
+#[cfg(feature = "wrappers")]
+pub mod navigation;
+#[cfg(feature = "wrappers")]
+pub mod series;
+#[cfg(any(
+    feature = "hdf5",
+    feature = "tiff",
+    feature = "cbf",
+    feature = "edf",
+    feature = "native",
+    feature = "jpeg",
+    feature = "jpeg2000"
+))]
+pub use source::SourceBinding;

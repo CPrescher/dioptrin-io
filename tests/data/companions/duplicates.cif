@@ -1,0 +1,4 @@
+data_duplicates
+_duplicate first
+_duplicate final
+_numeric_text 000000000000000000123.400(99)

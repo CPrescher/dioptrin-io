@@ -429,6 +429,15 @@ impl Reader {
         self.metadata.frames
     }
     #[must_use]
+    pub fn source_bindings(&self) -> &[crate::SourceBinding] {
+        &self.sources.bindings
+    }
+    /// # Errors
+    /// Any source, alias or frozen sparse layout changed.
+    pub fn check_sources(&self) -> Result<(), Error> {
+        self.check()
+    }
+    #[must_use]
     pub fn sources(&self) -> &[Source] {
         &self.sources.records
     }

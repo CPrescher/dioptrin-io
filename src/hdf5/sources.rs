@@ -42,6 +42,7 @@ pub(super) struct Sources {
     limits: Limits,
     policy: ExternalLinks,
     metadata: usize,
+    pub bindings: Vec<crate::SourceBinding>,
     root_origin: Option<PathBuf>,
 }
 impl Sources {
@@ -62,6 +63,7 @@ impl Sources {
             limits,
             policy,
             metadata: 0,
+            bindings: Vec::new(),
             root_origin: origin,
         };
         sources.add(path)?;
@@ -77,6 +79,26 @@ impl Sources {
     }
     pub(super) fn add(&mut self, path: impl AsRef<Path>) -> Result<usize, Error> {
         let snapshot = Snapshot::open(path).map_err(Error)?;
+        if !self.bindings.contains(&snapshot.binding) {
+            if self.bindings.len()
+                >= self
+                    .limits
+                    .source_files
+                    .saturating_add(self.limits.link_traversals)
+            {
+                return Err(Error("HDF5 source-binding limit".into()));
+            }
+            self.charge(
+                snapshot
+                    .binding
+                    .requested
+                    .as_os_str()
+                    .len()
+                    .saturating_add(snapshot.path.as_os_str().len())
+                    .saturating_add(128),
+            )?;
+            self.bindings.push(snapshot.binding.clone());
+        }
         if !std::fs::metadata(&snapshot.path)?.is_file() {
             return Err(Error("HDF5 snapshots require regular files".into()));
         }
@@ -121,6 +143,9 @@ impl Sources {
         Ok(self.tracked.len() - 1)
     }
     pub fn check(&self) -> Result<(), Error> {
+        for binding in &self.bindings {
+            binding.check().map_err(Error)?;
+        }
         for source in &self.tracked {
             source
                 .snapshot

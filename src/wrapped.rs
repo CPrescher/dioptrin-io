@@ -127,6 +127,10 @@ pub struct FrameBuffer {
     valid: bool,
 }
 impl FrameBuffer {
+    pub(crate) fn invalidate(&mut self) {
+        self.valid = false;
+    }
+
     #[must_use]
     pub fn sample_shape(&self) -> Option<Vec<usize>> {
         if !self.valid {
@@ -383,6 +387,47 @@ impl Reader {
         };
         source.check()?;
         Ok(Self { backend, source })
+    }
+    /// Validate all original source identities and selected alias targets.
+    /// # Errors
+    /// Any frozen source graph, binding or staging source changed.
+    pub fn check_sources(&self) -> Result<(), Error> {
+        self.source.check()?;
+        match &self.backend {
+            Backend::Edf(r) => r.check_sources()?,
+            #[cfg(feature = "hdf5")]
+            Backend::Hdf5(r) => r.check_sources().map_err(|e| Error(e.to_string()))?,
+            #[cfg(feature = "sparse")]
+            Backend::Sparse(r) => r.check_sources().map_err(|e| Error(e.to_string()))?,
+            _ => {}
+        }
+        Ok(())
+    }
+    /// Owned original aliases, excluding private decoded-root staging paths.
+    /// # Errors
+    /// Changed source/binding or canonical-path inspection failure.
+    pub fn source_bindings(&self) -> Result<Vec<crate::SourceBinding>, Error> {
+        self.check_sources()?;
+        let mut bindings = vec![self.source.binding().clone()];
+        let decoded = std::fs::canonicalize(self.source.path())?;
+        let extra: &[crate::SourceBinding] = match &self.backend {
+            Backend::Edf(r) => r.source_bindings(),
+            #[cfg(feature = "hdf5")]
+            Backend::Hdf5(r) => r.source_bindings(),
+            #[cfg(feature = "sparse")]
+            Backend::Sparse(r) => r.source_bindings(),
+            _ => &[],
+        };
+        for (index, binding) in extra.iter().enumerate() {
+            let private_backend_root = index == 0
+                && decoded != self.source.binding().resolved
+                && binding.resolved == decoded;
+            if !private_backend_root && !bindings.contains(binding) {
+                bindings.push(binding.clone());
+            }
+        }
+        self.check_sources()?;
+        Ok(bindings)
     }
     #[must_use]
     pub fn source_paths(&self) -> Vec<&Path> {
@@ -667,7 +712,7 @@ impl Reader {
     /// Invalid frame, changed original/staged source or backend decoding failure.
     pub fn read_frame_into(&mut self, index: usize, buffer: &mut FrameBuffer) -> Result<(), Error> {
         buffer.valid = false;
-        self.source.check()?;
+        self.check_sources()?;
         if index >= self.frames() {
             return Err(Error("wrapped frame index outside source".into()));
         }
@@ -779,7 +824,7 @@ impl Reader {
                 }
             }
         }
-        self.source.check()?;
+        self.check_sources()?;
         buffer.valid = true;
         Ok(())
     }

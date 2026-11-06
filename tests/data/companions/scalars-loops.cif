@@ -1,0 +1,17 @@
+data_independent
+# Independent CC0 fixture, no experimental data.
+_title 'two words'
+_double "double quoted"
+_numeric_text 00012.340(5)
+_unknown ?
+_inapplicable .
+_multiline
+;first line
+second line
+;
+loop_
+_atom_label
+_atom_x
+A1 1.234(5)
+'B two' -0.000
+stop_

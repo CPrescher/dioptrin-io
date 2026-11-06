@@ -1,0 +1,18 @@
+data_first
+_duplicate first
+_duplicate final
+save_unknown
+_orphan
+loop_
+_col_a
+_col_b
+1 2
+3
+save_
+data_second
+_second retained
+_array_data.data
+;
+opaque body, never a pixel array
+;
+_after_boundary not_projected

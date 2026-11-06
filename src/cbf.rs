@@ -326,3 +326,5 @@ fn decode_md5(s: &str) -> Result<[u8; 16], Error> {
         .try_into()
         .map_err(|_| Error("invalid CBF Content-MD5 length".into()))
 }
+
+pub mod document;

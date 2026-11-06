@@ -140,6 +140,10 @@ impl PreparedSource {
             .as_ref()
             .map_or(&self.snapshot.path, |f| f.path())
     }
+    #[cfg(feature = "wrappers")]
+    pub fn binding(&self) -> &crate::SourceBinding {
+        &self.snapshot.binding
+    }
     pub fn original_path(&self) -> &Path {
         &self.snapshot.path
     }

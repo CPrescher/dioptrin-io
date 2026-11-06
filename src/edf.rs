@@ -131,6 +131,7 @@ pub struct Reader {
     records: Vec<PayloadSource>,
     decoded_limit: usize,
     trailing_padding: usize,
+    source_bindings: Vec<crate::SourceBinding>,
 }
 impl Reader {
     /// Open immutable inline EDF, including bounded outer gzip/bzip2. External
@@ -153,6 +154,8 @@ impl Reader {
         if options.source_files == 0 {
             return Err(Error("EDF source-file limit must be positive".into()));
         }
+        let root_binding = crate::SourceBinding::capture(path.as_ref()).map_err(Error)?;
+        let mut source_bindings = vec![root_binding];
         let first = PreparedSource::open(path, options.transport)?;
         let directory = options
             .source_directory
@@ -171,7 +174,15 @@ impl Reader {
         let mut general: Vec<GeneralHeader> = Vec::new();
         let mut active_general = None;
         let mut offset = 0u64;
-        let mut metadata_bytes = 0usize;
+        let mut metadata_bytes = source_bindings[0]
+            .requested
+            .as_os_str()
+            .len()
+            .saturating_add(source_bindings[0].resolved.as_os_str().len())
+            .saturating_add(128);
+        if metadata_bytes > limits.metadata_bytes {
+            return Err(Error("EDF source-binding metadata limit".into()));
+        }
         let mut blocks = 0usize;
         let mut trailing_padding = 0;
         while offset < sources[0].bytes() {
@@ -283,106 +294,126 @@ impl Reader {
                 .checked_add(physical as u64)
                 .filter(|&n| n <= sources[0].bytes())
                 .ok_or_else(|| Error("truncated EDF binary payload".into()))?;
-            let (source, frame_offset, declared_bytes) =
-                if let Some(name) = fields.get("EDF_BINARYFILENAME") {
-                    if options.external_payloads == ExternalPayloads::Reject {
-                        return Err(Error(
-                            "external EDF payload requires explicit FollowSnapshot policy".into(),
-                        ));
-                    }
-                    let name = Path::new(name);
-                    let name = if options.external_basenames {
-                        name.file_name()
-                            .map(Path::new)
-                            .ok_or_else(|| Error("invalid EDF external filename".into()))?
-                    } else {
-                        name
-                    };
-                    let mut path = if name.is_absolute() {
-                        name.to_path_buf()
-                    } else {
-                        directory.join(name)
-                    };
-                    if !path.try_exists()?
-                        && options.external_payloads == ExternalPayloads::FollowCompressedSnapshot
-                    {
-                        let candidates =
-                            [suffixed_path(&path, ".gz"), suffixed_path(&path, ".bz2")];
-                        let found = candidates
-                            .into_iter()
-                            .filter_map(|p| match p.try_exists() {
-                                Ok(true) => Some(Ok(p)),
-                                Ok(false) => None,
-                                Err(e) => Some(Err(e)),
-                            })
-                            .collect::<Result<Vec<_>, _>>()?;
-                        if found.len() != 1 {
-                            return Err(Error(
-                                "missing or ambiguous compressed EDF payload counterpart".into(),
-                            ));
-                        }
-                        path = found[0].clone();
-                    }
-                    let canonical = std::fs::canonicalize(path)?;
-                    let source = if let Some(index) =
-                        sources.iter().position(|s| s.original_path() == canonical)
-                    {
-                        index
-                    } else {
-                        if sources.len() >= options.source_files {
-                            return Err(Error("EDF exceeds source-file limit".into()));
-                        }
-                        let remaining = options
-                            .transport
-                            .source_bytes
-                            .checked_sub(source_bytes)
-                            .filter(|&n| n > 0)
-                            .ok_or_else(|| {
-                                Error("EDF sources exceed total staging/source budget".into())
-                            })?;
-                        let prepared = PreparedSource::open(
-                            &canonical,
-                            TransportLimits {
-                                source_bytes: remaining,
-                                ..options.transport
-                            },
-                        )?;
-                        source_bytes = source_bytes
-                            .checked_add(prepared.bytes())
-                            .ok_or_else(|| Error("EDF total source size overflow".into()))?;
-                        metadata_bytes = metadata_bytes
-                            .checked_add(
-                                canonical
-                                    .as_os_str()
-                                    .len()
-                                    .saturating_mul(2)
-                                    .saturating_add(256),
-                            )
-                            .filter(|n| *n <= limits.metadata_bytes)
-                            .ok_or_else(|| {
-                                Error("EDF source manifest exceeds metadata budget".into())
-                            })?;
-                        records.push(PayloadSource {
-                            path: canonical,
-                            bytes: prepared.bytes(),
-                            outer_compression: prepared.compression(),
-                        });
-                        sources.push(prepared);
-                        sources.len() - 1
-                    };
-                    if source == 0 {
-                        return Err(Error(
-                            "EDF external payload must be a distinct source file".into(),
-                        ));
-                    }
-                    let start =
-                        optional_number(&fields, "EDF_BINARYFILEPOSITION")?.unwrap_or(0) as u64;
-                    let bytes = optional_number(&fields, "EDF_BINARYFILESIZE")?
-                        .unwrap_or(if plain { decoded } else { 0 });
-                    (source, start, bytes)
+            let (source, frame_offset, declared_bytes) = if let Some(name) =
+                fields.get("EDF_BINARYFILENAME")
+            {
+                if options.external_payloads == ExternalPayloads::Reject {
+                    return Err(Error(
+                        "external EDF payload requires explicit FollowSnapshot policy".into(),
+                    ));
+                }
+                let name = Path::new(name);
+                let name = if options.external_basenames {
+                    name.file_name()
+                        .map(Path::new)
+                        .ok_or_else(|| Error("invalid EDF external filename".into()))?
                 } else {
-                    (0, payload, declared_physical)
+                    name
                 };
+                let mut path = if name.is_absolute() {
+                    name.to_path_buf()
+                } else {
+                    directory.join(name)
+                };
+                if !path.try_exists()?
+                    && options.external_payloads == ExternalPayloads::FollowCompressedSnapshot
+                {
+                    let candidates = [suffixed_path(&path, ".gz"), suffixed_path(&path, ".bz2")];
+                    let found = candidates
+                        .into_iter()
+                        .filter_map(|p| match p.try_exists() {
+                            Ok(true) => Some(Ok(p)),
+                            Ok(false) => None,
+                            Err(e) => Some(Err(e)),
+                        })
+                        .collect::<Result<Vec<_>, _>>()?;
+                    if found.len() != 1 {
+                        return Err(Error(
+                            "missing or ambiguous compressed EDF payload counterpart".into(),
+                        ));
+                    }
+                    path = found[0].clone();
+                }
+                let binding = crate::SourceBinding::capture(&path).map_err(Error)?;
+                let canonical = binding.resolved.clone();
+                if !source_bindings.contains(&binding) {
+                    if source_bindings.len() >= options.source_files.saturating_add(limits.frames) {
+                        return Err(Error("EDF source-binding count limit".into()));
+                    }
+                    metadata_bytes = metadata_bytes
+                        .checked_add(
+                            binding
+                                .requested
+                                .as_os_str()
+                                .len()
+                                .saturating_add(binding.resolved.as_os_str().len())
+                                .saturating_add(128),
+                        )
+                        .filter(|&n| n <= limits.metadata_bytes)
+                        .ok_or_else(|| Error("EDF source-binding metadata limit".into()))?;
+                    source_bindings.push(binding);
+                }
+                let source = if let Some(index) =
+                    sources.iter().position(|s| s.original_path() == canonical)
+                {
+                    index
+                } else {
+                    if sources.len() >= options.source_files {
+                        return Err(Error("EDF exceeds source-file limit".into()));
+                    }
+                    let remaining = options
+                        .transport
+                        .source_bytes
+                        .checked_sub(source_bytes)
+                        .filter(|&n| n > 0)
+                        .ok_or_else(|| {
+                            Error("EDF sources exceed total staging/source budget".into())
+                        })?;
+                    let prepared = PreparedSource::open(
+                        &path,
+                        TransportLimits {
+                            source_bytes: remaining,
+                            ..options.transport
+                        },
+                    )?;
+                    source_bytes = source_bytes
+                        .checked_add(prepared.bytes())
+                        .ok_or_else(|| Error("EDF total source size overflow".into()))?;
+                    metadata_bytes = metadata_bytes
+                        .checked_add(
+                            canonical
+                                .as_os_str()
+                                .len()
+                                .saturating_mul(2)
+                                .saturating_add(256),
+                        )
+                        .filter(|n| *n <= limits.metadata_bytes)
+                        .ok_or_else(|| {
+                            Error("EDF source manifest exceeds metadata budget".into())
+                        })?;
+                    records.push(PayloadSource {
+                        path: canonical,
+                        bytes: prepared.bytes(),
+                        outer_compression: prepared.compression(),
+                    });
+                    sources.push(prepared);
+                    sources.len() - 1
+                };
+                if source == 0 {
+                    return Err(Error(
+                        "EDF external payload must be a distinct source file".into(),
+                    ));
+                }
+                let start = optional_number(&fields, "EDF_BINARYFILEPOSITION")?.unwrap_or(0) as u64;
+                let bytes = optional_number(&fields, "EDF_BINARYFILESIZE")?.unwrap_or(if plain {
+                    decoded
+                } else {
+                    0
+                });
+                (source, start, bytes)
+            } else {
+                (0, payload, declared_physical)
+            };
             let external_window_policy = (source != 0).then_some(options.external_window);
             let bytes = if external_window_policy == Some(ExternalWindow::UpToDeclared) {
                 let available = sources[source]
@@ -442,6 +473,9 @@ impl Reader {
         for source in &sources {
             source.check()?;
         }
+        for binding in &source_bindings {
+            binding.check().map_err(Error)?;
+        }
         Ok(Self {
             sources,
             pages,
@@ -449,7 +483,23 @@ impl Reader {
             records,
             decoded_limit: limits.frame_bytes,
             trailing_padding,
+            source_bindings,
         })
+    }
+    #[must_use]
+    pub fn source_bindings(&self) -> &[crate::SourceBinding] {
+        &self.source_bindings
+    }
+    /// # Errors
+    /// A frozen source or selected path alias changed.
+    pub fn check_sources(&self) -> Result<(), Error> {
+        for binding in &self.source_bindings {
+            binding.check().map_err(Error)?;
+        }
+        for source in &self.sources {
+            source.check()?;
+        }
+        Ok(())
     }
     #[must_use]
     pub fn frames(&self) -> usize {
@@ -477,9 +527,7 @@ impl Reader {
     /// Out-of-range frame, changed source, corrupt stream or exact-size mismatch.
     pub fn read_frame_into(&self, index: usize, buffer: &mut FrameBuffer) -> Result<(), Error> {
         buffer.shape = None;
-        for source in &self.sources {
-            source.check()?;
-        }
+        self.check_sources()?;
         let page = self
             .pages
             .get(index)
@@ -513,9 +561,7 @@ impl Reader {
             copy_samples(&buffer.decoded, &mut buffer.pixels, meta.little_endian)?;
         }
         self.sources[page.source].check_input_handle(&file)?;
-        for source in &self.sources {
-            source.check()?;
-        }
+        self.check_sources()?;
         buffer.shape = Some(meta.shape);
         Ok(())
     }
