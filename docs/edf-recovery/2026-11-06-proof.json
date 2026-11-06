@@ -1,0 +1,3589 @@
+{
+  "schema": 1,
+  "baseline": "docs/fabio-parity/2026-11-05-mar-sparse.json",
+  "baseline_sha256": "cea6a3410b379dd8462eae624dcf645112b0def766dc0624c72f99a8f236d0ae",
+  "base_audit_ref": "017afba",
+  "base_audit_sha256": "2dc908100e7e64b0187e42ed0f17d2d66ca64d08b982ba59ec4e01507a68eca2",
+  "probe_sha256": "b8f167f2465366be87c366e7232323a0b80328ba29fd44530886a7863ca3014d",
+  "oracle_sha256": "1d6f13ec7a567d34dd86eafd148a36fa49b5e0b03f5464bae1aeb4054b4f1091",
+  "reference": {
+    "fabio": "2026.6.0",
+    "fabio_commit": "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece",
+    "numpy": "2.5.4",
+    "python": "3.13.5 (main, Jun 12 2025, 12:22:43) [Clang 20.1.4 ]",
+    "zlib": "1.2.12"
+  },
+  "baseline_events": 26,
+  "unique_proof_sources": 14,
+  "records": [
+    {
+      "filename": "MultiFrame-Frame0.edf",
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/MultiFrame-Frame0.edf",
+      "baseline_sha256": "a162fbcc75ca97856e2adfc84ebb4b0ef093c0b5ac0cec44e66bcb87a4d7ef75",
+      "baseline_event_count": 7,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_getFrame_mono",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_getFrame_multi",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_next_multi",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_openimage_multiframes",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_previous_mono",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_previous_mono",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_previous_multi"
+      ],
+      "proof_source": "/tmp/dioptrin-rejection-sources-20261105/a162fbcc75ca97856e2adfc84ebb4b0ef093c0b5ac0cec44e66bcb87a4d7ef75-MultiFrame-Frame0.edf",
+      "proof_source_sha256": "a162fbcc75ca97856e2adfc84ebb4b0ef093c0b5ac0cec44e66bcb87a4d7ef75",
+      "proof_source_bytes": 4094780,
+      "exact_baseline_bytes": true,
+      "prior_provenance": "original_source",
+      "provenance": "captured_exact_source",
+      "mode": "legacy-size",
+      "native": {
+        "frames": [
+          {
+            "dtype": "float32",
+            "fields": {
+              "BYTEORDER": "LowByteFirst",
+              "CENTER_1": "871",
+              "CENTER_2": "105",
+              "COMPRESSION": "None",
+              "COUNT_TIME": "20.000000000",
+              "DATATYPE": "FloatValue",
+              "DATE": "Wed May 12 16:13:37 2010",
+              "DDUMMY": "0.1",
+              "DIM_1": "981",
+              "DIM_2": "1043",
+              "DUMMY": "-2",
+              "EDF_BINARYSIZE": "4092928",
+              "EDF_DATABLOCKID": "1.Image.Psd",
+              "EDF_HEADERSIZE": "8192",
+              "HEADERID": "EH:000001:000000:000000",
+              "HISTORY-1": "saxs_mac +var +pass -omod n -i1err _i1val -i1dum -2 -otit \"DiodeCurr=2.02409e-05, MachCurr=85.5486 mA, Concentration=5.77, Comments: bsa2, Code: BSA, Mask: /data/id14eh3/archive/CALIBRATION/MASK/Pcon_01Apr_msk.edf, Normalisation: 1.0\" -i1dis 2.425 -i1wv",
+              "HISTORY-1~1": "l 0.0931_nm -i1pix 172.0_um 172.0_um -i1cen 871 105 -ofac 49404.9177655 /data/id14eh3/inhouse/saxs_pilatus/Mats/100512/raw/IHLS861_013_04.edf /data/id14eh3/inhouse/saxs_pilatus/Mats/100512/2d/IHLS861_013_04.edf",
+              "IMAGE": "1",
+              "PSIZE_1": "0.000172",
+              "PSIZE_2": "0.000172",
+              "RUN": "0",
+              "SAMPLEDISTANCE": "2.425",
+              "SAXSDATAVERSION": "2.40",
+              "SIZE": "4092732",
+              "TITLE": "DiodeCurr=2.02409e-05, MachCurr=85.5486 mA, Concentration=5.77, Comments: bsa2, Code: BSA, Mask: /data/id14eh3/archive/CALIBRATION/MASK/Pcon_01Apr_msk.edf, Normalisation: 1.0",
+              "VERSIONNUMBER": "0.10",
+              "WAVELENGTH": "9.31e-11"
+            },
+            "frame": 0,
+            "frames": 1,
+            "header_sha256": "0f98b02c18844343e58d6ac950af3a2d7f4a219282437b0dcc32ef50fcbb6bcb",
+            "payload_window": {
+              "declared_bytes": 4092928,
+              "declared_compression": "None",
+              "declared_header_bytes": "8192",
+              "effective_bytes": 4092732,
+              "external_policy": null,
+              "inline_layout_policy": "LegacySizeAtParsedBoundary",
+              "legacy_size_bytes": 4092732,
+              "offset": 2048,
+              "parsed_header_bytes": 2048,
+              "payload_interpretation": "Declared",
+              "source": 0
+            },
+            "sample_sha256": "dece326b8236d214436058c8221ca76905a9038f6dd86a97f7bc34e5ee9dada6",
+            "shape": [
+              1043,
+              981
+            ]
+          }
+        ]
+      },
+      "independent_reference": {
+        "format": "edf",
+        "images": [
+          {
+            "frame": 0,
+            "shape": [
+              1023183
+            ],
+            "dtype": "float32",
+            "sample_sha256": "dece326b8236d214436058c8221ca76905a9038f6dd86a97f7bc34e5ee9dada6",
+            "fields": {
+              "HEADERID": "EH:000001:000000:000000",
+              "IMAGE": "1",
+              "BYTEORDER": "LowByteFirst",
+              "DATATYPE": "FloatValue",
+              "DIM_1": "981",
+              "DIM_2": "1043",
+              "SIZE": "4092732",
+              "DUMMY": "-2",
+              "RUN": "0",
+              "COMPRESSION": "None",
+              "DDUMMY": "0.1",
+              "TITLE": "DiodeCurr=2.02409e-05, MachCurr=85.5486 mA, Concentration=5.77, Comments: bsa2, Code: BSA, Mask: /data/id14eh3/archive/CALIBRATION/MASK/Pcon_01Apr_msk.edf, Normalisation: 1.0",
+              "COUNT_TIME": "20.000000000",
+              "PSIZE_1": "0.000172",
+              "SAMPLEDISTANCE": "2.425",
+              "SAXSDATAVERSION": "2.40",
+              "PSIZE_2": "0.000172",
+              "CENTER_2": "105",
+              "VERSIONNUMBER": "0.10",
+              "EDF_BINARYSIZE": "4092928",
+              "HISTORY-1~1": "l 0.0931_nm -i1pix 172.0_um 172.0_um -i1cen 871 105 -ofac 49404.9177655 /data/id14eh3/inhouse/saxs_pilatus/Mats/100512/raw/IHLS861_013_04.edf /data/id14eh3/inhouse/saxs_pilatus/Mats/100512/2d/IHLS861_013_04.edf",
+              "HISTORY-1": "saxs_mac +var +pass -omod n -i1err _i1val -i1dum -2 -otit \"DiodeCurr=2.02409e-05, MachCurr=85.5486 mA, Concentration=5.77, Comments: bsa2, Code: BSA, Mask: /data/id14eh3/archive/CALIBRATION/MASK/Pcon_01Apr_msk.edf, Normalisation: 1.0\" -i1dis 2.425 -i1wv",
+              "DATE": "Wed May 12 16:13:37 2010",
+              "WAVELENGTH": "9.31e-11",
+              "CENTER_1": "871",
+              "EDF_HEADERSIZE": "8192",
+              "EDF_DATABLOCKID": "1.Image.Psd"
+            },
+            "availability": {
+              "declared_shape": [
+                1043,
+                981
+              ],
+              "declared_samples": 1023183,
+              "present_samples": [
+                0,
+                1023183
+              ],
+              "missing_samples": null,
+              "verified_samples": [
+                0,
+                1023183
+              ],
+              "outer_integrity": "ContainerComplete",
+              "payload_integrity": "ContainerComplete",
+              "expected_payload_bytes": 4092732,
+              "available_payload_bytes": 4092732,
+              "availability": "AllSamples",
+              "payload_members": [],
+              "diagnostic": null,
+              "complete_verified_frame": true,
+              "partial_element_bytes": ""
+            },
+            "payload_window": {
+              "declared_bytes": 4092928,
+              "effective_bytes": 4092732,
+              "external_policy": null,
+              "source": 0,
+              "offset": 2048,
+              "inline_layout_policy": "LegacySizeAtParsedBoundary",
+              "declared_header_bytes": "8192",
+              "parsed_header_bytes": 2048,
+              "legacy_size_bytes": 4092732,
+              "declared_compression": "None",
+              "payload_interpretation": "Declared"
+            },
+            "header_sha256": "0f98b02c18844343e58d6ac950af3a2d7f4a219282437b0dcc32ef50fcbb6bcb",
+            "frames": 1
+          }
+        ],
+        "source_report": {
+          "path": "/private/tmp/dioptrin-rejection-sources-20261105/a162fbcc75ca97856e2adfc84ebb4b0ef093c0b5ac0cec44e66bcb87a4d7ef75-MultiFrame-Frame0.edf",
+          "encoded_bytes": 4094780,
+          "decoded_bytes": 4094780,
+          "compression": "None",
+          "integrity": "ContainerComplete",
+          "verified_decoded_bytes": 4094780,
+          "members": [],
+          "diagnostic": null
+        },
+        "stop": null,
+        "source_sha256": "a162fbcc75ca97856e2adfc84ebb4b0ef093c0b5ac0cec44e66bcb87a4d7ef75"
+      },
+      "fabio_reference": [
+        {
+          "shape": [
+            1043,
+            981
+          ],
+          "dtype": "float32",
+          "sample_sha256": "dece326b8236d214436058c8221ca76905a9038f6dd86a97f7bc34e5ee9dada6"
+        }
+      ],
+      "proof": {
+        "all_sample_bytes_match": true,
+        "source_dtype_shape_match": true,
+        "explicit_policy": true,
+        "no_decoder_retry": true
+      },
+      "source_unchanged_after_proof": true
+    },
+    {
+      "filename": "MultiFrame-Frame0.edf.bz2",
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/MultiFrame-Frame0.edf.bz2",
+      "baseline_sha256": "9e876c886c6d97f80ce5b3a58e96ae7c30cae56f643c5a04f272ca2c93f1bb98",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestEdfFastRead.test_fastread"
+      ],
+      "proof_source": "/tmp/dioptrin-rejection-sources-20261105/9e876c886c6d97f80ce5b3a58e96ae7c30cae56f643c5a04f272ca2c93f1bb98-MultiFrame-Frame0.edf.bz2",
+      "proof_source_sha256": "9e876c886c6d97f80ce5b3a58e96ae7c30cae56f643c5a04f272ca2c93f1bb98",
+      "proof_source_bytes": 622413,
+      "exact_baseline_bytes": true,
+      "prior_provenance": "original_source",
+      "provenance": "captured_exact_source",
+      "mode": "legacy-size",
+      "native": {
+        "frames": [
+          {
+            "dtype": "float32",
+            "fields": {
+              "BYTEORDER": "LowByteFirst",
+              "CENTER_1": "871",
+              "CENTER_2": "105",
+              "COMPRESSION": "None",
+              "COUNT_TIME": "20.000000000",
+              "DATATYPE": "FloatValue",
+              "DATE": "Wed May 12 16:13:37 2010",
+              "DDUMMY": "0.1",
+              "DIM_1": "981",
+              "DIM_2": "1043",
+              "DUMMY": "-2",
+              "EDF_BINARYSIZE": "4092928",
+              "EDF_DATABLOCKID": "1.Image.Psd",
+              "EDF_HEADERSIZE": "8192",
+              "HEADERID": "EH:000001:000000:000000",
+              "HISTORY-1": "saxs_mac +var +pass -omod n -i1err _i1val -i1dum -2 -otit \"DiodeCurr=2.02409e-05, MachCurr=85.5486 mA, Concentration=5.77, Comments: bsa2, Code: BSA, Mask: /data/id14eh3/archive/CALIBRATION/MASK/Pcon_01Apr_msk.edf, Normalisation: 1.0\" -i1dis 2.425 -i1wv",
+              "HISTORY-1~1": "l 0.0931_nm -i1pix 172.0_um 172.0_um -i1cen 871 105 -ofac 49404.9177655 /data/id14eh3/inhouse/saxs_pilatus/Mats/100512/raw/IHLS861_013_04.edf /data/id14eh3/inhouse/saxs_pilatus/Mats/100512/2d/IHLS861_013_04.edf",
+              "IMAGE": "1",
+              "PSIZE_1": "0.000172",
+              "PSIZE_2": "0.000172",
+              "RUN": "0",
+              "SAMPLEDISTANCE": "2.425",
+              "SAXSDATAVERSION": "2.40",
+              "SIZE": "4092732",
+              "TITLE": "DiodeCurr=2.02409e-05, MachCurr=85.5486 mA, Concentration=5.77, Comments: bsa2, Code: BSA, Mask: /data/id14eh3/archive/CALIBRATION/MASK/Pcon_01Apr_msk.edf, Normalisation: 1.0",
+              "VERSIONNUMBER": "0.10",
+              "WAVELENGTH": "9.31e-11"
+            },
+            "frame": 0,
+            "frames": 1,
+            "header_sha256": "0f98b02c18844343e58d6ac950af3a2d7f4a219282437b0dcc32ef50fcbb6bcb",
+            "payload_window": {
+              "declared_bytes": 4092928,
+              "declared_compression": "None",
+              "declared_header_bytes": "8192",
+              "effective_bytes": 4092732,
+              "external_policy": null,
+              "inline_layout_policy": "LegacySizeAtParsedBoundary",
+              "legacy_size_bytes": 4092732,
+              "offset": 2048,
+              "parsed_header_bytes": 2048,
+              "payload_interpretation": "Declared",
+              "source": 0
+            },
+            "sample_sha256": "dece326b8236d214436058c8221ca76905a9038f6dd86a97f7bc34e5ee9dada6",
+            "shape": [
+              1043,
+              981
+            ]
+          }
+        ]
+      },
+      "independent_reference": {
+        "format": "edf",
+        "images": [
+          {
+            "frame": 0,
+            "shape": [
+              1023183
+            ],
+            "dtype": "float32",
+            "sample_sha256": "dece326b8236d214436058c8221ca76905a9038f6dd86a97f7bc34e5ee9dada6",
+            "fields": {
+              "HEADERID": "EH:000001:000000:000000",
+              "IMAGE": "1",
+              "BYTEORDER": "LowByteFirst",
+              "DATATYPE": "FloatValue",
+              "DIM_1": "981",
+              "DIM_2": "1043",
+              "SIZE": "4092732",
+              "DUMMY": "-2",
+              "RUN": "0",
+              "COMPRESSION": "None",
+              "DDUMMY": "0.1",
+              "TITLE": "DiodeCurr=2.02409e-05, MachCurr=85.5486 mA, Concentration=5.77, Comments: bsa2, Code: BSA, Mask: /data/id14eh3/archive/CALIBRATION/MASK/Pcon_01Apr_msk.edf, Normalisation: 1.0",
+              "COUNT_TIME": "20.000000000",
+              "PSIZE_1": "0.000172",
+              "SAMPLEDISTANCE": "2.425",
+              "SAXSDATAVERSION": "2.40",
+              "PSIZE_2": "0.000172",
+              "CENTER_2": "105",
+              "VERSIONNUMBER": "0.10",
+              "EDF_BINARYSIZE": "4092928",
+              "HISTORY-1~1": "l 0.0931_nm -i1pix 172.0_um 172.0_um -i1cen 871 105 -ofac 49404.9177655 /data/id14eh3/inhouse/saxs_pilatus/Mats/100512/raw/IHLS861_013_04.edf /data/id14eh3/inhouse/saxs_pilatus/Mats/100512/2d/IHLS861_013_04.edf",
+              "HISTORY-1": "saxs_mac +var +pass -omod n -i1err _i1val -i1dum -2 -otit \"DiodeCurr=2.02409e-05, MachCurr=85.5486 mA, Concentration=5.77, Comments: bsa2, Code: BSA, Mask: /data/id14eh3/archive/CALIBRATION/MASK/Pcon_01Apr_msk.edf, Normalisation: 1.0\" -i1dis 2.425 -i1wv",
+              "DATE": "Wed May 12 16:13:37 2010",
+              "WAVELENGTH": "9.31e-11",
+              "CENTER_1": "871",
+              "EDF_HEADERSIZE": "8192",
+              "EDF_DATABLOCKID": "1.Image.Psd"
+            },
+            "availability": {
+              "declared_shape": [
+                1043,
+                981
+              ],
+              "declared_samples": 1023183,
+              "present_samples": [
+                0,
+                1023183
+              ],
+              "missing_samples": null,
+              "verified_samples": [
+                0,
+                1023183
+              ],
+              "outer_integrity": "ContainerComplete",
+              "payload_integrity": "ContainerComplete",
+              "expected_payload_bytes": 4092732,
+              "available_payload_bytes": 4092732,
+              "availability": "AllSamples",
+              "payload_members": [],
+              "diagnostic": null,
+              "complete_verified_frame": true,
+              "partial_element_bytes": ""
+            },
+            "payload_window": {
+              "declared_bytes": 4092928,
+              "effective_bytes": 4092732,
+              "external_policy": null,
+              "source": 0,
+              "offset": 2048,
+              "inline_layout_policy": "LegacySizeAtParsedBoundary",
+              "declared_header_bytes": "8192",
+              "parsed_header_bytes": 2048,
+              "legacy_size_bytes": 4092732,
+              "declared_compression": "None",
+              "payload_interpretation": "Declared"
+            },
+            "header_sha256": "0f98b02c18844343e58d6ac950af3a2d7f4a219282437b0dcc32ef50fcbb6bcb",
+            "frames": 1
+          }
+        ],
+        "source_report": {
+          "path": "/private/tmp/dioptrin-rejection-sources-20261105/9e876c886c6d97f80ce5b3a58e96ae7c30cae56f643c5a04f272ca2c93f1bb98-MultiFrame-Frame0.edf.bz2",
+          "encoded_bytes": 622413,
+          "decoded_bytes": 4094780,
+          "compression": "Bzip2",
+          "integrity": "ContainerComplete",
+          "verified_decoded_bytes": 4094780,
+          "members": [
+            {
+              "encoded_range": [
+                0,
+                622413
+              ],
+              "decoded_range": [
+                0,
+                4094780
+              ],
+              "integrity": "VerifiedMember",
+              "diagnostic": null
+            }
+          ],
+          "diagnostic": null
+        },
+        "stop": null,
+        "source_sha256": "9e876c886c6d97f80ce5b3a58e96ae7c30cae56f643c5a04f272ca2c93f1bb98"
+      },
+      "fabio_reference": [
+        {
+          "shape": [
+            1043,
+            981
+          ],
+          "dtype": "float32",
+          "sample_sha256": "dece326b8236d214436058c8221ca76905a9038f6dd86a97f7bc34e5ee9dada6"
+        }
+      ],
+      "proof": {
+        "all_sample_bytes_match": true,
+        "source_dtype_shape_match": true,
+        "explicit_policy": true,
+        "no_decoder_retry": true
+      },
+      "source_unchanged_after_proof": true
+    },
+    {
+      "filename": "MultiFrame-Frame1.edf",
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/MultiFrame-Frame1.edf",
+      "baseline_sha256": "223a5d373ee8e08071f7fc2ecca9a19963e94302b16e83199868deee238f0d09",
+      "baseline_event_count": 7,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_getFrame_mono",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_getFrame_mono",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_getFrame_multi",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_next_multi",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_openimage_multiframes",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_previous_mono",
+        "fabio.test.codecs.test_edfimage.TestEdfMultiFrame.test_previous_multi"
+      ],
+      "proof_source": "/tmp/dioptrin-rejection-sources-20261105/223a5d373ee8e08071f7fc2ecca9a19963e94302b16e83199868deee238f0d09-MultiFrame-Frame1.edf",
+      "proof_source_sha256": "223a5d373ee8e08071f7fc2ecca9a19963e94302b16e83199868deee238f0d09",
+      "proof_source_bytes": 4093756,
+      "exact_baseline_bytes": true,
+      "prior_provenance": "original_source",
+      "provenance": "captured_exact_source",
+      "mode": "legacy-size",
+      "native": {
+        "frames": [
+          {
+            "dtype": "float32",
+            "fields": {
+              "BYTEORDER": "LowByteFirst",
+              "COMPRESSION": "None",
+              "DATATYPE": "FloatValue",
+              "DIM_1": "981",
+              "DIM_2": "1043",
+              "DUMMY": "-1",
+              "EDF_BINARYSIZE": "4092928",
+              "EDF_DATABLOCKID": "1.Image.Error",
+              "EDF_HEADERSIZE": "8192",
+              "HEADERID": "EH:000001:000000:000000",
+              "IMAGE": "1",
+              "IMAGE.ERROR": "1",
+              "SIZE": "4092732"
+            },
+            "frame": 0,
+            "frames": 1,
+            "header_sha256": "e30379cb564a32629008e3948de1d6728a1de43abf2c61ac659c506dca6e0da0",
+            "payload_window": {
+              "declared_bytes": 4092928,
+              "declared_compression": "None",
+              "declared_header_bytes": "8192",
+              "effective_bytes": 4092732,
+              "external_policy": null,
+              "inline_layout_policy": "LegacySizeAtParsedBoundary",
+              "legacy_size_bytes": 4092732,
+              "offset": 1024,
+              "parsed_header_bytes": 1024,
+              "payload_interpretation": "Declared",
+              "source": 0
+            },
+            "sample_sha256": "5e1e3db002ec982fc29a54938591150141e699507dfd4d4ee2c93469fb99abef",
+            "shape": [
+              1043,
+              981
+            ]
+          }
+        ]
+      },
+      "independent_reference": {
+        "format": "edf",
+        "images": [
+          {
+            "frame": 0,
+            "shape": [
+              1023183
+            ],
+            "dtype": "float32",
+            "sample_sha256": "5e1e3db002ec982fc29a54938591150141e699507dfd4d4ee2c93469fb99abef",
+            "fields": {
+              "HEADERID": "EH:000001:000000:000000",
+              "IMAGE": "1",
+              "BYTEORDER": "LowByteFirst",
+              "DATATYPE": "FloatValue",
+              "DIM_1": "981",
+              "DIM_2": "1043",
+              "SIZE": "4092732",
+              "DUMMY": "-1",
+              "IMAGE.ERROR": "1",
+              "COMPRESSION": "None",
+              "EDF_BINARYSIZE": "4092928",
+              "EDF_HEADERSIZE": "8192",
+              "EDF_DATABLOCKID": "1.Image.Error"
+            },
+            "availability": {
+              "declared_shape": [
+                1043,
+                981
+              ],
+              "declared_samples": 1023183,
+              "present_samples": [
+                0,
+                1023183
+              ],
+              "missing_samples": null,
+              "verified_samples": [
+                0,
+                1023183
+              ],
+              "outer_integrity": "ContainerComplete",
+              "payload_integrity": "ContainerComplete",
+              "expected_payload_bytes": 4092732,
+              "available_payload_bytes": 4092732,
+              "availability": "AllSamples",
+              "payload_members": [],
+              "diagnostic": null,
+              "complete_verified_frame": true,
+              "partial_element_bytes": ""
+            },
+            "payload_window": {
+              "declared_bytes": 4092928,
+              "effective_bytes": 4092732,
+              "external_policy": null,
+              "source": 0,
+              "offset": 1024,
+              "inline_layout_policy": "LegacySizeAtParsedBoundary",
+              "declared_header_bytes": "8192",
+              "parsed_header_bytes": 1024,
+              "legacy_size_bytes": 4092732,
+              "declared_compression": "None",
+              "payload_interpretation": "Declared"
+            },
+            "header_sha256": "e30379cb564a32629008e3948de1d6728a1de43abf2c61ac659c506dca6e0da0",
+            "frames": 1
+          }
+        ],
+        "source_report": {
+          "path": "/private/tmp/dioptrin-rejection-sources-20261105/223a5d373ee8e08071f7fc2ecca9a19963e94302b16e83199868deee238f0d09-MultiFrame-Frame1.edf",
+          "encoded_bytes": 4093756,
+          "decoded_bytes": 4093756,
+          "compression": "None",
+          "integrity": "ContainerComplete",
+          "verified_decoded_bytes": 4093756,
+          "members": [],
+          "diagnostic": null
+        },
+        "stop": null,
+        "source_sha256": "223a5d373ee8e08071f7fc2ecca9a19963e94302b16e83199868deee238f0d09"
+      },
+      "fabio_reference": [
+        {
+          "shape": [
+            1043,
+            981
+          ],
+          "dtype": "float32",
+          "sample_sha256": "5e1e3db002ec982fc29a54938591150141e699507dfd4d4ee2c93469fb99abef"
+        }
+      ],
+      "proof": {
+        "all_sample_bytes_match": true,
+        "source_dtype_shape_match": true,
+        "explicit_policy": true,
+        "no_decoder_retry": true
+      },
+      "source_unchanged_after_proof": true
+    },
+    {
+      "filename": "d80_60s.edf",
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/d80_60s.edf",
+      "baseline_sha256": "64992b70b52b78335fc12dc0e0174ef47a360ae8579be9e1d5d3e558674d700f",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_oxdimage.TestOxdBig.test_same"
+      ],
+      "proof_source": "/tmp/dioptrin-rejection-sources-20261105/64992b70b52b78335fc12dc0e0174ef47a360ae8579be9e1d5d3e558674d700f-d80_60s.edf",
+      "proof_source_sha256": "64992b70b52b78335fc12dc0e0174ef47a360ae8579be9e1d5d3e558674d700f",
+      "proof_source_bytes": 16779776,
+      "exact_baseline_bytes": true,
+      "prior_provenance": "original_source",
+      "provenance": "captured_exact_source",
+      "mode": "raw-ty1",
+      "native": {
+        "frames": [
+          {
+            "dtype": "int32",
+            "fields": {
+              "ALPHA ANGLE IN DEG": "1024.0",
+              "BEAM CENTER X": "1024.0",
+              "BEAM CENTER Y": "1024.0",
+              "BEAM ROT IN DEG (E2)": "0.0",
+              "BEAM ROT IN DEG (E3)": "0.0",
+              "BETA ANGLE IN DEG": "1024.0",
+              "BINNING IN X": "1",
+              "BINNING IN Y": "1",
+              "BYTEORDER": "LowByteFirst",
+              "COMPRESSION": "TY1",
+              "DATATYPE": "SignedInteger",
+              "DETECTOR SIZE X": "2048",
+              "DETECTOR SIZE Y": "2048",
+              "DETECTOR TILT E1 IN DEG": "0.0",
+              "DETECTOR TILT E2 IN DEG": "0.0",
+              "DETECTOR TILT E3 IN DEG": "0.0",
+              "DETECTOR TYPE": "Onyx-Kodak (1x1: 0.06mm, 2x2: 0.12mm, 4x4: 0.24mm)",
+              "DIM_1": "2048",
+              "DIM_2": "2048",
+              "DISTANCE IN MM": "0.0",
+              "EDF_BINARYSIZE": "16777216",
+              "EDF_DATABLOCKID": "0.Image.Psd",
+              "EDF_HEADERSIZE": "3072",
+              "EXPOSURE TIME IN SEC": "60.0",
+              "FILENAME": "d80_60s.edf",
+              "FLOOD FIELD IMAGE": "",
+              "GAIN": "47.0",
+              "HEADER SIZE IN BYTES": "5120",
+              "HEADER VERSION": "OD SAPPHIRE  3.0",
+              "HEADERID": "EH:000000:000000:000000",
+              "IMAGE": "0",
+              "KAPPA END IN DEG": "0.0",
+              "KAPPA START IN DEG": "0.0",
+              "KAPPA ZERO CORR. IN DEG": "0.0",
+              "MONITOR COUNTS OF OVERFLOW RAW IMAGE 1": "0",
+              "MONITOR COUNTS OF OVERFLOW RAW IMAGE 2": "0",
+              "MONITOR COUNTS OF RAW IMAGE 1": "0",
+              "MONITOR COUNTS OF RAW IMAGE 2": "0",
+              "NO OF PIXELS": "4194304",
+              "NX": "2048",
+              "NY": "2048",
+              "OI": "2248892",
+              "OL": "0",
+              "OMEGA END IN DEG": "0.0",
+              "OMEGA START IN DEG": "0.0",
+              "OMEGA ZERO CORR. IN DEG": "0.0",
+              "OVERFLOW AFTER REMEASURE FLAG": "0",
+              "OVERFLOW THRESHOLD": "0",
+              "OVERFLOW TIME IN SEC": "0.0",
+              "OVERFLOWS FLAG": "0",
+              "PHI END IN DEG": "0.0",
+              "PHI START IN DEG": "0.0",
+              "PHI ZERO CORR. IN DEG": "0.0",
+              "PIXELS IN X": "2048",
+              "PIXELS IN Y": "2048",
+              "REAL PIXEL SIZE X (MM)": "0.0600551730244",
+              "REAL PIXEL SIZE Y (MM)": "0.0600551730244",
+              "SIZE": "16777216",
+              "SPATIAL CORRECTION FILE": "",
+              "SPATIAL CORRECTION FILE DATE": "",
+              "STAT: AVERAGE": "0.0",
+              "STAT: MAX": "0",
+              "STAT: MIN": "0",
+              "STAT: SKEWNESS": "0.0",
+              "STAT: STDDEV": "0.0",
+              "THETA END IN DEG": "0.0",
+              "THETA START IN DEG": "0.0",
+              "THETA ZERO CORR. IN DEG": "0.0",
+              "TIME": "Tue May 27 18:29:16 2003",
+              "UNWARPING": "1",
+              "WAVELENGTH ALPHA": "0.0",
+              "WAVELENGTH ALPHA1": "0.0",
+              "WAVELENGTH ALPHA2": "0.0",
+              "WAVELENGTH BETA": "0.0"
+            },
+            "frame": 0,
+            "frames": 1,
+            "header_sha256": "0159c1d8a030fd2cd040eb963e34cf9ab151b890720f884a9c7dafd9e88b65ec",
+            "payload_window": {
+              "declared_bytes": 16777216,
+              "declared_compression": "TY1",
+              "declared_header_bytes": "3072",
+              "effective_bytes": 16777216,
+              "external_policy": null,
+              "inline_layout_policy": "Declared",
+              "legacy_size_bytes": 16777216,
+              "offset": 2560,
+              "parsed_header_bytes": 2560,
+              "payload_interpretation": "StoredRawForLabel(\"TY1\")",
+              "source": 0
+            },
+            "sample_sha256": "5c3755c7d4222c75659ea470b1732fec51453c47e220a74f54f07ddea7e2cab5",
+            "shape": [
+              2048,
+              2048
+            ]
+          }
+        ]
+      },
+      "independent_reference": {
+        "format": "edf",
+        "images": [
+          {
+            "frame": 0,
+            "shape": [
+              4194304
+            ],
+            "dtype": "int32",
+            "sample_sha256": "5c3755c7d4222c75659ea470b1732fec51453c47e220a74f54f07ddea7e2cab5",
+            "fields": {
+              "EDF_DATABLOCKID": "0.Image.Psd",
+              "EDF_BINARYSIZE": "16777216",
+              "EDF_HEADERSIZE": "3072",
+              "BYTEORDER": "LowByteFirst",
+              "DATATYPE": "SignedInteger",
+              "DIM_1": "2048",
+              "DIM_2": "2048",
+              "IMAGE": "0",
+              "HEADERID": "EH:000000:000000:000000",
+              "SIZE": "16777216",
+              "OMEGA END IN DEG": "0.0",
+              "WAVELENGTH BETA": "0.0",
+              "COMPRESSION": "TY1",
+              "TIME": "Tue May 27 18:29:16 2003",
+              "OMEGA ZERO CORR. IN DEG": "0.0",
+              "MONITOR COUNTS OF OVERFLOW RAW IMAGE 2": "0",
+              "PHI END IN DEG": "0.0",
+              "MONITOR COUNTS OF OVERFLOW RAW IMAGE 1": "0",
+              "KAPPA ZERO CORR. IN DEG": "0.0",
+              "STAT: MAX": "0",
+              "STAT: MIN": "0",
+              "EXPOSURE TIME IN SEC": "60.0",
+              "ALPHA ANGLE IN DEG": "1024.0",
+              "KAPPA END IN DEG": "0.0",
+              "SPATIAL CORRECTION FILE DATE": "",
+              "BEAM ROT IN DEG (E2)": "0.0",
+              "NX": "2048",
+              "NY": "2048",
+              "NO OF PIXELS": "4194304",
+              "WAVELENGTH ALPHA": "0.0",
+              "BEAM CENTER Y": "1024.0",
+              "BEAM CENTER X": "1024.0",
+              "STAT: SKEWNESS": "0.0",
+              "MONITOR COUNTS OF RAW IMAGE 1": "0",
+              "DETECTOR TYPE": "Onyx-Kodak (1x1: 0.06mm, 2x2: 0.12mm, 4x4: 0.24mm)",
+              "STAT: AVERAGE": "0.0",
+              "OL": "0",
+              "DETECTOR TILT E3 IN DEG": "0.0",
+              "THETA ZERO CORR. IN DEG": "0.0",
+              "BINNING IN X": "1",
+              "BINNING IN Y": "1",
+              "OI": "2248892",
+              "BEAM ROT IN DEG (E3)": "0.0",
+              "DETECTOR TILT E1 IN DEG": "0.0",
+              "REAL PIXEL SIZE Y (MM)": "0.0600551730244",
+              "KAPPA START IN DEG": "0.0",
+              "WAVELENGTH ALPHA1": "0.0",
+              "WAVELENGTH ALPHA2": "0.0",
+              "THETA START IN DEG": "0.0",
+              "DISTANCE IN MM": "0.0",
+              "HEADER VERSION": "OD SAPPHIRE  3.0",
+              "OMEGA START IN DEG": "0.0",
+              "SPATIAL CORRECTION FILE": "",
+              "OVERFLOW THRESHOLD": "0",
+              "DETECTOR TILT E2 IN DEG": "0.0",
+              "OVERFLOW AFTER REMEASURE FLAG": "0",
+              "FILENAME": "d80_60s.edf",
+              "GAIN": "47.0",
+              "DETECTOR SIZE X": "2048",
+              "DETECTOR SIZE Y": "2048",
+              "BETA ANGLE IN DEG": "1024.0",
+              "OVERFLOWS FLAG": "0",
+              "REAL PIXEL SIZE X (MM)": "0.0600551730244",
+              "HEADER SIZE IN BYTES": "5120",
+              "MONITOR COUNTS OF RAW IMAGE 2": "0",
+              "FLOOD FIELD IMAGE": "",
+              "PHI START IN DEG": "0.0",
+              "STAT: STDDEV": "0.0",
+              "THETA END IN DEG": "0.0",
+              "OVERFLOW TIME IN SEC": "0.0",
+              "UNWARPING": "1",
+              "PIXELS IN Y": "2048",
+              "PIXELS IN X": "2048",
+              "PHI ZERO CORR. IN DEG": "0.0"
+            },
+            "availability": {
+              "declared_shape": [
+                2048,
+                2048
+              ],
+              "declared_samples": 4194304,
+              "present_samples": [
+                0,
+                4194304
+              ],
+              "missing_samples": null,
+              "verified_samples": [
+                0,
+                4194304
+              ],
+              "outer_integrity": "ContainerComplete",
+              "payload_integrity": "ContainerComplete",
+              "expected_payload_bytes": 16777216,
+              "available_payload_bytes": 16777216,
+              "availability": "AllSamples",
+              "payload_members": [],
+              "diagnostic": null,
+              "complete_verified_frame": true,
+              "partial_element_bytes": ""
+            },
+            "payload_window": {
+              "declared_bytes": 16777216,
+              "effective_bytes": 16777216,
+              "external_policy": null,
+              "source": 0,
+              "offset": 2560,
+              "inline_layout_policy": "Declared",
+              "declared_header_bytes": "3072",
+              "parsed_header_bytes": 2560,
+              "legacy_size_bytes": 16777216,
+              "declared_compression": "TY1",
+              "payload_interpretation": "StoredRawForLabel(\"TY1\")"
+            },
+            "header_sha256": "0159c1d8a030fd2cd040eb963e34cf9ab151b890720f884a9c7dafd9e88b65ec",
+            "frames": 1
+          }
+        ],
+        "source_report": {
+          "path": "/private/tmp/dioptrin-rejection-sources-20261105/64992b70b52b78335fc12dc0e0174ef47a360ae8579be9e1d5d3e558674d700f-d80_60s.edf",
+          "encoded_bytes": 16779776,
+          "decoded_bytes": 16779776,
+          "compression": "None",
+          "integrity": "ContainerComplete",
+          "verified_decoded_bytes": 16779776,
+          "members": [],
+          "diagnostic": null
+        },
+        "stop": null,
+        "source_sha256": "64992b70b52b78335fc12dc0e0174ef47a360ae8579be9e1d5d3e558674d700f"
+      },
+      "fabio_reference": [
+        {
+          "shape": [
+            2048,
+            2048
+          ],
+          "dtype": "int32",
+          "sample_sha256": "5c3755c7d4222c75659ea470b1732fec51453c47e220a74f54f07ddea7e2cab5"
+        }
+      ],
+      "proof": {
+        "all_sample_bytes_match": true,
+        "source_dtype_shape_match": true,
+        "explicit_policy": true,
+        "no_decoder_retry": true
+      },
+      "source_unchanged_after_proof": true
+    },
+    {
+      "filename": "fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_half_header.edf",
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_vtdrf8sk_clemens/TestBadFiles/fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_half_header.edf",
+      "baseline_sha256": "0d68c733fd34e3c1928b61ebadb113d035d02dc4eac18d90d9e051ce8494c12d",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_half_header"
+      ],
+      "proof_source": "/tmp/dioptrin-rejection-sources-20261105/0d68c733fd34e3c1928b61ebadb113d035d02dc4eac18d90d9e051ce8494c12d-fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_half_header.edf",
+      "proof_source_sha256": "0d68c733fd34e3c1928b61ebadb113d035d02dc4eac18d90d9e051ce8494c12d",
+      "proof_source_bytes": 262364,
+      "exact_baseline_bytes": true,
+      "prior_provenance": "captured_exact_source",
+      "provenance": "captured_exact_source",
+      "mode": "recovery",
+      "native": {
+        "source_recovery": {
+          "format": "edf",
+          "images": [
+            {
+              "availability": {
+                "availability": "AllSamples",
+                "available_payload_bytes": 262144,
+                "complete_verified_frame": true,
+                "declared_samples": 65536,
+                "declared_shape": [
+                  256,
+                  256
+                ],
+                "diagnostic": null,
+                "expected_payload_bytes": 262144,
+                "missing_samples": null,
+                "outer_integrity": "ContainerComplete",
+                "partial_element_bytes": "",
+                "payload_integrity": "ContainerComplete",
+                "payload_members": [],
+                "present_samples": [
+                  0,
+                  65536
+                ],
+                "verified_samples": [
+                  0,
+                  65536
+                ]
+              },
+              "dtype": "float32",
+              "fields": {
+                "BYTEORDER": "LowByteFirst",
+                "DATATYPE": "FloatValue",
+                "DIM_1": "256",
+                "DIM_2": "256",
+                "HISTORY-1": "something=something else",
+                "IMAGE": "1",
+                "OMEGA": "0.0"
+              },
+              "frame": 0,
+              "frames": 1,
+              "header_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+              "payload_window": {
+                "declared_bytes": 262144,
+                "declared_compression": null,
+                "declared_header_bytes": null,
+                "effective_bytes": 262144,
+                "external_policy": null,
+                "inline_layout_policy": "Declared",
+                "legacy_size_bytes": null,
+                "offset": 147,
+                "parsed_header_bytes": 147,
+                "payload_interpretation": "Declared",
+                "source": 0
+              },
+              "sample_sha256": "c6e7ed6f00997d21f30c8f9544fc10588db893fd9711b098528ab7a068584c56",
+              "shape": [
+                65536
+              ]
+            }
+          ],
+          "source_report": {
+            "compression": "None",
+            "decoded_bytes": 262364,
+            "diagnostic": null,
+            "encoded_bytes": 262364,
+            "integrity": "ContainerComplete",
+            "members": [],
+            "path": "/private/tmp/dioptrin-rejection-sources-20261105/0d68c733fd34e3c1928b61ebadb113d035d02dc4eac18d90d9e051ce8494c12d-fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_half_header.edf",
+            "verified_decoded_bytes": 262364
+          },
+          "stop": {
+            "bytes_hex": "7b0a4f6d656761203d20302e30203b0a44696d5f31203d20323536203b0a44696d5f32203d20323536203b0a4461746154797065203d20466c6f617456616c7565203b0a427974654f",
+            "kind": "TruncatedHeader",
+            "offset": 262291,
+            "sha256": "d1b0b549b9b495faa73bf6efdf7397f948653245f2662e925182c525cf7271fb"
+          }
+        }
+      },
+      "independent_reference": {
+        "format": "edf",
+        "images": [
+          {
+            "frame": 0,
+            "shape": [
+              65536
+            ],
+            "dtype": "float32",
+            "sample_sha256": "c6e7ed6f00997d21f30c8f9544fc10588db893fd9711b098528ab7a068584c56",
+            "fields": {
+              "OMEGA": "0.0",
+              "DIM_1": "256",
+              "DIM_2": "256",
+              "DATATYPE": "FloatValue",
+              "BYTEORDER": "LowByteFirst",
+              "IMAGE": "1",
+              "HISTORY-1": "something=something else"
+            },
+            "availability": {
+              "declared_shape": [
+                256,
+                256
+              ],
+              "declared_samples": 65536,
+              "present_samples": [
+                0,
+                65536
+              ],
+              "missing_samples": null,
+              "verified_samples": [
+                0,
+                65536
+              ],
+              "outer_integrity": "ContainerComplete",
+              "payload_integrity": "ContainerComplete",
+              "expected_payload_bytes": 262144,
+              "available_payload_bytes": 262144,
+              "availability": "AllSamples",
+              "payload_members": [],
+              "diagnostic": null,
+              "complete_verified_frame": true,
+              "partial_element_bytes": ""
+            },
+            "payload_window": {
+              "declared_bytes": 262144,
+              "effective_bytes": 262144,
+              "external_policy": null,
+              "source": 0,
+              "offset": 147,
+              "inline_layout_policy": "Declared",
+              "declared_header_bytes": null,
+              "parsed_header_bytes": 147,
+              "legacy_size_bytes": null,
+              "declared_compression": null,
+              "payload_interpretation": "Declared"
+            },
+            "header_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+            "frames": 1
+          }
+        ],
+        "source_report": {
+          "path": "/private/tmp/dioptrin-rejection-sources-20261105/0d68c733fd34e3c1928b61ebadb113d035d02dc4eac18d90d9e051ce8494c12d-fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_half_header.edf",
+          "encoded_bytes": 262364,
+          "decoded_bytes": 262364,
+          "compression": "None",
+          "integrity": "ContainerComplete",
+          "verified_decoded_bytes": 262364,
+          "members": [],
+          "diagnostic": null
+        },
+        "stop": {
+          "kind": "TruncatedHeader",
+          "offset": 262291,
+          "bytes_hex": "7b0a4f6d656761203d20302e30203b0a44696d5f31203d20323536203b0a44696d5f32203d20323536203b0a4461746154797065203d20466c6f617456616c7565203b0a427974654f",
+          "sha256": "d1b0b549b9b495faa73bf6efdf7397f948653245f2662e925182c525cf7271fb"
+        },
+        "source_sha256": "0d68c733fd34e3c1928b61ebadb113d035d02dc4eac18d90d9e051ce8494c12d"
+      },
+      "differences": [],
+      "proof": {
+        "all_available_words_match_independent_decoder": true,
+        "all_available_words_match_known_pinned_array": true,
+        "all_partial_element_bytes_match": true,
+        "available_samples": 65536,
+        "verified_samples": 65536,
+        "known_missing_samples": 0,
+        "incomplete_element_bytes": 0,
+        "complete_verified_earlier_frames": 1,
+        "unknown_following_header": true,
+        "missing_values_synthesized": false,
+        "whole_source_count_parity_claimed": false
+      },
+      "source_unchanged_after_proof": true
+    },
+    {
+      "filename": "fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_header_with_half_data.edf",
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_vtdrf8sk_clemens/TestBadFiles/fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_header_with_half_data.edf",
+      "baseline_sha256": "ed3bf8b40de3df52353f1846e98eb3d2321e0d345e56105903abaea6f7665587",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_header_with_half_data"
+      ],
+      "proof_source": "/tmp/dioptrin-rejection-sources-20261105/ed3bf8b40de3df52353f1846e98eb3d2321e0d345e56105903abaea6f7665587-fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_header_with_half_data.edf",
+      "proof_source_sha256": "ed3bf8b40de3df52353f1846e98eb3d2321e0d345e56105903abaea6f7665587",
+      "proof_source_bytes": 393510,
+      "exact_baseline_bytes": true,
+      "prior_provenance": "captured_exact_source",
+      "provenance": "captured_exact_source",
+      "mode": "recovery",
+      "native": {
+        "source_recovery": {
+          "format": "edf",
+          "images": [
+            {
+              "availability": {
+                "availability": "AllSamples",
+                "available_payload_bytes": 262144,
+                "complete_verified_frame": true,
+                "declared_samples": 65536,
+                "declared_shape": [
+                  256,
+                  256
+                ],
+                "diagnostic": null,
+                "expected_payload_bytes": 262144,
+                "missing_samples": null,
+                "outer_integrity": "ContainerComplete",
+                "partial_element_bytes": "",
+                "payload_integrity": "ContainerComplete",
+                "payload_members": [],
+                "present_samples": [
+                  0,
+                  65536
+                ],
+                "verified_samples": [
+                  0,
+                  65536
+                ]
+              },
+              "dtype": "float32",
+              "fields": {
+                "BYTEORDER": "LowByteFirst",
+                "DATATYPE": "FloatValue",
+                "DIM_1": "256",
+                "DIM_2": "256",
+                "HISTORY-1": "something=something else",
+                "IMAGE": "1",
+                "OMEGA": "0.0"
+              },
+              "frame": 0,
+              "frames": 2,
+              "header_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+              "payload_window": {
+                "declared_bytes": 262144,
+                "declared_compression": null,
+                "declared_header_bytes": null,
+                "effective_bytes": 262144,
+                "external_policy": null,
+                "inline_layout_policy": "Declared",
+                "legacy_size_bytes": null,
+                "offset": 147,
+                "parsed_header_bytes": 147,
+                "payload_interpretation": "Declared",
+                "source": 0
+              },
+              "sample_sha256": "c6e7ed6f00997d21f30c8f9544fc10588db893fd9711b098528ab7a068584c56",
+              "shape": [
+                65536
+              ]
+            },
+            {
+              "availability": {
+                "availability": "Prefix",
+                "available_payload_bytes": 131072,
+                "complete_verified_frame": false,
+                "declared_samples": 65536,
+                "declared_shape": [
+                  256,
+                  256
+                ],
+                "diagnostic": null,
+                "expected_payload_bytes": 262144,
+                "missing_samples": [
+                  32768,
+                  65536
+                ],
+                "outer_integrity": "ContainerComplete",
+                "partial_element_bytes": "",
+                "payload_integrity": "ContainerComplete",
+                "payload_members": [],
+                "present_samples": [
+                  0,
+                  32768
+                ],
+                "verified_samples": [
+                  0,
+                  32768
+                ]
+              },
+              "dtype": "float32",
+              "fields": {
+                "BYTEORDER": "LowByteFirst",
+                "DATATYPE": "FloatValue",
+                "DIM_1": "256",
+                "DIM_2": "256",
+                "HISTORY-1": "something=something else",
+                "IMAGE": "2",
+                "OMEGA": "0.0"
+              },
+              "frame": 1,
+              "frames": 2,
+              "header_sha256": "d34ad9723dd3ebbf6fb8a061fdea2715cce8cab173e115268d835776d8b86226",
+              "payload_window": {
+                "declared_bytes": 262144,
+                "declared_compression": null,
+                "declared_header_bytes": null,
+                "effective_bytes": 131072,
+                "external_policy": null,
+                "inline_layout_policy": "Declared",
+                "legacy_size_bytes": null,
+                "offset": 262438,
+                "parsed_header_bytes": 147,
+                "payload_interpretation": "Declared",
+                "source": 0
+              },
+              "sample_sha256": "c84987c876c7bc651a138cf57e0746a4b36691246450a115f3574545c120ea17",
+              "shape": [
+                32768
+              ]
+            }
+          ],
+          "source_report": {
+            "compression": "None",
+            "decoded_bytes": 393510,
+            "diagnostic": null,
+            "encoded_bytes": 393510,
+            "integrity": "ContainerComplete",
+            "members": [],
+            "path": "/private/tmp/dioptrin-rejection-sources-20261105/ed3bf8b40de3df52353f1846e98eb3d2321e0d345e56105903abaea6f7665587-fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_header_with_half_data.edf",
+            "verified_decoded_bytes": 393510
+          },
+          "stop": {
+            "available_bytes": 131072,
+            "expected_bytes": 262144,
+            "image_record": 1,
+            "kind": "TruncatedPayload",
+            "offset": 262438
+          }
+        }
+      },
+      "independent_reference": {
+        "format": "edf",
+        "images": [
+          {
+            "frame": 0,
+            "shape": [
+              65536
+            ],
+            "dtype": "float32",
+            "sample_sha256": "c6e7ed6f00997d21f30c8f9544fc10588db893fd9711b098528ab7a068584c56",
+            "fields": {
+              "OMEGA": "0.0",
+              "DIM_1": "256",
+              "DIM_2": "256",
+              "DATATYPE": "FloatValue",
+              "BYTEORDER": "LowByteFirst",
+              "IMAGE": "1",
+              "HISTORY-1": "something=something else"
+            },
+            "availability": {
+              "declared_shape": [
+                256,
+                256
+              ],
+              "declared_samples": 65536,
+              "present_samples": [
+                0,
+                65536
+              ],
+              "missing_samples": null,
+              "verified_samples": [
+                0,
+                65536
+              ],
+              "outer_integrity": "ContainerComplete",
+              "payload_integrity": "ContainerComplete",
+              "expected_payload_bytes": 262144,
+              "available_payload_bytes": 262144,
+              "availability": "AllSamples",
+              "payload_members": [],
+              "diagnostic": null,
+              "complete_verified_frame": true,
+              "partial_element_bytes": ""
+            },
+            "payload_window": {
+              "declared_bytes": 262144,
+              "effective_bytes": 262144,
+              "external_policy": null,
+              "source": 0,
+              "offset": 147,
+              "inline_layout_policy": "Declared",
+              "declared_header_bytes": null,
+              "parsed_header_bytes": 147,
+              "legacy_size_bytes": null,
+              "declared_compression": null,
+              "payload_interpretation": "Declared"
+            },
+            "header_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+            "frames": 2
+          },
+          {
+            "frame": 1,
+            "shape": [
+              32768
+            ],
+            "dtype": "float32",
+            "sample_sha256": "c84987c876c7bc651a138cf57e0746a4b36691246450a115f3574545c120ea17",
+            "fields": {
+              "OMEGA": "0.0",
+              "DIM_1": "256",
+              "DIM_2": "256",
+              "DATATYPE": "FloatValue",
+              "BYTEORDER": "LowByteFirst",
+              "IMAGE": "2",
+              "HISTORY-1": "something=something else"
+            },
+            "availability": {
+              "declared_shape": [
+                256,
+                256
+              ],
+              "declared_samples": 65536,
+              "present_samples": [
+                0,
+                32768
+              ],
+              "missing_samples": [
+                32768,
+                65536
+              ],
+              "verified_samples": [
+                0,
+                32768
+              ],
+              "outer_integrity": "ContainerComplete",
+              "payload_integrity": "ContainerComplete",
+              "expected_payload_bytes": 262144,
+              "available_payload_bytes": 131072,
+              "availability": "Prefix",
+              "payload_members": [],
+              "diagnostic": null,
+              "complete_verified_frame": false,
+              "partial_element_bytes": ""
+            },
+            "payload_window": {
+              "declared_bytes": 262144,
+              "effective_bytes": 131072,
+              "external_policy": null,
+              "source": 0,
+              "offset": 262438,
+              "inline_layout_policy": "Declared",
+              "declared_header_bytes": null,
+              "parsed_header_bytes": 147,
+              "legacy_size_bytes": null,
+              "declared_compression": null,
+              "payload_interpretation": "Declared"
+            },
+            "header_sha256": "d34ad9723dd3ebbf6fb8a061fdea2715cce8cab173e115268d835776d8b86226",
+            "frames": 2
+          }
+        ],
+        "source_report": {
+          "path": "/private/tmp/dioptrin-rejection-sources-20261105/ed3bf8b40de3df52353f1846e98eb3d2321e0d345e56105903abaea6f7665587-fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_header_with_half_data.edf",
+          "encoded_bytes": 393510,
+          "decoded_bytes": 393510,
+          "compression": "None",
+          "integrity": "ContainerComplete",
+          "verified_decoded_bytes": 393510,
+          "members": [],
+          "diagnostic": null
+        },
+        "stop": {
+          "kind": "TruncatedPayload",
+          "image_record": 1,
+          "offset": 262438,
+          "expected_bytes": 262144,
+          "available_bytes": 131072
+        },
+        "source_sha256": "ed3bf8b40de3df52353f1846e98eb3d2321e0d345e56105903abaea6f7665587"
+      },
+      "differences": [],
+      "proof": {
+        "all_available_words_match_independent_decoder": true,
+        "all_available_words_match_known_pinned_array": true,
+        "all_partial_element_bytes_match": true,
+        "available_samples": 98304,
+        "verified_samples": 98304,
+        "known_missing_samples": 32768,
+        "incomplete_element_bytes": 0,
+        "complete_verified_earlier_frames": 1,
+        "unknown_following_header": false,
+        "missing_values_synthesized": false,
+        "whole_source_count_parity_claimed": false
+      },
+      "source_unchanged_after_proof": true
+    },
+    {
+      "filename": "fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_header_with_no_data.edf",
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_vtdrf8sk_clemens/TestBadFiles/fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_header_with_no_data.edf",
+      "baseline_sha256": "6424036260cd6dfd424d7085d3ad17da434e3f7e7605828037cec241031546cf",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_header_with_no_data"
+      ],
+      "proof_source": "/tmp/dioptrin-rejection-sources-20261105/6424036260cd6dfd424d7085d3ad17da434e3f7e7605828037cec241031546cf-fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_header_with_no_data.edf",
+      "proof_source_sha256": "6424036260cd6dfd424d7085d3ad17da434e3f7e7605828037cec241031546cf",
+      "proof_source_bytes": 262438,
+      "exact_baseline_bytes": true,
+      "prior_provenance": "captured_exact_source",
+      "provenance": "captured_exact_source",
+      "mode": "recovery",
+      "native": {
+        "source_recovery": {
+          "format": "edf",
+          "images": [
+            {
+              "availability": {
+                "availability": "AllSamples",
+                "available_payload_bytes": 262144,
+                "complete_verified_frame": true,
+                "declared_samples": 65536,
+                "declared_shape": [
+                  256,
+                  256
+                ],
+                "diagnostic": null,
+                "expected_payload_bytes": 262144,
+                "missing_samples": null,
+                "outer_integrity": "ContainerComplete",
+                "partial_element_bytes": "",
+                "payload_integrity": "ContainerComplete",
+                "payload_members": [],
+                "present_samples": [
+                  0,
+                  65536
+                ],
+                "verified_samples": [
+                  0,
+                  65536
+                ]
+              },
+              "dtype": "float32",
+              "fields": {
+                "BYTEORDER": "LowByteFirst",
+                "DATATYPE": "FloatValue",
+                "DIM_1": "256",
+                "DIM_2": "256",
+                "HISTORY-1": "something=something else",
+                "IMAGE": "1",
+                "OMEGA": "0.0"
+              },
+              "frame": 0,
+              "frames": 2,
+              "header_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+              "payload_window": {
+                "declared_bytes": 262144,
+                "declared_compression": null,
+                "declared_header_bytes": null,
+                "effective_bytes": 262144,
+                "external_policy": null,
+                "inline_layout_policy": "Declared",
+                "legacy_size_bytes": null,
+                "offset": 147,
+                "parsed_header_bytes": 147,
+                "payload_interpretation": "Declared",
+                "source": 0
+              },
+              "sample_sha256": "c6e7ed6f00997d21f30c8f9544fc10588db893fd9711b098528ab7a068584c56",
+              "shape": [
+                65536
+              ]
+            },
+            {
+              "availability": {
+                "availability": "HeadersOnly",
+                "available_payload_bytes": 0,
+                "complete_verified_frame": false,
+                "declared_samples": 65536,
+                "declared_shape": [
+                  256,
+                  256
+                ],
+                "diagnostic": null,
+                "expected_payload_bytes": 262144,
+                "missing_samples": [
+                  0,
+                  65536
+                ],
+                "outer_integrity": "ContainerComplete",
+                "partial_element_bytes": "",
+                "payload_integrity": "ContainerComplete",
+                "payload_members": [],
+                "present_samples": [
+                  0,
+                  0
+                ],
+                "verified_samples": [
+                  0,
+                  0
+                ]
+              },
+              "dtype": "float32",
+              "fields": {
+                "BYTEORDER": "LowByteFirst",
+                "DATATYPE": "FloatValue",
+                "DIM_1": "256",
+                "DIM_2": "256",
+                "HISTORY-1": "something=something else",
+                "IMAGE": "2",
+                "OMEGA": "0.0"
+              },
+              "frame": 1,
+              "frames": 2,
+              "header_sha256": "d34ad9723dd3ebbf6fb8a061fdea2715cce8cab173e115268d835776d8b86226",
+              "payload_window": {
+                "declared_bytes": 262144,
+                "declared_compression": null,
+                "declared_header_bytes": null,
+                "effective_bytes": 0,
+                "external_policy": null,
+                "inline_layout_policy": "Declared",
+                "legacy_size_bytes": null,
+                "offset": 262438,
+                "parsed_header_bytes": 147,
+                "payload_interpretation": "Declared",
+                "source": 0
+              },
+              "sample_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "shape": [
+                0
+              ]
+            }
+          ],
+          "source_report": {
+            "compression": "None",
+            "decoded_bytes": 262438,
+            "diagnostic": null,
+            "encoded_bytes": 262438,
+            "integrity": "ContainerComplete",
+            "members": [],
+            "path": "/private/tmp/dioptrin-rejection-sources-20261105/6424036260cd6dfd424d7085d3ad17da434e3f7e7605828037cec241031546cf-fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_header_with_no_data.edf",
+            "verified_decoded_bytes": 262438
+          },
+          "stop": {
+            "available_bytes": 0,
+            "expected_bytes": 262144,
+            "image_record": 1,
+            "kind": "TruncatedPayload",
+            "offset": 262438
+          }
+        }
+      },
+      "independent_reference": {
+        "format": "edf",
+        "images": [
+          {
+            "frame": 0,
+            "shape": [
+              65536
+            ],
+            "dtype": "float32",
+            "sample_sha256": "c6e7ed6f00997d21f30c8f9544fc10588db893fd9711b098528ab7a068584c56",
+            "fields": {
+              "OMEGA": "0.0",
+              "DIM_1": "256",
+              "DIM_2": "256",
+              "DATATYPE": "FloatValue",
+              "BYTEORDER": "LowByteFirst",
+              "IMAGE": "1",
+              "HISTORY-1": "something=something else"
+            },
+            "availability": {
+              "declared_shape": [
+                256,
+                256
+              ],
+              "declared_samples": 65536,
+              "present_samples": [
+                0,
+                65536
+              ],
+              "missing_samples": null,
+              "verified_samples": [
+                0,
+                65536
+              ],
+              "outer_integrity": "ContainerComplete",
+              "payload_integrity": "ContainerComplete",
+              "expected_payload_bytes": 262144,
+              "available_payload_bytes": 262144,
+              "availability": "AllSamples",
+              "payload_members": [],
+              "diagnostic": null,
+              "complete_verified_frame": true,
+              "partial_element_bytes": ""
+            },
+            "payload_window": {
+              "declared_bytes": 262144,
+              "effective_bytes": 262144,
+              "external_policy": null,
+              "source": 0,
+              "offset": 147,
+              "inline_layout_policy": "Declared",
+              "declared_header_bytes": null,
+              "parsed_header_bytes": 147,
+              "legacy_size_bytes": null,
+              "declared_compression": null,
+              "payload_interpretation": "Declared"
+            },
+            "header_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+            "frames": 2
+          },
+          {
+            "frame": 1,
+            "shape": [
+              0
+            ],
+            "dtype": "float32",
+            "sample_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "fields": {
+              "OMEGA": "0.0",
+              "DIM_1": "256",
+              "DIM_2": "256",
+              "DATATYPE": "FloatValue",
+              "BYTEORDER": "LowByteFirst",
+              "IMAGE": "2",
+              "HISTORY-1": "something=something else"
+            },
+            "availability": {
+              "declared_shape": [
+                256,
+                256
+              ],
+              "declared_samples": 65536,
+              "present_samples": [
+                0,
+                0
+              ],
+              "missing_samples": [
+                0,
+                65536
+              ],
+              "verified_samples": [
+                0,
+                0
+              ],
+              "outer_integrity": "ContainerComplete",
+              "payload_integrity": "ContainerComplete",
+              "expected_payload_bytes": 262144,
+              "available_payload_bytes": 0,
+              "availability": "HeadersOnly",
+              "payload_members": [],
+              "diagnostic": null,
+              "complete_verified_frame": false,
+              "partial_element_bytes": ""
+            },
+            "payload_window": {
+              "declared_bytes": 262144,
+              "effective_bytes": 0,
+              "external_policy": null,
+              "source": 0,
+              "offset": 262438,
+              "inline_layout_policy": "Declared",
+              "declared_header_bytes": null,
+              "parsed_header_bytes": 147,
+              "legacy_size_bytes": null,
+              "declared_compression": null,
+              "payload_interpretation": "Declared"
+            },
+            "header_sha256": "d34ad9723dd3ebbf6fb8a061fdea2715cce8cab173e115268d835776d8b86226",
+            "frames": 2
+          }
+        ],
+        "source_report": {
+          "path": "/private/tmp/dioptrin-rejection-sources-20261105/6424036260cd6dfd424d7085d3ad17da434e3f7e7605828037cec241031546cf-fabio.test.codecs.test_edfimage.TestBadFiles.test_full_frame_plus_header_with_no_data.edf",
+          "encoded_bytes": 262438,
+          "decoded_bytes": 262438,
+          "compression": "None",
+          "integrity": "ContainerComplete",
+          "verified_decoded_bytes": 262438,
+          "members": [],
+          "diagnostic": null
+        },
+        "stop": {
+          "kind": "TruncatedPayload",
+          "image_record": 1,
+          "offset": 262438,
+          "expected_bytes": 262144,
+          "available_bytes": 0
+        },
+        "source_sha256": "6424036260cd6dfd424d7085d3ad17da434e3f7e7605828037cec241031546cf"
+      },
+      "differences": [],
+      "proof": {
+        "all_available_words_match_independent_decoder": true,
+        "all_available_words_match_known_pinned_array": true,
+        "all_partial_element_bytes_match": true,
+        "available_samples": 65536,
+        "verified_samples": 65536,
+        "known_missing_samples": 65536,
+        "incomplete_element_bytes": 0,
+        "complete_verified_earlier_frames": 1,
+        "unknown_following_header": false,
+        "missing_values_synthesized": false,
+        "whole_source_count_parity_claimed": false
+      },
+      "source_unchanged_after_proof": true
+    },
+    {
+      "filename": "fabio.test.codecs.test_edfimage.TestBadFiles.test_header_with_half_data.edf",
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_vtdrf8sk_clemens/TestBadFiles/fabio.test.codecs.test_edfimage.TestBadFiles.test_header_with_half_data.edf",
+      "baseline_sha256": "0cb76337d20d80ef0a5ee4a5d1c0355af009a880eba098c0ba88662dc0aab01f",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestBadFiles.test_header_with_half_data"
+      ],
+      "proof_source": "/tmp/dioptrin-rejection-sources-20261105/0cb76337d20d80ef0a5ee4a5d1c0355af009a880eba098c0ba88662dc0aab01f-fabio.test.codecs.test_edfimage.TestBadFiles.test_header_with_half_data.edf",
+      "proof_source_sha256": "0cb76337d20d80ef0a5ee4a5d1c0355af009a880eba098c0ba88662dc0aab01f",
+      "proof_source_bytes": 131219,
+      "exact_baseline_bytes": true,
+      "prior_provenance": "captured_exact_source",
+      "provenance": "captured_exact_source",
+      "mode": "recovery",
+      "native": {
+        "source_recovery": {
+          "format": "edf",
+          "images": [
+            {
+              "availability": {
+                "availability": "Prefix",
+                "available_payload_bytes": 131072,
+                "complete_verified_frame": false,
+                "declared_samples": 65536,
+                "declared_shape": [
+                  256,
+                  256
+                ],
+                "diagnostic": null,
+                "expected_payload_bytes": 262144,
+                "missing_samples": [
+                  32768,
+                  65536
+                ],
+                "outer_integrity": "ContainerComplete",
+                "partial_element_bytes": "",
+                "payload_integrity": "ContainerComplete",
+                "payload_members": [],
+                "present_samples": [
+                  0,
+                  32768
+                ],
+                "verified_samples": [
+                  0,
+                  32768
+                ]
+              },
+              "dtype": "float32",
+              "fields": {
+                "BYTEORDER": "LowByteFirst",
+                "DATATYPE": "FloatValue",
+                "DIM_1": "256",
+                "DIM_2": "256",
+                "HISTORY-1": "something=something else",
+                "IMAGE": "1",
+                "OMEGA": "0.0"
+              },
+              "frame": 0,
+              "frames": 1,
+              "header_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+              "payload_window": {
+                "declared_bytes": 262144,
+                "declared_compression": null,
+                "declared_header_bytes": null,
+                "effective_bytes": 131072,
+                "external_policy": null,
+                "inline_layout_policy": "Declared",
+                "legacy_size_bytes": null,
+                "offset": 147,
+                "parsed_header_bytes": 147,
+                "payload_interpretation": "Declared",
+                "source": 0
+              },
+              "sample_sha256": "c84987c876c7bc651a138cf57e0746a4b36691246450a115f3574545c120ea17",
+              "shape": [
+                32768
+              ]
+            }
+          ],
+          "source_report": {
+            "compression": "None",
+            "decoded_bytes": 131219,
+            "diagnostic": null,
+            "encoded_bytes": 131219,
+            "integrity": "ContainerComplete",
+            "members": [],
+            "path": "/private/tmp/dioptrin-rejection-sources-20261105/0cb76337d20d80ef0a5ee4a5d1c0355af009a880eba098c0ba88662dc0aab01f-fabio.test.codecs.test_edfimage.TestBadFiles.test_header_with_half_data.edf",
+            "verified_decoded_bytes": 131219
+          },
+          "stop": {
+            "available_bytes": 131072,
+            "expected_bytes": 262144,
+            "image_record": 0,
+            "kind": "TruncatedPayload",
+            "offset": 147
+          }
+        }
+      },
+      "independent_reference": {
+        "format": "edf",
+        "images": [
+          {
+            "frame": 0,
+            "shape": [
+              32768
+            ],
+            "dtype": "float32",
+            "sample_sha256": "c84987c876c7bc651a138cf57e0746a4b36691246450a115f3574545c120ea17",
+            "fields": {
+              "OMEGA": "0.0",
+              "DIM_1": "256",
+              "DIM_2": "256",
+              "DATATYPE": "FloatValue",
+              "BYTEORDER": "LowByteFirst",
+              "IMAGE": "1",
+              "HISTORY-1": "something=something else"
+            },
+            "availability": {
+              "declared_shape": [
+                256,
+                256
+              ],
+              "declared_samples": 65536,
+              "present_samples": [
+                0,
+                32768
+              ],
+              "missing_samples": [
+                32768,
+                65536
+              ],
+              "verified_samples": [
+                0,
+                32768
+              ],
+              "outer_integrity": "ContainerComplete",
+              "payload_integrity": "ContainerComplete",
+              "expected_payload_bytes": 262144,
+              "available_payload_bytes": 131072,
+              "availability": "Prefix",
+              "payload_members": [],
+              "diagnostic": null,
+              "complete_verified_frame": false,
+              "partial_element_bytes": ""
+            },
+            "payload_window": {
+              "declared_bytes": 262144,
+              "effective_bytes": 131072,
+              "external_policy": null,
+              "source": 0,
+              "offset": 147,
+              "inline_layout_policy": "Declared",
+              "declared_header_bytes": null,
+              "parsed_header_bytes": 147,
+              "legacy_size_bytes": null,
+              "declared_compression": null,
+              "payload_interpretation": "Declared"
+            },
+            "header_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+            "frames": 1
+          }
+        ],
+        "source_report": {
+          "path": "/private/tmp/dioptrin-rejection-sources-20261105/0cb76337d20d80ef0a5ee4a5d1c0355af009a880eba098c0ba88662dc0aab01f-fabio.test.codecs.test_edfimage.TestBadFiles.test_header_with_half_data.edf",
+          "encoded_bytes": 131219,
+          "decoded_bytes": 131219,
+          "compression": "None",
+          "integrity": "ContainerComplete",
+          "verified_decoded_bytes": 131219,
+          "members": [],
+          "diagnostic": null
+        },
+        "stop": {
+          "kind": "TruncatedPayload",
+          "image_record": 0,
+          "offset": 147,
+          "expected_bytes": 262144,
+          "available_bytes": 131072
+        },
+        "source_sha256": "0cb76337d20d80ef0a5ee4a5d1c0355af009a880eba098c0ba88662dc0aab01f"
+      },
+      "differences": [],
+      "proof": {
+        "all_available_words_match_independent_decoder": true,
+        "all_available_words_match_known_pinned_array": true,
+        "all_partial_element_bytes_match": true,
+        "available_samples": 32768,
+        "verified_samples": 32768,
+        "known_missing_samples": 32768,
+        "incomplete_element_bytes": 0,
+        "complete_verified_earlier_frames": 0,
+        "unknown_following_header": false,
+        "missing_values_synthesized": false,
+        "whole_source_count_parity_claimed": false
+      },
+      "source_unchanged_after_proof": true
+    },
+    {
+      "filename": "fabio.test.codecs.test_edfimage.TestBadFiles.test_header_with_no_data.edf",
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_vtdrf8sk_clemens/TestBadFiles/fabio.test.codecs.test_edfimage.TestBadFiles.test_header_with_no_data.edf",
+      "baseline_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestBadFiles.test_header_with_no_data"
+      ],
+      "proof_source": "/tmp/dioptrin-rejection-sources-20261105/c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9-fabio.test.codecs.test_edfimage.TestBadFiles.test_header_with_no_data.edf",
+      "proof_source_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+      "proof_source_bytes": 147,
+      "exact_baseline_bytes": true,
+      "prior_provenance": "captured_exact_source",
+      "provenance": "captured_exact_source",
+      "mode": "recovery",
+      "native": {
+        "source_recovery": {
+          "format": "edf",
+          "images": [
+            {
+              "availability": {
+                "availability": "HeadersOnly",
+                "available_payload_bytes": 0,
+                "complete_verified_frame": false,
+                "declared_samples": 65536,
+                "declared_shape": [
+                  256,
+                  256
+                ],
+                "diagnostic": null,
+                "expected_payload_bytes": 262144,
+                "missing_samples": [
+                  0,
+                  65536
+                ],
+                "outer_integrity": "ContainerComplete",
+                "partial_element_bytes": "",
+                "payload_integrity": "ContainerComplete",
+                "payload_members": [],
+                "present_samples": [
+                  0,
+                  0
+                ],
+                "verified_samples": [
+                  0,
+                  0
+                ]
+              },
+              "dtype": "float32",
+              "fields": {
+                "BYTEORDER": "LowByteFirst",
+                "DATATYPE": "FloatValue",
+                "DIM_1": "256",
+                "DIM_2": "256",
+                "HISTORY-1": "something=something else",
+                "IMAGE": "1",
+                "OMEGA": "0.0"
+              },
+              "frame": 0,
+              "frames": 1,
+              "header_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+              "payload_window": {
+                "declared_bytes": 262144,
+                "declared_compression": null,
+                "declared_header_bytes": null,
+                "effective_bytes": 0,
+                "external_policy": null,
+                "inline_layout_policy": "Declared",
+                "legacy_size_bytes": null,
+                "offset": 147,
+                "parsed_header_bytes": 147,
+                "payload_interpretation": "Declared",
+                "source": 0
+              },
+              "sample_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "shape": [
+                0
+              ]
+            }
+          ],
+          "source_report": {
+            "compression": "None",
+            "decoded_bytes": 147,
+            "diagnostic": null,
+            "encoded_bytes": 147,
+            "integrity": "ContainerComplete",
+            "members": [],
+            "path": "/private/tmp/dioptrin-rejection-sources-20261105/c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9-fabio.test.codecs.test_edfimage.TestBadFiles.test_header_with_no_data.edf",
+            "verified_decoded_bytes": 147
+          },
+          "stop": {
+            "available_bytes": 0,
+            "expected_bytes": 262144,
+            "image_record": 0,
+            "kind": "TruncatedPayload",
+            "offset": 147
+          }
+        }
+      },
+      "independent_reference": {
+        "format": "edf",
+        "images": [
+          {
+            "frame": 0,
+            "shape": [
+              0
+            ],
+            "dtype": "float32",
+            "sample_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "fields": {
+              "OMEGA": "0.0",
+              "DIM_1": "256",
+              "DIM_2": "256",
+              "DATATYPE": "FloatValue",
+              "BYTEORDER": "LowByteFirst",
+              "IMAGE": "1",
+              "HISTORY-1": "something=something else"
+            },
+            "availability": {
+              "declared_shape": [
+                256,
+                256
+              ],
+              "declared_samples": 65536,
+              "present_samples": [
+                0,
+                0
+              ],
+              "missing_samples": [
+                0,
+                65536
+              ],
+              "verified_samples": [
+                0,
+                0
+              ],
+              "outer_integrity": "ContainerComplete",
+              "payload_integrity": "ContainerComplete",
+              "expected_payload_bytes": 262144,
+              "available_payload_bytes": 0,
+              "availability": "HeadersOnly",
+              "payload_members": [],
+              "diagnostic": null,
+              "complete_verified_frame": false,
+              "partial_element_bytes": ""
+            },
+            "payload_window": {
+              "declared_bytes": 262144,
+              "effective_bytes": 0,
+              "external_policy": null,
+              "source": 0,
+              "offset": 147,
+              "inline_layout_policy": "Declared",
+              "declared_header_bytes": null,
+              "parsed_header_bytes": 147,
+              "legacy_size_bytes": null,
+              "declared_compression": null,
+              "payload_interpretation": "Declared"
+            },
+            "header_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+            "frames": 1
+          }
+        ],
+        "source_report": {
+          "path": "/private/tmp/dioptrin-rejection-sources-20261105/c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9-fabio.test.codecs.test_edfimage.TestBadFiles.test_header_with_no_data.edf",
+          "encoded_bytes": 147,
+          "decoded_bytes": 147,
+          "compression": "None",
+          "integrity": "ContainerComplete",
+          "verified_decoded_bytes": 147,
+          "members": [],
+          "diagnostic": null
+        },
+        "stop": {
+          "kind": "TruncatedPayload",
+          "image_record": 0,
+          "offset": 147,
+          "expected_bytes": 262144,
+          "available_bytes": 0
+        },
+        "source_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9"
+      },
+      "differences": [],
+      "proof": {
+        "all_available_words_match_independent_decoder": true,
+        "all_available_words_match_known_pinned_array": true,
+        "all_partial_element_bytes_match": true,
+        "available_samples": 0,
+        "verified_samples": 0,
+        "known_missing_samples": 65536,
+        "incomplete_element_bytes": 0,
+        "complete_verified_earlier_frames": 0,
+        "unknown_following_header": false,
+        "missing_values_synthesized": false,
+        "whole_source_count_parity_claimed": false
+      },
+      "source_unchanged_after_proof": true
+    },
+    {
+      "filename": "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_half_header.edf.gz",
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_vtdrf8sk_clemens/TestBadGzFiles/fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_half_header.edf.gz",
+      "baseline_sha256": "a2c49993fde7c68fb222753e25f48776d32d4064384defa8003fe18f95dbf5b7",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_half_header"
+      ],
+      "proof_source": "/tmp/dioptrin-rejection-sources-20261105/d8ee2fa5b92f6c2e6913815ee6e2540094c5d2a101dcc379cc466a7042c0b175-fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_half_header.edf.gz",
+      "proof_source_sha256": "d8ee2fa5b92f6c2e6913815ee6e2540094c5d2a101dcc379cc466a7042c0b175",
+      "proof_source_bytes": 522,
+      "exact_baseline_bytes": false,
+      "prior_provenance": "recreated_same_upstream_test",
+      "provenance": "recreated_same_upstream_test",
+      "mode": "recovery",
+      "native": {
+        "source_recovery": {
+          "format": "edf",
+          "images": [
+            {
+              "availability": {
+                "availability": "AllSamples",
+                "available_payload_bytes": 262144,
+                "complete_verified_frame": true,
+                "declared_samples": 65536,
+                "declared_shape": [
+                  256,
+                  256
+                ],
+                "diagnostic": null,
+                "expected_payload_bytes": 262144,
+                "missing_samples": null,
+                "outer_integrity": "VerifiedMember",
+                "partial_element_bytes": "",
+                "payload_integrity": "ContainerComplete",
+                "payload_members": [],
+                "present_samples": [
+                  0,
+                  65536
+                ],
+                "verified_samples": [
+                  0,
+                  65536
+                ]
+              },
+              "dtype": "float32",
+              "fields": {
+                "BYTEORDER": "LowByteFirst",
+                "DATATYPE": "FloatValue",
+                "DIM_1": "256",
+                "DIM_2": "256",
+                "HISTORY-1": "something=something else",
+                "IMAGE": "1",
+                "OMEGA": "0.0"
+              },
+              "frame": 0,
+              "frames": 1,
+              "header_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+              "payload_window": {
+                "declared_bytes": 262144,
+                "declared_compression": null,
+                "declared_header_bytes": null,
+                "effective_bytes": 262144,
+                "external_policy": null,
+                "inline_layout_policy": "Declared",
+                "legacy_size_bytes": null,
+                "offset": 147,
+                "parsed_header_bytes": 147,
+                "payload_interpretation": "Declared",
+                "source": 0
+              },
+              "sample_sha256": "c6e7ed6f00997d21f30c8f9544fc10588db893fd9711b098528ab7a068584c56",
+              "shape": [
+                65536
+              ]
+            }
+          ],
+          "source_report": {
+            "compression": "Gzip",
+            "decoded_bytes": 262359,
+            "diagnostic": "incomplete deflate stream",
+            "encoded_bytes": 522,
+            "integrity": "UnverifiedTruncated",
+            "members": [
+              {
+                "decoded_range": [
+                  0,
+                  147
+                ],
+                "diagnostic": null,
+                "encoded_range": [
+                  0,
+                  142
+                ],
+                "integrity": "VerifiedMember"
+              },
+              {
+                "decoded_range": [
+                  147,
+                  262291
+                ],
+                "diagnostic": null,
+                "encoded_range": [
+                  142,
+                  451
+                ],
+                "integrity": "VerifiedMember"
+              },
+              {
+                "decoded_range": [
+                  262291,
+                  262359
+                ],
+                "diagnostic": "incomplete deflate stream",
+                "encoded_range": [
+                  451,
+                  522
+                ],
+                "integrity": "UnverifiedTruncated"
+              }
+            ],
+            "path": "/private/tmp/dioptrin-rejection-sources-20261105/d8ee2fa5b92f6c2e6913815ee6e2540094c5d2a101dcc379cc466a7042c0b175-fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_half_header.edf.gz",
+            "verified_decoded_bytes": 262291
+          },
+          "stop": {
+            "bytes_hex": "7b0a4f6d656761203d20302e30203b0a44696d5f31203d20323536203b0a44696d5f32203d20323536203b0a4461746154797065203d20466c6f617456616c7565203b0a",
+            "kind": "TruncatedHeader",
+            "offset": 262291,
+            "sha256": "5a5b4b6c49da5943b56512cb8b66b934697b03c2b6353b3d8c242adcc7a9c4fa"
+          }
+        }
+      },
+      "independent_reference": {
+        "format": "edf",
+        "images": [
+          {
+            "frame": 0,
+            "shape": [
+              65536
+            ],
+            "dtype": "float32",
+            "sample_sha256": "c6e7ed6f00997d21f30c8f9544fc10588db893fd9711b098528ab7a068584c56",
+            "fields": {
+              "OMEGA": "0.0",
+              "DIM_1": "256",
+              "DIM_2": "256",
+              "DATATYPE": "FloatValue",
+              "BYTEORDER": "LowByteFirst",
+              "IMAGE": "1",
+              "HISTORY-1": "something=something else"
+            },
+            "availability": {
+              "declared_shape": [
+                256,
+                256
+              ],
+              "declared_samples": 65536,
+              "present_samples": [
+                0,
+                65536
+              ],
+              "missing_samples": null,
+              "verified_samples": [
+                0,
+                65536
+              ],
+              "outer_integrity": "VerifiedMember",
+              "payload_integrity": "ContainerComplete",
+              "expected_payload_bytes": 262144,
+              "available_payload_bytes": 262144,
+              "availability": "AllSamples",
+              "payload_members": [],
+              "diagnostic": null,
+              "complete_verified_frame": true,
+              "partial_element_bytes": ""
+            },
+            "payload_window": {
+              "declared_bytes": 262144,
+              "effective_bytes": 262144,
+              "external_policy": null,
+              "source": 0,
+              "offset": 147,
+              "inline_layout_policy": "Declared",
+              "declared_header_bytes": null,
+              "parsed_header_bytes": 147,
+              "legacy_size_bytes": null,
+              "declared_compression": null,
+              "payload_interpretation": "Declared"
+            },
+            "header_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+            "frames": 1
+          }
+        ],
+        "source_report": {
+          "path": "/private/tmp/dioptrin-rejection-sources-20261105/d8ee2fa5b92f6c2e6913815ee6e2540094c5d2a101dcc379cc466a7042c0b175-fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_half_header.edf.gz",
+          "encoded_bytes": 522,
+          "decoded_bytes": 262359,
+          "compression": "Gzip",
+          "integrity": "UnverifiedTruncated",
+          "verified_decoded_bytes": 262291,
+          "members": [
+            {
+              "encoded_range": [
+                0,
+                142
+              ],
+              "decoded_range": [
+                0,
+                147
+              ],
+              "integrity": "VerifiedMember",
+              "diagnostic": null
+            },
+            {
+              "encoded_range": [
+                142,
+                451
+              ],
+              "decoded_range": [
+                147,
+                262291
+              ],
+              "integrity": "VerifiedMember",
+              "diagnostic": null
+            },
+            {
+              "encoded_range": [
+                451,
+                522
+              ],
+              "decoded_range": [
+                262291,
+                262359
+              ],
+              "integrity": "UnverifiedTruncated",
+              "diagnostic": "incomplete DEFLATE body"
+            }
+          ],
+          "diagnostic": "incomplete DEFLATE body"
+        },
+        "stop": {
+          "kind": "TruncatedHeader",
+          "offset": 262291,
+          "bytes_hex": "7b0a4f6d656761203d20302e30203b0a44696d5f31203d20323536203b0a44696d5f32203d20323536203b0a4461746154797065203d20466c6f617456616c7565203b0a",
+          "sha256": "5a5b4b6c49da5943b56512cb8b66b934697b03c2b6353b3d8c242adcc7a9c4fa"
+        },
+        "source_sha256": "d8ee2fa5b92f6c2e6913815ee6e2540094c5d2a101dcc379cc466a7042c0b175"
+      },
+      "differences": [],
+      "proof": {
+        "all_available_words_match_independent_decoder": true,
+        "all_available_words_match_known_pinned_array": true,
+        "all_partial_element_bytes_match": true,
+        "available_samples": 65536,
+        "verified_samples": 65536,
+        "known_missing_samples": 0,
+        "incomplete_element_bytes": 0,
+        "complete_verified_earlier_frames": 1,
+        "unknown_following_header": true,
+        "missing_values_synthesized": false,
+        "whole_source_count_parity_claimed": false
+      },
+      "source_unchanged_after_proof": true
+    },
+    {
+      "filename": "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_header_with_half_data.edf.gz",
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_vtdrf8sk_clemens/TestBadGzFiles/fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_header_with_half_data.edf.gz",
+      "baseline_sha256": "b661ca7a7f9a9b70bfb670c9413e48576fd059ca2f40f09a6c174e83bb970997",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_header_with_half_data"
+      ],
+      "proof_source": "/tmp/dioptrin-rejection-sources-20261105/ee29afca40db2ca59dbbc09c6c3331352faa8cf302c00e58274d1d9208f87444-fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_header_with_half_data.edf.gz",
+      "proof_source_sha256": "ee29afca40db2ca59dbbc09c6c3331352faa8cf302c00e58274d1d9208f87444",
+      "proof_source_bytes": 747,
+      "exact_baseline_bytes": false,
+      "prior_provenance": "recreated_same_upstream_test",
+      "provenance": "recreated_same_upstream_test",
+      "mode": "recovery",
+      "native": {
+        "source_recovery": {
+          "format": "edf",
+          "images": [
+            {
+              "availability": {
+                "availability": "AllSamples",
+                "available_payload_bytes": 262144,
+                "complete_verified_frame": true,
+                "declared_samples": 65536,
+                "declared_shape": [
+                  256,
+                  256
+                ],
+                "diagnostic": null,
+                "expected_payload_bytes": 262144,
+                "missing_samples": null,
+                "outer_integrity": "VerifiedMember",
+                "partial_element_bytes": "",
+                "payload_integrity": "ContainerComplete",
+                "payload_members": [],
+                "present_samples": [
+                  0,
+                  65536
+                ],
+                "verified_samples": [
+                  0,
+                  65536
+                ]
+              },
+              "dtype": "float32",
+              "fields": {
+                "BYTEORDER": "LowByteFirst",
+                "DATATYPE": "FloatValue",
+                "DIM_1": "256",
+                "DIM_2": "256",
+                "HISTORY-1": "something=something else",
+                "IMAGE": "1",
+                "OMEGA": "0.0"
+              },
+              "frame": 0,
+              "frames": 2,
+              "header_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+              "payload_window": {
+                "declared_bytes": 262144,
+                "declared_compression": null,
+                "declared_header_bytes": null,
+                "effective_bytes": 262144,
+                "external_policy": null,
+                "inline_layout_policy": "Declared",
+                "legacy_size_bytes": null,
+                "offset": 147,
+                "parsed_header_bytes": 147,
+                "payload_interpretation": "Declared",
+                "source": 0
+              },
+              "sample_sha256": "c6e7ed6f00997d21f30c8f9544fc10588db893fd9711b098528ab7a068584c56",
+              "shape": [
+                65536
+              ]
+            },
+            {
+              "availability": {
+                "availability": "Prefix",
+                "available_payload_bytes": 112229,
+                "complete_verified_frame": false,
+                "declared_samples": 65536,
+                "declared_shape": [
+                  256,
+                  256
+                ],
+                "diagnostic": null,
+                "expected_payload_bytes": 262144,
+                "missing_samples": [
+                  28057,
+                  65536
+                ],
+                "outer_integrity": "UnverifiedTruncated",
+                "partial_element_bytes": "00",
+                "payload_integrity": "ContainerComplete",
+                "payload_members": [],
+                "present_samples": [
+                  0,
+                  28057
+                ],
+                "verified_samples": [
+                  0,
+                  0
+                ]
+              },
+              "dtype": "float32",
+              "fields": {
+                "BYTEORDER": "LowByteFirst",
+                "DATATYPE": "FloatValue",
+                "DIM_1": "256",
+                "DIM_2": "256",
+                "HISTORY-1": "something=something else",
+                "IMAGE": "2",
+                "OMEGA": "0.0"
+              },
+              "frame": 1,
+              "frames": 2,
+              "header_sha256": "d34ad9723dd3ebbf6fb8a061fdea2715cce8cab173e115268d835776d8b86226",
+              "payload_window": {
+                "declared_bytes": 262144,
+                "declared_compression": null,
+                "declared_header_bytes": null,
+                "effective_bytes": 112229,
+                "external_policy": null,
+                "inline_layout_policy": "Declared",
+                "legacy_size_bytes": null,
+                "offset": 262438,
+                "parsed_header_bytes": 147,
+                "payload_interpretation": "Declared",
+                "source": 0
+              },
+              "sample_sha256": "4a622d80233886cc147fd838ce1296e4199dd509c0ae374a2a7cae243f626ed0",
+              "shape": [
+                28057
+              ]
+            }
+          ],
+          "source_report": {
+            "compression": "Gzip",
+            "decoded_bytes": 374667,
+            "diagnostic": "incomplete deflate stream",
+            "encoded_bytes": 747,
+            "integrity": "UnverifiedTruncated",
+            "members": [
+              {
+                "decoded_range": [
+                  0,
+                  147
+                ],
+                "diagnostic": null,
+                "encoded_range": [
+                  0,
+                  142
+                ],
+                "integrity": "VerifiedMember"
+              },
+              {
+                "decoded_range": [
+                  147,
+                  262291
+                ],
+                "diagnostic": null,
+                "encoded_range": [
+                  142,
+                  451
+                ],
+                "integrity": "VerifiedMember"
+              },
+              {
+                "decoded_range": [
+                  262291,
+                  262438
+                ],
+                "diagnostic": null,
+                "encoded_range": [
+                  451,
+                  593
+                ],
+                "integrity": "VerifiedMember"
+              },
+              {
+                "decoded_range": [
+                  262438,
+                  374667
+                ],
+                "diagnostic": "incomplete deflate stream",
+                "encoded_range": [
+                  593,
+                  747
+                ],
+                "integrity": "UnverifiedTruncated"
+              }
+            ],
+            "path": "/private/tmp/dioptrin-rejection-sources-20261105/ee29afca40db2ca59dbbc09c6c3331352faa8cf302c00e58274d1d9208f87444-fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_header_with_half_data.edf.gz",
+            "verified_decoded_bytes": 262438
+          },
+          "stop": {
+            "available_bytes": 112229,
+            "expected_bytes": 262144,
+            "image_record": 1,
+            "kind": "TruncatedPayload",
+            "offset": 262438
+          }
+        }
+      },
+      "independent_reference": {
+        "format": "edf",
+        "images": [
+          {
+            "frame": 0,
+            "shape": [
+              65536
+            ],
+            "dtype": "float32",
+            "sample_sha256": "c6e7ed6f00997d21f30c8f9544fc10588db893fd9711b098528ab7a068584c56",
+            "fields": {
+              "OMEGA": "0.0",
+              "DIM_1": "256",
+              "DIM_2": "256",
+              "DATATYPE": "FloatValue",
+              "BYTEORDER": "LowByteFirst",
+              "IMAGE": "1",
+              "HISTORY-1": "something=something else"
+            },
+            "availability": {
+              "declared_shape": [
+                256,
+                256
+              ],
+              "declared_samples": 65536,
+              "present_samples": [
+                0,
+                65536
+              ],
+              "missing_samples": null,
+              "verified_samples": [
+                0,
+                65536
+              ],
+              "outer_integrity": "VerifiedMember",
+              "payload_integrity": "ContainerComplete",
+              "expected_payload_bytes": 262144,
+              "available_payload_bytes": 262144,
+              "availability": "AllSamples",
+              "payload_members": [],
+              "diagnostic": null,
+              "complete_verified_frame": true,
+              "partial_element_bytes": ""
+            },
+            "payload_window": {
+              "declared_bytes": 262144,
+              "effective_bytes": 262144,
+              "external_policy": null,
+              "source": 0,
+              "offset": 147,
+              "inline_layout_policy": "Declared",
+              "declared_header_bytes": null,
+              "parsed_header_bytes": 147,
+              "legacy_size_bytes": null,
+              "declared_compression": null,
+              "payload_interpretation": "Declared"
+            },
+            "header_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+            "frames": 2
+          },
+          {
+            "frame": 1,
+            "shape": [
+              28057
+            ],
+            "dtype": "float32",
+            "sample_sha256": "4a622d80233886cc147fd838ce1296e4199dd509c0ae374a2a7cae243f626ed0",
+            "fields": {
+              "OMEGA": "0.0",
+              "DIM_1": "256",
+              "DIM_2": "256",
+              "DATATYPE": "FloatValue",
+              "BYTEORDER": "LowByteFirst",
+              "IMAGE": "2",
+              "HISTORY-1": "something=something else"
+            },
+            "availability": {
+              "declared_shape": [
+                256,
+                256
+              ],
+              "declared_samples": 65536,
+              "present_samples": [
+                0,
+                28057
+              ],
+              "missing_samples": [
+                28057,
+                65536
+              ],
+              "verified_samples": [
+                0,
+                0
+              ],
+              "outer_integrity": "UnverifiedTruncated",
+              "payload_integrity": "ContainerComplete",
+              "expected_payload_bytes": 262144,
+              "available_payload_bytes": 112229,
+              "availability": "Prefix",
+              "payload_members": [],
+              "diagnostic": null,
+              "complete_verified_frame": false,
+              "partial_element_bytes": "00"
+            },
+            "payload_window": {
+              "declared_bytes": 262144,
+              "effective_bytes": 112229,
+              "external_policy": null,
+              "source": 0,
+              "offset": 262438,
+              "inline_layout_policy": "Declared",
+              "declared_header_bytes": null,
+              "parsed_header_bytes": 147,
+              "legacy_size_bytes": null,
+              "declared_compression": null,
+              "payload_interpretation": "Declared"
+            },
+            "header_sha256": "d34ad9723dd3ebbf6fb8a061fdea2715cce8cab173e115268d835776d8b86226",
+            "frames": 2
+          }
+        ],
+        "source_report": {
+          "path": "/private/tmp/dioptrin-rejection-sources-20261105/ee29afca40db2ca59dbbc09c6c3331352faa8cf302c00e58274d1d9208f87444-fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_header_with_half_data.edf.gz",
+          "encoded_bytes": 747,
+          "decoded_bytes": 374667,
+          "compression": "Gzip",
+          "integrity": "UnverifiedTruncated",
+          "verified_decoded_bytes": 262438,
+          "members": [
+            {
+              "encoded_range": [
+                0,
+                142
+              ],
+              "decoded_range": [
+                0,
+                147
+              ],
+              "integrity": "VerifiedMember",
+              "diagnostic": null
+            },
+            {
+              "encoded_range": [
+                142,
+                451
+              ],
+              "decoded_range": [
+                147,
+                262291
+              ],
+              "integrity": "VerifiedMember",
+              "diagnostic": null
+            },
+            {
+              "encoded_range": [
+                451,
+                593
+              ],
+              "decoded_range": [
+                262291,
+                262438
+              ],
+              "integrity": "VerifiedMember",
+              "diagnostic": null
+            },
+            {
+              "encoded_range": [
+                593,
+                747
+              ],
+              "decoded_range": [
+                262438,
+                374667
+              ],
+              "integrity": "UnverifiedTruncated",
+              "diagnostic": "incomplete DEFLATE body"
+            }
+          ],
+          "diagnostic": "incomplete DEFLATE body"
+        },
+        "stop": {
+          "kind": "TruncatedPayload",
+          "image_record": 1,
+          "offset": 262438,
+          "expected_bytes": 262144,
+          "available_bytes": 112229
+        },
+        "source_sha256": "ee29afca40db2ca59dbbc09c6c3331352faa8cf302c00e58274d1d9208f87444"
+      },
+      "differences": [],
+      "proof": {
+        "all_available_words_match_independent_decoder": true,
+        "all_available_words_match_known_pinned_array": true,
+        "all_partial_element_bytes_match": true,
+        "available_samples": 93593,
+        "verified_samples": 65536,
+        "known_missing_samples": 37479,
+        "incomplete_element_bytes": 1,
+        "complete_verified_earlier_frames": 1,
+        "unknown_following_header": false,
+        "missing_values_synthesized": false,
+        "whole_source_count_parity_claimed": false
+      },
+      "source_unchanged_after_proof": true
+    },
+    {
+      "filename": "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_header_with_no_data.edf.gz",
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_vtdrf8sk_clemens/TestBadGzFiles/fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_header_with_no_data.edf.gz",
+      "baseline_sha256": "a43d3f714c78e1b464244c2cd7315f49e6997b59efd6fa824fd05ee987b1c68a",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_header_with_no_data"
+      ],
+      "proof_source": "/tmp/dioptrin-rejection-sources-20261105/44df9440058aa80652548df2d9347e0e95689be7aa887198381806f8693eeaf4-fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_header_with_no_data.edf.gz",
+      "proof_source_sha256": "44df9440058aa80652548df2d9347e0e95689be7aa887198381806f8693eeaf4",
+      "proof_source_bytes": 593,
+      "exact_baseline_bytes": false,
+      "prior_provenance": "recreated_same_upstream_test",
+      "provenance": "recreated_same_upstream_test",
+      "mode": "recovery",
+      "native": {
+        "source_recovery": {
+          "format": "edf",
+          "images": [
+            {
+              "availability": {
+                "availability": "AllSamples",
+                "available_payload_bytes": 262144,
+                "complete_verified_frame": true,
+                "declared_samples": 65536,
+                "declared_shape": [
+                  256,
+                  256
+                ],
+                "diagnostic": null,
+                "expected_payload_bytes": 262144,
+                "missing_samples": null,
+                "outer_integrity": "ContainerComplete",
+                "partial_element_bytes": "",
+                "payload_integrity": "ContainerComplete",
+                "payload_members": [],
+                "present_samples": [
+                  0,
+                  65536
+                ],
+                "verified_samples": [
+                  0,
+                  65536
+                ]
+              },
+              "dtype": "float32",
+              "fields": {
+                "BYTEORDER": "LowByteFirst",
+                "DATATYPE": "FloatValue",
+                "DIM_1": "256",
+                "DIM_2": "256",
+                "HISTORY-1": "something=something else",
+                "IMAGE": "1",
+                "OMEGA": "0.0"
+              },
+              "frame": 0,
+              "frames": 2,
+              "header_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+              "payload_window": {
+                "declared_bytes": 262144,
+                "declared_compression": null,
+                "declared_header_bytes": null,
+                "effective_bytes": 262144,
+                "external_policy": null,
+                "inline_layout_policy": "Declared",
+                "legacy_size_bytes": null,
+                "offset": 147,
+                "parsed_header_bytes": 147,
+                "payload_interpretation": "Declared",
+                "source": 0
+              },
+              "sample_sha256": "c6e7ed6f00997d21f30c8f9544fc10588db893fd9711b098528ab7a068584c56",
+              "shape": [
+                65536
+              ]
+            },
+            {
+              "availability": {
+                "availability": "HeadersOnly",
+                "available_payload_bytes": 0,
+                "complete_verified_frame": false,
+                "declared_samples": 65536,
+                "declared_shape": [
+                  256,
+                  256
+                ],
+                "diagnostic": null,
+                "expected_payload_bytes": 262144,
+                "missing_samples": [
+                  0,
+                  65536
+                ],
+                "outer_integrity": "ContainerComplete",
+                "partial_element_bytes": "",
+                "payload_integrity": "ContainerComplete",
+                "payload_members": [],
+                "present_samples": [
+                  0,
+                  0
+                ],
+                "verified_samples": [
+                  0,
+                  0
+                ]
+              },
+              "dtype": "float32",
+              "fields": {
+                "BYTEORDER": "LowByteFirst",
+                "DATATYPE": "FloatValue",
+                "DIM_1": "256",
+                "DIM_2": "256",
+                "HISTORY-1": "something=something else",
+                "IMAGE": "2",
+                "OMEGA": "0.0"
+              },
+              "frame": 1,
+              "frames": 2,
+              "header_sha256": "d34ad9723dd3ebbf6fb8a061fdea2715cce8cab173e115268d835776d8b86226",
+              "payload_window": {
+                "declared_bytes": 262144,
+                "declared_compression": null,
+                "declared_header_bytes": null,
+                "effective_bytes": 0,
+                "external_policy": null,
+                "inline_layout_policy": "Declared",
+                "legacy_size_bytes": null,
+                "offset": 262438,
+                "parsed_header_bytes": 147,
+                "payload_interpretation": "Declared",
+                "source": 0
+              },
+              "sample_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "shape": [
+                0
+              ]
+            }
+          ],
+          "source_report": {
+            "compression": "Gzip",
+            "decoded_bytes": 262438,
+            "diagnostic": null,
+            "encoded_bytes": 593,
+            "integrity": "ContainerComplete",
+            "members": [
+              {
+                "decoded_range": [
+                  0,
+                  147
+                ],
+                "diagnostic": null,
+                "encoded_range": [
+                  0,
+                  142
+                ],
+                "integrity": "VerifiedMember"
+              },
+              {
+                "decoded_range": [
+                  147,
+                  262291
+                ],
+                "diagnostic": null,
+                "encoded_range": [
+                  142,
+                  451
+                ],
+                "integrity": "VerifiedMember"
+              },
+              {
+                "decoded_range": [
+                  262291,
+                  262438
+                ],
+                "diagnostic": null,
+                "encoded_range": [
+                  451,
+                  593
+                ],
+                "integrity": "VerifiedMember"
+              }
+            ],
+            "path": "/private/tmp/dioptrin-rejection-sources-20261105/44df9440058aa80652548df2d9347e0e95689be7aa887198381806f8693eeaf4-fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_header_with_no_data.edf.gz",
+            "verified_decoded_bytes": 262438
+          },
+          "stop": {
+            "available_bytes": 0,
+            "expected_bytes": 262144,
+            "image_record": 1,
+            "kind": "TruncatedPayload",
+            "offset": 262438
+          }
+        }
+      },
+      "independent_reference": {
+        "format": "edf",
+        "images": [
+          {
+            "frame": 0,
+            "shape": [
+              65536
+            ],
+            "dtype": "float32",
+            "sample_sha256": "c6e7ed6f00997d21f30c8f9544fc10588db893fd9711b098528ab7a068584c56",
+            "fields": {
+              "OMEGA": "0.0",
+              "DIM_1": "256",
+              "DIM_2": "256",
+              "DATATYPE": "FloatValue",
+              "BYTEORDER": "LowByteFirst",
+              "IMAGE": "1",
+              "HISTORY-1": "something=something else"
+            },
+            "availability": {
+              "declared_shape": [
+                256,
+                256
+              ],
+              "declared_samples": 65536,
+              "present_samples": [
+                0,
+                65536
+              ],
+              "missing_samples": null,
+              "verified_samples": [
+                0,
+                65536
+              ],
+              "outer_integrity": "ContainerComplete",
+              "payload_integrity": "ContainerComplete",
+              "expected_payload_bytes": 262144,
+              "available_payload_bytes": 262144,
+              "availability": "AllSamples",
+              "payload_members": [],
+              "diagnostic": null,
+              "complete_verified_frame": true,
+              "partial_element_bytes": ""
+            },
+            "payload_window": {
+              "declared_bytes": 262144,
+              "effective_bytes": 262144,
+              "external_policy": null,
+              "source": 0,
+              "offset": 147,
+              "inline_layout_policy": "Declared",
+              "declared_header_bytes": null,
+              "parsed_header_bytes": 147,
+              "legacy_size_bytes": null,
+              "declared_compression": null,
+              "payload_interpretation": "Declared"
+            },
+            "header_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+            "frames": 2
+          },
+          {
+            "frame": 1,
+            "shape": [
+              0
+            ],
+            "dtype": "float32",
+            "sample_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "fields": {
+              "OMEGA": "0.0",
+              "DIM_1": "256",
+              "DIM_2": "256",
+              "DATATYPE": "FloatValue",
+              "BYTEORDER": "LowByteFirst",
+              "IMAGE": "2",
+              "HISTORY-1": "something=something else"
+            },
+            "availability": {
+              "declared_shape": [
+                256,
+                256
+              ],
+              "declared_samples": 65536,
+              "present_samples": [
+                0,
+                0
+              ],
+              "missing_samples": [
+                0,
+                65536
+              ],
+              "verified_samples": [
+                0,
+                0
+              ],
+              "outer_integrity": "ContainerComplete",
+              "payload_integrity": "ContainerComplete",
+              "expected_payload_bytes": 262144,
+              "available_payload_bytes": 0,
+              "availability": "HeadersOnly",
+              "payload_members": [],
+              "diagnostic": null,
+              "complete_verified_frame": false,
+              "partial_element_bytes": ""
+            },
+            "payload_window": {
+              "declared_bytes": 262144,
+              "effective_bytes": 0,
+              "external_policy": null,
+              "source": 0,
+              "offset": 262438,
+              "inline_layout_policy": "Declared",
+              "declared_header_bytes": null,
+              "parsed_header_bytes": 147,
+              "legacy_size_bytes": null,
+              "declared_compression": null,
+              "payload_interpretation": "Declared"
+            },
+            "header_sha256": "d34ad9723dd3ebbf6fb8a061fdea2715cce8cab173e115268d835776d8b86226",
+            "frames": 2
+          }
+        ],
+        "source_report": {
+          "path": "/private/tmp/dioptrin-rejection-sources-20261105/44df9440058aa80652548df2d9347e0e95689be7aa887198381806f8693eeaf4-fabio.test.codecs.test_edfimage.TestBadGzFiles.test_full_frame_plus_header_with_no_data.edf.gz",
+          "encoded_bytes": 593,
+          "decoded_bytes": 262438,
+          "compression": "Gzip",
+          "integrity": "ContainerComplete",
+          "verified_decoded_bytes": 262438,
+          "members": [
+            {
+              "encoded_range": [
+                0,
+                142
+              ],
+              "decoded_range": [
+                0,
+                147
+              ],
+              "integrity": "VerifiedMember",
+              "diagnostic": null
+            },
+            {
+              "encoded_range": [
+                142,
+                451
+              ],
+              "decoded_range": [
+                147,
+                262291
+              ],
+              "integrity": "VerifiedMember",
+              "diagnostic": null
+            },
+            {
+              "encoded_range": [
+                451,
+                593
+              ],
+              "decoded_range": [
+                262291,
+                262438
+              ],
+              "integrity": "VerifiedMember",
+              "diagnostic": null
+            }
+          ],
+          "diagnostic": null
+        },
+        "stop": {
+          "kind": "TruncatedPayload",
+          "image_record": 1,
+          "offset": 262438,
+          "expected_bytes": 262144,
+          "available_bytes": 0
+        },
+        "source_sha256": "44df9440058aa80652548df2d9347e0e95689be7aa887198381806f8693eeaf4"
+      },
+      "differences": [],
+      "proof": {
+        "all_available_words_match_independent_decoder": true,
+        "all_available_words_match_known_pinned_array": true,
+        "all_partial_element_bytes_match": true,
+        "available_samples": 65536,
+        "verified_samples": 65536,
+        "known_missing_samples": 65536,
+        "incomplete_element_bytes": 0,
+        "complete_verified_earlier_frames": 1,
+        "unknown_following_header": false,
+        "missing_values_synthesized": false,
+        "whole_source_count_parity_claimed": false
+      },
+      "source_unchanged_after_proof": true
+    },
+    {
+      "filename": "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_header_with_half_data.edf.gz",
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_vtdrf8sk_clemens/TestBadGzFiles/fabio.test.codecs.test_edfimage.TestBadGzFiles.test_header_with_half_data.edf.gz",
+      "baseline_sha256": "81a4f7540535d4d7503cf00303e053da24fe9cd0e2e32d22334a4473566c856f",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_header_with_half_data"
+      ],
+      "proof_source": "/tmp/dioptrin-rejection-sources-20261105/985fdce3de8e101d40104e7e4a502ece450423c1cd180b47a2e0ccc76d078c4b-fabio.test.codecs.test_edfimage.TestBadGzFiles.test_header_with_half_data.edf.gz",
+      "proof_source_sha256": "985fdce3de8e101d40104e7e4a502ece450423c1cd180b47a2e0ccc76d078c4b",
+      "proof_source_bytes": 296,
+      "exact_baseline_bytes": false,
+      "prior_provenance": "recreated_same_upstream_test",
+      "provenance": "recreated_same_upstream_test",
+      "mode": "recovery",
+      "native": {
+        "source_recovery": {
+          "format": "edf",
+          "images": [
+            {
+              "availability": {
+                "availability": "Prefix",
+                "available_payload_bytes": 112229,
+                "complete_verified_frame": false,
+                "declared_samples": 65536,
+                "declared_shape": [
+                  256,
+                  256
+                ],
+                "diagnostic": null,
+                "expected_payload_bytes": 262144,
+                "missing_samples": [
+                  28057,
+                  65536
+                ],
+                "outer_integrity": "UnverifiedTruncated",
+                "partial_element_bytes": "00",
+                "payload_integrity": "ContainerComplete",
+                "payload_members": [],
+                "present_samples": [
+                  0,
+                  28057
+                ],
+                "verified_samples": [
+                  0,
+                  0
+                ]
+              },
+              "dtype": "float32",
+              "fields": {
+                "BYTEORDER": "LowByteFirst",
+                "DATATYPE": "FloatValue",
+                "DIM_1": "256",
+                "DIM_2": "256",
+                "HISTORY-1": "something=something else",
+                "IMAGE": "1",
+                "OMEGA": "0.0"
+              },
+              "frame": 0,
+              "frames": 1,
+              "header_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+              "payload_window": {
+                "declared_bytes": 262144,
+                "declared_compression": null,
+                "declared_header_bytes": null,
+                "effective_bytes": 112229,
+                "external_policy": null,
+                "inline_layout_policy": "Declared",
+                "legacy_size_bytes": null,
+                "offset": 147,
+                "parsed_header_bytes": 147,
+                "payload_interpretation": "Declared",
+                "source": 0
+              },
+              "sample_sha256": "4a622d80233886cc147fd838ce1296e4199dd509c0ae374a2a7cae243f626ed0",
+              "shape": [
+                28057
+              ]
+            }
+          ],
+          "source_report": {
+            "compression": "Gzip",
+            "decoded_bytes": 112376,
+            "diagnostic": "incomplete deflate stream",
+            "encoded_bytes": 296,
+            "integrity": "UnverifiedTruncated",
+            "members": [
+              {
+                "decoded_range": [
+                  0,
+                  147
+                ],
+                "diagnostic": null,
+                "encoded_range": [
+                  0,
+                  142
+                ],
+                "integrity": "VerifiedMember"
+              },
+              {
+                "decoded_range": [
+                  147,
+                  112376
+                ],
+                "diagnostic": "incomplete deflate stream",
+                "encoded_range": [
+                  142,
+                  296
+                ],
+                "integrity": "UnverifiedTruncated"
+              }
+            ],
+            "path": "/private/tmp/dioptrin-rejection-sources-20261105/985fdce3de8e101d40104e7e4a502ece450423c1cd180b47a2e0ccc76d078c4b-fabio.test.codecs.test_edfimage.TestBadGzFiles.test_header_with_half_data.edf.gz",
+            "verified_decoded_bytes": 147
+          },
+          "stop": {
+            "available_bytes": 112229,
+            "expected_bytes": 262144,
+            "image_record": 0,
+            "kind": "TruncatedPayload",
+            "offset": 147
+          }
+        }
+      },
+      "independent_reference": {
+        "format": "edf",
+        "images": [
+          {
+            "frame": 0,
+            "shape": [
+              28057
+            ],
+            "dtype": "float32",
+            "sample_sha256": "4a622d80233886cc147fd838ce1296e4199dd509c0ae374a2a7cae243f626ed0",
+            "fields": {
+              "OMEGA": "0.0",
+              "DIM_1": "256",
+              "DIM_2": "256",
+              "DATATYPE": "FloatValue",
+              "BYTEORDER": "LowByteFirst",
+              "IMAGE": "1",
+              "HISTORY-1": "something=something else"
+            },
+            "availability": {
+              "declared_shape": [
+                256,
+                256
+              ],
+              "declared_samples": 65536,
+              "present_samples": [
+                0,
+                28057
+              ],
+              "missing_samples": [
+                28057,
+                65536
+              ],
+              "verified_samples": [
+                0,
+                0
+              ],
+              "outer_integrity": "UnverifiedTruncated",
+              "payload_integrity": "ContainerComplete",
+              "expected_payload_bytes": 262144,
+              "available_payload_bytes": 112229,
+              "availability": "Prefix",
+              "payload_members": [],
+              "diagnostic": null,
+              "complete_verified_frame": false,
+              "partial_element_bytes": "00"
+            },
+            "payload_window": {
+              "declared_bytes": 262144,
+              "effective_bytes": 112229,
+              "external_policy": null,
+              "source": 0,
+              "offset": 147,
+              "inline_layout_policy": "Declared",
+              "declared_header_bytes": null,
+              "parsed_header_bytes": 147,
+              "legacy_size_bytes": null,
+              "declared_compression": null,
+              "payload_interpretation": "Declared"
+            },
+            "header_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+            "frames": 1
+          }
+        ],
+        "source_report": {
+          "path": "/private/tmp/dioptrin-rejection-sources-20261105/985fdce3de8e101d40104e7e4a502ece450423c1cd180b47a2e0ccc76d078c4b-fabio.test.codecs.test_edfimage.TestBadGzFiles.test_header_with_half_data.edf.gz",
+          "encoded_bytes": 296,
+          "decoded_bytes": 112376,
+          "compression": "Gzip",
+          "integrity": "UnverifiedTruncated",
+          "verified_decoded_bytes": 147,
+          "members": [
+            {
+              "encoded_range": [
+                0,
+                142
+              ],
+              "decoded_range": [
+                0,
+                147
+              ],
+              "integrity": "VerifiedMember",
+              "diagnostic": null
+            },
+            {
+              "encoded_range": [
+                142,
+                296
+              ],
+              "decoded_range": [
+                147,
+                112376
+              ],
+              "integrity": "UnverifiedTruncated",
+              "diagnostic": "incomplete DEFLATE body"
+            }
+          ],
+          "diagnostic": "incomplete DEFLATE body"
+        },
+        "stop": {
+          "kind": "TruncatedPayload",
+          "image_record": 0,
+          "offset": 147,
+          "expected_bytes": 262144,
+          "available_bytes": 112229
+        },
+        "source_sha256": "985fdce3de8e101d40104e7e4a502ece450423c1cd180b47a2e0ccc76d078c4b"
+      },
+      "differences": [],
+      "proof": {
+        "all_available_words_match_independent_decoder": true,
+        "all_available_words_match_known_pinned_array": true,
+        "all_partial_element_bytes_match": true,
+        "available_samples": 28057,
+        "verified_samples": 0,
+        "known_missing_samples": 37479,
+        "incomplete_element_bytes": 1,
+        "complete_verified_earlier_frames": 0,
+        "unknown_following_header": false,
+        "missing_values_synthesized": false,
+        "whole_source_count_parity_claimed": false
+      },
+      "source_unchanged_after_proof": true
+    },
+    {
+      "filename": "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_header_with_no_data.edf.gz",
+      "source": "/var/folders/bl/8tn2xdfx7l9_rty91f3_bkz40000gn/T/fabio_vtdrf8sk_clemens/TestBadGzFiles/fabio.test.codecs.test_edfimage.TestBadGzFiles.test_header_with_no_data.edf.gz",
+      "baseline_sha256": "0efa834491c81d4ffbba79c08a30c0d4ae5bc303da8620c7f8abe4e276b94352",
+      "baseline_event_count": 1,
+      "baseline_tests": [
+        "fabio.test.codecs.test_edfimage.TestBadGzFiles.test_header_with_no_data"
+      ],
+      "proof_source": "/tmp/dioptrin-rejection-sources-20261105/b41e336704653983e8379d073cb91914bda685fa4afd91be56c1713c8ba1eafd-fabio.test.codecs.test_edfimage.TestBadGzFiles.test_header_with_no_data.edf.gz",
+      "proof_source_sha256": "b41e336704653983e8379d073cb91914bda685fa4afd91be56c1713c8ba1eafd",
+      "proof_source_bytes": 142,
+      "exact_baseline_bytes": false,
+      "prior_provenance": "recreated_same_upstream_test",
+      "provenance": "recreated_same_upstream_test",
+      "mode": "recovery",
+      "native": {
+        "source_recovery": {
+          "format": "edf",
+          "images": [
+            {
+              "availability": {
+                "availability": "HeadersOnly",
+                "available_payload_bytes": 0,
+                "complete_verified_frame": false,
+                "declared_samples": 65536,
+                "declared_shape": [
+                  256,
+                  256
+                ],
+                "diagnostic": null,
+                "expected_payload_bytes": 262144,
+                "missing_samples": [
+                  0,
+                  65536
+                ],
+                "outer_integrity": "ContainerComplete",
+                "partial_element_bytes": "",
+                "payload_integrity": "ContainerComplete",
+                "payload_members": [],
+                "present_samples": [
+                  0,
+                  0
+                ],
+                "verified_samples": [
+                  0,
+                  0
+                ]
+              },
+              "dtype": "float32",
+              "fields": {
+                "BYTEORDER": "LowByteFirst",
+                "DATATYPE": "FloatValue",
+                "DIM_1": "256",
+                "DIM_2": "256",
+                "HISTORY-1": "something=something else",
+                "IMAGE": "1",
+                "OMEGA": "0.0"
+              },
+              "frame": 0,
+              "frames": 1,
+              "header_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+              "payload_window": {
+                "declared_bytes": 262144,
+                "declared_compression": null,
+                "declared_header_bytes": null,
+                "effective_bytes": 0,
+                "external_policy": null,
+                "inline_layout_policy": "Declared",
+                "legacy_size_bytes": null,
+                "offset": 147,
+                "parsed_header_bytes": 147,
+                "payload_interpretation": "Declared",
+                "source": 0
+              },
+              "sample_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "shape": [
+                0
+              ]
+            }
+          ],
+          "source_report": {
+            "compression": "Gzip",
+            "decoded_bytes": 147,
+            "diagnostic": null,
+            "encoded_bytes": 142,
+            "integrity": "ContainerComplete",
+            "members": [
+              {
+                "decoded_range": [
+                  0,
+                  147
+                ],
+                "diagnostic": null,
+                "encoded_range": [
+                  0,
+                  142
+                ],
+                "integrity": "VerifiedMember"
+              }
+            ],
+            "path": "/private/tmp/dioptrin-rejection-sources-20261105/b41e336704653983e8379d073cb91914bda685fa4afd91be56c1713c8ba1eafd-fabio.test.codecs.test_edfimage.TestBadGzFiles.test_header_with_no_data.edf.gz",
+            "verified_decoded_bytes": 147
+          },
+          "stop": {
+            "available_bytes": 0,
+            "expected_bytes": 262144,
+            "image_record": 0,
+            "kind": "TruncatedPayload",
+            "offset": 147
+          }
+        }
+      },
+      "independent_reference": {
+        "format": "edf",
+        "images": [
+          {
+            "frame": 0,
+            "shape": [
+              0
+            ],
+            "dtype": "float32",
+            "sample_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "fields": {
+              "OMEGA": "0.0",
+              "DIM_1": "256",
+              "DIM_2": "256",
+              "DATATYPE": "FloatValue",
+              "BYTEORDER": "LowByteFirst",
+              "IMAGE": "1",
+              "HISTORY-1": "something=something else"
+            },
+            "availability": {
+              "declared_shape": [
+                256,
+                256
+              ],
+              "declared_samples": 65536,
+              "present_samples": [
+                0,
+                0
+              ],
+              "missing_samples": [
+                0,
+                65536
+              ],
+              "verified_samples": [
+                0,
+                0
+              ],
+              "outer_integrity": "ContainerComplete",
+              "payload_integrity": "ContainerComplete",
+              "expected_payload_bytes": 262144,
+              "available_payload_bytes": 0,
+              "availability": "HeadersOnly",
+              "payload_members": [],
+              "diagnostic": null,
+              "complete_verified_frame": false,
+              "partial_element_bytes": ""
+            },
+            "payload_window": {
+              "declared_bytes": 262144,
+              "effective_bytes": 0,
+              "external_policy": null,
+              "source": 0,
+              "offset": 147,
+              "inline_layout_policy": "Declared",
+              "declared_header_bytes": null,
+              "parsed_header_bytes": 147,
+              "legacy_size_bytes": null,
+              "declared_compression": null,
+              "payload_interpretation": "Declared"
+            },
+            "header_sha256": "c7497ab70002e6604fa03add162dbe5d1f693302a9e136399afdb75dbcabe9d9",
+            "frames": 1
+          }
+        ],
+        "source_report": {
+          "path": "/private/tmp/dioptrin-rejection-sources-20261105/b41e336704653983e8379d073cb91914bda685fa4afd91be56c1713c8ba1eafd-fabio.test.codecs.test_edfimage.TestBadGzFiles.test_header_with_no_data.edf.gz",
+          "encoded_bytes": 142,
+          "decoded_bytes": 147,
+          "compression": "Gzip",
+          "integrity": "ContainerComplete",
+          "verified_decoded_bytes": 147,
+          "members": [
+            {
+              "encoded_range": [
+                0,
+                142
+              ],
+              "decoded_range": [
+                0,
+                147
+              ],
+              "integrity": "VerifiedMember",
+              "diagnostic": null
+            }
+          ],
+          "diagnostic": null
+        },
+        "stop": {
+          "kind": "TruncatedPayload",
+          "image_record": 0,
+          "offset": 147,
+          "expected_bytes": 262144,
+          "available_bytes": 0
+        },
+        "source_sha256": "b41e336704653983e8379d073cb91914bda685fa4afd91be56c1713c8ba1eafd"
+      },
+      "differences": [],
+      "proof": {
+        "all_available_words_match_independent_decoder": true,
+        "all_available_words_match_known_pinned_array": true,
+        "all_partial_element_bytes_match": true,
+        "available_samples": 0,
+        "verified_samples": 0,
+        "known_missing_samples": 65536,
+        "incomplete_element_bytes": 0,
+        "complete_verified_earlier_frames": 0,
+        "unknown_following_header": false,
+        "missing_values_synthesized": false,
+        "whole_source_count_parity_claimed": false
+      },
+      "source_unchanged_after_proof": true
+    }
+  ]
+}
