@@ -99,9 +99,106 @@ fn run_record(m: &dioptrin_io::xcalibur::run::RunDescription) -> Value {
     let hex = |b: &[u8]| b.iter().map(|v| format!("{v:02x}")).collect::<String>();
     json!({"kind":"xcalibur_run","fields":{"cprefix":m.prefix.text().ok(),"cfolder":m.folder.text().ok(),"inumofsweeps":m.declared_sweeps,"dunknown":float(m.unknown),"pssweep":sweeps},"float_bits":{"dunknown":format!("{:016x}",m.unknown.to_bits()),"pssweep":bits},"raw_text_hex":{"cprefix":hex(&m.prefix.0),"cfolder":hex(&m.folder.0)},"source_sha256":format!("{:x}",Sha256::digest(&m.original)),"source_bytes":m.original.len(),"parsed_bytes":m.parsed_bytes,"trailer_sha256":format!("{:x}",Sha256::digest(m.trailing_bytes())),"trailer_hex":hex(m.trailing_bytes()),"sweep_sha256":m.sweeps.iter().map(|s|format!("{:x}",Sha256::digest(s.original))).collect::<Vec<_>>(),"provenance":format!("{:?}",m.provenance)})
 }
+fn bytes_hex(bytes: &[u8]) -> String {
+    bytes.iter().map(|v| format!("{v:02x}")).collect()
+}
+fn syntax_record(d: &dioptrin_io::cbf::syntax::Document) -> Value {
+    use dioptrin_io::cbf::syntax::{Item, Token, Value as CValue};
+    fn token(d: &dioptrin_io::cbf::syntax::Document, t: Token) -> Value {
+        json!({"span":[t.span.start,t.span.end],"content":[t.content.start,t.content.end],"style":format!("{:?}",t.style),"text":d.text(t),"raw_hex":d.raw(t).map(bytes_hex)})
+    }
+    fn value(d: &dioptrin_io::cbf::syntax::Document, v: CValue) -> Value {
+        json!({"token":token(d,v.token),"null":v.null.map(|v|format!("{v:?}"))})
+    }
+    fn items(d: &dioptrin_io::cbf::syntax::Document, values: &[Item]) -> Vec<Value> {
+        values.iter().map(|item|match item {
+        Item::Scalar(s)=>json!({"kind":"Scalar","name":token(d,s.name),"value":value(d,s.value),"span":[s.span.start,s.span.end]}),
+        Item::Loop(l)=>json!({"kind":"Loop","columns":l.columns.iter().map(|t|token(d,*t)).collect::<Vec<_>>(),"values":l.values.iter().map(|v|value(d,*v)).collect::<Vec<_>>(),"rows":l.rows().count(),"span":[l.span.start,l.span.end]}),
+        Item::SaveFrame(f)=>json!({"kind":"SaveFrame","name":token(d,f.name),"items":items(d,&f.items),"span":[f.span.start,f.span.end]}),
+    }).collect()
+    }
+    json!({"kind":"cif_syntax","version":format!("{:?}",d.version),"provenance":format!("{:?}",d.provenance),"blocks":d.blocks.iter().map(|b|json!({"name":token(d,b.name),"items":items(d,&b.items),"span":[b.span.start,b.span.end]})).collect::<Vec<_>>(),"source_bytes":d.original.len(),"source_sha256":format!("{:x}",Sha256::digest(&d.original))})
+}
+#[cfg(feature = "columnfile")]
+fn column_record(t: &dioptrin_io::columnfile::Table) -> Value {
+    let mut digest = Sha256::new();
+    for v in t.values() {
+        digest.update(v.to_le_bytes());
+    }
+    json!({"kind":"columnfile","representation":"DecodedFloat64View","shape":t.shape(),"labels_hex":t.labels().map(bytes_hex).collect::<Vec<_>>(),"comments_hex":t.comments().map(bytes_hex).collect::<Vec<_>>(),"lexemes_hex":t.lexemes().map(bytes_hex).collect::<Vec<_>>(),"value_bits":t.values().iter().map(|v|format!("{:016x}",v.to_bits())).collect::<Vec<_>>(),"integer_exactness":t.integer_exactness().collect::<Vec<_>>(),"value_sha256":format!("{:x}",digest.finalize()),"source_sha256":format!("{:x}",Sha256::digest(t.original())),"source_bytes":t.original().len(),"provenance":format!("{:?}",t.provenance())})
+}
+#[cfg(feature = "chiplot")]
+fn profile_record(p: &dioptrin_io::chiplot::Profile) -> Value {
+    use dioptrin_io::chiplot::Number;
+    let text = |range: &std::ops::Range<usize>| json!({"span":[range.start,range.end],"text":std::str::from_utf8(&p.original[range.clone()]).ok(),"hex":bytes_hex(&p.original[range.clone()])});
+    json!({"kind":"chiplot","representation":"ExactSourceLexemes","headers":p.headers.iter().map(text).collect::<Vec<_>>(),"declaration":text(&p.declaration),"declared_points":p.declared_points,"curves":p.curves,"rows":p.rows.iter().map(|r|json!({"line":r.line,"samples":r.samples.iter().map(|s|json!({"offset":s.offset,"lexeme":s.lexeme,"number":match s.number {Number::I64(v)=>json!({"kind":"I64","value":v}),Number::U64(v)=>json!({"kind":"U64","value":v}),Number::IntegerText=>json!({"kind":"IntegerText"}),Number::Decimal=>json!({"kind":"Decimal"}),Number::NonFinite=>json!({"kind":"NonFinite"})}})).collect::<Vec<_>>()})).collect::<Vec<_>>(),"comments":p.comments.iter().map(|c|json!({"line":c.line,"offset":c.offset,"hex":bytes_hex(&c.text)})).collect::<Vec<_>>(),"diagnostics":p.diagnostics,"source_sha256":format!("{:x}",Sha256::digest(&p.original)),"source_bytes":p.original.len(),"provenance":format!("{:?}",p.provenance)})
+}
 fn main() -> Result<(), Box<dyn Error>> {
     let args = std::env::args().collect::<Vec<_>>();
     let kind = args.get(1).ok_or("API command required")?;
+    #[cfg(feature = "columnfile")]
+    if kind.starts_with("columnfile") {
+        use dioptrin_io::columnfile::{Format, Reader, Table};
+        let path = args.get(2).ok_or("source required")?;
+        let format = if args.iter().any(|s| s == "--binary") {
+            Format::Binary
+        } else {
+            Format::Ascii
+        };
+        let result = match kind.as_str() {
+            "columnfile" => column_record(Reader::open(path, format, Default::default())?.table()?),
+            "columnfile-bytes" => column_record(&Table::from_bytes(
+                &std::fs::read(path)?,
+                format,
+                Default::default(),
+            )?),
+            "columnfile-stream" => column_record(&Table::from_reader(
+                std::io::stdin().lock(),
+                format,
+                Default::default(),
+            )?),
+            _ => return Err("unknown columnfile command".into()),
+        };
+        println!("{result}");
+        return Ok(());
+    }
+    #[cfg(feature = "chiplot")]
+    if kind.starts_with("chiplot") {
+        use dioptrin_io::chiplot::{Profile, Reader};
+        let path = args.get(2).ok_or("source required")?;
+        let record = match kind.as_str() {
+            "chiplot" => profile_record(Reader::open(path, Default::default())?.metadata()?),
+            "chiplot-bytes" => profile_record(&Profile::from_bytes(
+                &std::fs::read(path)?,
+                Default::default(),
+            )?),
+            "chiplot-stream" => profile_record(&Profile::from_reader(
+                std::io::stdin().lock(),
+                Default::default(),
+            )?),
+            _ => return Err("unknown CHIPLOT command".into()),
+        };
+        println!("{record}");
+        return Ok(());
+    }
+    if kind.starts_with("cif-syntax") {
+        use dioptrin_io::cbf::syntax::{Document, Reader};
+        let path = args.get(2).ok_or("source required")?;
+        let record = match kind.as_str() {
+            "cif-syntax" => syntax_record(Reader::open(path, Default::default())?.metadata()?),
+            "cif-syntax-bytes" => syntax_record(&Document::from_bytes(
+                &std::fs::read(path)?,
+                Default::default(),
+            )?),
+            "cif-syntax-stream" => syntax_record(&Document::from_reader(
+                std::io::stdin().lock(),
+                Default::default(),
+            )?),
+            _ => return Err("unknown CIF syntax command".into()),
+        };
+        println!("{record}");
+        return Ok(());
+    }
     #[cfg(feature = "xcalibur")]
     if kind.starts_with("xcalibur-run") {
         use dioptrin_io::xcalibur::run::{Reader, RunDescription};

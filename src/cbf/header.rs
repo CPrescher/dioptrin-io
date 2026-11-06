@@ -80,53 +80,12 @@ impl<'a> Tokens<'a> {
         }
     }
     fn scan(&mut self) -> Result<Option<Token<'a>>, LexError> {
-        let bytes = self.source.as_bytes();
-        loop {
-            while self.position < bytes.len() && bytes[self.position].is_ascii_whitespace() {
-                self.position += 1;
-            }
-            if bytes.get(self.position) != Some(&b'#') {
-                break;
-            }
-            while self.position < bytes.len() && bytes[self.position] != b'\n' {
-                self.position += 1;
-            }
-        }
-        if self.position == bytes.len() {
+        let Some(token) = super::syntax::scan(self.source, &mut self.position, false)
+            .map_err(LexError::Syntax)?
+        else {
             return Ok(None);
-        }
-        let start = self.position;
-        let quoted = b"'\"".contains(&bytes[start]);
-        let text;
-        if bytes[start] == b';' && (start == 0 || bytes[start - 1] == b'\n') {
-            let begin = start + 1;
-            let end = self.source[begin..]
-                .find("\n;")
-                .map(|n| begin + n)
-                .ok_or(LexError::Syntax("unterminated CIF semicolon value"))?;
-            text = &self.source[begin..end];
-            self.position = end + 2;
-        } else if quoted {
-            let quote = bytes[start];
-            self.position += 1;
-            while self.position < bytes.len()
-                && !(bytes[self.position] == quote
-                    && (self.position + 1 == bytes.len()
-                        || bytes[self.position + 1].is_ascii_whitespace()))
-            {
-                self.position += 1;
-            }
-            if self.position == bytes.len() {
-                return Err(LexError::Syntax("unterminated CIF quoted value"));
-            }
-            text = &self.source[start + 1..self.position];
-            self.position += 1;
-        } else {
-            while self.position < bytes.len() && !bytes[self.position].is_ascii_whitespace() {
-                self.position += 1;
-            }
-            text = &self.source[start..self.position];
-        }
+        };
+        let text = &self.source[token.content.start..token.content.end];
         self.cost = text
             .len()
             .checked_mul(4)
@@ -136,7 +95,10 @@ impl<'a> Tokens<'a> {
             .ok_or(LexError::Budget)?;
         Ok(Some(Token {
             text,
-            quoted: quoted || bytes[start] == b';',
+            // Keep the historical projection treatment of bare semicolon-led
+            // tokens too; strict syntax distinguishes them by column position.
+            quoted: token.style != super::syntax::Style::Bare
+                || self.source.as_bytes()[token.span.start] == b';',
         }))
     }
 }

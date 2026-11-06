@@ -1,0 +1,5 @@
+data_simple
+_title 'two words'
+loop_ _id _value
+A 1.234(5)
+B -0.000

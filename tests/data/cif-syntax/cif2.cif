@@ -1,0 +1,7 @@
+#\#CIF_2.0
+data_x
+_unicode "αβ"
+_list [1 2]
+_table {"key": [3 4]}
+_triple '''line
+break'''

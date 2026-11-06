@@ -1,0 +1,1 @@
+data_lexical_title 'a dog's life'_empty ''_hash abc#def_quoted_hash 'literal # text'_semicolon ;literal_text;first second;_numeric 000000000000000000123.400(99)_dot '.'_array_data.data 'ordinary standalone value'

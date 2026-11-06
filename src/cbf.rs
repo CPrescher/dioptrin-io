@@ -328,3 +328,5 @@ fn decode_md5(s: &str) -> Result<[u8; 16], Error> {
 }
 
 pub mod document;
+
+pub mod syntax;

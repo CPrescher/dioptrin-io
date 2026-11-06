@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "license": "CC0-1.0",
+  "origin": "independently authored from the FIT2D documented minimum CHIPLOT header/column grammar; nonfinite/comment cases are explicitly labelled reader extensions",
+  "primary_format": {
+    "url": "https://www.esrf.fr/computing/scientific/FIT2D/FIT2D_REF/node115.html",
+    "sha256": "e3b012c52ad4134f32cbd0fb72373931c5c1e1f4c53a73701260db9ac7ba59b7",
+    "bytes": 37018,
+    "local_audit_copy": "/tmp/dioptrin-chiplot-format-node115.html"
+  },
+  "generator": "scripts/generate_chiplot_fixtures.py",
+  "files": [
+    {
+      "path": "ascending.chi",
+      "bytes": 66,
+      "sha256": "a491b30415c2945d052c55671ca59ce34633abe24b8211ae8c0ca7324ab101f6"
+    },
+    {
+      "path": "descending.chi",
+      "bytes": 39,
+      "sha256": "5025bea70a14f4ea3a718f3e17012f94fa8e6eb158c00315d6ebb3252de8789a"
+    },
+    {
+      "path": "nonuniform.chi",
+      "bytes": 40,
+      "sha256": "b1c62c616541d93e6db60b1b051efade4b2eb17d5e3a11bb972c461170d5d368"
+    },
+    {
+      "path": "multi-curve.chi",
+      "bytes": 115,
+      "sha256": "fdad043cc9454d7e199bac6bd56f7348dd51978df82d321f5c8f9387fa99be47"
+    },
+    {
+      "path": "zero.chi",
+      "bytes": 45,
+      "sha256": "f3d5b906a0331bde0776191a9cdc1c9f32fe68d22be2816ff6b78557e4c1e403"
+    },
+    {
+      "path": "one.chi",
+      "bytes": 48,
+      "sha256": "f96bfe87551b3ed519b9ffd8d01d3f1f5a34d4e687257a06c7f99907121b34a3"
+    },
+    {
+      "path": "nonfinite.chi",
+      "bytes": 60,
+      "sha256": "bd4e98a169f6ec1ca56a27d8a0ef75bb8426796e064e753ed8f5dd73507ebad1"
+    },
+    {
+      "path": "precision.chi",
+      "bytes": 128,
+      "sha256": "b218caf7dec3d49c85055c4a8204cf99edb8f7992e67cd978b04cf903d728267"
+    },
+    {
+      "path": "comments-crlf.chi",
+      "bytes": 94,
+      "sha256": "f168251336086ef79158361cce7b5a5b3276db59c7b24b1ead9b2d2ea5bc9a26"
+    }
+  ]
+}

@@ -1,0 +1,519 @@
+{
+  "schema": 1,
+  "license": "CC0-1.0",
+  "dedication": "Independent synthetic source text and explicit expected scoped trees by the dioptrin-io authors; no upstream measurement data. Expected trees are handwritten; spans are derived only from their declared literal anchors.",
+  "pinned_fabio_commit": "9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece",
+  "fixtures": [
+    {
+      "file": "scopes.cif",
+      "sha256": "e848aea709fc8b4431bdc8e6c05821c39e671bcec802e5fbf90fb9fe6a43c67c",
+      "bytes": 223,
+      "input_condition": "valid_cif11",
+      "reader_action": "strict_read",
+      "reference_qualification": [
+        "multiple_block_and_saveframe_scope_flattening",
+        "case_sensitive_reference_keys"
+      ],
+      "expected_blocks": [
+        {
+          "heading": "data_First",
+          "items": [
+            {
+              "kind": "Scalar",
+              "name": "_Title",
+              "value": {
+                "raw": "'Scope one'",
+                "style": "SingleQuoted"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_unknown",
+              "value": {
+                "raw": "?",
+                "style": "Bare"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_literal",
+              "value": {
+                "raw": "'?'",
+                "style": "SingleQuoted"
+              }
+            },
+            {
+              "kind": "Loop",
+              "columns": [
+                "_atom_id",
+                "_atom_value"
+              ],
+              "values": [
+                {
+                  "raw": "A",
+                  "style": "Bare"
+                },
+                {
+                  "raw": "9007199254740993",
+                  "style": "Bare"
+                },
+                {
+                  "raw": "B",
+                  "style": "Bare"
+                },
+                {
+                  "raw": ".",
+                  "style": "Bare"
+                }
+              ]
+            },
+            {
+              "kind": "SaveFrame",
+              "heading": "save_Definition",
+              "items": [
+                {
+                  "kind": "Scalar",
+                  "name": "_TITLE",
+                  "value": {
+                    "raw": "\"separate scope\"",
+                    "style": "DoubleQuoted"
+                  }
+                },
+                {
+                  "kind": "Loop",
+                  "columns": [
+                    "_key",
+                    "_text"
+                  ],
+                  "values": [
+                    {
+                      "raw": "1",
+                      "style": "Bare"
+                    },
+                    {
+                      "raw": "'two words'",
+                      "style": "SingleQuoted"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "heading": "DaTa_SECOND",
+          "items": [
+            {
+              "kind": "Scalar",
+              "name": "_title",
+              "value": {
+                "raw": "'Scope two'",
+                "style": "SingleQuoted"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "lexical-lf.cif",
+      "sha256": "e64ed740361ff77f7e3f978bf10446c629d66c6bb3ab4107df615a64462514f6",
+      "bytes": 225,
+      "input_condition": "valid_cif11",
+      "reader_action": "strict_read",
+      "reference_qualification": [
+        "reference_comment_stripping_inside_values",
+        "empty_quoted_literal_preserved",
+        "raw_eol_content_preserved"
+      ],
+      "expected_blocks": [
+        {
+          "heading": "data_lexical",
+          "items": [
+            {
+              "kind": "Scalar",
+              "name": "_title",
+              "value": {
+                "raw": "'a dog's life'",
+                "style": "SingleQuoted"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_empty",
+              "value": {
+                "raw": "''",
+                "style": "SingleQuoted"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_hash",
+              "value": {
+                "raw": "abc#def",
+                "style": "Bare"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_quoted_hash",
+              "value": {
+                "raw": "'literal # text'",
+                "style": "SingleQuoted"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_semicolon",
+              "value": {
+                "raw": ";literal",
+                "style": "Bare"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_text",
+              "value": {
+                "raw": ";first\n second\n;",
+                "style": "TextField"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_numeric",
+              "value": {
+                "raw": "000000000000000000123.400(99)",
+                "style": "Bare"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_dot",
+              "value": {
+                "raw": "'.'",
+                "style": "SingleQuoted"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_array_data.data",
+              "value": {
+                "raw": "'ordinary standalone value'",
+                "style": "SingleQuoted"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "lexical-crlf.cif",
+      "sha256": "444cdb40bdb760cf08b8f5fde70ca994bc3a989ccfb47fece349df37eca0fc7b",
+      "bytes": 238,
+      "input_condition": "valid_cif11",
+      "reader_action": "strict_read",
+      "reference_qualification": [
+        "reference_comment_stripping_inside_values",
+        "empty_quoted_literal_preserved",
+        "raw_eol_content_preserved"
+      ],
+      "expected_blocks": [
+        {
+          "heading": "data_lexical",
+          "items": [
+            {
+              "kind": "Scalar",
+              "name": "_title",
+              "value": {
+                "raw": "'a dog's life'",
+                "style": "SingleQuoted"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_empty",
+              "value": {
+                "raw": "''",
+                "style": "SingleQuoted"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_hash",
+              "value": {
+                "raw": "abc#def",
+                "style": "Bare"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_quoted_hash",
+              "value": {
+                "raw": "'literal # text'",
+                "style": "SingleQuoted"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_semicolon",
+              "value": {
+                "raw": ";literal",
+                "style": "Bare"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_text",
+              "value": {
+                "raw": ";first\r\n second\r\n;",
+                "style": "TextField"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_numeric",
+              "value": {
+                "raw": "000000000000000000123.400(99)",
+                "style": "Bare"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_dot",
+              "value": {
+                "raw": "'.'",
+                "style": "SingleQuoted"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_array_data.data",
+              "value": {
+                "raw": "'ordinary standalone value'",
+                "style": "SingleQuoted"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "lexical-cr.cif",
+      "sha256": "ba764402a49b86c23fe25a434431f43d3a5ea926dceeb191085ec36b01ea4780",
+      "bytes": 225,
+      "input_condition": "valid_cif11",
+      "reader_action": "strict_read",
+      "reference_qualification": [
+        "reference_comment_stripping_inside_values",
+        "empty_quoted_literal_preserved",
+        "raw_eol_content_preserved"
+      ],
+      "expected_blocks": [
+        {
+          "heading": "data_lexical",
+          "items": [
+            {
+              "kind": "Scalar",
+              "name": "_title",
+              "value": {
+                "raw": "'a dog's life'",
+                "style": "SingleQuoted"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_empty",
+              "value": {
+                "raw": "''",
+                "style": "SingleQuoted"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_hash",
+              "value": {
+                "raw": "abc#def",
+                "style": "Bare"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_quoted_hash",
+              "value": {
+                "raw": "'literal # text'",
+                "style": "SingleQuoted"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_semicolon",
+              "value": {
+                "raw": ";literal",
+                "style": "Bare"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_text",
+              "value": {
+                "raw": ";first\r second\r;",
+                "style": "TextField"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_numeric",
+              "value": {
+                "raw": "000000000000000000123.400(99)",
+                "style": "Bare"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_dot",
+              "value": {
+                "raw": "'.'",
+                "style": "SingleQuoted"
+              }
+            },
+            {
+              "kind": "Scalar",
+              "name": "_array_data.data",
+              "value": {
+                "raw": "'ordinary standalone value'",
+                "style": "SingleQuoted"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "simple-loop.cif",
+      "sha256": "17846e1658859030158abe4bb4fe0b2ea8785e569429fd02fdced3538ef59a0a",
+      "bytes": 68,
+      "input_condition": "valid_cif11",
+      "reader_action": "strict_read",
+      "reference_qualification": [],
+      "expected_blocks": [
+        {
+          "heading": "data_simple",
+          "items": [
+            {
+              "kind": "Scalar",
+              "name": "_title",
+              "value": {
+                "raw": "'two words'",
+                "style": "SingleQuoted"
+              }
+            },
+            {
+              "kind": "Loop",
+              "columns": [
+                "_id",
+                "_value"
+              ],
+              "values": [
+                {
+                  "raw": "A",
+                  "style": "Bare"
+                },
+                {
+                  "raw": "1.234(5)",
+                  "style": "Bare"
+                },
+                {
+                  "raw": "B",
+                  "style": "Bare"
+                },
+                {
+                  "raw": "-0.000",
+                  "style": "Bare"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "duplicate-case.cif",
+      "sha256": "55cc3f796a1e3e9810986af5a5a20e3c9b2a32e1a38b05984bd24586dc618fcf",
+      "bytes": 17,
+      "input_condition": "malformed_cif11",
+      "reader_action": "reject",
+      "reference_qualification": [],
+      "expected_error": "duplicate case-insensitive CIF name"
+    },
+    {
+      "file": "duplicate-loop.cif",
+      "sha256": "d67091d8f24ecc7b73553d6ad20836ef5b3c2023dfc33992009b0e6a2bda89a6",
+      "bytes": 23,
+      "input_condition": "malformed_cif11",
+      "reader_action": "reject",
+      "reference_qualification": [],
+      "expected_error": "duplicate case-insensitive CIF name"
+    },
+    {
+      "file": "incomplete-loop.cif",
+      "sha256": "0e892dd52c6039c4ff4908f96d3690ed0f60bee8971bd611cb80e55cb7a684d5",
+      "bytes": 21,
+      "input_condition": "malformed_cif11",
+      "reader_action": "reject",
+      "reference_qualification": [],
+      "expected_error": "CIF loop requires nonempty complete rows"
+    },
+    {
+      "file": "nested-save.cif",
+      "sha256": "20cc82620268a60c142e6e5e47170a19852f7527ad40bed60cc9c473360b74a1",
+      "bytes": 38,
+      "input_condition": "malformed_cif11",
+      "reader_action": "reject",
+      "reference_qualification": [],
+      "expected_error": "reserved or unexpected CIF token"
+    },
+    {
+      "file": "global.cif",
+      "sha256": "acc00bab303ed5eea5ac32e195ab680bf1104a9964743f937fe6925cef068121",
+      "bytes": 13,
+      "input_condition": "malformed_cif11",
+      "reader_action": "reject",
+      "reference_qualification": [],
+      "expected_error": "CIF content outside a data block"
+    },
+    {
+      "file": "empty-save.cif",
+      "sha256": "e7601064bb9825056b94133ec662db8e23b0969276051e4328f643ae2e5ca3ee",
+      "bytes": 20,
+      "input_condition": "malformed_cif11",
+      "reader_action": "reject",
+      "reference_qualification": [],
+      "expected_error": "CIF save frame terminator without a nonempty frame"
+    },
+    {
+      "file": "cif2.cif",
+      "sha256": "62b6315b710b15528fbab390b6165c0283589ce1db506dae60ba470808cce3a4",
+      "bytes": 93,
+      "input_condition": "unsupported_cif2",
+      "reader_action": "reject",
+      "reference_qualification": [],
+      "expected_error": "unsupported CIF syntax version"
+    }
+  ],
+  "primary_specification": {
+    "version": "CIF 1.1",
+    "url": "https://www.iucr.org/what-we-do/digital-standards/cif/cif1/file-syntax",
+    "capture_path": "/tmp/dioptrin-cif-iucr-web-capture.txt",
+    "capture_sha256": "f53e1745545ebc4c71da3e17997903f8dabb63085b29962e089e0df150de8b30",
+    "capture_kind": "Web tool rendered primary-source excerpts including retrieval framing; this is not an HTTP-body hash. Direct HTTP retrieval returned403. Captured text retained outside Git.",
+    "normative_sections": [
+      "paragraphs6-7 scopes/unique names",
+      "paragraphs14-19 lexical delimiters",
+      "paragraphs22-33 character/line/name restrictions",
+      "AppendixA formal productions and nonempty saveframes/loops"
+    ],
+    "cif2_url": "https://www.iucr.org/what-we-do/digital-standards/cif/cif2",
+    "cif2_ebnf_url": "https://www.iucr.org/__data/assets/text_file/0009/112131/CIF2-ENBF.txt",
+    "cif2_action": "UnsupportedVersion; not malformed CIF1 or a reference defect"
+  }
+}

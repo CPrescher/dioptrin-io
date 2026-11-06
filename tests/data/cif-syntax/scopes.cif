@@ -1,0 +1,17 @@
+#\#CIF_1.1
+data_First
+_Title 'Scope one'
+_unknown ?
+_literal '?'
+loop_
+_atom_id
+_atom_value
+A 9007199254740993
+B .
+save_Definition
+_TITLE "separate scope"
+loop_ _key _text
+1 'two words'
+save_
+DaTa_SECOND
+_title 'Scope two'

@@ -110,3 +110,8 @@ pub mod series;
     feature = "jpeg2000"
 ))]
 pub use source::SourceBinding;
+
+#[cfg(feature = "chiplot")]
+pub mod chiplot;
+#[cfg(feature = "columnfile")]
+pub mod columnfile;
