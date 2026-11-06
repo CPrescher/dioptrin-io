@@ -35,19 +35,26 @@ fail. Regular datasets ignore irrelevant global VDS bindings entirely, including
 their source-file budget, so one explicit manifest can accompany Lambda module
 and master reads without changing regular module interpretation.
 
-The first scope is rank3, contiguous regular, frame-preserving mosaics. Every
-source/virtual frame selection starts at 0 and covers the same complete frozen
-frame range. Fixed declared frame extents must agree; zero-extent unlimited VDS
-frames derive exclusively from the bound concrete modules. Fixed spatial
-extents and every rectangle are validated, and overlaps fail. Gapped/overlapping
-hyperslabs, points, irregular selections, frame shifts, nested/cyclic VDS,
-spatial growth and printf mappings remain unsupported. A declared finite master
-with additional fill-only frames is outside this initial full-frame contract.
+Rank 3 finite mappings admit contiguous, strided and irregular unions of
+hyperslabs, including different source/destination block shapes, frame offsets,
+frame reshaping and frame-varying coverage. Native HDF5 selection iteration order
+pairs the original source and virtual selections; block index or bounding shape
+is never used as a substitute for that pairing. Fixed declared dimensions and
+every selected source/virtual coordinate are validated. Overlapping mappings
+fail explicitly rather than selecting an implicit precedence.
+
+The original unlimited Lambda contract remains separate: contiguous,
+frame-preserving selections start at frame0 and derive their frozen extent only
+from complete explicitly bound modules. General unlimited irregular/strided
+selections, point selections, nested/cyclic VDS, spatial growth and printf
+mappings remain unsupported. Finite masters may contain additional fill-only
+frames only under the explicit defined-fill policy.
 
 The reader queries original mapping property lists and their owned dataspaces;
-it never reads the virtual dataset or queries its native conditional frame
-extent. Source files/datasets are opened through the existing bounded `Sources`
-graph. Standard native dtype equality, concrete source shape, filters, chunk
+it never reads the virtual dataset or queries an unlimited mapping's native
+conditional frame extent. Finite mappings retain/check their fixed master
+extent, which does not depend on source availability. Source files/datasets are
+opened through the existing bounded `Sources` graph. Standard native dtype equality, concrete source shape, filters, chunk
 bounds, raw-external rejection and storage allocation are admitted before output.
 Mapped sources must have fully allocated storage. Missing files, missing datasets,
 partial module chunks or unallocated module regions cannot turn into fill,
@@ -59,40 +66,65 @@ This differs deliberately from native VDS availability behavior: HDF5 may return
 fill for missing mapped data and may change the view extent according to which
 sources are available. The [HDF5 dataset-access documentation](https://portal.hdfgroup.org/documentation/hdf5/latest/group___d_a_p_l.html)
 specifies those native behaviors. Here, native HDF5 decodes concrete module
-rectangles directly into selected regions of a typed full-frame buffer.
-No module passes through float conversion or an intermediate detector-sized
-array. Every standard integer type, IEEE f32/f64, original endian declaration,
-reserved value, NaN payload and signed zero retains its existing typed contract.
+selections directly into a typed full-frame buffer. Finite mapping reads use
+`H5Sselect_project_intersection` (available since HDF5 1.10.6) to project one
+virtual frame into its original concrete source selection. No module passes
+through float conversion, a per-pixel mapping array or an intermediate detector
+image. Standard integers, f32/f64, admitted complex pairs, original bool bytes and
+binary16 words preserve their existing type/endian/reserved-bit contracts.
 
 `UnmappedRegions::Reject` requires complete spatial coverage. `DeclaredFill`
 permits only genuinely unmapped raster regions with an original defined VDS fill
 and compatible fill-time declaration. These logical regions remain distinct
 from module measurements. The exact typed fill scalar initializes the output,
-then exact module samples overlay their original rectangles. Undefined fill or
-FillTime::Never fails for uncovered pixels. No source-derived mask, correction,
+then exact module samples overlay their original selected coordinates. Undefined
+fill or FillTime::Never fails for uncovered pixels. No source-derived mask, correction,
 normalization, flip or geometry transform is applied.
 
 `typed::Metadata.virtual_dataset` records `VdsMetadata`: original mapping shape
 and maximum dimensions, frozen shape, unmapped-region policy/count and every
 mapping. Each mapping retains original filename/dataset/selection records,
 canonical actual source file, resolved dataset, source shape/type/endian/layout,
-source fill/time/allocation, filters, origins and mapped shape. `sources()` and
-`links()` retain the complete immutable graph. Original selection records preserve
+source fill/time/allocation, filters and original selection records. Irregular
+records retain native canonical inclusive block bounds. `selection_layout`
+distinguishes `ContiguousRectangle` and `FiniteSelection`. Origins and the legacy
+`mapped_shape` describe bounding boxes for finite selections; they do not imply
+full coverage. Explicit `source_bounding_shape`, `virtual_bounding_shape` and
+`selected_elements` remove that ambiguity, including unequal block shapes.
+
+Coverage is recorded in `unmapped_pixels_by_frame`. The Rust field
+`unmapped_pixels_per_frame` is now `Option<usize>`: `Some(n)` means constant
+coverage, `None` means variable coverage. Existing constant JSON remains a
+number; variable JSON is null alongside the complete per-frame vector.
+`sources()` and `links()` retain the complete immutable graph. Original selection records preserve
 HDF5 UNLIMITED as u64::MAX. Master `fill_value` stays typed; its
 `storage_allocated=false` describes the virtual master, while mapped source
 allocation is reported separately.
 
-Every source is checked before/after indexing and each frame read. Every concrete
-module shape is checked around decoding, including resizable sources and sources
-not yet overlaid. Multi-part virtual scans also check every other virtual or
-ordinary part, so an unflushed extension elsewhere invalidates global frame
-indices too. Changes invalidate the output and require reopening; there is
-no live refresh or decoded-count cache. Dataset, mapping, link traversal, source
-file, text, metadata, frame and chunk limits remain separate. Coverage uses a
-sorted sweep with bounded metadata rather than detector-sized scratch. Payload
-limits do not include native HDF5 internal caches/codec bookkeeping or promise
-an RSS ceiling; existing variable-length discovery-string allocation is still
-managed by upstream HDF5 before its retained length check.
+Every source and original path alias is checked before/after indexing and each
+frame read. Every concrete module shape and file/object identity is checked,
+including sources not used by the requested frame. Concrete paths are walked
+component by component and must remain hard links before native lookup; an
+introduced external link cannot cause implicit file search. Recorded original
+soft/external link kinds and exact raw values are revalidated even before file
+timestamps change. Master object/mapping-property identities and finite master
+extents are also checked, detecting unflushed replacement, retargeting and extent
+changes. Returned creation property lists are copies; editing a copy does not
+mutate a created dataset. Multi-part scans retain their complete-graph checks.
+Changes invalidate output and require reopening; no live refresh or decoded
+sample cache is introduced.
+
+Dataset, mapping, link traversal, source, text, metadata, frame and chunk limits
+remain separate. Irregular block arrays and per-frame coverage vectors are
+charged before Rust allocation. Finite selections additionally cap block
+complexity at 16,384 and aggregate frame/selection operations at 1,000,000.
+Contiguous repeated blocks count as one compact interval for that admission.
+Finite coverage uses native hyperslab set operations, with no detector-sized
+point scratch; the unlimited rectangle path retains its sorted sweep. These
+bounds qualify admitted operations and retained Rust metadata, not total RSS.
+Native HDF5 dataspace/property deserialization, selection bookkeeping, caches and
+codec allocations are separate, including allocations before wrapper admission.
+Variable-length discovery strings retain their existing post-native-read bound.
 
 The actual Lambda master has three missing acquisition-system absolute names.
 Explicit bindings select the three independently fingerprinted corpus modules.
@@ -127,3 +159,25 @@ The bindings JSON is an explicit array of `stored_filename`/`actual_file` record
 the proof script never infers those paths. It reads actual modules independently,
 assembles rectangles/fill, compares every native and h5py pixel signature, and
 checks all input fingerprints again. Large detector files remain outside Git.
+
+
+## Finite selection proof
+
+The [finite irregular proof](vds/2026-11-06-marv2-vds-ojpeg.json) compares 15
+independent CC0 masters and all 46 frames against manually sorted original
+source words, direct h5py VDS reads and unchanged pinned FabIO `Hdf5Image` calls.
+The cases include differing block shapes, irregular selections on both sides,
+strided coordinates, source-to-different-virtual frames, variable coverage and a
+whole fill-only frame. U64 extrema, signed integers, float/complex NaN payloads,
+negative zero, binary16 and noncanonical bool bytes remain exact in both byte
+orders where tested. A bound source with a nested concrete path and a complete
+three-file external-link graph are included. Seven separately classified
+rejections cover unavailable/partial/out-of-bounds bound sources, mapping
+overlap, source-policy/fill-policy admission and the selection-complexity cap.
+
+Five focused Rust tests additionally exercise unflushed source/master
+unlink/rebind, finite master growth, new external leaf/ancestor injection and
+recorded external-link retargeting, output invalidation and resource limits.
+Three Python controls ensure source words, source dtype and variable-coverage
+provenance cannot pass after mutation. Generators and proof helpers are test-only;
+all reference and executable/source fingerprints are retained in the report.

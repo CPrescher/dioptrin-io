@@ -16,8 +16,8 @@ Every format dependency is optional; default features are empty.
 
 | Feature | Implemented scope | Important remaining gaps |
 |---|---|---|
-| `hdf5` | Typed 2D/3D images/stacks with standard scalar, binary16, Boolean and exact packed complex types, both byte orders, Eiger/LImA/Lambda discovery, explicit external-file/raw-window snapshots and bound regular VDS mosaics; original u32 compatibility reader; opt-in indexed raw u16/u32 chunks and bounded parallel consumers | Nested/printf/irregular VDS, arbitrary enums/compounds/custom types, other image ranks and live refresh; raw fast path retains its narrower contract |
-| `tiff` | Scalar/packed/WhiteIsZero/palette/CFA/color/planar TIFF and BigTIFF; primary pages and explicit SubIFD selection, strips/tiles, lossless codecs, CCITT RLE/Group3 1D/2D/Group4, legacy LZW, native YCbCr grids/units, modern JPEG and bounded OJPEG; explicit legacy metadata policies; ThunderScan complete/available-row reads; Pilatus/MAR headers | OJPEG/JPEG component reads need `jpeg`; fragmented OJPEG/other sampled layouts remain gaps; F16 widening and reference views qualified |
+| `hdf5` | Typed 2D/3D images/stacks with standard scalar, binary16, Boolean and exact packed complex types, both byte orders, Eiger/LImA/Lambda discovery, explicit external-file/raw-window snapshots and bound regular/unlimited mosaics and finite strided/irregular VDS selections; original u32 compatibility reader; opt-in indexed raw u16/u32 chunks and bounded parallel consumers | Nested/printf/unlimited irregular VDS, arbitrary enums/compounds/custom types, other image ranks and live refresh; raw fast path retains its narrower contract |
+| `tiff` | Scalar/packed/WhiteIsZero/palette/CFA/color/planar TIFF and BigTIFF; primary pages and explicit SubIFD selection, strips/tiles, lossless codecs, CCITT RLE/Group3 1D/2D/Group4, legacy LZW, native YCbCr grids/units, modern JPEG and bounded OJPEG interchange/table fragments and explicit stacked tile streams; explicit legacy metadata policies; ThunderScan complete/available-row reads; Pilatus/MAR headers | OJPEG/JPEG component reads need `jpeg`; ambiguous legacy OJPEG profiles and other sampled layouts remain gaps; F16 widening and reference views qualified |
 | `jpeg`, `jpeg2000` | Mature libjpeg-turbo/OpenJPEG backends; lossless high-precision JPEG; original channels, precision, lossy provenance and headers | Unsupported precision/component layouts fail explicitly; see image contracts |
 | `cbf` | Eight integer types, explicit byte-offset dialects, original encoded payload/integrity access, raw CIF headers and separate source-preserving CIF 1.1/2.0 syntax trees | Dictionary semantics, other decoded codecs and multiple binary sections |
 | `edf` | Ten scalar types, full-rank source arrays/explicit planes and concatenated records/general headers, internal/outer compression and bounded padding, explicit external-source snapshots, explicit legacy layout/label policies and typed-prefix recovery | ABI-dependent float128, obsolete byte-offset; complete-image APIs stay strict; recovery exposes missing spans and member integrity separately |
@@ -29,7 +29,7 @@ Every format dependency is optional; default features are empty.
 | `fixed` | GE intact/blank/EDF-prefixed headers and Pixi fixed frame records | Explicit source manifests and fixed-layout variants outside the corpus |
 | `fit2d`, `kcd`, `mpa` | FIT2D primary/mask/axis arrays, separate KCD readouts/explicit sum, MPA CDAT maps and DATA spectra | Binary MPA and unsupported record layouts/types |
 | `esperanto` | Original signed32 Long32/AGI bitfield counts, row indexes, headers and strict source bounds | Unsupported header variants fail; no writer-style reshaping on read |
-| `mar345` | MAR345/MAR555 PCK V1, original unsigned counts, high-count tables and headers, both byte orders | V2, spiral/old IMAGE, degenerate predictor shapes; file series use explicit manifests |
+| `mar345` | MAR345/MAR555 PCK V1/V2, original unsigned counts, high-count tables and headers, both byte orders | Spiral/old IMAGE, degenerate predictor shapes; file series use explicit manifests |
 | `sparse` | Original HDF5 sparse events/components/attributes and explicit deterministic background reconstruction | Stochastic noise; native reference and Python fallback have separate semantics; reconstructed backgrounds are derived |
 | `xcalibur` | CCD characteristics/source records, explicit mask reconstruction and native lossless binary-mask decomposition and bounded .run acquisition records | No fabricated source images; truncated machine tails require an explicit policy |
 | `xsd` | Explicit 2D XSData XML arrays, base64/base32/base16, ten scalar/complex types and optional MD5 | Other ranks/types/encodings and namespaces |
@@ -152,7 +152,8 @@ resource limits, source mutation, dtype and unsupported-subformat details.
 
 ## MAR345 and sparse HDF5
 
-`mar345::Reader` reuses a bounded adaptation of the existing MIT PCK V1 codec.
+`mar345::Reader` reuses the bounded MIT-derived PCK decoder for V1 and V2,
+with separately qualified V2 block framing and original unsigned counts.
 It returns U32 source counts, including exact high-count replacements. See
 [MAR345 contracts and oracle differences](docs/MAR345_READER.md).
 
@@ -258,3 +259,7 @@ See [layout and type qualification](docs/LAYOUT_TYPE_PARITY.md) for source-rank
 EDF arrays, NumPy Boolean/binary16/empty arrays, HDF5 exact types/raw windows
 and TIFF directory/fax layouts. Source correctness, reference failures and
 valid unsupported variants are recorded separately.
+
+The [MAR345 V2, VDS and OJPEG continuation](docs/MARV2_VDS_OJPEG_PARITY.md)
+records the added source contracts, independent original-word comparisons and
+separate unchanged FabIO failures or display behavior.

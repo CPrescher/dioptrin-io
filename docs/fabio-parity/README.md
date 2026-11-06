@@ -1,4 +1,25 @@
-# Layout and type readers, 2026-11-06
+# MAR345 V2, irregular VDS and fragmented OJPEG, 2026-11-06
+
+The [current continuation](2026-11-06-marv2-vds-ojpeg.json) retains 237 unchanged
+reference tests (zero failures/errors, one existing slow skip) and all 626
+qualified input outcomes. Prior pixel/reference outcomes, metadata, attributes
+and input/header summaries remain unchanged.
+
+New proofs establish original seven-bit MAR345 V2 against the untouched CCP4
+writer/decoder, explicit incompatible eight-bit compatibility, finite irregular
+VDS selection projection and source-preserving OJPEG fragments. The original
+writer check corrected a provisional eight-bit V2 assumption before committing;
+reference bugs, unsupported profiles and deliberate source policies remain
+separate. No genuinely acquired V2 sample was available in the pinned corpus.
+
+See [combined evidence](../MARV2_VDS_OJPEG_PARITY.md) and the
+[native checks](2026-11-06-marv2-vds-ojpeg-native-checks.json): **380 Rust tests,
+140 Python controls**, all required/no-default checks, **23 isolated features**
+and the Rust 1.89 CBF build pass. Fourteen prior standalone proofs and three new
+proofs use the final executables. Full reading parity remains unestablished for
+the documented remaining variants and qualified source/reference differences.
+
+## Previous layout and type readers, retained
 
 The [current continuation](2026-11-06-layout-types.json) preserves all 626
 qualified input outcomes and 237 unchanged reference tests (zero failures/errors,

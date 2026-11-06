@@ -128,7 +128,7 @@ captures, with separate content-discovery and EDF header ledgers. A separate
 feature-disabled run distinguishes unavailable compilation features from missing
 readers. Every original registry entry remains in the ledger.
 
-Current evidence is recorded in `fabio-parity/2026-11-06-layout-types.json`;
+Current evidence is recorded in `fabio-parity/2026-11-06-marv2-vds-ojpeg.json`;
 the earlier baseline and typed-HDF5 reports are retained. The current report is
 a failing full-parity gate, with exact native successes, unsupported layouts,
 reference differences and remaining readers kept separate.
@@ -330,3 +330,14 @@ windows, and TIFF SubIFD/fax layouts. Original source dimensions and IEEE bits
 remain authoritative. Independent word checks, unchanged reference failures,
 malformed input, resource policies and valid unsupported capabilities are
 recorded separately. Full reading parity remains unestablished.
+
+## MAR345 V2, irregular VDS and fragmented OJPEG
+
+The [three-reader continuation](MARV2_VDS_OJPEG_PARITY.md) qualifies original
+seven-bit MAR345 V2, explicit eight-bit compatibility framing, finite irregular
+VDS selections and source-preserving OJPEG fragments. Original-writer evidence
+caught the distinction between canonical V2 and FabIO's incompatible legacy
+framing; failed reference interpretations remain separate from source success.
+New HDF5 source-identity/link checks reject unflushed retargeting, and OJPEG raw
+component checks remain distinct from display conversion. Full parity stays
+false for the explicitly remaining versions/layouts and reference differences.

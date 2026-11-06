@@ -1,8 +1,9 @@
-# MAR345 / MAR555 native PCK V1 input
+# MAR345 / MAR555 native PCK V1/V2 input
 
 The optional `mar345` feature depends only on the existing `native` feature.
 `mar345::Reader` exposes `open(path, Limits)`, `metadata()`, `frames()` and
-`read_frame_into(index, &mut FrameBuffer)`. One source image produces a U32
+`read_frame_into(index, &mut FrameBuffer)`. The exact source marker selects PCK
+V1 or V2; `Metadata::pck_version` retains that selection. One source image produces a U32
 buffer of original unsigned counts in stored row order. Metadata distinguishes
 `base_pixel_type=U16` from the U32 output/high-value counts. No orientation,
 intensity multiplier, geometry, correction or neighboring-file substitution is
@@ -71,21 +72,43 @@ presented as reference equality. Both actual corpus sources match the reference
 without count changes. No diagnostic interpretation or automatic retry exposes
 misread reference counts as source data.
 
-## PCK V2 audit and unsupported scope
+## PCK V2 support and qualified reference scope
 
-The pinned MIT `unpack_pck` docstring explicitly states V1 only. Its surrounding
-function recognizes V2 markers but still calls that V1 function by default;
-only the separate LGPL path selects the older V2 routine. Recognizing the
-marker is therefore not evidence of a working permissive V2 backend.
+Original PCK V2 is supported by default using the existing bounded MIT-derived
+bit reader and predictor: three run-exponent bits, four width-selector bits,
+runs 1–128 and widths 0 / 3 through 16 / 32. All sixteen width codes are valid.
+The unchanged original JPA writer and reader independently establish both this
+seven-bit grammar and signed16 predictor semantics. Native reads five actual
+outputs of that original writer exactly, including unsigned words above 32767.
 
-The manufacturer's public description establishes the surrounding MAR345
-layout but does not provide an authoritative separate V2 grammar. No already
-bounded, permissively licensed standalone native V2 backend was located in the
-recorded reader evaluation. Native `open` rejects a V2 marker explicitly and
-never searches onward for a V1 alternative. V2, raw spiral/old IMAGE variants,
-other high-record framing, degenerate predictor shapes and automatic file-series
-traversal remain visible gaps. Supporting these requires its own source/codec
-contract and independent reference files; no guessed V2 decoder is included.
+FabIO's older separate C V2 reader implements an incompatible eight-bit framing
+under the same marker. It requires the explicit
+`Options { v2_dialect: PckV2Dialect::FabioLegacyEightBit }` through
+`Reader::open_with_options`. `Original` is the default. Metadata records
+`pck_v2_dialect: Some(...)` for V2 and `None` for V1. There is no heuristic or
+failed-decoder retry; zero-only coincidental compatibility does not identify a
+source dialect. Both profiles preserve headers, unsigned source counts and order.
+
+The [V2 contract and proof](MAR345_V2.md) separate 32 independent original-profile
+fixtures and five unchanged original writer/reader roundtrips from 39 explicit
+eight-bit fixtures. The original JPA decoder matches every original-profile
+source word. The legacy C8 oracle matches 37 compatibility fixtures exactly;
+two fully explained unsigned-predictor differences remain separately qualified.
+No LGPL implementation or dependency is incorporated into production. Original
+and legacy C code is compiled unchanged outside Git for bounded test-only use.
+
+The pinned default FabIO function still calls its V1-only decoder for V2 markers.
+For original-profile cases, ten zero subsets match, eight safe calls return
+wrong words and fourteen unsafe V1 reinterpretations are not called. The
+separate compatibility profile records fourteen coincidental zero matches,
+five wrong results, two big-endian identification errors and eighteen unsafe
+reinterpretations not called. No reference dispatch or object is patched.
+
+The two actual pinned corpus images remain V1 and match unchanged FabIO. No
+acquired detector V2 sample was found; original-writer validation is independent
+producer evidence, not acquired-detector V2 coverage. Raw spiral/old IMAGE,
+other table framing and predictor dimensions below two remain explicit gaps.
+File-series navigation is provided separately without automatic source substitution.
 
 ## Bounds, snapshots and verification
 
@@ -97,11 +120,11 @@ output; adversarial writes preserving all source metadata are outside this
 contract. Worker-owned FrameBuffer allocations are reused. Budgets cover payload
 and conservative metadata admission rather than total process RSS.
 
-Twenty-six small independent CC0 files verify complete source/sample hashes,
+Twenty-six V1 and 71 V2 small independent CC0 files verify complete source/sample hashes,
 field widths, runs, predictor edge behavior, both endian tables, compact/padded
 framing, header aliases/reserved bytes and the qualified oracle differences.
 Tests reject malformed headers, high indices/counts/duplicates/padding,
-unsupported V2/spiral, invalid block sizes, truncated streams, extra encoded
+unsupported spiral, unassigned compatibility-dialect selectors, invalid block sizes, truncated streams, extra encoded
 bytes, nonzero unused bits, resource limits and changed sources. Failed reads
 never expose partially reconstructed counts.
 
