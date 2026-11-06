@@ -12,6 +12,7 @@ use std::{
     io::{BufReader, Cursor, Read, Seek, SeekFrom},
     path::{Path, PathBuf},
 };
+pub mod recovery;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum ExternalPayloads {
@@ -34,10 +35,29 @@ pub enum ExternalWindow {
     /// for a complete image must still exist. Inline blocks are never shortened.
     UpToDeclared,
 }
+/// Explicit interpretation of contradictory legacy inline block declarations.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub enum InlineLayout {
+    #[default]
+    Declared,
+    /// Use the actual parsed closing newline and require legacy Size to describe
+    /// the complete uncompressed inline payload. Original declarations stay visible.
+    LegacySizeAtParsedBoundary,
+}
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub enum PayloadInterpretation {
+    #[default]
+    Declared,
+    /// Caller asserts that this exact declared compression label describes stored
+    /// raw scalar words. The label must match; no codec is tried or retried first.
+    StoredRawForLabel(String),
+}
 #[derive(Debug, Clone)]
 pub struct Options {
     pub external_payloads: ExternalPayloads,
     pub external_window: ExternalWindow,
+    pub inline_layout: InlineLayout,
+    pub payload_interpretation: PayloadInterpretation,
     /// Directory of the original header when a caller has staged its wrapper.
     pub source_directory: Option<PathBuf>,
     /// Explicit FabIO acquisition-file relocation convention. Default false:
@@ -51,6 +71,8 @@ impl Default for Options {
         Self {
             external_payloads: ExternalPayloads::Reject,
             external_window: ExternalWindow::Exact,
+            inline_layout: InlineLayout::Declared,
+            payload_interpretation: PayloadInterpretation::Declared,
             source_directory: None,
             external_basenames: false,
             transport: TransportLimits::default(),
@@ -75,6 +97,12 @@ pub struct Metadata {
     pub pixel_type: PixelType,
     pub little_endian: bool,
     pub compression: String,
+    pub declared_compression: Option<String>,
+    pub payload_interpretation: PayloadInterpretation,
+    pub inline_layout_policy: Option<InlineLayout>,
+    pub declared_header_bytes: Option<String>,
+    pub parsed_header_bytes: usize,
+    pub legacy_size_bytes: Option<usize>,
     /// Effective bytes read from the admitted source window.
     pub stored_bytes: usize,
     /// Original declared physical/window byte count (or shape-derived default).
@@ -165,7 +193,12 @@ impl Reader {
                 }
                 input.seek(SeekFrom::Start(offset))?;
             }
-            let Some((header, local)) = read_header(&mut input, limits)? else {
+            let Some((header, local)) = read_header(
+                &mut input,
+                limits,
+                options.inline_layout == InlineLayout::Declared,
+            )?
+            else {
                 break;
             };
             let payload = offset
@@ -229,22 +262,20 @@ impl Reader {
                 "highbytefirst" => false,
                 _ => return Err(Error("unsupported EDF byte order".into())),
             };
-            let compression = match fields
-                .get("COMPRESSION")
-                .map(|s| s.to_ascii_uppercase())
-                .as_deref()
-            {
-                None | Some("NONE" | "NO" | "NO COMPRESSION" | "FALSE") => "NONE",
-                Some("GZIP" | "GZIPCOMPRESSION") => "GZIP",
-                Some("Z" | "ZLIB" | "ZCOMPRESSION") => "ZLIB",
-                Some("BZ2" | "BZ" | "BZIP2" | "BZCOMPRESSION" | "BZ2COMPRESSION") => "BZ2",
-                Some(value) => return Err(Error(format!("unsupported EDF compression {value}"))),
-            }
-            .to_owned();
+            let compression = effective_compression(&fields, &options.payload_interpretation)?;
             let plain = compression == "NONE";
-            let physical = optional_number(&fields, "EDF_BINARYSIZE")?
+            let declared_physical = optional_number(&fields, "EDF_BINARYSIZE")?
                 .or(optional_number(&fields, "SIZE")?)
                 .unwrap_or(if plain { decoded } else { 0 });
+            let external = fields.contains_key("EDF_BINARYFILENAME");
+            let physical = effective_inline_bytes(
+                &fields,
+                declared_physical,
+                decoded,
+                plain,
+                external,
+                options.inline_layout,
+            )?;
             if physical > limits.encoded_bytes {
                 return Err(Error("EDF encoded block exceeds limit".into()));
             }
@@ -350,7 +381,7 @@ impl Reader {
                         .unwrap_or(if plain { decoded } else { 0 });
                     (source, start, bytes)
                 } else {
-                    (0, payload, physical)
+                    (0, payload, declared_physical)
                 };
             let external_window_policy = (source != 0).then_some(options.external_window);
             let bytes = if external_window_policy == Some(ExternalWindow::UpToDeclared) {
@@ -361,6 +392,8 @@ impl Reader {
                 u64::try_from(declared_bytes)
                     .map_err(|_| Error("EDF external window exceeds u64".into()))?
                     .min(available) as usize
+            } else if source == 0 {
+                physical
             } else {
                 declared_bytes
             };
@@ -374,6 +407,15 @@ impl Reader {
                 return Err(Error("invalid/truncated EDF payload window".into()));
             }
             let metadata = Metadata {
+                declared_compression: fields.get("COMPRESSION").cloned(),
+                payload_interpretation: options.payload_interpretation.clone(),
+                inline_layout_policy: (source == 0).then_some(options.inline_layout),
+                declared_header_bytes: fields
+                    .get("EDF_HEADERSIZE")
+                    .or_else(|| fields.get("HEADERSIZE"))
+                    .cloned(),
+                parsed_header_bytes: header.len(),
+                legacy_size_bytes: optional_number(&fields, "SIZE")?,
                 shape,
                 pixel_type,
                 little_endian,
@@ -508,7 +550,29 @@ fn header_cost(header: &[u8], fields: &BTreeMap<String, String>) -> usize {
 }
 type HeaderBlock = (Vec<u8>, BTreeMap<String, String>);
 
-fn read_header(input: &mut impl Read, limits: Limits) -> Result<Option<HeaderBlock>, Error> {
+enum HeaderRecord {
+    Empty,
+    Complete(HeaderBlock),
+    Incomplete(Vec<u8>),
+    Invalid(Vec<u8>, String),
+}
+fn read_header(
+    input: &mut impl Read,
+    limits: Limits,
+    check_declared: bool,
+) -> Result<Option<HeaderBlock>, Error> {
+    match read_header_record(input, limits, check_declared)? {
+        HeaderRecord::Empty => Ok(None),
+        HeaderRecord::Complete(value) => Ok(Some(value)),
+        HeaderRecord::Incomplete(_) => Err(Error("truncated EDF header".into())),
+        HeaderRecord::Invalid(_, reason) => Err(Error(reason)),
+    }
+}
+fn read_header_record(
+    input: &mut impl Read,
+    limits: Limits,
+    check_declared: bool,
+) -> Result<HeaderRecord, Error> {
     let mut header = Vec::new();
     let mut opened = false;
     loop {
@@ -520,15 +584,19 @@ fn read_header(input: &mut impl Read, limits: Limits) -> Result<Option<HeaderBlo
         let mut b = [0];
         if input.read(&mut b)? == 0 {
             if !opened && header.iter().all(u8::is_ascii_whitespace) {
-                return Ok(None);
+                return Ok(HeaderRecord::Empty);
             }
-            return Err(Error("truncated EDF header".into()));
+            return Ok(HeaderRecord::Incomplete(header));
         }
         if !opened {
             if b[0] == b'{' {
                 opened = true;
             } else if !b[0].is_ascii_whitespace() {
-                return Err(Error("invalid EDF header opening".into()));
+                header.push(b[0]);
+                return Ok(HeaderRecord::Invalid(
+                    header,
+                    "invalid EDF header opening".into(),
+                ));
             }
         }
         header.push(b[0]);
@@ -544,18 +612,72 @@ fn read_header(input: &mut impl Read, limits: Limits) -> Result<Option<HeaderBlo
         if let Some((key, value)) = entry.split_once('=') {
             let key = trim(key).to_ascii_uppercase();
             if key.is_empty() {
-                return Err(Error("empty EDF header key".into()));
+                return Ok(HeaderRecord::Invalid(header, "empty EDF header key".into()));
             }
             fields.insert(key, trim(value).to_owned());
         }
     }
-    if let Some(declared) =
-        optional_number(&fields, "EDF_HEADERSIZE")?.or(optional_number(&fields, "HEADERSIZE")?)
+    if check_declared
+        && let Some(declared) =
+            optional_number(&fields, "EDF_HEADERSIZE")?.or(optional_number(&fields, "HEADERSIZE")?)
         && declared > limits.header_bytes
     {
         return Err(Error("EDF declared header size exceeds limit".into()));
     }
-    Ok(Some((header, fields)))
+    Ok(HeaderRecord::Complete((header, fields)))
+}
+fn effective_compression(
+    fields: &BTreeMap<String, String>,
+    policy: &PayloadInterpretation,
+) -> Result<String, Error> {
+    if let PayloadInterpretation::StoredRawForLabel(expected) = policy {
+        if expected.is_empty()
+            || fields
+                .get("COMPRESSION")
+                .is_none_or(|value| !value.eq_ignore_ascii_case(expected))
+        {
+            return Err(Error(
+                "EDF explicit stored-raw label does not match source declaration".into(),
+            ));
+        }
+        return Ok("NONE".into());
+    }
+    Ok(match fields
+        .get("COMPRESSION")
+        .map(|s| s.to_ascii_uppercase())
+        .as_deref()
+    {
+        None | Some("NONE" | "NO" | "NO COMPRESSION" | "FALSE") => "NONE",
+        Some("GZIP" | "GZIPCOMPRESSION") => "GZIP",
+        Some("Z" | "ZLIB" | "ZCOMPRESSION") => "ZLIB",
+        Some("BZ2" | "BZ" | "BZIP2" | "BZCOMPRESSION" | "BZ2COMPRESSION") => "BZ2",
+        Some(value) => return Err(Error(format!("unsupported EDF compression {value}"))),
+    }
+    .into())
+}
+fn effective_inline_bytes(
+    fields: &BTreeMap<String, String>,
+    declared: usize,
+    decoded: usize,
+    plain: bool,
+    external: bool,
+    policy: InlineLayout,
+) -> Result<usize, Error> {
+    if external || policy == InlineLayout::Declared {
+        return Ok(declared);
+    }
+    if !plain {
+        return Err(Error(
+            "EDF legacy Size interpretation requires explicit uncompressed scalar storage".into(),
+        ));
+    }
+    let size = number(fields, "SIZE")?;
+    if size < decoded {
+        return Err(Error(
+            "EDF legacy Size cannot supply the complete declared samples".into(),
+        ));
+    }
+    Ok(size)
 }
 fn decode_member(
     input: &mut impl Read,
