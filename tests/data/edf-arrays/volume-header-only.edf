@@ -1,0 +1,12 @@
+{
+HeaderID = EH:000001:000000:000000 ;
+Image = 0 ;
+DataType = Unsigned64 ;
+ByteOrder = LowByteFirst ;
+Dim_1 = 4 ;
+Dim_2 = 3 ;
+Dim_3 = 2 ;
+Size = 192 ;
+Compression = NONE ;
+SourceArrayBytes = 192 ;
+                                                                                                                                                                                                                                                                                                                         }

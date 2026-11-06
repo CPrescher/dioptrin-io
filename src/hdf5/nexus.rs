@@ -175,9 +175,8 @@ impl Reader {
                 if shape.len() > 32 {
                     return Err(Error("NeXus dataset rank limit".into()));
                 }
-                let descriptor = dataset.dtype()?.to_descriptor()?;
+                let descriptor = typed::type_descriptor(&dataset.dtype()?)?;
                 let text: Option<String> = None;
-                let descriptor = format!("{descriptor:?}");
                 self.sources.charge(
                     descriptor
                         .len()
@@ -763,6 +762,20 @@ fn pixels_equal(a: &PixelBuffer, b: &PixelBuffer) -> bool {
         }
         (PixelBuffer::F64(a), PixelBuffer::F64(b)) => {
             a.len() == b.len() && a.iter().zip(b).all(|(a, b)| a.to_bits() == b.to_bits())
+        }
+        (PixelBuffer::C32(a), PixelBuffer::C32(b)) => {
+            a.len() == b.len()
+                && a.iter()
+                    .flatten()
+                    .zip(b.iter().flatten())
+                    .all(|(a, b)| a.to_bits() == b.to_bits())
+        }
+        (PixelBuffer::C64(a), PixelBuffer::C64(b)) => {
+            a.len() == b.len()
+                && a.iter()
+                    .flatten()
+                    .zip(b.iter().flatten())
+                    .all(|(a, b)| a.to_bits() == b.to_bits())
         }
         _ => a == b,
     }

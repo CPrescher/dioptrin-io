@@ -1,6 +1,8 @@
 //! Immutable typed HDF5 images/stacks, with explicit detector discovery and
 //! complete tracking of the local files traversed by admitted external links.
 pub use super::sources::{Link, Source};
+#[path = "external_raw.rs"]
+mod external_raw;
 pub use super::vds::{
     FilenameBinding, Mapping as VdsMapping, SelectionRecord as VdsSelection, UnmappedRegions,
     VdsMetadata, VdsOptions,
@@ -8,13 +10,17 @@ pub use super::vds::{
 pub use super::{Error, Filter};
 use super::{sources::Sources, vds};
 use crate::{PixelBuffer, PixelType};
+pub use external_raw::{ExternalRawMetadata, ExternalRawOptions, ExternalRawWindow};
 use hdf5_backend::{Container, Dataset, Dataspace, Datatype, LocationType, types::TypeDescriptor};
 use hdf5_sys::{
     h5a::{H5Aexists, H5Aread},
     h5d::{H5D_space_status_t, H5Dget_space_status, H5Dread},
-    h5p::H5P_DEFAULT,
+    h5p::{H5P_DEFAULT, H5Pget_fill_value},
     h5s::H5S_ALL,
-    h5t::H5Tequal,
+    h5t::{
+        H5T_class_t, H5Tcopy, H5Tcreate, H5Tequal, H5Tinsert, H5Tset_ebias, H5Tset_fields,
+        H5Tset_size,
+    },
 };
 use std::{collections::BTreeMap, path::Path};
 
@@ -76,6 +82,8 @@ pub struct Metadata {
     pub first_frame: usize,
     pub pixel_type: PixelType,
     pub little_endian: bool,
+    /// Original HDF5 type declaration, including compound member names/offsets.
+    pub type_descriptor: String,
     pub layout: hdf5_backend::dataset::Layout,
     pub filters: Vec<Filter>,
     /// HDF5-declared scalar fill, including its default zero. Returning fill
@@ -87,10 +95,14 @@ pub struct Metadata {
     /// Explicit virtual mapping provenance. Source frame extents are derived
     /// from concrete bound modules; missing modules never supply fill.
     pub virtual_dataset: Option<VdsMetadata>,
+    /// Explicit bound raw filenames and admitted frozen byte windows.
+    pub external_raw: Option<ExternalRawMetadata>,
 }
 struct Part {
+    source: usize,
     dataset: Dataset,
     mosaic: Option<vds::Mosaic>,
+    raw: Option<external_raw::Raw>,
     metadata: Metadata,
 }
 pub struct Reader {
@@ -126,7 +138,7 @@ impl Reader {
         selection: Selection<'_>,
         options: Options,
     ) -> Result<Self, Error> {
-        Self::open_inner(path, selection, options, None, None)
+        Self::open_inner(path, selection, options, None, None, None)
     }
     /// Explicit immutable VDS mosaics with caller-approved filename bindings.
     /// Regular datasets keep their existing interpretation and ignore unused
@@ -140,7 +152,7 @@ impl Reader {
         options: Options,
         vds: VdsOptions<'_>,
     ) -> Result<Self, Error> {
-        Self::open_inner(path, selection, options, Some(vds), None)
+        Self::open_inner(path, selection, options, Some(vds), None, None)
     }
     /// Open captured/relocated source bytes with an explicit directory for root
     /// relative links. Intermediate files retain their own original directories.
@@ -153,13 +165,29 @@ impl Reader {
         vds: Option<VdsOptions<'_>>,
         origin: Option<&Path>,
     ) -> Result<Self, Error> {
-        Self::open_inner(path, selection, options, vds, origin)
+        Self::open_inner(path, selection, options, vds, None, origin)
+    }
+    /// Explicit storage contracts for virtual mappings and/or raw external
+    /// files. Every raw filename needs an exact caller-provided binding; native
+    /// HDF5 external-file lookup is never used for sample bytes.
+    /// # Errors
+    /// Incomplete windows, missing/ambiguous bindings, changed sources or limits.
+    pub fn open_snapshot_with_storage(
+        path: impl AsRef<Path>,
+        selection: Selection<'_>,
+        options: Options,
+        vds: Option<VdsOptions<'_>>,
+        raw: Option<ExternalRawOptions<'_>>,
+        origin: Option<&Path>,
+    ) -> Result<Self, Error> {
+        Self::open_inner(path, selection, options, vds, raw, origin)
     }
     fn open_inner(
         path: impl AsRef<Path>,
         selection: Selection<'_>,
         options: Options,
         vds_options: Option<VdsOptions<'_>>,
+        raw_options: Option<ExternalRawOptions<'_>>,
         origin: Option<&Path>,
     ) -> Result<Self, Error> {
         let limits = options.limits;
@@ -184,6 +212,7 @@ impl Reader {
         super::register_filters()?;
         let mut sources = Sources::new_with_origin(path, limits, options.external_links, origin)?;
         let mut bindings = None;
+        let mut raw_bindings = None;
         let mut indexed_datasets = 0usize;
         let mut fields = BTreeMap::new();
         let requests = match selection {
@@ -339,12 +368,39 @@ impl Reader {
                 .checked_add(count)
                 .filter(|&n| n <= limits.frames)
                 .ok_or_else(|| Error("HDF5 sequence exceeds frame limit".into()))?;
+            let has_raw = !dataset.dcpl()?.get_external()?.is_empty();
+            let (raw, external_raw, raw_storage) = if has_raw {
+                if raw_bindings.is_none() {
+                    let policy = raw_options.ok_or_else(|| {
+                        Error(
+                            "HDF5 raw external storage requires explicit ExternalRawOptions".into(),
+                        )
+                    })?;
+                    raw_bindings = Some(external_raw::Bindings::new(policy, limits)?);
+                }
+                let bytes = count
+                    .checked_mul(elements)
+                    .and_then(|n| n.checked_mul(pixel_type.bytes()))
+                    .and_then(|n| u64::try_from(n).ok())
+                    .ok_or_else(|| Error("raw external dataset size overflow".into()))?;
+                let (raw, metadata, storage) = external_raw::admit(
+                    &dataset,
+                    &mut sources,
+                    raw_bindings.as_mut().expect("initialized raw bindings"),
+                    limits,
+                    pixel_type,
+                    bytes,
+                )?;
+                (Some(raw), Some(metadata), Some(storage))
+            } else {
+                (None, None, None)
+            };
             let Storage {
                 filters,
                 fill_value,
                 fill_time,
                 storage_allocated,
-            } = if let Some(storage) = virtual_storage {
+            } = if let Some(storage) = virtual_storage.or(raw_storage) {
                 storage
             } else {
                 admit_storage(&dataset, pixel_type, limits)?
@@ -365,24 +421,31 @@ impl Reader {
                 first_frame: frames,
                 pixel_type,
                 little_endian,
+                type_descriptor: type_descriptor(&dataset.dtype()?)?,
                 layout: dataset.layout(),
                 filters,
                 fill_value,
                 storage_allocated,
                 fill_time,
                 virtual_dataset,
+                external_raw,
             };
             parts.push(Part {
+                source,
                 dataset,
                 metadata,
                 mosaic,
+                raw,
             });
             frames = next;
         }
         if let Some(bindings) = bindings {
             bindings.finish()?;
         }
-        check_virtual_graph(&parts)?;
+        if let Some(bindings) = raw_bindings {
+            bindings.finish()?;
+        }
+        check_virtual_graph(&parts, &sources)?;
         sources.check()?;
         Ok(Self {
             parts,
@@ -404,7 +467,7 @@ impl Reader {
     /// Any source/alias or admitted virtual graph changed after indexing.
     pub fn check_sources(&self) -> Result<(), Error> {
         self.sources.check()?;
-        check_virtual_graph(&self.parts)
+        check_virtual_graph(&self.parts, &self.sources)
     }
     #[must_use]
     pub fn sources(&self) -> &[Source] {
@@ -439,7 +502,7 @@ impl Reader {
     pub fn read_frame_into(&self, index: usize, buffer: &mut FrameBuffer) -> Result<(), Error> {
         buffer.shape = None;
         self.sources.check()?;
-        check_virtual_graph(&self.parts)?;
+        check_virtual_graph(&self.parts, &self.sources)?;
         let part = self
             .part(index)
             .ok_or_else(|| Error("HDF5 frame outside snapshot".into()))?;
@@ -452,10 +515,27 @@ impl Reader {
             .pixels
             .resize(meta.pixel_type, count)
             .map_err(Error)?;
+        if let Some(raw) = &part.raw {
+            let offset = (index - meta.first_frame)
+                .checked_mul(count)
+                .and_then(|n| n.checked_mul(meta.pixel_type.bytes()))
+                .and_then(|n| u64::try_from(n).ok())
+                .ok_or_else(|| Error("raw external frame offset overflow".into()))?;
+            raw.read(
+                &self.sources,
+                offset,
+                &mut buffer.pixels,
+                meta.little_endian,
+            )?;
+            self.sources.check()?;
+            check_virtual_graph(&self.parts, &self.sources)?;
+            buffer.shape = Some(meta.shape);
+            return Ok(());
+        }
         if let Some(mosaic) = &part.mosaic {
             mosaic.read(index - meta.first_frame, meta.shape, &mut buffer.pixels)?;
             self.sources.check()?;
-            check_virtual_graph(&self.parts)?;
+            check_virtual_graph(&self.parts, &self.sources)?;
             buffer.shape = Some(meta.shape);
             return Ok(());
         }
@@ -492,7 +572,7 @@ impl Reader {
             }
         })?;
         self.sources.check()?;
-        check_virtual_graph(&self.parts)?;
+        check_virtual_graph(&self.parts, &self.sources)?;
         buffer.shape = Some(meta.shape);
         Ok(())
     }
@@ -502,11 +582,22 @@ impl Reader {
 // including other virtual parts and ordinary parts sharing the global index.
 // Shape checks also catch unflushed in-process HDF5 extensions before file stamps
 // change. Ordinary non-VDS readers retain their existing access/check behavior.
-fn check_virtual_graph(parts: &[Part]) -> Result<(), Error> {
-    if !parts.iter().any(|part| part.mosaic.is_some()) {
+fn check_virtual_graph(parts: &[Part], sources: &Sources) -> Result<(), Error> {
+    if !parts
+        .iter()
+        .any(|part| part.mosaic.is_some() || part.raw.is_some())
+    {
         return Ok(());
     }
     for part in parts {
+        if part.raw.is_some() {
+            let current = sources.file(part.source).dataset(&part.metadata.dataset)?;
+            if current.loc_info()?.token != part.dataset.loc_info()?.token {
+                return Err(Error(
+                    "raw external dataset binding changed; reopen snapshot".into(),
+                ));
+            }
+        }
         if let Some(mosaic) = &part.mosaic {
             mosaic.check()?;
         } else if part.dataset.shape() != part.metadata.source_shape {
@@ -617,17 +708,126 @@ pub(super) fn standard_type(dtype: &Datatype) -> Result<(PixelType, bool), Error
             U32,H5T_STD_U32LE,H5T_STD_U32BE;I32,H5T_STD_I32LE,H5T_STD_I32BE;
             U64,H5T_STD_U64LE,H5T_STD_U64BE;I64,H5T_STD_I64LE,H5T_STD_I64BE;
             F32,H5T_IEEE_F32LE,H5T_IEEE_F32BE;F64,H5T_IEEE_F64LE,H5T_IEEE_F64BE);
-        Err(Error("HDF5 samples must use a standard 8/16/32/64-bit integer or IEEE f32/f64 type; custom precision, enums, complex and compound types are unsupported".into()))
+        let boolean = Datatype::from_type::<bool>()?;
+        if unsafe { H5Tequal(dtype.id(), boolean.id()) } > 0 {
+            return Ok((PixelType::Bool, true));
+        }
+        for little in [true, false] {
+            let expected = half_type(little)?;
+            if unsafe { H5Tequal(dtype.id(), expected.id()) } > 0 {
+                return Ok((PixelType::F16, little));
+            }
+        }
+        for ty in [PixelType::C32, PixelType::C64] {
+            for little in [true, false] {
+                let expected = complex_type(ty, little)?;
+                // Exact native equality includes member names, order, offsets,
+                // size and original IEEE component types/byte order.
+                if unsafe { H5Tequal(dtype.id(), expected.id()) } > 0 {
+                    return Ok((ty, little));
+                }
+            }
+        }
+        Err(Error("HDF5 samples require exact standard integers/IEEE floats or packed r/i IEEE complex pairs; custom precision, enums and other compounds are unsupported".into()))
+    })
+}
+// h5py's IEEE binary16 encoding, constructed from an owned copy. No
+// conversion to f32 is involved in HDF5 output or fill-value access.
+fn half_type(little: bool) -> Result<Datatype, Error> {
+    use hdf5_backend::globals::*;
+    hdf5_backend::sync::sync(|| {
+        let base = if little {
+            *H5T_IEEE_F32LE
+        } else {
+            *H5T_IEEE_F32BE
+        };
+        // SAFETY: copy creates an owned datatype, never mutates predefined IDs.
+        let dtype: Datatype = unsafe { hdf5_backend::from_id(H5Tcopy(base))? };
+        if unsafe { H5Tset_fields(dtype.id(), 15, 10, 5, 0, 10) } < 0
+            || unsafe { H5Tset_size(dtype.id(), 2) } < 0
+            || unsafe { H5Tset_ebias(dtype.id(), 15) } < 0
+        {
+            return Err(Error(
+                "cannot construct exact HDF5 IEEE binary16 type".into(),
+            ));
+        }
+        Ok(dtype)
+    })
+}
+/// Retain binary16's exact encoding even when the upstream descriptor enum was
+/// compiled without its optional half-float wrapper dependency.
+pub(super) fn type_descriptor(dtype: &Datatype) -> Result<String, Error> {
+    match dtype.to_descriptor() {
+        Ok(value) => Ok(format!("{value:?}")),
+        Err(error) => {
+            if matches!(standard_type(dtype), Ok((PixelType::F16, _))) {
+                Ok("Float(U2;IEEE754-binary16)".into())
+            } else {
+                Err(error.into())
+            }
+        }
+    }
+}
+fn complex_type(ty: PixelType, little: bool) -> Result<Datatype, Error> {
+    use hdf5_backend::globals::*;
+    let component = match (ty, little) {
+        (PixelType::C32, true) => *H5T_IEEE_F32LE,
+        (PixelType::C32, false) => *H5T_IEEE_F32BE,
+        (PixelType::C64, true) => *H5T_IEEE_F64LE,
+        (PixelType::C64, false) => *H5T_IEEE_F64BE,
+        _ => return Err(Error("unsupported HDF5 complex representation".into())),
+    };
+    hdf5_backend::sync::sync(|| {
+        // SAFETY: native compound datatype is immediately owned by Datatype;
+        // both inserted components are process-lifetime standard IEEE types.
+        let dtype: Datatype =
+            unsafe { hdf5_backend::from_id(H5Tcreate(H5T_class_t::H5T_COMPOUND, ty.bytes()))? };
+        if unsafe { H5Tinsert(dtype.id(), c"r".as_ptr(), 0, component) } < 0
+            || unsafe { H5Tinsert(dtype.id(), c"i".as_ptr(), ty.component_bytes(), component) } < 0
+        {
+            return Err(Error("cannot construct exact HDF5 complex datatype".into()));
+        }
+        Ok(dtype)
     })
 }
 pub(super) fn memory_type(ty: PixelType) -> Result<Datatype, Error> {
-    macro_rules! types {($($v:ident,$t:ty);*)=>{match ty {$(PixelType::$v=>Datatype::from_type::<$t>()?),*,_=>return Err(Error("complex HDF5 samples need a separate dtype contract".into()))}};}
+    if ty == PixelType::F16 {
+        return half_type(cfg!(target_endian = "little"));
+    }
+    if ty == PixelType::Bool {
+        return Ok(Datatype::from_type::<bool>()?);
+    }
+    if matches!(ty, PixelType::C32 | PixelType::C64) {
+        return complex_type(ty, cfg!(target_endian = "little"));
+    }
+    macro_rules! types {($($v:ident,$t:ty);*)=>{match ty {$(PixelType::$v=>Datatype::from_type::<$t>()?),*,_=>return Err(Error("unsupported exact HDF5 memory type".into()))}};}
     Ok(types!(U8,u8;I8,i8;U16,u16;I16,i16;U32,u32;I32,i32;U64,u64;I64,i64;F32,f32;F64,f64))
 }
 pub(super) fn fill(dataset: &Dataset, ty: PixelType) -> Result<Option<PixelBuffer>, Error> {
+    use hdf5_backend::dataset::FillValue;
     let plist = dataset.dcpl()?;
-    macro_rules! types {($($v:ident,$t:ty);*)=>{match ty {$(PixelType::$v=>plist.get_fill_value_as::<$t>()?.map(|v|PixelBuffer::$v(vec![v]))),*,_=>return Err(Error("complex HDF5 fill needs a separate dtype contract".into()))}};}
-    Ok(types!(U8,u8;I8,i8;U16,u16;I16,i16;U32,u32;I32,i32;U64,u64;I64,i64;F32,f32;F64,f64))
+    if plist.get_fill_value_defined()? == FillValue::Undefined {
+        return Ok(None);
+    }
+    let mut value = PixelBuffer::default();
+    value.resize(ty, 1).map_err(Error)?;
+    let memory = memory_type(ty)?;
+    hdf5_backend::sync::sync(|| {
+        // SAFETY: destination owns exactly one initialized native sample of the
+        // admitted memory datatype, including both complex components.
+        if unsafe {
+            H5Pget_fill_value(
+                plist.id(),
+                memory.id(),
+                value.bytes_mut().as_mut_ptr().cast(),
+            )
+        } < 0
+        {
+            return Err(Error("cannot read exact HDF5 scalar fill".into()));
+        }
+        Ok(())
+    })?;
+    Ok(Some(value))
 }
 pub(super) fn read_text(
     container: &Container,

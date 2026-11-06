@@ -1,0 +1,629 @@
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -45,41 +45,7 @@
+ name = "fax"
+ path = "src/lib.rs"
+ 
+-[[example]]
+-name = "bitdiff"
+-path = "examples/bitdiff.rs"
+-
+-[[example]]
+-name = "check"
+-path = "examples/check.rs"
+-
+-[[example]]
+-name = "fax2pbm"
+-path = "examples/fax2pbm.rs"
+-
+-[[example]]
+-name = "fax2tiff"
+-path = "examples/fax2tiff.rs"
+-
+-[[example]]
+-name = "pbm2fax"
+-path = "examples/pbm2fax.rs"
+-
+-[[example]]
+-name = "validate"
+-path = "examples/validate.rs"
+-
+-[[test]]
+-name = "check"
+-path = "tests/check.rs"
+-
+-[[test]]
+-name = "errors"
+-path = "tests/errors.rs"
+-
+ [dependencies.fax_derive]
+ version = "0.2.0"
+ optional = true
+ 
+-[dev-dependencies.tiff]
+-version = "0.11.3"
+--- a/src/decoder.rs
++++ b/src/decoder.rs
+@@ -1,7 +1,6 @@
+ use std::convert::Infallible;
+-use std::io::{self, Bytes, Read};
+-
+-use crate::maps::{black, mode, white, Mode, EDFB_HALF, EOL};
++
++use crate::maps::{black, mode, white, Mode};
+ use crate::{BitReader, ByteReader, Color, Transitions};
+ 
+ fn with_markup<D, R>(decoder: D, reader: &mut R) -> Option<u16>
+@@ -239,107 +238,334 @@
+     }
+     // when Complete::Complete is returned, there is no useful data in .transitions() or .line()
+     pub fn advance(&mut self) -> Result<DecodeStatus, DecodeError<E>> {
+-        let mut transitions = Transitions::new(&self.reference);
+-        let mut a0 = 0;
+-        let mut color = Color::White;
+-        let mut start_of_row = true;
+-        //debug!("\n\nline {}", y);
+-
+-        loop {
+-            //reader.print_peek();
+-            let mode = match mode::decode(&mut self.reader) {
+-                Some(mode) => mode,
+-                None => return Err(DecodeError::Invalid),
+-            };
+-            //debug!("  {:?}, color={:?}, a0={}", mode, color, a0);
+-
+-            match mode {
+-                Mode::Pass => {
+-                    if start_of_row && color == Color::White {
+-                        transitions.pos += 1;
+-                    } else {
+-                        transitions
+-                            .next_color(a0, !color, false)
+-                            .ok_or(DecodeError::Invalid)?;
+-                    }
+-                    //debug!("b1={}", b1);
+-                    if let Some(b2) = transitions.next() {
+-                        //debug!("b2={}", b2);
+-                        a0 = b2;
+-                    }
+-                }
+-                Mode::Vertical(delta) => {
+-                    let b1 = transitions
+-                        .next_color(a0, !color, start_of_row)
+-                        .unwrap_or(self.width);
+-                    let a1_i32 = b1 as i32 + delta as i32;
+-                    if a1_i32 < 0 || a1_i32 > self.width as i32 {
+-                        break;
+-                    }
+-                    let a1 = a1_i32 as u16;
+-                    //debug!("transition to {:?} at {}", !color, a1);
+-                    // Canonical form: only store transitions strictly less
+-                    // than width. A transition at width is the implicit
+-                    // end-of-line and is not a color change. This matches
+-                    // the encoder's `self.current` representation (see
+-                    // encoder.rs — it only pushes values yielded by pels,
+-                    // which are always in [0, width-1]).
+-                    if a1 < self.width {
+-                        self.current.push(a1);
+-                    }
+-                    color = !color;
+-                    a0 = a1;
+-                    if delta < 0 {
+-                        transitions.seek_back(a0);
+-                    }
+-                }
+-                Mode::Horizontal => {
+-                    let a0a1 = colored(color, &mut self.reader).ok_or(DecodeError::Invalid)?;
+-                    let a1a2 = colored(!color, &mut self.reader).ok_or(DecodeError::Invalid)?;
+-                    let a1 = a0.checked_add(a0a1).ok_or(DecodeError::Invalid)?;
+-                    let a2 = a1.checked_add(a1a2).ok_or(DecodeError::Invalid)?;
+-                    //debug!("a0a1={}, a1a2={}, a1={}, a2={}", a0a1, a1a2, a1, a2);
+-
+-                    // Same canonical form rule: never store a transition
+-                    // at width (it's the end-of-line sentinel, not a flip).
+-                    if a1 < self.width {
+-                        self.current.push(a1);
+-                    }
+-                    if a2 >= self.width {
+-                        break;
+-                    }
+-                    self.current.push(a2);
+-                    a0 = a2;
+-                }
+-                Mode::Extension => {
+-                    let _ext = self.reader.peek(3).ok_or(DecodeError::Invalid)?;
+-                    let _ = self.reader.consume(3);
+-                    return Err(DecodeError::Unsupported);
+-                }
+-                Mode::EOF => return Ok(DecodeStatus::End),
+-            }
+-            start_of_row = false;
+-
+-            if a0 >= self.width {
+-                break;
+-            }
+-        }
+-        //debug!("{:?}", current);
+-
++        let status = decode_2d_row(
++            &mut self.reader,
++            &self.reference,
++            &mut self.current,
++            self.width,
++            false,
++        )?;
++        if status == DecodeStatus::End {
++            return Ok(status);
++        }
+         std::mem::swap(&mut self.reference, &mut self.current);
+         self.current.clear();
+-
+-        Ok(DecodeStatus::Incomplete)
++        Ok(status)
+     }
+ 
+     pub fn transition(&self) -> &[u16] {
+         &self.reference
+     }
+ 
+-    pub fn line(&self) -> Line {
++    pub fn line(&self) -> Line<'_> {
+         Line {
+             transitions: &self.reference,
+             width: self.width,
++        }
++    }
++}
++
++// The compatibility Group4 API and strict TIFF mixed-mode row API share this
++// mature state machine. Strict mode adds bounds/progress checks without
++// changing legacy Group4 recovery behavior.
++fn decode_2d_row<B: crate::BitReader>(
++    reader: &mut B,
++    reference: &[u16],
++    current: &mut Vec<u16>,
++    width: u16,
++    strict: bool,
++) -> Result<DecodeStatus, DecodeError<B::Error>> {
++    let mut transitions = Transitions::new(reference);
++    let mut a0 = 0;
++    let mut color = Color::White;
++    let mut start_of_row = true;
++    //debug!("\n\nline {}", y);
++
++    loop {
++        //reader.print_peek();
++        let mode = match if strict {
++            strict_mode(reader)?
++        } else {
++            mode::decode(reader)
++        } {
++            Some(mode) => mode,
++            None => return Err(DecodeError::Invalid),
++        };
++        //debug!("  {:?}, color={:?}, a0={}", mode, color, a0);
++
++        match mode {
++            Mode::Pass => {
++                if start_of_row && color == Color::White {
++                    transitions.pos += 1;
++                } else {
++                    transitions
++                        .next_color(a0, !color, false)
++                        .ok_or(DecodeError::Invalid)?;
++                }
++                //debug!("b1={}", b1);
++                if let Some(b2) = transitions.next() {
++                    if strict && (b2 <= a0 || b2 >= width) {
++                        return Err(DecodeError::Invalid);
++                    }
++                    //debug!("b2={}", b2);
++                    a0 = b2;
++                } else if strict {
++                    return Err(DecodeError::Invalid);
++                }
++            }
++            Mode::Vertical(delta) => {
++                let b1 = transitions
++                    .next_color(a0, !color, start_of_row)
++                    .unwrap_or(width);
++                let a1_i32 = b1 as i32 + delta as i32;
++                if a1_i32 < 0 || a1_i32 > width as i32 {
++                    if strict {
++                        return Err(DecodeError::Invalid);
++                    }
++                    break;
++                }
++                let a1 = a1_i32 as u16;
++                if strict && (a1 < a0 || a1 == a0 && !(start_of_row && color == Color::White)) {
++                    return Err(DecodeError::Invalid);
++                }
++                //debug!("transition to {:?} at {}", !color, a1);
++                // Canonical form: only store transitions strictly less
++                // than width. A transition at width is the implicit
++                // end-of-line and is not a color change. This matches
++                // the encoder's `current` representation (see
++                // encoder.rs — it only pushes values yielded by pels,
++                // which are always in [0, width-1]).
++                if a1 < width {
++                    current.push(a1);
++                }
++                color = !color;
++                a0 = a1;
++                if delta < 0 {
++                    transitions.seek_back(a0);
++                }
++            }
++            Mode::Horizontal => {
++                let a0a1 = if strict {
++                    strict_colored(color, reader, width - a0)?
++                } else {
++                    colored(color, reader).ok_or(DecodeError::Invalid)?
++                };
++                let a1a2 = if strict {
++                    None
++                } else {
++                    Some(colored(!color, reader).ok_or(DecodeError::Invalid)?)
++                };
++                let a1 = a0.checked_add(a0a1).ok_or(DecodeError::Invalid)?;
++                let a1a2 = match a1a2 {
++                    Some(n) => n,
++                    None => strict_colored(!color, reader, width - a1)?,
++                };
++                let a2 = a1.checked_add(a1a2).ok_or(DecodeError::Invalid)?;
++                if strict
++                    && (a2 > width
++                        || a1 == a0 && !(start_of_row && color == Color::White)
++                        || a2 == a1 && a1 != width)
++                {
++                    return Err(DecodeError::Invalid);
++                }
++                //debug!("a0a1={}, a1a2={}, a1={}, a2={}", a0a1, a1a2, a1, a2);
++
++                // Same canonical form rule: never store a transition
++                // at width (it's the end-of-line sentinel, not a flip).
++                if a1 < width {
++                    current.push(a1);
++                }
++                if a2 >= width {
++                    break;
++                }
++                current.push(a2);
++                a0 = a2;
++            }
++            Mode::Extension => {
++                let _ext = reader.peek(3).ok_or(DecodeError::Invalid)?;
++                let _ = reader.consume(3);
++                return Err(DecodeError::Unsupported);
++            }
++            Mode::EOF => {
++                return if strict {
++                    Err(DecodeError::Invalid)
++                } else {
++                    Ok(DecodeStatus::End)
++                }
++            }
++        }
++        start_of_row = false;
++
++        if a0 >= width {
++            break;
++        }
++    }
++    //debug!("{:?}", current);
++
++    Ok(DecodeStatus::Incomplete)
++}
++
++/// One strict T.4/T.6 two-dimensional row at a time, driven by the caller's
++/// bounded bit reader. No EOL/RTC/EOFB is consumed or inferred here. TIFF owns
++/// those delimiters and must supply/reset the reference for one-dimensional rows.
++/// The Group4 compatibility API above uses the same state machine with its
++/// historical recovery behavior; this API never returns an incomplete row.
++pub struct StrictRowDecoder {
++    reference: Vec<u16>,
++    current: Vec<u16>,
++    width: u16,
++}
++impl StrictRowDecoder {
++    pub fn new(width: u16) -> Result<Self, DecodeError<()>> {
++        if width == 0 {
++            return Err(DecodeError::Invalid);
++        }
++        let mut reference = Vec::new();
++        let mut current = Vec::new();
++        reference
++            .try_reserve_exact(usize::from(width))
++            .map_err(|_| DecodeError::Invalid)?;
++        current
++            .try_reserve_exact(usize::from(width))
++            .map_err(|_| DecodeError::Invalid)?;
++        Ok(Self {
++            reference,
++            current,
++            width,
++        })
++    }
++    /// Canonical changing elements: strictly increasing positions below width,
++    /// with optional position zero for a row starting black. Empty means white.
++    pub fn set_reference(&mut self, transitions: &[u16]) -> Result<(), DecodeError<()>> {
++        if transitions.len() > usize::from(self.width)
++            || transitions.iter().any(|v| *v >= self.width)
++            || transitions.windows(2).any(|w| w[0] >= w[1])
++        {
++            return Err(DecodeError::Invalid);
++        }
++        self.reference.clear();
++        self.reference.extend_from_slice(transitions);
++        Ok(())
++    }
++    /// Successful output is a complete row. On failure the old reference stays
++    /// intact and the incomplete current row is discarded.
++    pub fn decode<B: crate::BitReader>(
++        &mut self,
++        reader: &mut B,
++    ) -> Result<&[u16], DecodeError<B::Error>> {
++        self.current.clear();
++        if let Err(error) =
++            decode_2d_row(reader, &self.reference, &mut self.current, self.width, true)
++        {
++            self.current.clear();
++            return Err(error);
++        }
++        std::mem::swap(&mut self.reference, &mut self.current);
++        self.current.clear();
++        Ok(&self.reference)
++    }
++}
++
++// Table decoders may consume a prefix before a failed lookahead. Stage their
++// peeks/consumes without changing the caller's source position until a complete
++// codeword is known. The fallback uses the same backend's public codewords;
++// no zero extension or virtual source bits are supplied at strip EOF.
++struct Staged<'a, B> {
++    reader: &'a B,
++    consumed: u8,
++}
++impl<B: crate::BitReader> crate::BitReader for Staged<'_, B> {
++    type Error = ();
++    fn peek(&self, n: u8) -> Option<u16> {
++        let total = self.consumed.checked_add(n)?;
++        if total > 16 {
++            return None;
++        }
++        let mask = if n == 16 { u16::MAX } else { (1u16 << n) - 1 };
++        Some(self.reader.peek(total)? & mask)
++    }
++    fn consume(&mut self, n: u8) -> Result<(), ()> {
++        self.peek(n).ok_or(())?;
++        self.consumed += n;
++        Ok(())
++    }
++    fn bits_to_byte_boundary(&self) -> u8 {
++        (self.reader.bits_to_byte_boundary() + 8 - self.consumed % 8) % 8
++    }
++}
++fn strict_mode<B: crate::BitReader>(reader: &mut B) -> Result<Option<Mode>, DecodeError<B::Error>> {
++    let mut staged = Staged {
++        reader: &*reader,
++        consumed: 0,
++    };
++    if let Some(value) = mode::decode(&mut staged) {
++        let consumed = staged.consumed;
++        reader.consume(consumed).map_err(DecodeError::Reader)?;
++        return Ok(Some(value));
++    }
++    for value in [
++        Mode::Pass,
++        Mode::Horizontal,
++        Mode::Vertical(0),
++        Mode::Vertical(1),
++        Mode::Vertical(2),
++        Mode::Vertical(3),
++        Mode::Vertical(-1),
++        Mode::Vertical(-2),
++        Mode::Vertical(-3),
++        Mode::Extension,
++        Mode::EOF,
++    ] {
++        let Some(code) = mode::encode(value) else {
++            continue;
++        };
++        if reader.peek(code.len) == Some(code.data) {
++            reader.consume(code.len).map_err(DecodeError::Reader)?;
++            return Ok(Some(value));
++        }
++    }
++    Ok(None)
++}
++fn strict_colored<B: crate::BitReader>(
++    color: Color,
++    reader: &mut B,
++    maximum: u16,
++) -> Result<u16, DecodeError<B::Error>> {
++    let mut total = 0u16;
++    loop {
++        let mut staged = Staged {
++            reader: &*reader,
++            consumed: 0,
++        };
++        let decoded = match color {
++            Color::White => white::decode(&mut staged),
++            Color::Black => black::decode(&mut staged),
++        };
++        let (value, length) = if let Some(value) = decoded {
++            (value, staged.consumed)
++        } else {
++            let mut found = None;
++            for value in (0..64).chain((64..=2560).step_by(64)) {
++                let code = match color {
++                    Color::White => white::encode(value),
++                    Color::Black => black::encode(value),
++                };
++                if let Some(code) = code {
++                    if reader.peek(code.len) == Some(code.data) {
++                        found = Some((value, code.len));
++                        break;
++                    }
++                }
++            }
++            found.ok_or(DecodeError::Invalid)?
++        };
++        reader.consume(length).map_err(DecodeError::Reader)?;
++        total = total
++            .checked_add(value)
++            .filter(|n| *n <= maximum)
++            .ok_or(DecodeError::Invalid)?;
++        if value < 64 {
++            return Ok(total);
+         }
+     }
+ }
+@@ -479,7 +705,9 @@
+             assert!(
+                 decoded_line.iter().all(|&t| t < width),
+                 "decoder produced non-canonical transition list {decoded_line:?} \
+-                 (contains width={width}); transitions should all be < width"
++                 (contains width={width}); transitions should all be < width",
++                decoded_line = decoded_line,
++                width = width
+             );
+         }
+     }
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -1,8 +1,6 @@
+ #![deny(unsafe_code)]
+ use std::convert::Infallible;
+ use std::fmt;
+-use std::io::{self, Read};
+-use std::iter::Map;
+ use std::ops::Not;
+ 
+ #[cfg(feature = "debug")]
+@@ -22,6 +20,8 @@
+ 
+ /// Decoder module
+ pub mod decoder;
++#[cfg(test)]
++mod strict_tests;
+ 
+ /// Encoder module
+ pub mod encoder;
+--- a/src/strict_tests.rs
++++ b/src/strict_tests.rs
+@@ -0,0 +1,114 @@
++use crate::{
++    decoder::{DecodeStatus, Group4Decoder, StrictRowDecoder},
++    maps::{black, mode, white, Mode},
++    BitReader,
++};
++use std::convert::TryFrom;
++struct Bits {
++    source: String,
++    position: usize,
++}
++impl Bits {
++    fn new(source: impl Into<String>) -> Self {
++        Self {
++            source: source.into(),
++            position: 0,
++        }
++    }
++}
++impl BitReader for Bits {
++    type Error = ();
++    fn peek(&self, n: u8) -> Option<u16> {
++        let end = self.position.checked_add(usize::from(n))?;
++        if n > 16 || end > self.source.len() {
++            return None;
++        }
++        Some(
++            self.source.as_bytes()[self.position..end]
++                .iter()
++                .fold(0, |n, b| n * 2 + u16::from(*b == b'1')),
++        )
++    }
++    fn consume(&mut self, n: u8) -> Result<(), ()> {
++        self.peek(n).ok_or(())?;
++        self.position += usize::from(n);
++        Ok(())
++    }
++    fn bits_to_byte_boundary(&self) -> u8 {
++        ((8 - self.position % 8) % 8) as u8
++    }
++}
++fn horizontal(a: u16, b: u16) -> String {
++    format!(
++        "{}{}{}",
++        mode::encode(Mode::Horizontal).unwrap(),
++        white::encode(a).unwrap(),
++        black::encode(b).unwrap()
++    )
++}
++#[test]
++fn strict_exact_last_mode_no_virtual_lookahead_or_tail_fill() {
++    let mut decoder = StrictRowDecoder::new(5).unwrap();
++    let mut bits = Bits::new("1");
++    assert_eq!(decoder.decode(&mut bits).unwrap(), []);
++    assert_eq!(bits.position, 1);
++    decoder.set_reference(&[0, 3]).unwrap();
++    let mut bits = Bits::new("111");
++    assert_eq!(decoder.decode(&mut bits).unwrap(), [0, 3]);
++    assert_eq!(bits.position, 3);
++    let mut truncated = Bits::new("11");
++    assert!(decoder.decode(&mut truncated).is_err());
++    let mut same = Bits::new("111");
++    assert_eq!(decoder.decode(&mut same).unwrap(), [0, 3]);
++}
++#[test]
++fn strict_horizontal_width_and_zero_end_sentinel() {
++    let mut decoder = StrictRowDecoder::new(5).unwrap();
++    let mut bits = Bits::new(horizontal(5, 0));
++    assert_eq!(decoder.decode(&mut bits).unwrap(), []);
++    let mut overrun = Bits::new(horizontal(6, 0));
++    assert!(decoder.decode(&mut overrun).is_err());
++    let mut bits = Bits::new(horizontal(0, 5));
++    assert_eq!(decoder.decode(&mut bits).unwrap(), [0]);
++    let mut zero = Bits::new(horizontal(0, 0));
++    assert!(decoder.decode(&mut zero).is_err());
++}
++#[test]
++fn strict_vertical_bounds_premature_eol_and_reference_validation() {
++    let mut decoder = StrictRowDecoder::new(5).unwrap();
++    assert!(decoder.decode(&mut Bits::new("011")).is_err());
++    assert!(decoder
++        .decode(&mut Bits::new(mode::encode(Mode::EOF).unwrap().to_string()))
++        .is_err());
++    assert!(decoder.decode(&mut Bits::new("0000001000")).is_err());
++    decoder.set_reference(&[0, 3]).unwrap();
++    assert!(decoder.set_reference(&[1, 1]).is_err());
++    assert!(decoder.set_reference(&[5]).is_err());
++    assert!(StrictRowDecoder::new(0).is_err());
++    assert_eq!(decoder.decode(&mut Bits::new("111")).unwrap(), [0, 3]);
++}
++#[test]
++fn legacy_group4_recovery_remains_explicitly_unchanged() {
++    let bytes = [0b01100000];
++    let mut decoder = Group4Decoder::new(bytes.iter().copied().map(Ok::<_, ()>), 5).unwrap();
++    assert_eq!(decoder.advance().unwrap(), DecodeStatus::Incomplete);
++    assert_eq!(decoder.transition(), []);
++}
++#[test]
++fn strict_all_vertical_offsets_pass_and_horizontal_share_backend_state_machine() {
++    let mut decoder = StrictRowDecoder::new(15).unwrap();
++    for delta in -3i8..=3 {
++        decoder.set_reference(&[5, 10]).unwrap();
++        let code = format!("{}11", mode::encode(Mode::Vertical(delta)).unwrap());
++        let mut bits = Bits::new(code);
++        assert_eq!(
++            decoder.decode(&mut bits).unwrap(),
++            [u16::try_from(5i16 + i16::from(delta)).unwrap(), 10]
++        );
++        assert_eq!(bits.position, bits.source.len());
++    }
++    decoder.set_reference(&[2, 4, 7]).unwrap();
++    assert_eq!(decoder.decode(&mut Bits::new("000111")).unwrap(), [7]);
++    decoder.set_reference(&[]).unwrap();
++    assert!(decoder.decode(&mut Bits::new("0001")).is_err());
++}

@@ -533,7 +533,7 @@ fn coverage(parts: &[SourcePart]) -> Result<usize, Error> {
 }
 fn fill_pixels(target: &mut PixelBuffer, fill: &PixelBuffer) -> Result<(), Error> {
     macro_rules! values{($($v:ident);*)=>{match(target,fill){$((PixelBuffer::$v(out),PixelBuffer::$v(value))if value.len()==1=>out.fill(value[0]),)*_=>return Err(Error("VDS typed fill does not match native output".into()))}};}
-    values!(U8;I8;U16;I16;U32;I32;U64;I64;F32;F64);
+    values!(Bool;F16;U8;I8;U16;I16;U32;I32;U64;I64;F32;F64;C32;C64;CI16);
     Ok(())
 }
 struct Space(hid_t);

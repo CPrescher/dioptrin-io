@@ -1,4 +1,4 @@
-//! Bounded Group3 one-dimensional strips through the existing permissive fax
+//! Bounded Group3 one-/two-dimensional and CCITT RLE strips through the existing fax
 //! backend Huffman tables. This adapter owns strict TIFF row/EOL framing and
 //! emits only complete terminating runs within the declared source window.
 use super::{Error, Metadata, TagValue};
@@ -9,6 +9,7 @@ use std::{
 };
 use tiff_fax_backend::{
     BitReader,
+    decoder::StrictRowDecoder,
     maps::{black, white},
 };
 pub(super) fn decode(
@@ -52,7 +53,27 @@ pub(super) fn decode(
         let offset = offset.clone().into_u64()?;
         let length = usize::try_from(length.clone().into_u64()?)
             .map_err(|_| Error("Group3 strip length overflow".into()))?;
-        if length > limit || length.checked_mul(8).is_none() {
+        let mixed = page.compression == 3
+            && page
+                .tags
+                .get(&292)
+                .map(|v| v.clone().into_u32())
+                .transpose()?
+                .unwrap_or(0)
+                & 1
+                != 0;
+        let scratch = if mixed {
+            usize::from(width)
+                .checked_mul(8)
+                .and_then(|n| n.checked_add(256))
+        } else {
+            Some(0)
+        };
+        if scratch
+            .and_then(|n| n.checked_add(length))
+            .is_none_or(|n| n > limit)
+            || length.checked_mul(8).is_none()
+        {
             return Err(Error(
                 "Group3 encoded scratch exceeds intermediate limit".into(),
             ));
@@ -84,7 +105,15 @@ pub(super) fn decode(
             .unwrap_or(0)
             & 4
             != 0;
-        decode_strip(&encoded, width, height, byte_aligned, output)?;
+        decode_strip(
+            &encoded,
+            width,
+            height,
+            byte_aligned,
+            page.compression == 2,
+            mixed,
+            output,
+        )?;
     }
     if output.len() != page.shape[0] * page.shape[1] {
         return Err(Error("Group3 decoded sample count mismatch".into()));
@@ -133,7 +162,7 @@ impl BitReader for Bits<'_> {
     }
 }
 impl Bits<'_> {
-    fn eol(&mut self, byte_aligned: bool) -> Result<(), Error> {
+    fn eol(&mut self, byte_aligned: bool, mixed: bool) -> Result<(), Error> {
         let mut zeros = 0;
         while self.peek(1) == Some(0) {
             self.position += 1;
@@ -146,7 +175,12 @@ impl Bits<'_> {
             return Err(Error("Group3 requires an eleven-zero EOL marker".into()));
         }
         self.position += 1;
-        if byte_aligned && !self.position.is_multiple_of(8) || !byte_aligned && zeros != 11 {
+        // TIFF6 aligns EOL itself; RFC2306 MR aligns EOL plus its tag.
+        // Both carry the same real row delimiter and bounded zero fill.
+        if byte_aligned
+            && !(self.position.is_multiple_of(8) || mixed && (self.position + 1).is_multiple_of(8))
+            || !byte_aligned && zeros != 11
+        {
             return Err(Error(
                 "Group3 EOL fill contradicts declared T4Options".into(),
             ));
@@ -163,48 +197,131 @@ fn decode_strip(
     width: u16,
     height: usize,
     byte_aligned: bool,
+    rle: bool,
+    mixed: bool,
     output: &mut Vec<u8>,
 ) -> Result<(), Error> {
     let mut bits = Bits {
         bytes: encoded,
         position: 0,
     };
-    for _ in 0..height {
-        bits.eol(byte_aligned)?;
-        let mut column = 0u16;
-        let mut black_run = false;
-        while column < width {
-            let mut run = 0u16;
-            loop {
-                let count = decode_run(&mut bits, black_run)
-                    .ok_or_else(|| Error("invalid/truncated Group3 Huffman run".into()))?;
-                run = run
-                    .checked_add(count)
-                    .filter(|&n| n <= width - column)
-                    .ok_or_else(|| Error("Group3 run exceeds declared row width".into()))?;
-                if count < 64 {
-                    break;
+    let mut decoder = if mixed {
+        Some(StrictRowDecoder::new(width).map_err(|e| Error(format!("Group3 row state: {e:?}")))?)
+    } else {
+        None
+    };
+    let mut transitions = Vec::new();
+    if mixed {
+        transitions
+            .try_reserve_exact(usize::from(width))
+            .map_err(|e| Error(e.to_string()))?;
+    }
+    for row in 0..height {
+        if !rle {
+            bits.eol(byte_aligned, mixed)?;
+        }
+        let one_d = if mixed {
+            let tag = bits
+                .peek(1)
+                .ok_or_else(|| Error("missing Group3 row tag".into()))?;
+            bits.consume(1)
+                .map_err(|_| Error("truncated Group3 row tag".into()))?;
+            tag == 1
+        } else {
+            true
+        };
+        if row == 0 && !one_d {
+            return Err(Error(
+                "first Group3 row in a strip must be one-dimensional".into(),
+            ));
+        }
+        if one_d {
+            let first = output.len();
+            decode_one_d(&mut bits, width, output)?;
+            if let Some(decoder) = decoder.as_mut() {
+                transitions.clear();
+                let mut color = 0;
+                for (column, &sample) in output[first..].iter().enumerate() {
+                    if sample != color {
+                        transitions.push(column as u16);
+                        color = sample;
+                    }
                 }
+                decoder
+                    .set_reference(&transitions)
+                    .map_err(|e| Error(format!("invalid Group3 reference row: {e:?}")))?;
             }
-            output.extend(std::iter::repeat_n(u8::from(black_run), usize::from(run)));
-            column += run;
-            black_run = !black_run;
+        } else {
+            let transitions = decoder.as_mut().unwrap().decode(&mut bits).map_err(|e| {
+                Error(format!(
+                    "invalid/truncated Group3 two-dimensional row: {e:?}"
+                ))
+            })?;
+            let mut start = 0;
+            let mut color = 0;
+            for end in transitions.iter().copied().chain(std::iter::once(width)) {
+                output.extend(std::iter::repeat_n(color, usize::from(end - start)));
+                start = end;
+                color ^= 1;
+            }
+        }
+        if rle {
+            let padding = bits.bits_to_byte_boundary();
+            // TIFF6 section9: ignored final row-byte bits, not source samples.
+            bits.consume(padding)
+                .map_err(|_| Error("truncated CCITT RLE row padding".into()))?;
         }
     }
-    // Class-F strips may end after the last complete row with byte padding.
-    // Otherwise admit one trailing EOL, or the complete six-EOL RTC sequence.
     if bits.only_byte_padding() {
         return Ok(());
     }
-    bits.eol(byte_aligned)?;
+    if rle {
+        return Err(Error("extra coded data after CCITT RLE rows".into()));
+    }
+    // Class-F permits byte padding, one trailing EOL, or a complete six-EOL
+    // RTC. In mixed mode each RTC EOL is followed by the mandatory 1D tag.
+    let marker = |bits: &mut Bits<'_>| -> Result<(), Error> {
+        bits.eol(byte_aligned, mixed)?;
+        if mixed {
+            if bits.peek(1) != Some(1) {
+                return Err(Error("Group3 RTC requires one-dimensional tags".into()));
+            }
+            bits.consume(1)
+                .map_err(|_| Error("truncated Group3 RTC tag".into()))?;
+        }
+        Ok(())
+    };
+    marker(&mut bits)?;
     if bits.only_byte_padding() {
         return Ok(());
     }
     for _ in 0..5 {
-        bits.eol(byte_aligned)?;
+        marker(&mut bits)?;
     }
     if !bits.only_byte_padding() {
         return Err(Error("extra coded data after Group3 rows/RTC".into()));
+    }
+    Ok(())
+}
+fn decode_one_d(bits: &mut Bits<'_>, width: u16, output: &mut Vec<u8>) -> Result<(), Error> {
+    let mut column = 0u16;
+    let mut black_run = false;
+    while column < width {
+        let mut run = 0u16;
+        loop {
+            let count = decode_run(bits, black_run)
+                .ok_or_else(|| Error("invalid/truncated Group3 Huffman run".into()))?;
+            run = run
+                .checked_add(count)
+                .filter(|&n| n <= width - column)
+                .ok_or_else(|| Error("Group3 run exceeds declared row width".into()))?;
+            if count < 64 {
+                break;
+            }
+        }
+        output.extend(std::iter::repeat_n(u8::from(black_run), usize::from(run)));
+        column += run;
+        black_run = !black_run;
     }
     Ok(())
 }

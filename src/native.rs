@@ -74,6 +74,9 @@ impl DtrekHeader {
     pub fn open(path: impl AsRef<Path>, limits: Limits) -> Result<Self, Error> {
         limits.validate()?;
         let snapshot = Snapshot::open(path).map_err(Error)?;
+        if !std::fs::metadata(&snapshot.path)?.is_file() {
+            return Err(Error("native path snapshots require regular files".into()));
+        }
         let mut file = File::open(&snapshot.path)?;
         snapshot.check_handle(&file).map_err(Error)?;
         let (mut metadata, _) = dtrek(&mut file, limits, true)?;
@@ -129,6 +132,9 @@ impl Reader {
     pub fn open(path: impl AsRef<Path>, format: Format, limits: Limits) -> Result<Self, Error> {
         limits.validate()?;
         let snapshot = Snapshot::open(path).map_err(Error)?;
+        if !std::fs::metadata(&snapshot.path)?.is_file() {
+            return Err(Error("native path snapshots require regular files".into()));
+        }
         let mut file = File::open(&snapshot.path)?;
         snapshot.check_handle(&file).map_err(Error)?;
         let (mut metadata, storage) = match format {
@@ -141,8 +147,12 @@ impl Reader {
         };
         metadata.format = Some(format);
         let offset = file.stream_position()?;
-        let count = limits.pixels(metadata.shape, metadata.pixel_type)?;
-        if metadata.frames == 0 || metadata.frames > limits.frames {
+        let count = if format == Format::Npy && metadata.shape.contains(&0) {
+            0
+        } else {
+            limits.pixels(metadata.shape, metadata.pixel_type)?
+        };
+        if (metadata.frames == 0 && format != Format::Npy) || metadata.frames > limits.frames {
             return Err(Error("native image exceeds frame limit".into()));
         }
         let frame_bytes = count * metadata.pixel_type.bytes();
@@ -275,6 +285,13 @@ impl Reader {
             .resize(meta.pixel_type, count)
             .map_err(Error)?;
         resize_bytes(&mut buffer.encoded, self.encoded)?;
+        if count == 0 {
+            // Empty arrays retain their declared axes without iterating enormous
+            // zero-width rows or inventing any samples/frames.
+            self.snapshot.check_handle(&file).map_err(Error)?;
+            buffer.shape = Some(meta.shape);
+            return Ok(());
+        }
         if meta.fortran_order {
             // At most one frame's payload is retained. Read samples from the
             // source; leading frame axes are interleaved in Fortran storage.
@@ -942,6 +959,8 @@ fn npy(file: &mut File, limits: Limits) -> Result<(Metadata, Storage), Error> {
         .split_at_checked(1)
         .ok_or_else(|| Error("empty NPY dtype".into()))?;
     let ty = match scalar {
+        "b1" => PixelType::Bool,
+        "f2" => PixelType::F16,
         "u1" => PixelType::U8,
         "u2" => PixelType::U16,
         "u4" => PixelType::U32,
@@ -965,7 +984,7 @@ fn npy(file: &mut File, limits: Limits) -> Result<(Metadata, Storage), Error> {
     };
     let count = source_shape
         .iter()
-        .try_fold(1usize, |n, &d| n.checked_mul(d).filter(|&n| n > 0))
+        .try_fold(1usize, |n, &d| n.checked_mul(d))
         .ok_or_else(|| Error("invalid/overflowing NPY shape".into()))?;
     // Bound the complete source arithmetic before computing offsets/strides.
     count
@@ -976,9 +995,14 @@ fn npy(file: &mut File, limits: Limits) -> Result<(Metadata, Storage), Error> {
         [n] => [1, *n],
         dims => [dims[dims.len() - 2], dims[dims.len() - 1]],
     };
-    let pixels = limits.pixels(shape, ty)?;
+    if !shape.contains(&0) {
+        limits.pixels(shape, ty)?;
+    }
     let mut metadata = meta(shape, ty, little, header, [("descr".into(), descr)].into());
-    metadata.frames = count / pixels;
+    metadata.frames = source_shape[..source_shape.len().saturating_sub(2)]
+        .iter()
+        .try_fold(1usize, |n, &d| n.checked_mul(d))
+        .ok_or_else(|| Error("NPY frame count overflow".into()))?;
     metadata.fortran_order = fortran;
     metadata.source_shape = source_shape;
     Ok((metadata, Storage::Scalar))

@@ -293,7 +293,7 @@
              self.jpeg_tables.as_deref().map(|a| &**a),
              chunk_dims,
              self.samples,
---- /dev/null
+--- a/src/decoder/legacy_lzw.rs
 +++ b/src/decoder/legacy_lzw.rs
 @@ -0,0 +1,123 @@
 +//! Local bounded adapter for the pre-TIFF-6 LSB/late-change LZW dialect.
@@ -456,11 +456,152 @@
  }
  
  /// All the information needed to read and interpret byte slices from the underlying file, i.e. to
-@@ -783,7 +797,16 @@
+@@ -782,65 +796,134 @@
+     host.convert_endian_bytes(class, buf, byte_order);
  }
  
- impl<R: Read + Seek> Decoder<R> {
+-impl<R: Read + Seek> Decoder<R> {
 -    pub fn new(mut r: R) -> TiffResult<Decoder<R>> {
+-        let mut endianess = Vec::with_capacity(2);
+-        (&mut r).take(2).read_to_end(&mut endianess)?;
+-        let byte_order = match &*endianess {
+-            b"II" => ByteOrder::LittleEndian,
+-            b"MM" => ByteOrder::BigEndian,
+-            _ => {
++fn header_reader<R: Read + Seek>(
++    mut r: R,
++    limits: Limits,
++) -> TiffResult<(ValueReader<R>, Option<IfdPointer>)> {
++    let mut endianess = Vec::with_capacity(2);
++    (&mut r).take(2).read_to_end(&mut endianess)?;
++    let byte_order = match &*endianess {
++        b"II" => ByteOrder::LittleEndian,
++        b"MM" => ByteOrder::BigEndian,
++        _ => {
++            return Err(TiffError::FormatError(
++                TiffFormatError::TiffSignatureNotFound,
++            ))
++        }
++    };
++    let mut reader = EndianReader::new(r, byte_order);
++
++    let bigtiff = match reader.read_u16()? {
++        42 => false,
++        43 => {
++            // Read bytesize of offsets (in bigtiff it's alway 8 but provide a way to move to 16 some day)
++            if reader.read_u16()? != 8 {
+                 return Err(TiffError::FormatError(
+                     TiffFormatError::TiffSignatureNotFound,
+-                ))
++                ));
+             }
++            // This constant should always be 0
++            if reader.read_u16()? != 0 {
++                return Err(TiffError::FormatError(
++                    TiffFormatError::TiffSignatureNotFound,
++                ));
++            }
++            true
++        }
++        _ => {
++            return Err(TiffError::FormatError(
++                TiffFormatError::TiffSignatureInvalid,
++            ))
++        }
++    };
++
++    let next_ifd = if bigtiff {
++        Some(reader.read_u64()?)
++    } else {
++        Some(u64::from(reader.read_u32()?))
++    }
++    .map(IfdPointer);
++
++    Ok((
++        ValueReader {
++            reader,
++            bigtiff,
++            limits,
++        },
++        next_ifd,
++    ))
++}
++
++/// Metadata-only access to existing IFD/value parsing. It does not instantiate
++/// an image, select a codec, validate sample windows or allocate decoded pixels.
++/// Callers must bound source directory ranges and total retained values.
++pub struct DirectoryReader<R> {
++    reader: ValueReader<R>,
++    next: Option<IfdPointer>,
++}
++impl<R: Read + Seek> DirectoryReader<R> {
++    pub fn new(r: R, limits: Limits) -> TiffResult<Self> {
++        let (reader, next) = header_reader(r, limits)?;
++        Ok(Self { reader, next })
++    }
++    pub fn next_directory(&mut self) -> TiffResult<Option<(IfdPointer, Directory)>> {
++        let Some(next) = self.next.filter(|p| p.0 != 0) else {
++            return Ok(None);
+         };
+-        let mut reader = EndianReader::new(r, byte_order);
+-
+-        let bigtiff = match reader.read_u16()? {
+-            42 => false,
+-            43 => {
+-                // Read bytesize of offsets (in bigtiff it's alway 8 but provide a way to move to 16 some day)
+-                if reader.read_u16()? != 8 {
+-                    return Err(TiffError::FormatError(
+-                        TiffFormatError::TiffSignatureNotFound,
+-                    ));
+-                }
+-                // This constant should always be 0
+-                if reader.read_u16()? != 0 {
+-                    return Err(TiffError::FormatError(
+-                        TiffFormatError::TiffSignatureNotFound,
+-                    ));
+-                }
+-                true
+-            }
+-            _ => {
+-                return Err(TiffError::FormatError(
+-                    TiffFormatError::TiffSignatureInvalid,
+-                ))
+-            }
+-        };
+-
+-        let next_ifd = if bigtiff {
+-            Some(reader.read_u64()?)
+-        } else {
+-            Some(u64::from(reader.read_u32()?))
+-        }
+-        .map(IfdPointer);
+-
+-        let current_ifd = *next_ifd.as_ref().unwrap();
++        let directory = ValueReader::read_ifd(
++            &mut self.reader.reader,
++            self.reader.bigtiff,
++            next,
++            Some(self.reader.limits.ifd_value_size / 128),
++        )?;
++        self.next = directory.next();
++        Ok(Some((next, directory)))
++    }
++    /// Read an independently admitted directory without instantiating an image.
++    pub fn read_directory(&mut self, pointer: IfdPointer) -> TiffResult<Directory> {
++        ValueReader::read_ifd(&mut self.reader.reader, self.reader.bigtiff, pointer,
++            Some(self.reader.limits.ifd_value_size / 128))
++    }
++    pub fn directory_tags<'a>(&'a mut self, directory: &'a Directory) -> IfdDecoder<'a> {
++        IfdDecoder {
++            inner: tag_reader::TagReader {
++                decoder: &mut self.reader,
++                ifd: directory,
++            },
++        }
++    }
++}
++
++impl<R: Read + Seek> Decoder<R> {
 +    pub fn new(r: R) -> TiffResult<Decoder<R>> {
 +        Self::new_with_chunk_layouts(r, BTreeMap::new())
 +    }
@@ -468,13 +609,29 @@
 +    /// Use only after independently bounding the supplied source windows.
 +    /// The default constructor never supplies a chunk interpretation override.
 +    pub fn new_with_chunk_layouts(
-+        mut r: R,
++        r: R,
 +        chunk_overrides: BTreeMap<u64, ChunkLayoutOverride>,
 +    ) -> TiffResult<Decoder<R>> {
-         let mut endianess = Vec::with_capacity(2);
-         (&mut r).take(2).read_to_end(&mut endianess)?;
-         let byte_order = match &*endianess {
-@@ -841,6 +864,7 @@
++        Self::new_at_directory(r, None, Limits::default(), chunk_overrides)
++    }
++
++    /// The optional pointer must belong to a separately bounded reachable IFD
++    /// graph. Selecting it does not parse or decode the primary image first.
++    pub fn new_at_directory(r: R, pointer: Option<IfdPointer>, limits: Limits,
++        chunk_overrides: BTreeMap<u64, ChunkLayoutOverride>) -> TiffResult<Decoder<R>> {
++        let (value_reader, primary) = header_reader(r, limits)?;
++        let next_ifd = pointer.or(primary);
++        let current_ifd = next_ifd.ok_or(TiffError::FormatError(TiffFormatError::ImageFileDirectoryNotFound))?;
+         let ifd_offsets = vec![current_ifd];
+ 
+         let mut decoder = Decoder {
+-            value_reader: ValueReader {
+-                reader,
+-                bigtiff,
+-                limits: Default::default(),
+-            },
++            value_reader,
+             next_ifd,
              ifd_offsets,
              current_ifd: None,
              seen_ifds: cycles::IfdCycles::new(),
@@ -482,7 +639,7 @@
              image: Image {
                  ifd: None,
                  width: 0,
-@@ -861,6 +885,7 @@
+@@ -861,6 +944,7 @@
                  chunk_offsets: Vec::new(),
                  chunk_bytes: Vec::new(),
                  chroma_subsampling: (2, 2),
@@ -490,7 +647,7 @@
              },
          };
          decoder.next_image()?;
-@@ -870,6 +895,11 @@
+@@ -870,6 +954,11 @@
      pub fn with_limits(mut self, limits: Limits) -> Decoder<R> {
          self.value_reader.limits = limits;
          self
@@ -502,7 +659,7 @@
      }
  
      pub fn dimensions(&mut self) -> TiffResult<(u32, u32)> {
-@@ -921,7 +951,12 @@
+@@ -921,7 +1010,12 @@
              let ifd = self.value_reader.read_directory(*ifd_offset)?;
              self.next_ifd = ifd.next();
              self.current_ifd = Some(*ifd_offset);
@@ -516,7 +673,24 @@
  
              Ok(())
          } else {
-@@ -959,7 +994,12 @@
+@@ -929,6 +1023,16 @@
+                 TiffFormatError::ImageFileDirectoryNotFound,
+             ))
+         }
++    }
++
++    /// Load an independently admitted directory by source offset.
++    pub fn seek_to_directory(&mut self, pointer: IfdPointer) -> TiffResult<()> {
++        let ifd = self.value_reader.read_directory(pointer)?;
++        self.next_ifd = ifd.next();
++        self.current_ifd = Some(pointer);
++        self.image = Image::from_reader(&mut self.value_reader, ifd,
++            self.chunk_overrides.get(&pointer.0))?;
++        Ok(())
+     }
+ 
+     fn next_ifd(&mut self) -> TiffResult<Directory> {
+@@ -959,7 +1063,12 @@
      /// To determine whether there are more images call `TIFFDecoder::more_images` instead.
      pub fn next_image(&mut self) -> TiffResult<()> {
          let ifd = self.next_ifd()?;
@@ -530,6 +704,33 @@
          Ok(())
      }
  
+@@ -1671,7 +1780,7 @@
+ 
+ impl<R: Seek + Read> ValueReader<R> {
+     pub(crate) fn read_directory(&mut self, ptr: IfdPointer) -> Result<Directory, TiffError> {
+-        Self::read_ifd(&mut self.reader, self.bigtiff, ptr)
++        Self::read_ifd(&mut self.reader, self.bigtiff, ptr, None)
+     }
+ 
+     /// Reads a IFD entry.
+@@ -1716,6 +1825,7 @@
+         reader: &mut EndianReader<R>,
+         bigtiff: bool,
+         ifd_location: IfdPointer,
++        max_entries: Option<usize>,
+     ) -> TiffResult<Directory> {
+         reader.goto_offset(ifd_location.0)?;
+ 
+@@ -1727,6 +1837,9 @@
+             reader.read_u16()?.into()
+         };
+ 
++        if max_entries.is_some_and(|max| num_tags > max as u64) {
++            return Err(TiffError::LimitsExceeded);
++        }
+         for _ in 0..num_tags {
+             let (tag, entry) = match Self::read_entry(reader, bigtiff)? {
+                 Some(val) => val,
 --- a/src/decoder/stream.rs
 +++ b/src/decoder/stream.rs
 @@ -1,5 +1,5 @@

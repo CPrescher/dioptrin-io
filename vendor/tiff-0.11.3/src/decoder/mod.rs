@@ -879,6 +879,11 @@ impl<R: Read + Seek> DirectoryReader<R> {
         self.next = directory.next();
         Ok(Some((next, directory)))
     }
+    /// Read an independently admitted directory without instantiating an image.
+    pub fn read_directory(&mut self, pointer: IfdPointer) -> TiffResult<Directory> {
+        ValueReader::read_ifd(&mut self.reader.reader, self.reader.bigtiff, pointer,
+            Some(self.reader.limits.ifd_value_size / 128))
+    }
     pub fn directory_tags<'a>(&'a mut self, directory: &'a Directory) -> IfdDecoder<'a> {
         IfdDecoder {
             inner: tag_reader::TagReader {
@@ -900,8 +905,16 @@ impl<R: Read + Seek> Decoder<R> {
         r: R,
         chunk_overrides: BTreeMap<u64, ChunkLayoutOverride>,
     ) -> TiffResult<Decoder<R>> {
-        let (value_reader, next_ifd) = header_reader(r, Limits::default())?;
-        let current_ifd = *next_ifd.as_ref().unwrap();
+        Self::new_at_directory(r, None, Limits::default(), chunk_overrides)
+    }
+
+    /// The optional pointer must belong to a separately bounded reachable IFD
+    /// graph. Selecting it does not parse or decode the primary image first.
+    pub fn new_at_directory(r: R, pointer: Option<IfdPointer>, limits: Limits,
+        chunk_overrides: BTreeMap<u64, ChunkLayoutOverride>) -> TiffResult<Decoder<R>> {
+        let (value_reader, primary) = header_reader(r, limits)?;
+        let next_ifd = pointer.or(primary);
+        let current_ifd = next_ifd.ok_or(TiffError::FormatError(TiffFormatError::ImageFileDirectoryNotFound))?;
         let ifd_offsets = vec![current_ifd];
 
         let mut decoder = Decoder {
@@ -1010,6 +1023,16 @@ impl<R: Read + Seek> Decoder<R> {
                 TiffFormatError::ImageFileDirectoryNotFound,
             ))
         }
+    }
+
+    /// Load an independently admitted directory by source offset.
+    pub fn seek_to_directory(&mut self, pointer: IfdPointer) -> TiffResult<()> {
+        let ifd = self.value_reader.read_directory(pointer)?;
+        self.next_ifd = ifd.next();
+        self.current_ifd = Some(pointer);
+        self.image = Image::from_reader(&mut self.value_reader, ifd,
+            self.chunk_overrides.get(&pointer.0))?;
+        Ok(())
     }
 
     fn next_ifd(&mut self) -> TiffResult<Directory> {

@@ -7,38 +7,59 @@ use dioptrin_io::{
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 use std::{error::Error, path::Path};
+fn visit_le_bytes(p: &PixelBuffer, mut write: impl FnMut(&[u8])) {
+    macro_rules! scalars {($($variant:ident);*)=>{match p {$(PixelBuffer::$variant(values)=>for value in values {write(&value.to_le_bytes());},)*_=>unreachable!()}};}
+    match p {
+        PixelBuffer::C32(values) => {
+            for pair in values {
+                for value in pair {
+                    write(&value.to_le_bytes());
+                }
+            }
+        }
+        PixelBuffer::C64(values) => {
+            for pair in values {
+                for value in pair {
+                    write(&value.to_le_bytes());
+                }
+            }
+        }
+        PixelBuffer::CI16(values) => {
+            for pair in values {
+                for value in pair {
+                    write(&value.to_le_bytes());
+                }
+            }
+        }
+        _ => scalars!(Bool;F16;U8;U16;U32;U64;I8;I16;I32;I64;F32;F64),
+    }
+}
+fn canonical_bytes(p: &PixelBuffer) -> Vec<u8> {
+    let mut bytes = Vec::new();
+    visit_le_bytes(p, |slice| bytes.extend_from_slice(slice));
+    bytes
+}
 fn pixels(p: &PixelBuffer) -> Value {
-    let mut hash = Sha256::new();
-    macro_rules! digest {($($variant:ident,$name:literal);*)=>{match p {$(PixelBuffer::$variant(values)=>{for v in values {hash.update(v.to_le_bytes());}$name}),*,_=>unreachable!()}};}
-    let dtype = match p {
-        PixelBuffer::C32(v) => {
-            for p in v {
-                for v in p {
-                    hash.update(v.to_le_bytes());
-                }
-            }
-            "complex64"
-        }
-        PixelBuffer::C64(v) => {
-            for p in v {
-                for v in p {
-                    hash.update(v.to_le_bytes());
-                }
-            }
-            "complex128"
-        }
-        PixelBuffer::CI16(v) => {
-            for p in v {
-                for v in p {
-                    hash.update(v.to_le_bytes());
-                }
-            }
-            "complex_int16"
-        }
-        _ => {
-            digest!(U8,"uint8";U16,"uint16";U32,"uint32";U64,"uint64";I8,"int8";I16,"int16";I32,"int32";I64,"int64";F32,"float32";F64,"float64")
-        }
+    use dioptrin_io::PixelType;
+    let dtype = match p.pixel_type() {
+        PixelType::Bool => "bool",
+        PixelType::F16 => "float16",
+        PixelType::U8 => "uint8",
+        PixelType::U16 => "uint16",
+        PixelType::U32 => "uint32",
+        PixelType::U64 => "uint64",
+        PixelType::I8 => "int8",
+        PixelType::I16 => "int16",
+        PixelType::I32 => "int32",
+        PixelType::I64 => "int64",
+        PixelType::F32 => "float32",
+        PixelType::F64 => "float64",
+        PixelType::C32 => "complex64",
+        PixelType::C64 => "complex128",
+        PixelType::CI16 => "complex_int16",
     };
+    let mut hash = Sha256::new();
+    visit_le_bytes(p, |slice| hash.update(slice));
     json!({"dtype":dtype,"sample_sha256":format!("{:x}",hash.finalize())})
 }
 fn fields(m: wrapped::Metadata<'_>) -> Value {
@@ -224,9 +245,7 @@ fn attribute_value(value: &dioptrin_io::hdf5::attributes::AttributeValue) -> Val
             little_endian,
             values,
         } => {
-            let mut data = Vec::new();
-            macro_rules! encode {($($v:ident);*)=>{match values {$(PixelBuffer::$v(v)=>for n in v{data.extend_from_slice(&n.to_le_bytes());},)* _=>unreachable!()}};}
-            encode!(U8;U16;U32;U64;I8;I16;I32;I64;F32;F64);
+            let data = canonical_bytes(values);
             json!({"kind":"Numeric","shape":shape,"pixel_type":format!("{pixel_type:?}"),"little_endian":little_endian,"pixels":pixels(values),"value_hex":bytes_hex(&data)})
         }
     }
@@ -304,6 +323,171 @@ fn attribute_input(
 fn main() -> Result<(), Box<dyn Error>> {
     let args = std::env::args().collect::<Vec<_>>();
     let kind = args.get(1).ok_or("API command required")?;
+    if kind == "npy-layout" {
+        let reader = native::Reader::open(
+            args.get(2).ok_or("path required")?,
+            native::Format::Npy,
+            Default::default(),
+        )?;
+        let m = reader.metadata();
+        let mut images = Vec::new();
+        let mut buffer = native::FrameBuffer::default();
+        for frame in 0..reader.frames() {
+            reader.read_frame_into(frame, &mut buffer)?;
+            let p = buffer.pixels().ok_or("pixels absent")?;
+            images.push(json!({"frame":frame,"shape":buffer.shape(),"pixel_type":format!("{:?}",p.pixel_type()),"pixels":pixels(p),"value_hex":bytes_hex(&canonical_bytes(p))}));
+        }
+        println!(
+            "{}",
+            json!({"frames":reader.frames(),"metadata":{"source_shape":m.source_shape,"shape":m.shape,"fortran_order":m.fortran_order,"pixel_type":format!("{:?}",m.pixel_type),"little_endian":m.little_endian,"fields":m.fields,"header_hex":bytes_hex(&m.header)},"images":images})
+        );
+        return Ok(());
+    }
+    if kind == "edf-array" {
+        let c: Value =
+            serde_json::from_slice(&std::fs::read(args.get(2).ok_or("request required")?)?)?;
+        let reader = dioptrin_io::edf::Reader::open(
+            c["path"].as_str().ok_or("path required")?,
+            Default::default(),
+        )?;
+        let record = usize::try_from(c["record"].as_u64().unwrap_or(0))?;
+        let m = reader.metadata(record).ok_or("record absent")?;
+        let mut array = dioptrin_io::edf::ArrayBuffer::default();
+        reader.read_array_into(record, &mut array)?;
+        let p = array.pixels().ok_or("array absent")?;
+        let mut output = json!({"records":reader.frames(),"metadata":{"source_shape":m.source_shape,"source_samples":m.source_samples,"plane_count":m.plane_count,"shape":m.shape,"frame_layout":format!("{:?}",m.frame_layout),"implicit_dimensions":m.implicit_dimensions,"record_index":m.record_index,"fields":m.fields,"header_hex":bytes_hex(&m.header),"pixel_type":format!("{:?}",m.pixel_type),"little_endian":m.little_endian},"array":{"shape":array.shape(),"pixel_type":format!("{:?}",p.pixel_type()),"pixels":pixels(p),"value_hex":bytes_hex(&canonical_bytes(p))}});
+        if let Some(v) = c.get("leading") {
+            let leading = v
+                .as_array()
+                .ok_or("leading array required")?
+                .iter()
+                .map(|v| usize::try_from(v.as_u64().ok_or("index required")?).map_err(Into::into))
+                .collect::<Result<Vec<_>, Box<dyn Error>>>()?;
+            let mut plane = dioptrin_io::edf::FrameBuffer::default();
+            reader.read_plane_into(record, &leading, &mut plane)?;
+            let p = plane.pixels().ok_or("plane absent")?;
+            output["plane"] = json!({"shape":plane.shape(),"pixel_type":format!("{:?}",p.pixel_type()),"pixels":pixels(p),"value_hex":bytes_hex(&canonical_bytes(p))});
+        }
+        println!("{output}");
+        return Ok(());
+    }
+    if kind == "tiff-directories" {
+        let catalog = dioptrin_io::tiff::directories::Catalog::open(
+            args.get(2).ok_or("path required")?,
+            Default::default(),
+        )?;
+        let dirs=catalog.directories()?.iter().map(|d|json!({"ifd_offset":d.ifd_offset,"next_ifd":d.next_ifd,"subifd_offsets":d.subifd_offsets,"primary_index":d.primary_index,"subifd_entry":d.subifd_entry.as_ref().map(|e|json!({"tag":e.tag,"field_type":e.field_type,"count":e.count,"entry_offset":e.entry_offset,"ifd_entry_hex":bytes_hex(&e.ifd_entry),"payload_offset":e.payload_offset})),"tags":d.tags.iter().map(|(k,v)|(k.to_string(),tiff_tag(v))).collect::<serde_json::Map<_,_>>(),"opaque_tags":d.opaque_tags.iter().map(|(k,v)|(k.to_string(),json!({"field_type":v.field_type,"count":v.count,"entry_hex":bytes_hex(&v.ifd_entry),"value_hex":bytes_hex(&v.value_bytes),"reason":v.reason}))).collect::<serde_json::Map<_,_>>()})).collect::<Vec<_>>();
+        println!(
+            "{}",
+            json!({"primary_offsets":catalog.primary_offsets()?,"directories":dirs})
+        );
+        return Ok(());
+    }
+    if kind == "tiff-directory" {
+        let offset = args.get(3).ok_or("offset required")?;
+        let offset = if let Some(hex) = offset.strip_prefix("0x") {
+            u64::from_str_radix(hex, 16)?
+        } else {
+            offset.parse()?
+        };
+        let mut reader = dioptrin_io::tiff::Reader::open_directory(
+            args.get(2).ok_or("path required")?,
+            offset,
+            Default::default(),
+            Default::default(),
+        )?;
+        let mut buffer = dioptrin_io::tiff::FrameBuffer::default();
+        reader.read_frame_into(0, &mut buffer)?;
+        let p = buffer.pixels().ok_or("pixels absent")?;
+        let m = reader.metadata(0).ok_or("metadata absent")?;
+        println!(
+            "{}",
+            json!({"frames":reader.frames(),"ifd_offset":offset,"shape":buffer.shape(),"pixel_type":format!("{:?}",p.pixel_type()),"pixels":pixels(p),"value_hex":bytes_hex(&canonical_bytes(p)),"metadata":{"little_endian":m.little_endian,"source_pixel_type":format!("{:?}",m.pixel_type),"tags":m.tags.iter().map(|(k,v)|(k.to_string(),tiff_tag(v))).collect::<serde_json::Map<_,_>>()}})
+        );
+        return Ok(());
+    }
+    #[cfg(feature = "hdf5")]
+    if kind == "hdf5-layout" {
+        use dioptrin_io::hdf5::typed::{
+            ExternalLinks, ExternalRawOptions, FilenameBinding, Options, Reader, Selection,
+        };
+        let c: Value =
+            serde_json::from_slice(&std::fs::read(args.get(2).ok_or("JSON request required")?)?)?;
+        let raw_bindings = c
+            .get("raw_filenames")
+            .map(|v| v.as_array().ok_or("raw_filenames array required"))
+            .transpose()?
+            .map(|a| {
+                a.iter()
+                    .map(|v| {
+                        Ok::<_, Box<dyn Error>>(FilenameBinding {
+                            stored_filename: v["stored_filename"]
+                                .as_str()
+                                .ok_or("stored_filename required")?
+                                .into(),
+                            actual_file: v["actual_file"]
+                                .as_str()
+                                .ok_or("actual_file required")?
+                                .into(),
+                        })
+                    })
+                    .collect::<Result<Vec<_>, _>>()
+            })
+            .transpose()?;
+        let options = Options {
+            external_links: if c["follow_external"].as_bool().unwrap_or(false) {
+                ExternalLinks::FollowSnapshot
+            } else {
+                ExternalLinks::Reject
+            },
+            ..Default::default()
+        };
+        let reader = Reader::open_snapshot_with_storage(
+            c["path"].as_str().ok_or("path required")?,
+            Selection::Dataset(c["dataset"].as_str().ok_or("dataset required")?),
+            options,
+            None,
+            raw_bindings
+                .as_ref()
+                .map(|v| ExternalRawOptions { filenames: v }),
+            c["origin"].as_str().map(Path::new),
+        )?;
+        let mut metadata = Vec::new();
+        let mut first_frames = std::collections::BTreeSet::new();
+        for index in 0..reader.frames() {
+            let m = reader.metadata(index).ok_or("metadata absent")?;
+            if !first_frames.insert(m.first_frame) {
+                continue;
+            }
+            metadata.push(json!({"source_file":m.source_file,"dataset":m.dataset,"source_shape":m.source_shape,"shape":m.shape,"frames":m.frames,"first_frame":m.first_frame,"pixel_type":format!("{:?}",m.pixel_type),"little_endian":m.little_endian,"type_descriptor":m.type_descriptor,"layout":format!("{:?}",m.layout),"filters":m.filters.iter().map(|v|format!("{v:?}")).collect::<Vec<_>>(),"fill_value":m.fill_value.as_ref().map(|v|json!({"pixels":pixels(v),"value_hex":bytes_hex(&canonical_bytes(v))})),"storage_allocated":m.storage_allocated,"fill_time":format!("{:?}",m.fill_time),"external_raw":m.external_raw.as_ref().map(|r|json!({"frozen_bytes":r.frozen_bytes,"windows":r.windows.iter().map(|w|json!({"stored_filename":w.stored_filename,"source_file":w.source_file,"file_offset":w.file_offset,"declared_bytes":w.declared_bytes,"logical_offset":w.logical_offset,"effective_bytes":w.effective_bytes})).collect::<Vec<_>>()}))}));
+        }
+        let frames = if let Some(v) = c.get("frames") {
+            v.as_array()
+                .ok_or("frames array required")?
+                .iter()
+                .map(|v| {
+                    usize::try_from(v.as_u64().ok_or("frame index required")?)
+                        .map_err(|e| e.to_string().into())
+                })
+                .collect::<Result<Vec<_>, Box<dyn Error>>>()?
+        } else {
+            (0..reader.frames()).collect()
+        };
+        let mut images = Vec::new();
+        let mut buffer = dioptrin_io::hdf5::typed::FrameBuffer::default();
+        for frame in frames {
+            match reader.read_frame_into(frame,&mut buffer) {
+                Ok(())=>{let p=buffer.pixels().ok_or("pixels unavailable")?;images.push(json!({"frame":frame,"status":"ok","shape":buffer.shape(),"pixel_type":format!("{:?}",p.pixel_type()),"pixels":pixels(p),"value_hex":bytes_hex(&canonical_bytes(p))}));},
+                Err(error)=>images.push(json!({"frame":frame,"status":"error","error":error.to_string(),"pixels_available":buffer.pixels().is_some()})),
+            }
+        }
+        reader.check_sources()?;
+        println!(
+            "{}",
+            json!({"kind":"hdf5_layout","frames":reader.frames(),"metadata":metadata,"images":images,"sources":reader.sources().iter().map(|s|json!({"path":s.path,"bytes":s.bytes})).collect::<Vec<_>>(),"source_bindings":reader.source_bindings().iter().map(|b|json!({"requested":b.requested,"resolved":b.resolved})).collect::<Vec<_>>(),"links":reader.links().iter().map(|l|json!({"source":l.source,"path":l.path,"external":l.external,"raw_hex":bytes_hex(&l.raw_value)})).collect::<Vec<_>>()})
+        );
+        return Ok(());
+    }
     if kind.starts_with("pilatus") {
         use dioptrin_io::pilatus::{Document, Reader};
         let path = args.get(2).ok_or("source required")?;

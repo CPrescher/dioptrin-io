@@ -63,6 +63,11 @@ pub enum Format {
     Tiff,
     /// Explicit legacy TIFF metadata interpretations; original tags are retained.
     TiffWithOptions(tiff::Options),
+    /// Select one directory reachable through the declared primary/SubIFD graph.
+    TiffDirectory {
+        offset: u64,
+        options: tiff::Options,
+    },
 }
 
 enum Backend {
@@ -383,6 +388,10 @@ impl Reader {
                     },
                 )
                 .map_err(|e| Error(e.to_string()))?,
+            )),
+            Format::TiffDirectory { offset, options } => Backend::Tiff(Box::new(
+                tiff::Reader::open_directory(input, offset, tiff, options)
+                    .map_err(|e| Error(e.to_string()))?,
             )),
         };
         source.check()?;

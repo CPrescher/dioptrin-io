@@ -1,0 +1,63 @@
+{
+  "license": "CC0-1.0",
+  "generator": "scripts/generate_edf_array_fixtures.py",
+  "contract": "source image records preserve rank/axes; explicit plane views are not extra records",
+  "files": {
+    "volume-u16-be.edf": {
+      "bytes": 560,
+      "sha256": "0be176a129686972694c83a906a48a091d1db312de466e77bdc0bd261ef7896c"
+    },
+    "rank4-gzip.edf": {
+      "bytes": 591,
+      "sha256": "cbe65b82d05194bfb30ecc6356474824f65ca8fef98e0ba41b338f7ae1e19c81"
+    },
+    "rank5-zlib.edf": {
+      "bytes": 542,
+      "sha256": "e4d53254a5d0513993d85768ee37bb1728a47b1f50cf2010f0fe3e1c4675142b"
+    },
+    "rank3-bzip.edf": {
+      "bytes": 573,
+      "sha256": "3f2160c5d00b8c5886dfe250be99a033f60908083d12b895cdece801f97f8147"
+    },
+    "rank1.edf": {
+      "bytes": 518,
+      "sha256": "8a793d38547a858364b52cadf492198c7d392d7eadc8784c6fc9b08b7941422c"
+    },
+    "scalar.edf": {
+      "bytes": 520,
+      "sha256": "9a953665720eceed9606b41d42dca116243be24cc2060f3f9b34ebf990d596b1"
+    },
+    "singleton-leading.edf": {
+      "bytes": 524,
+      "sha256": "8b2d932e47a8779513ddec81224c09c5eaa076ac23fb493156d9fe010411c022"
+    },
+    "sparse-dimensions.edf": {
+      "bytes": 524,
+      "sha256": "fa663bd57987434bd549946f33f9d5f833bd0c85a6619ea0fc0c7e9425401ffa"
+    },
+    "mixed-records.edf": {
+      "bytes": 1624,
+      "sha256": "ef7015019a9fe0152ce6c2150b422ab151bab70b2387ad4bf0af15bf15969c88"
+    },
+    "general-volume.edf": {
+      "bytes": 1048,
+      "sha256": "8d25ffeed9b412e0500e8a0c6402d3398cd26a8163994fe602dac78be645ac9a"
+    },
+    "volume-truncated.edf": {
+      "bytes": 555,
+      "sha256": "a81f770e237f73490d7a9a9e5d7f60c6babf2664812ee529be7de20179fcf176"
+    },
+    "volume-header-only.edf": {
+      "bytes": 512,
+      "sha256": "e12f0df96677a1602b82fedf892efa8e4bb9f5823169091af555be364596e27e"
+    },
+    "volume-corrupt-member.edf": {
+      "bytes": 553,
+      "sha256": "adbd20844478659a32e7ba6d5aaf4a3ed44b279464f96cf4040adb88fd0dff54"
+    },
+    "volume-footer-short.edf": {
+      "bytes": 552,
+      "sha256": "43976edc58a77cd649f3fdfb75e6a56254f7922750709d837747c7953db1b88f"
+    }
+  }
+}

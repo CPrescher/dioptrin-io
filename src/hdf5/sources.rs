@@ -30,6 +30,10 @@ pub struct Link {
     /// Native HDF5 link value, including flags and NUL-delimited strings.
     pub raw_value: Vec<u8>,
 }
+struct RawTracked {
+    snapshot: Snapshot,
+    handle: OsFile,
+}
 struct Tracked {
     snapshot: Snapshot,
     handle: OsFile,
@@ -37,6 +41,7 @@ struct Tracked {
 }
 pub(super) struct Sources {
     tracked: Vec<Tracked>,
+    raw: Vec<RawTracked>,
     pub records: Vec<Source>,
     pub links: Vec<Link>,
     limits: Limits,
@@ -58,6 +63,7 @@ impl Sources {
         }
         let mut sources = Self {
             tracked: Vec::new(),
+            raw: Vec::new(),
             records: Vec::new(),
             links: Vec::new(),
             limits,
@@ -113,7 +119,7 @@ impl Sources {
                 .map_err(Error)?;
             return Ok(index);
         }
-        if self.tracked.len() >= self.limits.source_files {
+        if self.tracked.len().saturating_add(self.raw.len()) >= self.limits.source_files {
             return Err(Error("HDF5 snapshot exceeds source-file limit".into()));
         }
         self.charge(
@@ -142,11 +148,85 @@ impl Sources {
         });
         Ok(self.tracked.len() - 1)
     }
+    /// Track an explicitly bound external raw file without opening it as HDF5.
+    pub(super) fn add_raw(&mut self, path: &Path) -> Result<usize, Error> {
+        let snapshot = Snapshot::open(path).map_err(Error)?;
+        if !std::fs::metadata(&snapshot.path)?.is_file() {
+            return Err(Error(
+                "HDF5 raw external source requires a regular file".into(),
+            ));
+        }
+        if !self.bindings.contains(&snapshot.binding) {
+            if self.bindings.len()
+                >= self
+                    .limits
+                    .source_files
+                    .saturating_add(self.limits.link_traversals)
+            {
+                return Err(Error("HDF5 source-binding limit".into()));
+            }
+            self.charge(
+                snapshot
+                    .binding
+                    .requested
+                    .as_os_str()
+                    .len()
+                    .saturating_add(snapshot.path.as_os_str().len())
+                    .saturating_add(128),
+            )?;
+            self.bindings.push(snapshot.binding.clone());
+        }
+        if let Some(index) = self
+            .raw
+            .iter()
+            .position(|s| s.snapshot.path == snapshot.path)
+        {
+            self.raw[index]
+                .snapshot
+                .check_handle(&self.raw[index].handle)
+                .map_err(Error)?;
+            return Ok(index);
+        }
+        if self.tracked.len().saturating_add(self.raw.len()) >= self.limits.source_files {
+            return Err(Error("HDF5 snapshot exceeds source-file limit".into()));
+        }
+        self.charge(
+            snapshot
+                .path
+                .as_os_str()
+                .len()
+                .saturating_mul(2)
+                .saturating_add(256),
+        )?;
+        let handle = OsFile::open(&snapshot.path)?;
+        snapshot.check_handle(&handle).map_err(Error)?;
+        self.records.push(Source {
+            path: snapshot.path.clone(),
+            bytes: snapshot.bytes(),
+        });
+        self.raw.push(RawTracked { snapshot, handle });
+        Ok(self.raw.len() - 1)
+    }
+    pub(super) fn raw_file(&self, index: usize) -> &OsFile {
+        &self.raw[index].handle
+    }
+    pub(super) fn raw_path(&self, index: usize) -> &Path {
+        &self.raw[index].snapshot.path
+    }
+    pub(super) fn raw_bytes(&self, index: usize) -> u64 {
+        self.raw[index].snapshot.bytes()
+    }
     pub fn check(&self) -> Result<(), Error> {
         for binding in &self.bindings {
             binding.check().map_err(Error)?;
         }
         for source in &self.tracked {
+            source
+                .snapshot
+                .check_handle(&source.handle)
+                .map_err(Error)?;
+        }
+        for source in &self.raw {
             source
                 .snapshot
                 .check_handle(&source.handle)

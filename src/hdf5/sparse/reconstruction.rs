@@ -1,9 +1,12 @@
 use super::*;
 pub(super) fn read(reader: &Reader, index: usize, buffer: &mut FrameBuffer) -> Result<(), Error> {
+    let ty = reader.metadata.intensity_type;
+    if !numeric::is_integer(ty) && !matches!(ty, PixelType::F32 | PixelType::F64) {
+        return Err(Error("deterministic sparse reconstruction supports integer/f32/f64 intensities only; read original stored components for complex, bool or binary16 values".into()));
+    }
     let mut sparse = SparseFrameBuffer::default();
     reader.read_sparse_frame_into(index, &mut sparse)?;
     let limit = reader.options.limits.component_bytes;
-    let ty = reader.metadata.intensity_type;
     let shape = reader.metadata.shape;
     let count = shape[0] * shape[1];
     let mut mask = ArrayBuffer::default();

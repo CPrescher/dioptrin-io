@@ -3,8 +3,35 @@ use dioptrin_io::{PixelBuffer, sparse::*};
 use sha2::{Digest, Sha256};
 fn hash(pixels: &PixelBuffer) -> String {
     let mut hash = Sha256::new();
+    match pixels {
+        PixelBuffer::C32(v) => {
+            for pair in v {
+                for x in pair {
+                    hash.update(x.to_le_bytes());
+                }
+            }
+            return format!("{:x}", hash.finalize());
+        }
+        PixelBuffer::C64(v) => {
+            for pair in v {
+                for x in pair {
+                    hash.update(x.to_le_bytes());
+                }
+            }
+            return format!("{:x}", hash.finalize());
+        }
+        PixelBuffer::CI16(v) => {
+            for pair in v {
+                for x in pair {
+                    hash.update(x.to_le_bytes());
+                }
+            }
+            return format!("{:x}", hash.finalize());
+        }
+        _ => {}
+    }
     macro_rules! bytes{($($variant:ident);*)=>{match pixels{$(PixelBuffer::$variant(v)=>{for n in v{hash.update(n.to_le_bytes());}},)*_=>panic!("unsupported sparse samples")}};}
-    bytes!(U8;U16;U32;U64;I8;I16;I32;I64;F32;F64);
+    bytes!(Bool;F16;U8;U16;U32;U64;I8;I16;I32;I64;F32;F64);
     format!("{:x}", hash.finalize())
 }
 fn main() -> Result<(), Box<dyn std::error::Error>> {

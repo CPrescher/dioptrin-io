@@ -19,6 +19,8 @@ fn hash(values: &PixelBuffer) -> String {
     }
     match values {
         PixelBuffer::U8(v) => digest.update(v),
+        PixelBuffer::Bool(v) => scalar!(v),
+        PixelBuffer::F16(v) => scalar!(v),
         PixelBuffer::U16(v) => scalar!(v),
         PixelBuffer::U32(v) => scalar!(v),
         PixelBuffer::U64(v) => scalar!(v),

@@ -78,7 +78,10 @@ pub enum Availability {
 }
 #[derive(Debug, Clone)]
 pub struct SpanReport {
+    /// Full source record axes; declared_shape is the legacy trailing plane view.
+    pub declared_source_shape: Vec<usize>,
     pub declared_shape: [usize; 2],
+    pub record_index: usize,
     pub declared_samples: usize,
     pub present_samples: Range<usize>,
     pub missing_samples: Option<Range<usize>>,
@@ -89,6 +92,8 @@ pub struct SpanReport {
     pub outer_integrity: Integrity,
     pub payload_integrity: Integrity,
     pub complete_verified_frame: bool,
+    /// Record-wide status, never a claim that one selected plane is the record.
+    pub complete_verified_record: bool,
     pub payload_members: Vec<MemberReport>,
     pub diagnostic: Option<String>,
 }
@@ -401,18 +406,13 @@ impl Reader {
             }
             // A malformed later header may stop recovery; a configured resource
             // bound is never softened into a successful partial index.
-            if let (Ok(h), Ok(w), Ok(ty)) = (
-                super::number(&fields, "DIM_2"),
-                super::number(&fields, "DIM_1"),
-                super::field(&fields, "DATATYPE").and_then(super::edf_type),
-            ) {
-                let bytes = h
-                    .checked_mul(w)
-                    .and_then(|n| n.checked_mul(ty.bytes()))
-                    .ok_or_else(|| Error("EDF recovery shape overflows platform".into()))?;
-                if bytes > limits.frame_bytes {
-                    return Err(Error("EDF recovery frame exceeds byte budget".into()));
-                }
+            let admission_type = super::field(&fields, "DATATYPE")
+                .and_then(super::edf_type)
+                .unwrap_or(crate::PixelType::U8);
+            if let Err(super::array::GeometryError::Bound(error)) =
+                super::array::geometry(&fields, admission_type, limits)
+            {
+                return Err(error);
             }
             let original_header = header.clone();
             let parsed = parse_metadata(
@@ -434,6 +434,17 @@ impl Reader {
                     break;
                 }
             };
+            metadata.record_index = pages.len();
+            charge(
+                &mut metadata_bytes,
+                metadata
+                    .source_shape
+                    .len()
+                    .saturating_add(metadata.implicit_dimensions.len())
+                    .saturating_mul(std::mem::size_of::<usize>())
+                    .saturating_add(128),
+                limits,
+            )?;
             if expected > limits.encoded_bytes {
                 return Err(Error("EDF recovery encoded window exceeds budget".into()));
             }
@@ -511,7 +522,7 @@ impl Reader {
             .get(index)
             .ok_or_else(|| Error("EDF recovery image record outside source".into()))?;
         let meta = &page.metadata;
-        let declared_samples = self.limits.pixels(meta.shape, meta.pixel_type)?;
+        let declared_samples = meta.source_samples;
         let needed = declared_samples * meta.pixel_type.bytes();
         let mut file = File::open(self.source.path())?;
         self.source.check_input(&file)?;
@@ -623,7 +634,9 @@ impl Reader {
         };
         self.source.check_input(&file)?;
         buffer.report = Some(SpanReport {
+            declared_source_shape: meta.source_shape.clone(),
             declared_shape: meta.shape,
+            record_index: index,
             declared_samples,
             present_samples: 0..count,
             missing_samples: (count < declared_samples).then_some(count..declared_samples),
@@ -634,6 +647,7 @@ impl Reader {
             outer_integrity,
             payload_integrity: decoded.integrity,
             complete_verified_frame,
+            complete_verified_record: complete_verified_frame,
             payload_members: decoded.members,
             diagnostic: decoded.diagnostic,
         });
@@ -655,19 +669,10 @@ fn parse_metadata(
     limits: Limits,
     options: &super::Options,
 ) -> Result<(Metadata, usize), Error> {
-    if fields
-        .keys()
-        .filter(|k| k.starts_with("DIM_"))
-        .any(|k| k != "DIM_1" && k != "DIM_2" && fields[k] != "1")
-    {
-        return Err(Error("EDF recovery volume layout is unsupported".into()));
-    }
-    let shape = [
-        super::number(&fields, "DIM_2")?,
-        super::number(&fields, "DIM_1")?,
-    ];
     let pixel_type = super::edf_type(super::field(&fields, "DATATYPE")?)?;
-    let decoded = limits.pixels(shape, pixel_type)? * pixel_type.bytes();
+    let geometry = super::array::geometry(&fields, pixel_type, limits)
+        .map_err(super::array::GeometryError::into_error)?;
+    let decoded = geometry.samples * pixel_type.bytes();
     let little_endian = match super::field(&fields, "BYTEORDER")?
         .to_ascii_uppercase()
         .as_str()
@@ -695,7 +700,13 @@ fn parse_metadata(
         ));
     }
     let metadata = Metadata {
-        shape,
+        shape: geometry.plane,
+        source_shape: geometry.shape,
+        source_samples: geometry.samples,
+        plane_count: geometry.planes,
+        frame_layout: geometry.layout,
+        implicit_dimensions: geometry.implicit,
+        record_index: 0,
         pixel_type,
         little_endian,
         declared_compression: fields.get("COMPRESSION").cloned(),

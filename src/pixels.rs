@@ -3,6 +3,10 @@
 /// Original scalar sample type, before any consumer conversion.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum PixelType {
+    /// Logical boolean with original one-byte storage retained.
+    Bool,
+    /// IEEE binary16. Buffers retain raw 16-bit patterns, including NaN payloads.
+    F16,
     U8,
     U16,
     U32,
@@ -25,8 +29,8 @@ impl PixelType {
     #[must_use]
     pub const fn bytes(self) -> usize {
         match self {
-            Self::U8 | Self::I8 => 1,
-            Self::U16 | Self::I16 => 2,
+            Self::Bool | Self::U8 | Self::I8 => 1,
+            Self::F16 | Self::U16 | Self::I16 => 2,
             Self::U32 | Self::I32 | Self::F32 | Self::CI16 => 4,
             Self::U64 | Self::I64 | Self::F64 | Self::C32 => 8,
             Self::C64 => 16,
@@ -47,8 +51,15 @@ impl PixelType {
 
 /// Owned, contiguous row-major samples. No scaling, clipping or float conversion.
 /// Consumers can match a variant and pass its slice directly to numerical code.
+/// Bool/F16 variants are explicit storage-bit containers; callers choose any
+/// logical boolean or floating-point widening view separately.
 #[derive(Debug, Clone, PartialEq)]
 pub enum PixelBuffer {
+    /// Original boolean storage bytes. A nonzero byte has logical value true;
+    /// noncanonical bytes are not silently normalized to one.
+    Bool(Vec<u8>),
+    /// Original IEEE binary16 bits, not unsigned integer detector counts.
+    F16(Vec<u16>),
     U8(Vec<u8>),
     U16(Vec<u16>),
     U32(Vec<u32>),
@@ -73,6 +84,8 @@ impl PixelBuffer {
     #[must_use]
     pub fn pixel_type(&self) -> PixelType {
         match self {
+            Self::Bool(_) => PixelType::Bool,
+            Self::F16(_) => PixelType::F16,
             Self::U8(_) => PixelType::U8,
             Self::U16(_) => PixelType::U16,
             Self::U32(_) => PixelType::U32,
@@ -92,6 +105,8 @@ impl PixelBuffer {
     #[must_use]
     pub fn len(&self) -> usize {
         match self {
+            Self::Bool(v) => v.len(),
+            Self::F16(v) => v.len(),
             Self::U8(v) => v.len(),
             Self::U16(v) => v.len(),
             Self::U32(v) => v.len(),
@@ -113,6 +128,16 @@ impl PixelBuffer {
         self.len() == 0
     }
 
+    /// Explicit logical view of original boolean storage. Bytes remain available
+    /// unchanged in `Bool`; this view treats every nonzero byte as true.
+    #[must_use]
+    pub fn logical_booleans(&self) -> Option<impl ExactSizeIterator<Item = bool> + '_> {
+        match self {
+            Self::Bool(values) => Some(values.iter().map(|value| *value != 0)),
+            _ => None,
+        }
+    }
+
     #[cfg(any(feature = "hdf5", feature = "cbf", feature = "edf", feature = "native"))]
     pub(crate) fn resize(&mut self, ty: PixelType, len: usize) -> Result<(), String> {
         macro_rules! resize {
@@ -128,6 +153,8 @@ impl PixelBuffer {
             }};
         }
         match ty {
+            PixelType::Bool => resize!(Bool, 0),
+            PixelType::F16 => resize!(F16, 0),
             PixelType::U8 => resize!(U8, 0),
             PixelType::U16 => resize!(U16, 0),
             PixelType::U32 => resize!(U32, 0),
@@ -147,6 +174,8 @@ impl PixelBuffer {
     #[cfg(any(feature = "hdf5", feature = "edf", feature = "native"))]
     pub(crate) fn bytes_mut(&mut self) -> &mut [u8] {
         match self {
+            Self::Bool(v) => v,
+            Self::F16(v) => bytemuck::cast_slice_mut(v),
             Self::U8(v) => v,
             Self::U16(v) => bytemuck::cast_slice_mut(v),
             Self::U32(v) => bytemuck::cast_slice_mut(v),

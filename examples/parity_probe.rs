@@ -6,6 +6,8 @@ use std::error::Error;
 
 fn declared_dtype(ty: PixelType) -> &'static str {
     match ty {
+        PixelType::Bool => "bool",
+        PixelType::F16 => "float16",
         PixelType::U8 => "uint8",
         PixelType::U16 => "uint16",
         PixelType::U32 => "uint32",
@@ -54,7 +56,7 @@ fn sample_dtype_and_hash(pixels: &PixelBuffer, hash: &mut Sha256) -> &'static st
             "complex_int16"
         }
         _ => {
-            digest!(U8,"uint8";U16,"uint16";U32,"uint32";U64,"uint64";I8,"int8";I16,"int16";I32,"int32";I64,"int64";F32,"float32";F64,"float64")
+            digest!(Bool,"bool";F16,"float16";U8,"uint8";U16,"uint16";U32,"uint32";U64,"uint64";I8,"int8";I16,"int16";I32,"int32";I64,"int64";F32,"float32";F64,"float64")
         }
     }
 }

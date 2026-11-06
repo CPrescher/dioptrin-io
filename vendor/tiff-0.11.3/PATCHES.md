@@ -56,3 +56,11 @@ a directory. The root header API also reuses source-range/cycle admission and
 rejects unknown field types or duplicate IDs rather than silently dropping them.
 This provides original primary-IFD metadata for unsupported pixel layouts; it
 never asserts sample availability, repairs a window or introduces a count decoder.
+
+Explicit directory access adds a metadata-only directory lookup and an image
+constructor/seek accepting a caller-admitted reachable source offset. They use
+the same header/IFD/value/Image parsers and raster/codec pipeline. Constructor
+limits now apply before parsing the first selected image. The root caller owns
+the bounded declared-edge graph traversal and rejects unknown offset selection;
+primary image-chain indexing stays the default. Unsupported primary pixels need
+not be decoded or interpreted to read an independently valid child directory.

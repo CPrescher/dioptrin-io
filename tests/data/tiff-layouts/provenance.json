@@ -1,0 +1,70 @@
+{
+  "license": "CC0-1.0",
+  "origin": "independent deterministic integer/float arrays; native libtiff CCITT encoder and tifffile IFD writer",
+  "numpy_version": "2.5.4",
+  "tifffile_version": "2026.10.15",
+  "libtiff": {
+    "path": "/opt/homebrew/Cellar/libtiff/4.7.2/lib/libtiff.6.dylib",
+    "sha256": "ed5a54e3e8a621ba58f51ce632debb3f8d0ef068faf5bee887672581698e4cc1",
+    "version": "LIBTIFF, Version 4.7.2\nCopyright (c) 1988-1996 Sam Leffler\nCopyright (c) 1991-1996 Silicon Graphics, Inc."
+  },
+  "generator_sha256": "a8a7b3b4a3edef08985c773babd1f7fc2cdb5e6eae0e8b559818cbeca8deb7e6",
+  "files": {
+    "fax-2-options0-fill1.tif": {
+      "bytes": 354,
+      "sha256": "fa8662d9d27d97bfeb9fb7418205276dae955f37b25962dc0db7b7ef6982665e"
+    },
+    "fax-2-options0-fill1.tif.raw": {
+      "bytes": 1581,
+      "sha256": "d698d8aecf1a892701fb54207496626ef1bfd9e1dbab75a6feab9cda9e61ceb7"
+    },
+    "fax-2-options0-fill2.tif": {
+      "bytes": 354,
+      "sha256": "23e714983723f4d86306b25507686060de0e0432515cda5966cb6eb5bcd33e47"
+    },
+    "fax-2-options0-fill2.tif.raw": {
+      "bytes": 1581,
+      "sha256": "d698d8aecf1a892701fb54207496626ef1bfd9e1dbab75a6feab9cda9e61ceb7"
+    },
+    "fax-3-options1-fill1.tif": {
+      "bytes": 406,
+      "sha256": "07005fdb0ba895d3bd2db95908e3d2f395bb93e0a26e547cd7e10bc2d923ba3e"
+    },
+    "fax-3-options1-fill1.tif.raw": {
+      "bytes": 1581,
+      "sha256": "d698d8aecf1a892701fb54207496626ef1bfd9e1dbab75a6feab9cda9e61ceb7"
+    },
+    "fax-3-options1-fill2.tif": {
+      "bytes": 406,
+      "sha256": "6b8c9872f4d1f5657165582138cd6262be2e386e93b2aaf85a7b557361eb315f"
+    },
+    "fax-3-options1-fill2.tif.raw": {
+      "bytes": 1581,
+      "sha256": "d698d8aecf1a892701fb54207496626ef1bfd9e1dbab75a6feab9cda9e61ceb7"
+    },
+    "fax-3-options5-fill1.tif": {
+      "bytes": 414,
+      "sha256": "de6635ba6530189ff77f44a49028e483f6b79b04fa40076abc73c3688b892cf3"
+    },
+    "fax-3-options5-fill1.tif.raw": {
+      "bytes": 1581,
+      "sha256": "d698d8aecf1a892701fb54207496626ef1bfd9e1dbab75a6feab9cda9e61ceb7"
+    },
+    "fax-3-options5-fill2.tif": {
+      "bytes": 414,
+      "sha256": "aeb4ea95411aba4887620899f5f00c8245f95cbbb52cf8988f92712e51667b05"
+    },
+    "fax-3-options5-fill2.tif.raw": {
+      "bytes": 1581,
+      "sha256": "d698d8aecf1a892701fb54207496626ef1bfd9e1dbab75a6feab9cda9e61ceb7"
+    },
+    "subifds-big-be.tif": {
+      "bytes": 1388,
+      "sha256": "d16391174540e3ef5395cede162e8f7588ae3c1f8744709d849e5200d4362bdc"
+    },
+    "subifds-classic.tif": {
+      "bytes": 924,
+      "sha256": "e632ce17ef85e43625e034b08d9f5ccf4a51b79fb460a2afaea5640731100543"
+    }
+  }
+}

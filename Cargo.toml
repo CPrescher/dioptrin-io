@@ -67,6 +67,9 @@ tempfile = "3.27"
 sha2 = "0.10"
 serde_json = "1.0"
 
+[patch.crates-io]
+fax = { path = "vendor/fax-0.2.7" }
+
 [[example]]
 name = "inspect_frames"
 required-features = ["hdf5"]

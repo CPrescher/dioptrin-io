@@ -22,7 +22,15 @@ pub(super) struct FileView {
     patches: BTreeMap<u64, [u8; 2]>,
     samples: Option<(ChunkWindows, Option<u64>)>,
 }
+#[derive(Debug, Clone)]
+pub(super) struct DirectoryLinks {
+    pub next: u64,
+    pub children: Vec<u64>,
+    pub subifd_entry: Option<SourceEntry>,
+}
 pub(super) struct Admission {
+    pub first_ifd: u64,
+    pub links: BTreeMap<u64, DirectoryLinks>,
     pub entry_counts: BTreeMap<u64, u64>,
     pub file: FileView,
     pub photos: BTreeMap<u64, OriginalPhoto>,
@@ -31,7 +39,13 @@ pub(super) struct Admission {
     pub interpretations: BTreeMap<u64, Interpretation>,
 }
 impl Admission {
-    pub fn open(mut file: File, limits: Limits, options: Options) -> Result<Self, Error> {
+    pub fn open(file: File, limits: Limits, options: Options) -> Result<Self, Error> {
+        Self::scan(file, limits, options, false)
+    }
+    pub fn graph(file: File, limits: Limits, options: Options) -> Result<Self, Error> {
+        Self::scan(file, limits, options, true)
+    }
+    fn scan(mut file: File, limits: Limits, options: Options, graph: bool) -> Result<Self, Error> {
         let length = file.metadata().map_err(io)?.len();
         let mut header = [0; 8];
         file.read_exact(&mut header).map_err(io)?;
@@ -64,6 +78,9 @@ impl Admission {
             }
             _ => return Err(Error("invalid TIFF version".into())),
         };
+        let first_ifd = next;
+        let mut links = BTreeMap::new();
+        let mut pending = Vec::new();
         let mut entry_counts = BTreeMap::new();
         let mut visited = BTreeSet::new();
         let mut patches = BTreeMap::new();
@@ -74,11 +91,15 @@ impl Admission {
         let mut retained = 0usize;
         let mut interpretations = BTreeMap::new();
         while next != 0 {
+            if graph && visited.contains(&next) {
+                next = pending.pop().unwrap_or(0);
+                continue;
+            }
             if visited.len() >= limits.frames || !visited.insert(next) {
                 return Err(Error("TIFF primary IFD cycle/frame limit".into()));
             }
             retained = retained
-                .checked_add(96)
+                .checked_add(if graph { 512 } else { 96 })
                 .filter(|&n| n <= limits.metadata_bytes)
                 .ok_or_else(|| Error("TIFF IFD adapter exceeds metadata budget".into()))?;
             let mut count = [0; 8];
@@ -111,6 +132,8 @@ impl Admission {
                     "TIFF compatibility source entries exceed metadata budget".into(),
                 ));
             }
+            let mut children = Vec::new();
+            let mut subifd_entry = None;
             let mut photo_seen = false;
             let mut description_seen = false;
             for index in 0..count {
@@ -157,6 +180,38 @@ impl Admission {
                         ifd_entry: entry[..stride as usize].to_vec(),
                         payload_offset: (unit != 0 && size > offset_bytes)
                             .then(|| number(&entry[value_pos as usize..stride as usize])),
+                    });
+                }
+                if graph && tag == 330 {
+                    if subifd_entry.is_some() || ![4, 13, 16, 18].contains(&ty) {
+                        return Err(Error("invalid/duplicate TIFF SubIFDs field".into()));
+                    }
+                    retained = usize::try_from(n)
+                        .ok()
+                        .and_then(|n| n.checked_mul(48))
+                        .and_then(|n| retained.checked_add(n))
+                        .filter(|&n| n <= limits.metadata_bytes)
+                        .ok_or_else(|| Error("TIFF SubIFD edges exceed metadata budget".into()))?;
+                    let start = if size <= offset_bytes {
+                        pos + value_pos
+                    } else {
+                        number(&entry[value_pos as usize..stride as usize])
+                    };
+                    children
+                        .try_reserve_exact(n as usize)
+                        .map_err(|e| Error(e.to_string()))?;
+                    for i in 0..n {
+                        let mut pointer = [0; 8];
+                        read_at(&mut file, start + i * unit, &mut pointer[..unit as usize])?;
+                        children.push(number(&pointer[..unit as usize]));
+                    }
+                    subifd_entry = Some(SourceEntry {
+                        tag,
+                        field_type: ty,
+                        count: n,
+                        entry_offset: pos,
+                        ifd_entry: entry[..stride as usize].to_vec(),
+                        payload_offset: (size > offset_bytes).then_some(start),
                     });
                 }
                 if tag == 270 {
@@ -228,7 +283,31 @@ impl Admission {
             }
             let mut offset = [0; 8];
             read_at(&mut file, end, &mut offset[..offset_bytes as usize])?;
-            next = number(&offset[..offset_bytes as usize]);
+            let following = number(&offset[..offset_bytes as usize]);
+            if graph {
+                // Keep null child slots visible, but never traverse offset zero.
+                for child in children.iter().copied().filter(|&p| p != 0) {
+                    pending.push(child);
+                }
+                links.insert(
+                    next,
+                    DirectoryLinks {
+                        next: following,
+                        children,
+                        subifd_entry,
+                    },
+                );
+                next = if following != 0 {
+                    following
+                } else {
+                    pending.pop().unwrap_or(0)
+                };
+            } else {
+                next = following;
+            }
+        }
+        if graph {
+            validate_graph(first_ifd, &links)?;
         }
         if !interpretations.is_empty() {
             let mut metadata_ranges = payloads.clone();
@@ -251,6 +330,8 @@ impl Admission {
         }
         file.seek(SeekFrom::Start(0)).map_err(io)?;
         Ok(Self {
+            first_ifd,
+            links,
             entry_counts,
             file: FileView {
                 file,
@@ -375,6 +456,42 @@ fn overlaps_ranges(ranges: &[(u64, u64)], start: u64, end: u64) -> bool {
         .checked_sub(1)
         .is_some_and(|index| ranges[index].1 > start)
 }
+// Iterative DFS distinguishes shared directory aliases (a DAG) from a cycle;
+// recursion and stack growth are bounded by the admitted graph/edge budgets.
+fn validate_graph(root: u64, links: &BTreeMap<u64, DirectoryLinks>) -> Result<(), Error> {
+    let mut colors = BTreeMap::new();
+    let mut stack = vec![(root, false)];
+    while let Some((offset, exit)) = stack.pop() {
+        if offset == 0 {
+            continue;
+        }
+        if exit {
+            colors.insert(offset, 2);
+            continue;
+        }
+        match colors.get(&offset) {
+            Some(1) => return Err(Error("TIFF directory graph cycle".into())),
+            Some(2) => continue,
+            _ => {}
+        }
+        colors.insert(offset, 1);
+        stack.push((offset, true));
+        let node = links
+            .get(&offset)
+            .ok_or_else(|| Error("unadmitted TIFF directory edge".into()))?;
+        for child in node
+            .children
+            .iter()
+            .copied()
+            .chain(std::iter::once(node.next))
+            .filter(|&n| n != 0)
+        {
+            stack.push((child, false));
+        }
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod interval_tests {
     use super::*;

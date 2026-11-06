@@ -12,7 +12,9 @@ use std::{
     io::{BufReader, Cursor, Read, Seek, SeekFrom},
     path::{Path, PathBuf},
 };
+mod array;
 pub mod recovery;
+pub use array::{ArrayBuffer, FrameLayout, MAX_RANK};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum ExternalPayloads {
@@ -93,7 +95,15 @@ pub struct PayloadSource {
 }
 #[derive(Debug, Clone)]
 pub struct Metadata {
+    /// Trailing 2D plane view; source_shape is authoritative for source rank.
     pub shape: [usize; 2],
+    pub source_shape: Vec<usize>,
+    pub source_samples: usize,
+    pub plane_count: usize,
+    pub frame_layout: FrameLayout,
+    /// Canonical DIM_i fields absent and assigned the pinned EDF default1.
+    pub implicit_dimensions: Vec<usize>,
+    pub record_index: usize,
     pub pixel_type: PixelType,
     pub little_endian: bool,
     pub compression: String,
@@ -257,16 +267,14 @@ impl Reader {
             metadata_bytes = metadata_bytes
                 .checked_add(header_cost(&[], &fields))
                 .ok_or_else(|| Error("EDF metadata overflow".into()))?;
-            if fields
-                .keys()
-                .filter(|k| k.starts_with("DIM_"))
-                .any(|k| k != "DIM_1" && k != "DIM_2" && fields[k] != "1")
-            {
-                return Err(Error("EDF volume dimensions are unsupported".into()));
-            }
-            let shape = [number(&fields, "DIM_2")?, number(&fields, "DIM_1")?];
             let pixel_type = edf_type(field(&fields, "DATATYPE")?)?;
-            let count = limits.pixels(shape, pixel_type)?;
+            let geometry = array::geometry(&fields, pixel_type, limits)
+                .map_err(array::GeometryError::into_error)?;
+            metadata_bytes = metadata_bytes
+                .checked_add(geometry.metadata_bytes())
+                .filter(|&n| n <= limits.metadata_bytes)
+                .ok_or_else(|| Error("EDF source-shape metadata exceeds limit".into()))?;
+            let count = geometry.samples;
             let decoded = count * pixel_type.bytes();
             let little_endian = match field(&fields, "BYTEORDER")?.to_ascii_lowercase().as_str() {
                 "lowbytefirst" => true,
@@ -447,7 +455,13 @@ impl Reader {
                     .cloned(),
                 parsed_header_bytes: header.len(),
                 legacy_size_bytes: optional_number(&fields, "SIZE")?,
-                shape,
+                shape: geometry.plane,
+                source_shape: geometry.shape,
+                source_samples: geometry.samples,
+                plane_count: geometry.planes,
+                frame_layout: geometry.layout,
+                implicit_dimensions: geometry.implicit,
+                record_index: pages.len(),
                 pixel_type,
                 little_endian,
                 compression,
@@ -505,6 +519,12 @@ impl Reader {
     pub fn frames(&self) -> usize {
         self.pages.len()
     }
+    /// Source image records, identical to frames(). Leading axes never create
+    /// additional records; select their planes explicitly or read the full array.
+    #[must_use]
+    pub fn image_records(&self) -> usize {
+        self.pages.len()
+    }
     #[must_use]
     pub fn metadata(&self, index: usize) -> Option<&Metadata> {
         self.pages.get(index).map(|p| &p.metadata)
@@ -528,6 +548,86 @@ impl Reader {
     pub fn read_frame_into(&self, index: usize, buffer: &mut FrameBuffer) -> Result<(), Error> {
         buffer.shape = None;
         self.check_sources()?;
+        let meta = self
+            .metadata(index)
+            .ok_or_else(|| Error("EDF frame index outside file".into()))?;
+        if meta.frame_layout == FrameLayout::ArrayOrPlaneRequired {
+            return Err(Error("EDF source array requires read_array_into or explicit read_plane_into; source records are not planes".into()));
+        }
+        self.read_record_into(index, buffer)?;
+        buffer.shape = Some(meta.shape);
+        Ok(())
+    }
+    /// Read a complete source array in its declared rank and stored axis order.
+    /// No leading dimensions are flattened into records or silently discarded.
+    /// # Errors
+    /// Invalid record, source mutation, codec integrity or resource failure.
+    pub fn read_array_into(&self, index: usize, buffer: &mut ArrayBuffer) -> Result<(), Error> {
+        buffer.invalidate();
+        self.read_record_into(index, &mut buffer.data)?;
+        let shape = &self.pages[index].metadata.source_shape;
+        buffer
+            .shape
+            .try_reserve_exact(shape.len().saturating_sub(buffer.shape.len()))
+            .map_err(|e| Error(e.to_string()))?;
+        buffer.shape.clear();
+        buffer.shape.extend_from_slice(shape);
+        buffer.valid = true;
+        Ok(())
+    }
+    /// Explicit trailing 2D plane view. Leading coordinates follow source_shape
+    /// in C order. Rank0/1 use an explicitly selected singleton row/column view.
+    /// Decode the complete record, then select in place; no second full-array or
+    /// plane allocation is made and the full source workspace capacity remains.
+    /// This does not promise partial I/O or faster decoding.
+    /// # Errors
+    /// Invalid record/leading coordinates, source, codec or resource failures.
+    pub fn read_plane_into(
+        &self,
+        index: usize,
+        leading: &[usize],
+        buffer: &mut FrameBuffer,
+    ) -> Result<(), Error> {
+        buffer.shape = None;
+        self.check_sources()?;
+        let meta = self
+            .metadata(index)
+            .ok_or_else(|| Error("EDF image record outside source".into()))?;
+        let dimensions = &meta.source_shape[..meta.source_shape.len().saturating_sub(2)];
+        if leading.len() != dimensions.len() {
+            return Err(Error(
+                "EDF plane coordinate rank differs from leading source axes".into(),
+            ));
+        }
+        let mut ordinal = 0usize;
+        for (&coordinate, &dimension) in leading.iter().zip(dimensions) {
+            if coordinate >= dimension {
+                return Err(Error("EDF plane coordinate outside source axis".into()));
+            }
+            ordinal = ordinal
+                .checked_mul(dimension)
+                .and_then(|n| n.checked_add(coordinate))
+                .ok_or_else(|| Error("EDF plane index overflow".into()))?;
+        }
+        let samples = meta.shape[0]
+            .checked_mul(meta.shape[1])
+            .ok_or_else(|| Error("EDF plane size overflow".into()))?;
+        let start = ordinal
+            .checked_mul(samples)
+            .ok_or_else(|| Error("EDF plane offset overflow".into()))?;
+        let end = start
+            .checked_add(samples)
+            .filter(|&n| n <= meta.source_samples)
+            .ok_or_else(|| Error("EDF plane exceeds complete source array".into()))?;
+        self.read_record_into(index, buffer)?;
+        array::select_plane(&mut buffer.pixels, start, end)?;
+        self.check_sources()?;
+        buffer.shape = Some(meta.shape);
+        Ok(())
+    }
+    fn read_record_into(&self, index: usize, buffer: &mut FrameBuffer) -> Result<(), Error> {
+        buffer.shape = None;
+        self.check_sources()?;
         let page = self
             .pages
             .get(index)
@@ -538,7 +638,7 @@ impl Reader {
         resize_bytes(&mut buffer.encoded, page.bytes)?;
         file.read_exact(&mut buffer.encoded)?;
         let meta = &page.metadata;
-        let count = meta.shape[0] * meta.shape[1];
+        let count = meta.source_samples;
         let bytes = count * meta.pixel_type.bytes();
         buffer
             .pixels
@@ -562,7 +662,6 @@ impl Reader {
         }
         self.sources[page.source].check_input_handle(&file)?;
         self.check_sources()?;
-        buffer.shape = Some(meta.shape);
         Ok(())
     }
 }

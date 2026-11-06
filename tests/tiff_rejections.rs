@@ -176,7 +176,7 @@ fn group3_source_bounds_options_resource_and_mutation_are_explicit() {
     set(&mut bad, 266, 3);
     assert!(decode(&bad).is_err());
     let mut bad = std::fs::read(fixture("group3-makeup.tif")).unwrap();
-    set(&mut bad, 292, 1); // Two-dimensional Group3 remains unsupported.
+    set(&mut bad, 292, 1); // Declaring mixed mode cannot reinterpret this untagged 1D payload.
     assert!(decode(&bad).is_err());
     let mut bad = std::fs::read(fixture("group3-aligned.tif")).unwrap();
     set(&mut bad, 292, 0); // Actual byte-fill cannot contradict source options.

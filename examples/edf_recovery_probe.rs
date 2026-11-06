@@ -8,7 +8,7 @@ use sha2::{Digest, Sha256};
 fn signature(pixels: &PixelBuffer) -> Value {
     let mut hash = Sha256::new();
     macro_rules! digest {($($v:ident,$name:literal);*)=>{match pixels{$(PixelBuffer::$v(values)=>{for value in values{hash.update(value.to_le_bytes());}$name},)*_=>panic!("EDF requires scalar samples")}};}
-    let dtype = digest!(U8,"uint8";I8,"int8";U16,"uint16";I16,"int16";U32,"uint32";I32,"int32";U64,"uint64";I64,"int64";F32,"float32";F64,"float64");
+    let dtype = digest!(Bool,"bool";F16,"float16";U8,"uint8";I8,"int8";U16,"uint16";I16,"int16";U32,"uint32";I32,"int32";U64,"uint64";I64,"int64";F32,"float32";F64,"float64");
     json!({"dtype":dtype,"shape":[pixels.len()],"sample_sha256":format!("{:x}",hash.finalize())})
 }
 fn window(m: &edf::Metadata) -> Value {
@@ -58,6 +58,12 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             image["payload_window"] = window(m);
             image["header_sha256"] = json!(format!("{:x}", Sha256::digest(&m.header)));
             image["availability"] = json!({"declared_shape":r.declared_shape,"declared_samples":r.declared_samples,"present_samples":[r.present_samples.start,r.present_samples.end],"missing_samples":r.missing_samples.as_ref().map(|r|[r.start,r.end]),"verified_samples":[r.verified_samples.start,r.verified_samples.end],"expected_payload_bytes":r.expected_payload_bytes,"available_payload_bytes":r.available_payload_bytes,"availability":format!("{:?}",r.availability),"outer_integrity":format!("{:?}",r.outer_integrity),"payload_integrity":format!("{:?}",r.payload_integrity),"payload_members":members(&r.payload_members),"diagnostic":r.diagnostic,"complete_verified_frame":r.complete_verified_frame,"partial_element_bytes":hex(buffer.partial_element_bytes().unwrap())});
+            if r.declared_source_shape.len() != 2 {
+                image["availability"]["declared_source_shape"] = json!(r.declared_source_shape);
+                image["availability"]["record_index"] = json!(r.record_index);
+                image["availability"]["complete_verified_record"] =
+                    json!(r.complete_verified_record);
+            }
             images.push(image);
         }
         let s = reader.source_report();

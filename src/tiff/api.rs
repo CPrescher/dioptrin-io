@@ -319,7 +319,7 @@ fn crop(
         .filter(|&n| n <= pixels.len())
         .ok_or_else(|| Error("TIFF API row window exceeds decoded samples".into()))?;
     macro_rules! select {($($kind:ident);*)=>{match pixels {$(PixelBuffer::$kind(v)=>{v.copy_within(first..last,0);v.truncate(last-first);}),*}};}
-    select!(U8;U16;U32;U64;I8;I16;I32;I64;F32;F64;C32;C64;CI16);
+    select!(Bool;F16;U8;U16;U32;U64;I8;I16;I32;I64;F32;F64;C32;C64;CI16);
     Ok(())
 }
 fn mono(pixels: &PixelBuffer, components: usize, budget: usize) -> Result<PixelBuffer, Error> {

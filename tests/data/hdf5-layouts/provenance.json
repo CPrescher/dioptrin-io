@@ -1,0 +1,147 @@
+{
+  "schema": 1,
+  "license": "CC0-1.0",
+  "origin": "independent hand-chosen IEEE component/half bit patterns, bool storage bytes and explicit external windows; no reference writer",
+  "generator": "scripts/generate_hdf5_layout_fixtures.py",
+  "datasets": {
+    "complex64-le": {
+      "shape": [
+        1,
+        2,
+        3
+      ],
+      "dtype": "<c8",
+      "frame_hex": [
+        "00000000000000800000807f000080ff4523c17f2143c5ff010000000000803fffff7f7f0000800000000040000040c0"
+      ],
+      "attribute_hex": "00000000000000800000807f000080ff4523c17f2143c5ff010000000000803fffff7f7f0000800000000040000040c0"
+    },
+    "complex64-be": {
+      "shape": [
+        1,
+        2,
+        3
+      ],
+      "dtype": ">c8",
+      "frame_hex": [
+        "00000000000000800000807f000080ff4523c17f2143c5ff010000000000803fffff7f7f0000800000000040000040c0"
+      ],
+      "attribute_hex": "00000000000000800000807f000080ff4523c17f2143c5ff010000000000803fffff7f7f0000800000000040000040c0"
+    },
+    "complex128-le": {
+      "shape": [
+        1,
+        2,
+        3
+      ],
+      "dtype": "<c16",
+      "frame_hex": [
+        "00000000000000000000000000000080000000000000f07f000000000000f0ffbc9a78563412f87f3412badccdabf8ff0100000000000000000000000000f03fffffffffffffef7f0000000000001000000000000000004000000000000008c0"
+      ],
+      "attribute_hex": "00000000000000000000000000000080000000000000f07f000000000000f0ffbc9a78563412f87f3412badccdabf8ff0100000000000000000000000000f03fffffffffffffef7f0000000000001000000000000000004000000000000008c0"
+    },
+    "complex128-be": {
+      "shape": [
+        1,
+        2,
+        3
+      ],
+      "dtype": ">c16",
+      "frame_hex": [
+        "00000000000000000000000000000080000000000000f07f000000000000f0ffbc9a78563412f87f3412badccdabf8ff0100000000000000000000000000f03fffffffffffffef7f0000000000001000000000000000004000000000000008c0"
+      ],
+      "attribute_hex": "00000000000000000000000000000080000000000000f07f000000000000f0ffbc9a78563412f87f3412badccdabf8ff0100000000000000000000000000f03fffffffffffffef7f0000000000001000000000000000004000000000000008c0"
+    },
+    "half-le": {
+      "shape": [
+        2,
+        2,
+        3
+      ],
+      "dtype": "<f2",
+      "frame_hex": [
+        "00000080007c00fc557eaafe",
+        "0100003cff7b0004004000c2"
+      ],
+      "attribute_hex": "00000080007c00fc557eaafe0100003cff7b0004004000c2"
+    },
+    "half-be": {
+      "shape": [
+        2,
+        2,
+        3
+      ],
+      "dtype": ">f2",
+      "frame_hex": [
+        "00000080007c00fc557eaafe",
+        "0100003cff7b0004004000c2"
+      ],
+      "attribute_hex": "00000080007c00fc557eaafe0100003cff7b0004004000c2"
+    },
+    "bool": {
+      "shape": [
+        2,
+        3
+      ],
+      "dtype": "|b1",
+      "frame_hex": [
+        "0001027f80ff"
+      ],
+      "attribute_hex": "0001027f80ff"
+    },
+    "complex-fill": {
+      "shape": [
+        2,
+        2
+      ],
+      "dtype": ">c8",
+      "frame_hex": [
+        "000000804523c17f000000804523c17f000000804523c17f000000804523c17f"
+      ]
+    },
+    "external": {
+      "shape": [
+        2,
+        2,
+        3
+      ],
+      "dtype": ">c8",
+      "frame_hex": [
+        "00000000000000804523c17f2143c5ff010000000000803f00000040000040c00000807f000080ffffff7f7f00008000",
+        "0000003f000000bf00000000010000000200000003000000040000000500000006000000070000000800000009000000"
+      ]
+    }
+  },
+  "files": [
+    {
+      "path": "complex-vds.h5",
+      "bytes": 6144,
+      "sha256": "2192d5a567cb74a87e1926d8f2eaf21d558e3947c51d728a210afec88911999a"
+    },
+    {
+      "path": "external-a.bin",
+      "bytes": 31,
+      "sha256": "b0a60ac3bd605023b266e6ef8774110f584668519530d1daa4235a5ec596beb6"
+    },
+    {
+      "path": "external-b.bin",
+      "bytes": 106,
+      "sha256": "da9912922946931e521eef78583e56ba2b4477f8772b5ce6d00a60c202e78f0c"
+    },
+    {
+      "path": "external.h5",
+      "bytes": 1576,
+      "sha256": "860e1cd3a7a73a23e823f3700e7c3936d50c58b24dc724eeac0b2d309cb74de8"
+    },
+    {
+      "path": "sparse-types.h5",
+      "bytes": 9536,
+      "sha256": "2c0983bdaaa18be3ec1e405d5deafb1c19d31a6564d652aa6af41aefa40d3b05"
+    },
+    {
+      "path": "types.h5",
+      "bytes": 28840,
+      "sha256": "b89d5058b248a4e3cb3a0ac98bfb1857419a8c565c4120b59d0c4346c6a388ac"
+    }
+  ]
+}

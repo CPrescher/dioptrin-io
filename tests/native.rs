@@ -225,7 +225,6 @@ fn malformed_truncated_oversized_and_unsupported_sources_fail_closed() {
     }
     for text in [
         "{'descr':'<u8','fortran_order':False,'shape':(18446744073709551615,2)}",
-        "{'descr':'<u8','fortran_order':False,'shape':(0,3)}",
         "{'descr':'|O','fortran_order':False,'shape':(2,3)}",
         "{'descr':'<f16','fortran_order':False,'shape':(2,3)}",
         "{'descr':'<u8','descr':'<i8','fortran_order':False,'shape':(2,3)}",

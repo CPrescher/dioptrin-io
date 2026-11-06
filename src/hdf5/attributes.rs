@@ -56,8 +56,8 @@ pub(super) fn snapshot(
         sources.charge(name.len().saturating_mul(2).saturating_add(128))?;
         let attribute = location.attr(&name)?;
         let dtype = attribute.dtype()?;
-        let descriptor = dtype.to_descriptor()?;
-        let type_descriptor = format!("{descriptor:?}");
+        let descriptor = dtype.to_descriptor().ok();
+        let type_descriptor = typed::type_descriptor(&dtype)?;
         let shape = attribute.shape();
         sources.charge(
             type_descriptor
@@ -74,10 +74,12 @@ pub(super) fn snapshot(
         );
         let value = if matches!(
             descriptor,
-            TypeDescriptor::VarLenAscii
-                | TypeDescriptor::VarLenUnicode
-                | TypeDescriptor::FixedAscii(_)
-                | TypeDescriptor::FixedUnicode(_)
+            Some(
+                TypeDescriptor::VarLenAscii
+                    | TypeDescriptor::VarLenUnicode
+                    | TypeDescriptor::FixedAscii(_)
+                    | TypeDescriptor::FixedUnicode(_)
+            )
         ) {
             let text = texts(&attribute, limits.text_bytes, true)?;
             sources.charge(

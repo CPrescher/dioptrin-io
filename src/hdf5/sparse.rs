@@ -564,13 +564,15 @@ fn discover(
             if shape.len() > 32 {
                 return Err(Error("sparse component rank exceeds limit".into()));
             }
-            let descriptor = dtype.to_descriptor()?;
+            let descriptor = dtype.to_descriptor().ok();
             let text = matches!(
                 descriptor,
-                TypeDescriptor::VarLenAscii
-                    | TypeDescriptor::VarLenUnicode
-                    | TypeDescriptor::FixedAscii(_)
-                    | TypeDescriptor::FixedUnicode(_)
+                Some(
+                    TypeDescriptor::VarLenAscii
+                        | TypeDescriptor::VarLenUnicode
+                        | TypeDescriptor::FixedAscii(_)
+                        | TypeDescriptor::FixedUnicode(_)
+                )
             );
             let (pixel_type, little_endian, storage, text_value) = if text {
                 let filters = typed::admit_filters(&dataset, dtype.size(), limits.hdf5)?;
@@ -649,7 +651,7 @@ fn discover(
                     shape,
                     pixel_type,
                     little_endian,
-                    type_descriptor: format!("{descriptor:?}"),
+                    type_descriptor: typed::type_descriptor(&dtype)?,
                     layout,
                     filters,
                     fill_value,

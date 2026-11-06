@@ -11,6 +11,7 @@ use crate::{PixelBuffer, PixelType, source::Snapshot};
 pub mod api;
 pub mod compatibility;
 pub use compatibility::{Options, TileTables, UncompressedWindows};
+pub mod directories;
 mod group3;
 pub mod header;
 mod ifd_view;
@@ -180,6 +181,27 @@ impl Reader {
         limits: Limits,
         options: Options,
     ) -> Result<Self, Error> {
+        Self::open_indexed(path, limits, options, None)
+    }
+    /// Select exactly one reachable directory, including a SubIFD. Primary
+    /// indexing remains unchanged; arbitrary offsets are never admitted.
+    /// # Errors
+    /// Invalid/cyclic metadata graph, unknown offset, unsupported selected
+    /// layout, resource bounds or source changes.
+    pub fn open_directory(
+        path: impl AsRef<Path>,
+        offset: u64,
+        limits: Limits,
+        options: Options,
+    ) -> Result<Self, Error> {
+        Self::open_indexed(path, limits, options, Some(offset))
+    }
+    fn open_indexed(
+        path: impl AsRef<Path>,
+        limits: Limits,
+        options: Options,
+        selected: Option<u64>,
+    ) -> Result<Self, Error> {
         if [
             limits.frames,
             limits.frame_bytes,
@@ -206,6 +228,16 @@ impl Reader {
         native.intermediate_buffer_size = limits.intermediate_bytes;
         // Decoder::new initially uses the upstream defaults while parsing the
         // first IFD (1 MiB per tag); our tighter limits apply immediately after.
+        let admission = if selected.is_some() {
+            Admission::graph(file, limits, options)?
+        } else {
+            Admission::open(file, limits, options)?
+        };
+        if selected.is_some_and(|offset| !admission.links.contains_key(&offset)) {
+            return Err(Error(
+                "selected TIFF directory is not reachable from the source root".into(),
+            ));
+        }
         let Admission {
             file,
             photos,
@@ -213,13 +245,17 @@ impl Reader {
             retained,
             mut interpretations,
             ..
-        } = Admission::open(file, limits, options)?;
+        } = admission;
         let overrides = interpretations
             .iter()
             .map(|(&offset, value)| (offset, value.backend()))
             .collect();
-        let mut decoder =
-            Decoder::new_with_chunk_layouts(BufReader::new(file), overrides)?.with_limits(native);
+        let mut decoder = Decoder::new_at_directory(
+            BufReader::new(file),
+            selected.map(tiff_backend::tags::IfdPointer),
+            native,
+            overrides,
+        )?;
         let mut pages = Vec::new();
         let mut ifd_offsets = Vec::new();
         #[cfg(feature = "jpeg")]
@@ -304,7 +340,7 @@ impl Reader {
                 .map_err(|e| Error(e.to_string()))?;
             ifd_offsets.push(ifd);
             pages.push(page);
-            if !decoder.more_images() {
+            if selected.is_some() || !decoder.more_images() {
                 break;
             }
             decoder.next_image()?;
@@ -464,7 +500,7 @@ impl Reader {
             buffer.channels = 1;
             return Ok(());
         }
-        if page.compression == 3 {
+        if [2, 3].contains(&page.compression) {
             group3::decode(
                 &self.snapshot,
                 &self.identity_handle,
@@ -476,7 +512,8 @@ impl Reader {
             buffer.channels = page.channels;
             return Ok(());
         }
-        self.decoder.seek_to_image(index)?;
+        self.decoder
+            .seek_to_directory(tiff_backend::tags::IfdPointer(self.ifd_offsets[index]))?;
         // Discard any metadata prefetch before switching to bounded sample
         // windows. The backend seeks to every chunk before reading it.
         discard_prefetch(self.decoder.inner())?;
@@ -642,7 +679,7 @@ fn metadata(
     let compression = decoder
         .find_tag_unsigned::<u16>(Tag::Compression)?
         .unwrap_or(1);
-    if ![1, 3, 4, 5, 6, 7, 8, 32946, 32773, 32809].contains(&compression) {
+    if ![1, 2, 3, 4, 5, 6, 7, 8, 32946, 32773, 32809].contains(&compression) {
         return Err(Error(format!(
             "unsupported TIFF detector compression {compression}"
         )));
@@ -652,9 +689,11 @@ fn metadata(
             "old JPEG TIFF requires the optional jpeg feature".into(),
         ));
     }
-    if fill_order == 2 && !(compression == 3 || compression == 1 && bits < 8 && channels == 1) {
+    if fill_order == 2
+        && !([2, 3].contains(&compression) || compression == 1 && bits < 8 && channels == 1)
+    {
         return Err(Error(
-            "LSB-first TIFF is admitted only for Group3 and uncompressed packed grayscale".into(),
+            "LSB-first TIFF is admitted only for CCITT RLE/Group3 and uncompressed packed grayscale".into(),
         ));
     }
     if compression == 32809
@@ -673,7 +712,7 @@ fn metadata(
             "ThunderScan requires unsigned four-bit single-plane strips without predictor".into(),
         ));
     }
-    if compression == 3 {
+    if [2, 3].contains(&compression) {
         let options = decoder
             .find_tag_unsigned::<u32>(Tag::Unknown(292))?
             .unwrap_or(0);
@@ -682,11 +721,16 @@ fn metadata(
             || channels != 1
             || planar != 1
             || ![0, 1].contains(&photo)
-            || options & !4 != 0
+            || options & !5 != 0
+            || compression == 2 && options != 0
+            || decoder
+                .find_tag_unsigned::<u16>(Tag::Predictor)?
+                .unwrap_or(1)
+                != 1
             || decoder.get_chunk_type() != ChunkType::Strip
         {
             return Err(Error(
-                "Group3 TIFF admits only one-dimensional bilevel strips (optional EOL fill bits)"
+                "CCITT RLE/Group3 TIFF requires bilevel strips without uncompressed mode or predictor"
                     .into(),
             ));
         }
@@ -834,7 +878,7 @@ fn validate_chunk_lengths(
     offsets: &[u64],
     lengths: &[u64],
 ) -> Result<(), Error> {
-    let chunks = if page.compression == 3 {
+    let chunks = if [2, 3].contains(&page.compression) {
         // RowsPerStrip=UINT32_MAX is the standard one-strip/default dialect.
         // Upstream strip_count() uses an overflowing height+rows-1 expression;
         // this codec uses the clipped logical source row count instead.

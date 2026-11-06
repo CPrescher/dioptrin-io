@@ -4,7 +4,7 @@ use sha2::{Digest, Sha256};
 fn hash(pixels: &PixelBuffer) -> String {
     let mut h = Sha256::new();
     macro_rules! bytes{($($v:ident);*)=>{match pixels{$(PixelBuffer::$v(values)=>{for value in values{h.update(value.to_le_bytes());}},)*_=>panic!("not an EDF scalar")}};}
-    bytes!(U8;U16;U32;U64;I8;I16;I32;I64;F32;F64);
+    bytes!(Bool;F16;U8;U16;U32;U64;I8;I16;I32;I64;F32;F64);
     format!("{:x}", h.finalize())
 }
 fn run() -> Result<(), Box<dyn std::error::Error>> {

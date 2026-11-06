@@ -4,3 +4,10 @@ tests/data/lowlevel/*.txt -text -whitespace
 tests/data/lowlevel/*.h5 -text
 tests/data/cbf-encoded/*.cbf -text -whitespace
 tests/data/tiff-api/*.tif -text
+tests/data/edf-arrays/* -text -whitespace
+tests/data/npy-types/* -text -whitespace
+tests/data/hdf5-layouts/* -text -whitespace
+tests/data/tiff-layouts/* -text -whitespace
+vendor/fax-0.2.7/*.patch -whitespace
+vendor/tiff-0.11.3/*.patch -whitespace
+vendor/fax-0.2.7/Cargo.toml -whitespace

@@ -18,6 +18,8 @@ fn sample_hash(pixels: &PixelBuffer) -> String {
                 hash.update([value as u8]);
             }
         }
+        PixelBuffer::Bool(v) => scalar!(v),
+        PixelBuffer::F16(v) => scalar!(v),
         PixelBuffer::U16(v) => scalar!(v),
         PixelBuffer::U32(v) => scalar!(v),
         PixelBuffer::U64(v) => scalar!(v),

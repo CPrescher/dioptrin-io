@@ -1,0 +1,27 @@
+{
+  "crate": "fax",
+  "version": "0.2.7",
+  "license": "MIT",
+  "registry_archive_sha256": "caf1079563223d5d59d83c85886a56e586cfd5c1a26292e971a0fa266531ac5a",
+  "upstream": "https://github.com/pdf-rs/fax",
+  "baseline_files_sha256": {
+    "Cargo.toml": "60d52f46e11adccef92a5b4d01b8c41632f4f030c496b4f7ce2680d02dffd42c",
+    "Cargo.toml.orig": "1a093a8cbffe84785115f203ab7c1455e39b8ec0a9c86943a0c23d6e24a8567c",
+    "LICENSE": "7101390b4c8edd752f4c0de47f35d61b44d9cf0ee8dd032115e25644e277cfff",
+    "README.md": "c79f0c2a08d8b13daaaf45be481e80b12d1818c3feb91ba89e8967fe9e3a2d84",
+    ".cargo_vcs_info.json": "6425a187e7ee9f8c0f53d81851cbe49003f454a1c10d47d081712d767c8f5aa8",
+    "src/encoder.rs": "e56b33ec18f7200627f2832c255aac829792ea00f5dad82d86b10d48a8be69d4",
+    "src/lib.rs": "b0274432b3ac8134c91b4dc7a3c4438f34e4009e28a2ca1e7ed1b58903ee9b34",
+    "src/tiff.rs": "9a764b0c665faa564924433dc3b39d1c2ac6e10628df1b26ed56878ff1a3c2c3",
+    "src/decoder.rs": "cf02bd63284a375ac704b300ec8611d079cf86287ebf704b771a1b03dd7cb893",
+    "src/maps.rs": "ec54d7a995572ec9bcb6bea5699286e15b424204a95a13fb5b283b3afc1da04c",
+    "src/bitmaps.rs": "1a5e39b709669865ffffc3587942b01011fdc2634ce420c74daa3791982d206d"
+  },
+  "local_changes": [
+    "Cargo.toml: remove only uncopied explicit example/test targets and unused tiff dev dependency",
+    "src/decoder.rs: share the existing Group4 row state machine with a bounded strict row API, original Huffman maps and exact source-bit lookahead; compatibility API behavior retained",
+    "src/strict_tests.rs: five strict row and compatibility regressions; no external corpus",
+    "src/lib.rs and src/decoder.rs: unused imports/lifetime/test-format warning cleanup and test module registration"
+  ],
+  "complete_patch": "dioptrin-strict-rows.patch"
+}
