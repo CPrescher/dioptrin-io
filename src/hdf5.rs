@@ -11,6 +11,7 @@ mod sources;
 #[cfg(feature = "sparse")]
 pub mod sparse;
 pub mod typed;
+mod vds;
 
 use hdf5_backend::{Dataset, File};
 use std::fmt::{Display, Formatter};

@@ -98,3 +98,7 @@ required-features = ["tiff", "jpeg"]
 [[example]]
 name = "ycbcr_probe"
 required-features = ["tiff"]
+
+[[example]]
+name = "vds_probe"
+required-features = ["hdf5"]

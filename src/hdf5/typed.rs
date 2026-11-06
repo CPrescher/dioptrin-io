@@ -1,8 +1,12 @@
 //! Immutable typed HDF5 images/stacks, with explicit detector discovery and
 //! complete tracking of the local files traversed by admitted external links.
-use super::sources::Sources;
 pub use super::sources::{Link, Source};
+pub use super::vds::{
+    FilenameBinding, Mapping as VdsMapping, SelectionRecord as VdsSelection, UnmappedRegions,
+    VdsMetadata, VdsOptions,
+};
 pub use super::{Error, Filter};
+use super::{sources::Sources, vds};
 use crate::{PixelBuffer, PixelType};
 use hdf5_backend::{Container, Dataset, Dataspace, Datatype, LocationType, types::TypeDescriptor};
 use hdf5_sys::{
@@ -80,9 +84,13 @@ pub struct Metadata {
     pub fill_value: Option<PixelBuffer>,
     pub storage_allocated: bool,
     pub fill_time: hdf5_backend::dataset::FillTime,
+    /// Explicit virtual mapping provenance. Source frame extents are derived
+    /// from concrete bound modules; missing modules never supply fill.
+    pub virtual_dataset: Option<VdsMetadata>,
 }
 struct Part {
     dataset: Dataset,
+    mosaic: Option<vds::Mosaic>,
     metadata: Metadata,
 }
 pub struct Reader {
@@ -118,6 +126,28 @@ impl Reader {
         selection: Selection<'_>,
         options: Options,
     ) -> Result<Self, Error> {
+        Self::open_inner(path, selection, options, None)
+    }
+    /// Explicit immutable VDS mosaics with caller-approved filename bindings.
+    /// Regular datasets keep their existing interpretation and ignore unused
+    /// global VDS bindings. Virtual datasets require a complete bound graph.
+    /// # Errors
+    /// Missing/ambiguous bindings, unsupported selections, overlapping modules,
+    /// undefined unmapped fill, unavailable/changed concrete sources or limits.
+    pub fn open_snapshot_with_vds(
+        path: impl AsRef<Path>,
+        selection: Selection<'_>,
+        options: Options,
+        vds: VdsOptions<'_>,
+    ) -> Result<Self, Error> {
+        Self::open_inner(path, selection, options, Some(vds))
+    }
+    fn open_inner(
+        path: impl AsRef<Path>,
+        selection: Selection<'_>,
+        options: Options,
+        vds_options: Option<VdsOptions<'_>>,
+    ) -> Result<Self, Error> {
         let limits = options.limits;
         if [
             limits.frames,
@@ -139,6 +169,8 @@ impl Reader {
         }
         super::register_filters()?;
         let mut sources = Sources::new(path, limits, options.external_links)?;
+        let mut bindings = None;
+        let mut indexed_datasets = 0usize;
         let mut fields = BTreeMap::new();
         let requests = match selection {
             Selection::Dataset(path) => {
@@ -236,13 +268,43 @@ impl Reader {
         for (source, path) in requests {
             let (source, path) = sources.resolve(source, &path)?;
             let dataset = sources.file(source).dataset(&path)?;
-            let source_shape = dataset.shape();
+            indexed_datasets = indexed_datasets
+                .checked_add(1)
+                .filter(|&n| n <= limits.datasets)
+                .ok_or_else(|| {
+                    Error("HDF5 snapshot exceeds concrete/virtual dataset limit".into())
+                })?;
+            let (pixel_type, little_endian) = standard_type(&dataset.dtype()?)?;
+            let (source_shape, mosaic, virtual_dataset, virtual_storage) = if dataset.layout()
+                == hdf5_backend::dataset::Layout::Virtual
+            {
+                if bindings.is_none() {
+                    let options = vds_options.ok_or_else(|| Error("HDF5 virtual datasets/external raw storage require separate source contracts; use explicit VdsOptions".into()))?;
+                    bindings = Some(vds::Bindings::new(options, limits)?);
+                }
+                let bindings = bindings.as_mut().expect("initialized VDS binding policy");
+                let admission = vds::admit(
+                    &dataset,
+                    &mut sources,
+                    bindings,
+                    limits,
+                    &mut indexed_datasets,
+                    pixel_type,
+                )?;
+                (
+                    admission.metadata.frozen_shape.to_vec(),
+                    Some(admission.mosaic),
+                    Some(admission.metadata),
+                    Some(admission.storage),
+                )
+            } else {
+                (dataset.shape(), None, None, None)
+            };
             let (count, shape) = match source_shape.as_slice() {
                 [h, w] => (1, [*h, *w]),
                 [n, h, w] => (*n, [*h, *w]),
                 _ => return Err(Error("typed HDF5 expects a 2D image or 3D stack".into())),
             };
-            let (pixel_type, little_endian) = standard_type(&dataset.dtype()?)?;
             let elements = shape[0]
                 .checked_mul(shape[1])
                 .filter(|&n| n > 0)
@@ -268,7 +330,11 @@ impl Reader {
                 fill_value,
                 fill_time,
                 storage_allocated,
-            } = admit_storage(&dataset, pixel_type, limits)?;
+            } = if let Some(storage) = virtual_storage {
+                storage
+            } else {
+                admit_storage(&dataset, pixel_type, limits)?
+            };
             sources.charge(
                 path.len()
                     .saturating_mul(2)
@@ -290,9 +356,17 @@ impl Reader {
                 fill_value,
                 storage_allocated,
                 fill_time,
+                virtual_dataset,
             };
-            parts.push(Part { dataset, metadata });
+            parts.push(Part {
+                dataset,
+                metadata,
+                mosaic,
+            });
             frames = next;
+        }
+        if let Some(bindings) = bindings {
+            bindings.finish()?;
         }
         sources.check()?;
         Ok(Self {
@@ -343,7 +417,7 @@ impl Reader {
             .part(index)
             .ok_or_else(|| Error("HDF5 frame outside snapshot".into()))?;
         let meta = &part.metadata;
-        if part.dataset.shape() != meta.source_shape {
+        if part.mosaic.is_none() && part.dataset.shape() != meta.source_shape {
             return Err(Error("HDF5 dataset changed; reopen snapshot".into()));
         }
         let count = meta.shape[0] * meta.shape[1];
@@ -351,6 +425,12 @@ impl Reader {
             .pixels
             .resize(meta.pixel_type, count)
             .map_err(Error)?;
+        if let Some(mosaic) = &part.mosaic {
+            mosaic.read(index - meta.first_frame, meta.shape, &mut buffer.pixels)?;
+            self.sources.check()?;
+            buffer.shape = Some(meta.shape);
+            return Ok(());
+        }
         let memory_type = memory_type(meta.pixel_type)?;
         let space = part.dataset.space()?;
         let space = if meta.source_shape.len() == 3 {
@@ -495,12 +575,22 @@ pub(super) fn memory_type(ty: PixelType) -> Result<Datatype, Error> {
     macro_rules! types {($($v:ident,$t:ty);*)=>{match ty {$(PixelType::$v=>Datatype::from_type::<$t>()?),*,_=>return Err(Error("complex HDF5 samples need a separate dtype contract".into()))}};}
     Ok(types!(U8,u8;I8,i8;U16,u16;I16,i16;U32,u32;I32,i32;U64,u64;I64,i64;F32,f32;F64,f64))
 }
-fn fill(dataset: &Dataset, ty: PixelType) -> Result<Option<PixelBuffer>, Error> {
+pub(super) fn fill(dataset: &Dataset, ty: PixelType) -> Result<Option<PixelBuffer>, Error> {
     let plist = dataset.dcpl()?;
     macro_rules! types {($($v:ident,$t:ty);*)=>{match ty {$(PixelType::$v=>plist.get_fill_value_as::<$t>()?.map(|v|PixelBuffer::$v(vec![v]))),*,_=>return Err(Error("complex HDF5 fill needs a separate dtype contract".into()))}};}
     Ok(types!(U8,u8;I8,i8;U16,u16;I16,i16;U32,u32;I32,i32;U64,u64;I64,i64;F32,f32;F64,f64))
 }
 fn read_text(container: &Container, limit: usize, attribute: bool) -> Result<String, Error> {
+    if !attribute {
+        let dataset = container.as_dataset()?;
+        if dataset.layout() == hdf5_backend::dataset::Layout::Virtual
+            || !dataset.dcpl()?.get_external()?.is_empty()
+        {
+            return Err(Error(
+                "HDF5 discovery text cannot use VDS or raw external storage".into(),
+            ));
+        }
+    }
     if container.size() != 1 {
         return Err(Error("HDF5 discovery text must contain one string".into()));
     }

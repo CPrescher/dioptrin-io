@@ -68,7 +68,7 @@ impl Sources {
             .ok_or_else(|| Error("HDF5 snapshot metadata exceeds budget".into()))?;
         Ok(())
     }
-    fn add(&mut self, path: impl AsRef<Path>) -> Result<usize, Error> {
+    pub(super) fn add(&mut self, path: impl AsRef<Path>) -> Result<usize, Error> {
         let snapshot = Snapshot::open(path).map_err(Error)?;
         if !std::fs::metadata(&snapshot.path)?.is_file() {
             return Err(Error("HDF5 snapshots require regular files".into()));
