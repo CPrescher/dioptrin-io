@@ -128,7 +128,7 @@ captures, with separate content-discovery and EDF header ledgers. A separate
 feature-disabled run distinguishes unavailable compilation features from missing
 readers. Every original registry entry remains in the ledger.
 
-Current evidence is recorded in `fabio-parity/2026-11-06-input-apis.json`;
+Current evidence is recorded in `fabio-parity/2026-11-06-series-companions.json`;
 the earlier baseline and typed-HDF5 reports are retained. The current report is
 a failing full-parity gate, with exact native successes, unsupported layouts,
 reference differences and remaining readers kept separate.
@@ -221,8 +221,9 @@ Header-only and observed source-attribute comparisons are qualified separately
 in `metadata-parity/HEADER_ATTRIBUTES.md`. Xcalibur CCD masks now have 11 separately
 instrumented API events; see [XCALIBUR_MASKS.md](XCALIBUR_MASKS.md). Content
 discovery and direct stream input are subsequently qualified in
-[INPUT_APIS.md](INPUT_APIS.md). Neighboring-file series, companion readers and
-unsupported variants remain separate full-parity work.
+[INPUT_APIS.md](INPUT_APIS.md). Series/navigation and companion records are subsequently qualified in
+[SERIES_COMPANIONS_PARITY.md](SERIES_COMPANIONS_PARITY.md); unsupported variants
+and the remaining documented helper/grammar contracts stay separate.
 
 ## Rejection audit and captured test inputs
 
@@ -288,3 +289,14 @@ qualifications, and three separately compared EDF `readheader` events. The
 [new API audit](INPUT_APIS.md) describes capture/origin/resource contracts and
 remaining series/companion work. Full reading parity remains false for measured
 reference differences and separate unsupported contracts.
+
+## Series/navigation and companion continuation
+
+The [series/companion audit](SERIES_COMPANIONS_PARITY.md) adds 37 unchanged
+upstream series/filename tests, 515 native cursor actions and 10,010 filenames.
+Separate native .run and CIF document APIs each have 9 path/buffer/stdin
+comparisons with raw-source fidelity and explicit projection limits. Three pinned
+table/profile helpers fail on independent valid inputs; no absent reference
+result is counted as parity. The complete existing 237-test/626-input run is
+retained in the new reader continuation, with separate native validation and
+reference source fingerprints.

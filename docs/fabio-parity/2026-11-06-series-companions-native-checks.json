@@ -1,0 +1,513 @@
+{
+  "date": "2026-11-06",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "scope": "Frozen file-series manifests, global/local frame navigation, source/alias graph integrity, Xcalibur run/sweep acquisition metadata and standalone CIF HeaderProjection",
+  "required_checks": [
+    {
+      "command": "cargo fmt --check",
+      "exit_code": 0,
+      "seconds": 0.424
+    },
+    {
+      "command": "cargo clippy --locked --all-targets --all-features -- -D warnings",
+      "exit_code": 0,
+      "seconds": 0.402
+    },
+    {
+      "command": "cargo test --locked --all-features",
+      "exit_code": 0,
+      "seconds": 75.672,
+      "tests_passed": 272
+    }
+  ],
+  "isolated_feature_checks": [
+    {
+      "command": "cargo check --locked --no-default-features",
+      "exit_code": 0,
+      "seconds": 0.459
+    },
+    {
+      "command": "cargo test --locked --no-default-features",
+      "exit_code": 0,
+      "seconds": 28.079,
+      "tests_passed": 8
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features bruker -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.141
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features cbf -- -D warnings",
+      "exit_code": 0,
+      "seconds": 2.812
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features containers -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.263
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features edf -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.115
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features esperanto -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.001
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features fit2d -- -D warnings",
+      "exit_code": 0,
+      "seconds": 2.906
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features fixed -- -D warnings",
+      "exit_code": 0,
+      "seconds": 2.939
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features hdf5 -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.293
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features jpeg -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.296
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features jpeg2000 -- -D warnings",
+      "exit_code": 0,
+      "seconds": 2.954
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features kcd -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.0
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features mar345 -- -D warnings",
+      "exit_code": 0,
+      "seconds": 2.977
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features mpa -- -D warnings",
+      "exit_code": 0,
+      "seconds": 2.992
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features native -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.006
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features oxford -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.003
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features raxis -- -D warnings",
+      "exit_code": 0,
+      "seconds": 2.95
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features sparse -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.56
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features tiff -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.525
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features wrappers -- -D warnings",
+      "exit_code": 0,
+      "seconds": 3.979
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features xsd -- -D warnings",
+      "exit_code": 0,
+      "seconds": 2.948
+    },
+    {
+      "command": "cargo clippy --locked --no-default-features --all-targets --features xcalibur -- -D warnings",
+      "exit_code": 0,
+      "seconds": 2.864
+    }
+  ],
+  "optional_features_checked": 21,
+  "python_controls": {
+    "command": "env DYLD_LIBRARY_PATH=/opt/homebrew/lib /tmp/dioptrin-io-fabio-suite-env/bin/python -m unittest discover -s scripts -p 'test_*.py'",
+    "exit_code": 0,
+    "tests_passed": 56
+  },
+  "full_suite_report": "docs/fabio-parity/2026-11-06-series-companions.json",
+  "full_suite_report_sha256": "1fb9390f61098006d0219f4a0233ccd73ec09a1187dbef802aaeffefe3578d09",
+  "full_suite_exit_code": 1,
+  "full_suite_exit_reason": "All measured source/input/series/companion qualification gates pass; exact/full FabIO parity remains false for measured reference differences and documented grammar/variant/helper scope",
+  "full_suite_results": {
+    "run": 237,
+    "failures": [],
+    "errors": [],
+    "skipped": [
+      [
+        "fabio.test.codecs.test_mar345image.TestMar345.test_memoryleak",
+        "very slow test"
+      ]
+    ],
+    "input_module_tests": 24,
+    "codec_module_tests": 213
+  },
+  "input_api_summary": {
+    "read_events": 626,
+    "status": {
+      "qualified": 626
+    },
+    "native_stream": {
+      "match": 626
+    },
+    "discovery": {
+      "explicit_configuration_required": 2,
+      "match": 610,
+      "qualified_outer_integrity_rejection": 3,
+      "conservative_ambiguity": 4,
+      "source_qualified_container_alias": 1,
+      "container_alias": 6
+    },
+    "scopes": {
+      "complete_native_records": 600,
+      "metadata_only": 26
+    },
+    "reference_data_getter_errors": 1,
+    "all_events_qualified": true
+  },
+  "full_reading_parity": false,
+  "prior_report": "docs/fabio-parity/2026-11-06-input-apis.json",
+  "prior_read_events": 626,
+  "prior_count_reference_outcomes_unchanged": true,
+  "prior_metadata_summary_unchanged": true,
+  "prior_attribute_summary_unchanged": true,
+  "additional_reports": {
+    "docs/series/2026-11-06-series-navigation.json": {
+      "sha256": "c4a9e3e48c84fb678f145515ec36c09bbaff55fa012695cbcbe9c85197ceb569",
+      "qualified": true,
+      "probe_sha256": "66aa9b321e841aa4cee5be810666f23475024cd564a83248073268affd7a2fdb"
+    },
+    "docs/companions/2026-11-06-xcalibur-run.json": {
+      "sha256": "cb6ad535039a41e7027a292e055bb53b2db8d0c3fd0b31c000c9dee9ec1722c9",
+      "qualified": true,
+      "probe_sha256": "66aa9b321e841aa4cee5be810666f23475024cd564a83248073268affd7a2fdb"
+    },
+    "docs/companions/2026-11-06-cif-document.json": {
+      "sha256": "50d892fd0a9d133099e2a5b93e0d52467fc5ea4ccc83906bdca64e31cfe08861",
+      "qualified": true,
+      "probe_sha256": "66aa9b321e841aa4cee5be810666f23475024cd564a83248073268affd7a2fdb"
+    }
+  },
+  "series_summary": {
+    "reference_tests": 37,
+    "reference_failures": 0,
+    "reference_errors": 0,
+    "reference_skips": 0,
+    "series_instances": 19,
+    "observed_series_requests": 49,
+    "observed_iterator_yields": 20,
+    "observed_series_successes": 40,
+    "observed_series_errors": 9,
+    "object_open_reads": 25,
+    "filename_helper_calls": 36,
+    "numbered_constructors": 8,
+    "unique_numbered_batches": 2,
+    "numbered_paths_compared": 10010,
+    "native_cursor_actions": 515
+  },
+  "series_tests": [
+    {
+      "test": "fabio.test.test_file_series.TestRandomSeries.testfirst",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestRandomSeries.testjump",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestRandomSeries.testlast",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestEdfNumbered.testfirst",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestEdfNumbered.testlast",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestEdfNumbered.testlen",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestEdfNumbered.testnext",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestEdfNumbered.testnextjump",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestEdfNumbered.testprevious",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestEdfNumbered.testprevjump",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestFileSeries.test_anyframe_frames",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestFileSeries.test_anyframe_getframe",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestFileSeries.test_anyframe_getframes",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestFileSeries.test_anyframe_nframes",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestFileSeries.test_anyframe_nofiles",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestFileSeries.test_filename_generator",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestFileSeries.test_filename_iterator",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestFileSeries.test_multiframe_frames",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestFileSeries.test_multiframe_getframe",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestFileSeries.test_multiframe_nframes",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestFileSeries.test_multiframe_nofiles",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestFileSeries.test_singleframe_frames",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestFileSeries.test_singleframe_getframe",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestFileSeries.test_singleframe_nframes",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestFileSeries.test_singleframe_nframes2",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestFileSeries.test_singleframe_nframes3",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestFileSeries.test_singleframe_nofiles",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestFileSeries.test_with_filename_series",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_file_series.TestFileSeries.test_with_numbered_file_series",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_filename_steps.TestNext.test_next1",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_filename_steps.TestPrev.test_prev1",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_filename_steps.TestJump.test_jump1",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_filenames.TestFilenames.test_many_cases",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_filenames.TestFilenames.test_more_cases",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_filenames.TestFilenames.test_more_cases_jump",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_filenames.TestFilenameObjects.test_FileNameObject_can_iterate",
+      "status": "passed"
+    },
+    {
+      "test": "fabio.test.test_filenames.TestFilenameObjects.test_files_are_being_opened",
+      "status": "passed"
+    }
+  ],
+  "all_additional_sources_probes_unchanged": true,
+  "api_probe_sha256": "66aa9b321e841aa4cee5be810666f23475024cd564a83248073268affd7a2fdb",
+  "rust_sources_sha256": {
+    "src/binary.rs": "b2464ed8ac2a848116f44faa2280f25ac40c2f15b3d25720a2d3eb4cfd83e50d",
+    "src/bruker/common.rs": "58ebb4b8bc1e89dba4288caa1224cae78f02812bbce4d911ec3159983c7020bc",
+    "src/bruker/view.rs": "4fb7483ddf6e85120b4a08e959de7c2716ae02e5cebd98d50c2d798ce6d2e059",
+    "src/bruker.rs": "3b7d0ea45d1e418697b96015b38bce2f6dc2c02926b1bdb8cebb76386568d8e0",
+    "src/cbf/document.rs": "f0e6dd547ead39f785c86e7b76c7b6dc880f532c7d8bf0e0f23607624d139962",
+    "src/cbf/header.rs": "77a4b385e60b3ca6dfc0b284506c33d9b7eda8cf65910574c9eaa0ae9312b5b8",
+    "src/cbf.rs": "c46045cc074cc38de29c93bf27b57cdc3a466ea279d76b786d7a55a484b79e0e",
+    "src/detector_tiff/mar_schema.rs": "0d224ae8a52443423f144a61604176be37727deec320333fdb4c947581ffb819",
+    "src/detector_tiff.rs": "06cbc9b5a8db291196e6fa3bfab75baeb860c4948dba5dd21811a001160712fd",
+    "src/discovery.rs": "acfac305e21289355c6617c6d78ff0886fc79e852e1a069b0e11482fb269d7cd",
+    "src/dm3.rs": "a7b9ad01a2eac150156c92f2aec088587786ffa90e80c502f1628e0537747b93",
+    "src/edf/recovery.rs": "b8206c62dc3ca88c715f173803aec8c30af85a1f67f4ec39c1a3c1d27eab8cdb",
+    "src/edf.rs": "50efe2c4d2fe7d6783cf73afaaeabe5a53a68f7a0a047c9218d49c7350de942a",
+    "src/esperanto.rs": "d2bb2f34e02000e28810a62479b9f16958c9f7ebe6bc4a9400b41b1841abc8ed",
+    "src/fit2d.rs": "a3dfab6f09927651c98f9561fc497788d9f4736a0795be9c6c37de52de3c2004",
+    "src/ge.rs": "73ef7bbb055d7e90f7fb8ffcef887bd5382b5a82c818f1972558a51d522e4326",
+    "src/hdf5/cache.rs": "2b2927c6cc7bcf4d8daae4add9a72c9fa2414b93dd51950cffb634beaf45c050",
+    "src/hdf5/discovery.rs": "d3fe9f5f5c6abf10084cbc3b7562b443b17359336e0fb102ff5aa28f6f1881aa",
+    "src/hdf5/raw.rs": "aa1c6fa0a31303cc769214393039fec9975bff9c1e1d54eca59808e98d3927fc",
+    "src/hdf5/sources.rs": "f79106332878717c9dae77373fcaf9f711e2c36fdf45a06bfaec087c8aa6ec54",
+    "src/hdf5/sparse/numeric.rs": "9e842fc99100d24a6913d506dd86e7f63b0213eee695cea2a82515712be78433",
+    "src/hdf5/sparse/reconstruction.rs": "801f9c866a9e5796e7de966cad42f50e5c128183cf895660d155265cd99df364",
+    "src/hdf5/sparse.rs": "86365e54f3448047f7dbae439b19efaa22bc47fd641f6ca423512556f35bce54",
+    "src/hdf5/typed.rs": "6042b1b05f900bfd405c25b86b879e9a29cf9d6bed4395d0315a102fda39b6d0",
+    "src/hdf5/vds.rs": "e8e82c3152e40d589e196a31a5165723f056ed7f2875deb235dc8f587dd68207",
+    "src/hdf5.rs": "49be9fa8a2f36cdac7f1fcb9d7737b173b5c9074b1d820acbfd264028a33dddc",
+    "src/jpeg.rs": "ab2e7dbea38cf2c876e4ad2a73ce74e4e2ee19c28a193365054b33082522f445",
+    "src/jpeg2000.rs": "be8ad6f74a6c161532e73aaae16dff9d37533f6c1181f66eae35fc5ff99ba7e3",
+    "src/kcd.rs": "fb532aa6e23648399ea52e0872edf0f57e45aacfe951c1284c1f46d3e12330e8",
+    "src/lib.rs": "364e690a143f20b1668e33d553d0d3c2dd1dcf14c2647ae577083f674e337866",
+    "src/mar345.rs": "cf527509342046e1725b12ebe5ffbc4ad2f21f6c63b9d820e9c168c9818e16aa",
+    "src/mpa.rs": "6c81d70a3ef9b7f6a95a2f52a7add8aa14c70c15bd21c9ecb252e98b3e4cda9a",
+    "src/mrc.rs": "eb01640b8d6436f363b3b45531050de3ff06f42b4ecb4e3a120bce8ea16bca28",
+    "src/native.rs": "b526d517a3e35d9e020bfa26944b41f4198d5aa6347289d44710402d406f28c2",
+    "src/navigation.rs": "6fe155d07f11fefca9d9ba09c623a235688fcf4d17e6a3083ed88adc73901f68",
+    "src/oxford/ty5.rs": "1ca4411422d7b4ecc6ed574bdc8a5ac592d27f0a2baae0b77ded7a7e457e5136",
+    "src/oxford.rs": "134d222d921b9685483a486177e50984159afa6d91bb850d55f59ee1973c9a0d",
+    "src/pilatus.rs": "f87ab50599b638171c46f8ac16df4b0f1efaec4dfba580cefcd45071dbc9a436",
+    "src/pixels.rs": "89f9b646e2970e79c77c625529f367f5fe96bd35c9ecf73cad67bbb59dde3c12",
+    "src/pixi.rs": "2522bc7b5cfc0a70f4624d87193fade8075857b08c7cf34fb05ce9f0ddf5b7ee",
+    "src/raster.rs": "f27377deff1a475984240c548cc77890d8d1f53181245ac8654333fdd7a29c1f",
+    "src/raxis.rs": "c0bee389a94056c437a18948996c1449351aefcae9ea9191dd228ce1d63e11db",
+    "src/series.rs": "fd197478fa7206f11411627cb58c4f2bc5952a63173e0544536a813c5c564a64",
+    "src/source.rs": "cb034be18672cba6d92b3b35071b584d435f29507aa9bb9603fd59b03a41b30a",
+    "src/spe.rs": "48849be1954fe507ed36d9eb7ae476b43b2810abe434dcf889165af7df71fb98",
+    "src/tiff/compatibility.rs": "ee3dc5bdd237f58bde81538c46ee6a393793b0632e9c921e867479f3c7a4e541",
+    "src/tiff/group3.rs": "ede0d60ba03fc62e6e707bd2a4f7a06d8fc272f83ba9d0bd1ab62943cb49f1da",
+    "src/tiff/header.rs": "d0c018ff4ed229641c7e12c60bdf49681b0f4e10c4cd872123cc1b7dc917871d",
+    "src/tiff/ifd_view.rs": "75d7ac11299d65d1780a5f8bf1a43649a17f5fe17f95d52f9c00e48d0d21a77b",
+    "src/tiff/jpeg_components.rs": "8cc9ef27459a54f7a6e47ea6e594d5a51bdb0b0820d10c2c93a778f010014c53",
+    "src/tiff/ojpeg.rs": "27ea210bfa75c251d75a396fb949b1d466fe68c67b5e8201cb25f7a81296176a",
+    "src/tiff/thunderscan.rs": "7d299c5032402b5af16f79ec7f66d9609a03046a058fe91b9cc13206673fff2c",
+    "src/tiff/view.rs": "c4f32a6903c98c8030047a217ef572c6f03261e37fe4d4b0724315f5f4dbc2ed",
+    "src/tiff/view_jpeg.rs": "8f8df0d1a26d93e9f15715d9d238e47c7bd420afe8d3c7337004691c0af522e1",
+    "src/tiff/view_ycbcr.rs": "9fbb8713ae4739ef0433441e15412d54ad8920b297652caab687b14c57d9f583",
+    "src/tiff/ycbcr.rs": "12958c127df223a150ee186094d70126a2841d79ccccb68bd3a08d78e4cdaa19",
+    "src/tiff/ycbcr_jpeg.rs": "3a70a695fed2fca125b2609356989c669b3020eeaeaed6d86a4c1c3f2365e679",
+    "src/tiff.rs": "e3090d8f9315ae9e95869f41730bdc0f7eb2e5499de1e8b37df1e46bd38eef56",
+    "src/transport.rs": "9201e70f29c23ee027334f0db48e4965f32c7cbf04720b5d14d84087407c4aa3",
+    "src/wrapped/input.rs": "dfa3474eaa04ad8c00733165f4f104e572f673b8630750b027b724aff88ce337",
+    "src/wrapped.rs": "0d2ed07e6475d8763c6c994d33cafb5ef46436131be1143ec014ec0de6f76633",
+    "src/xcalibur/decomposition.rs": "b3d2d3e0decf3ae69fdfc742fc2ebe623459b98e817550a01efe774a4c886269",
+    "src/xcalibur/run.rs": "f0e998aa761d4cf1a6b93c1b24c13f8077baca0751ef030f3eeb914ab9fbc595",
+    "src/xcalibur.rs": "7a308e59ffd22c11f501e79f618b13bf1d4aa200cf90e23786682003352048d9",
+    "src/xsd.rs": "bcfe7328bc0d9d809dc6abda92d790039069e3829332abcfb300b0379e0ac601"
+  },
+  "build_files_sha256": {
+    "Cargo.toml": "3027e525067ba68ad411b42256497f43fc7bec71905ae096aa9995e685515bbe",
+    "Cargo.lock": "e0206f1f8defd7d6c31232193928691a191fb2d1495aa0aa3450e12d708dba29",
+    "build.rs": "d2a7178ee320636f7cad875759fb90447e5969fb90737b0a1cf21233b3d2c982"
+  },
+  "bridge_sources_sha256": {
+    "scripts/fabio_suite_parity.py": "01c2e345c60c06dee32a2ed86c7ee5ef30c4d13396f21763a802ab6a9d57cd6b",
+    "scripts/input_reference.py": "5d8fa685b82d918d84c0dfd3a8beb1f49dcc4b1addec332b7390224d080f8115",
+    "scripts/test_input_reference.py": "20381984b08a471c89fa5729d984c650baec617224985d9186e9d1b95bc55709",
+    "scripts/tiff_component_reference.py": "74b7a9fa2900ed7cb143652314d912f0aa44d2b1c358be4d4509cde2a9db3fbe",
+    "scripts/edf_recovery_reference.py": "1d6f13ec7a567d34dd86eafd148a36fa49b5e0b03f5464bae1aeb4054b4f1091",
+    "scripts/thunderscan_reference.py": "d311a75653571d4c9dd7728b128f99bf74ba1e8a58c5dc93c74cd4cc532846d9",
+    "scripts/pillow_planar16_reference.py": "d4e6e41d35c914eeee066ebc466982af37251539eaa7132b5c8f05ad7f8ff5a1",
+    "scripts/metadata_parity.py": "36d190c08896f1dbe6f01659edc8c35cf6207fbf5bd5335e5972e2922e222231",
+    "scripts/test_metadata_parity.py": "4f3536409c38c7219e688e9d3357d52cc5885ef49d8a5b4432395b66fddf96bd",
+    "scripts/metadata_attributes.py": "6c6c4b51d6fdce1a412e4a6a6ab0b9b872381fd7e51fac489643a6d34010573e",
+    "scripts/test_metadata_attributes.py": "afbe0a91c24113fbd3611ae1b16b6f561c1bffb628c2f2b62a7b209e1c17abb2",
+    "scripts/header_reference.py": "1dea4d20e8136148d972efd4c971218a0891cf3b7bc0ff05703c059f15c44fbf",
+    "scripts/xcalibur_reference.py": "525c3f34bace525a4333eec0943f0422295a1522f879c1dc5309034b5e85a1d2",
+    "scripts/test_xcalibur_reference.py": "b0eef707252cc47355598985cc32fbd71972a0d64df1e4fbf8cb9ff6b26fdaec",
+    "scripts/generate_xcalibur_fixtures.py": "706537dd54674c91ae6dd3a78db0f883c9cb61e9e27428f825ec5f4da88dacbb",
+    "scripts/inventory_fabio.py": "639ef41a9367a5e0b322e27f95653b2c65cbf8f8bfb268a369156181185e5cc7",
+    "examples/parity_probe.rs": "33783be1a34371a633997bec651a8a31f74d68a585f44cac52844d139ff9250d",
+    "docs/fabio-2026.6.0-inventory.json": "8d3c118d876b9a6834890dafa736434409281267be0117b014848690d6719a57"
+  },
+  "new_api_test_fixture_license_sha256": {
+    "examples/api_probe.rs": "fdbe8ebb8ae9c575c1d419f0aaf2d8aa15a555dd2545ac89ba7586662504da2d",
+    "licenses/native-readers/FabIO-series-MIT.txt": "0d149793912130670620e3a6cab8971de1f803c6f885b047ed354cdee6037ecb",
+    "scripts/cif_document_reference.py": "6e68e6d07fb907b8c5f93cf9ac6e57af9b0bb1816c968d704cec89616c7c6d93",
+    "scripts/companion_reference.py": "e2c0fc1b8042925feebca895c782121c66269803624d67c91872273487fa6952",
+    "scripts/generate_xcalibur_run_fixtures.py": "12c59dc4a735233811fdbe382df87a9e627c876b32607f5f8075003c8b7c079f",
+    "scripts/series_reference.py": "e88796064c25eaf25c31a319baa6f201b6a6a5e6f2e9e18a22df0a702073ec95",
+    "scripts/test_cif_document_reference.py": "582dddd3bbe8fd417deed2aca9f0cdd8c65274c06913071c467af228714f7cf5",
+    "scripts/test_companion_reference.py": "9e6e54dbe82b4a65a463438024a1007a40653839c3d53b73c4bb998898a3560c",
+    "scripts/test_series_reference.py": "3c3cf0252e57929fdcdb6830b5a3f0451c63cb10e67d3ef5bd5c7d2f723433a2",
+    "tests/cif_document.rs": "9748ea978b7e4205331ec7007845d812aa07cc22d08cad53af6be344c9900933",
+    "tests/data/companions/column-table.flt": "e6d81d980fb927c1061fa95e237837f8548d2414081cf361df0702c12662a0fb",
+    "tests/data/companions/diagnostics.cif": "f35ee9f18d7be92af3914557b27c1b735a2a7b0f6aec54650c8cc995ac00153c",
+    "tests/data/companions/duplicates.cif": "c9917725dbfbae96fc2ca9731742f6108c353ad3646ecc96418c1ada4ca72afd",
+    "tests/data/companions/profile.chi": "ec34173cd0794f41b5825fcacad0c931917f4dc9e636131a1537d6c18448a5d5",
+    "tests/data/companions/provenance.json": "5e31ffc33c4f8b07dcfec7728d7d9a3f2b0fda2d91bfcb50923f3c20abd782e2",
+    "tests/data/companions/scalars-loops.cif": "9a6039c82453ee8edb48616f11d225ba9755142f8c7ed0c458fd63a6897014e1",
+    "tests/data/xcalibur/README.md": "579c94688747f00578be02fcb407828f373cbaf7e9175d7cbfdbd07754969f3e",
+    "tests/data/xcalibur/raw-text-floats.run": "774081bd582a9c8ae549a066ef864d9fea3517e3726c1e811cf512cfe15d2417",
+    "tests/data/xcalibur/records.ccd": "ac411bb46aef81b8914e986fad16a46916a92a31f3db95280625735c4cfbc538",
+    "tests/data/xcalibur/records.run": "80f87a92dd48a6706f09b99f892fde1738cb99a37f2954254a4fad447e567e91",
+    "tests/data/xcalibur/run-provenance.json": "bbaaff549722c8c1ddc454b6444c07bf1080c23cab08b4c786b2c12b86bd56ce",
+    "tests/data/xcalibur/zero-sweeps.run": "8889eb3cdd3d0ac94711b47ce78b430d8e23a7b31ecc994c56d0c3310c87674a",
+    "tests/navigation.rs": "78d3615977a64b7d1afcd696476ba660e8e97b4aca616c724ff17a5115dc85a4",
+    "tests/series.rs": "0be639c3d0c01bfa30cd5464de08a42b5f7ba40d6222f9b30baaa841189d3222",
+    "tests/source_bindings.rs": "e38fb155ffbd7701a4fe2ad074a8fc9140d52308f81fc3afcef47b7aff8895a3",
+    "tests/xcalibur_run.rs": "892ac958c36a6f756b4fb79c247886a449d0ba1dd2c075e4f2436250cacf1a34"
+  },
+  "external_manifest_environment": {
+    "CONTAINER_PARITY_MANIFEST": "/tmp/dioptrin-containers-upstream.json",
+    "FIXED_PARITY_MANIFEST": "/tmp/dioptrin-fixed-upstream.json",
+    "ESPERANTO_PARITY_MANIFEST": "/tmp/dioptrin-esperanto-upstream.json",
+    "MAR345_PARITY_MANIFEST": "/tmp/dioptrin-mar345-upstream.json"
+  },
+  "all_full_suite_fingerprints_unchanged": true,
+  "external_manifest_sha256": {
+    "/tmp/dioptrin-containers-upstream.json": "ef20a19a14847c2d1a39f49053d4657eda6f16d813ace5b73f4475c9b1c7ec8f",
+    "/tmp/dioptrin-fixed-upstream.json": "208b3e42e28126077f0f01ca7119f7a927eee5c68cbe4a05fbd44826a8a43a06",
+    "/tmp/dioptrin-esperanto-upstream.json": "ae0619810b4147f7101f0375b79c567bce21357d2d0b5cc39aeee6c69fcdab2f",
+    "/tmp/dioptrin-mar345-upstream.json": "5b107a4cd175c7c72630e6c63925baec91bba9d3938c48cb6017d152aba6d0b7"
+  }
+}

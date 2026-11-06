@@ -177,3 +177,8 @@ neighboring-file series/frame navigation and companion readers such as Xcalibur
 `.run`; variants outside the corpus and the native HDF5 qualifications above
 remain separate. Existing reference bugs, display conventions and absent source
 samples are retained as such.
+
+File-series/frame navigation and run/CIF companion access are subsequently
+qualified in [SERIES_COMPANIONS_PARITY.md](SERIES_COMPANIONS_PARITY.md). That
+continuation also strengthens source-path alias checks without changing this
+input API's count/provenance contracts.

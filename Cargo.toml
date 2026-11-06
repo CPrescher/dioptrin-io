@@ -114,3 +114,7 @@ required-features = ["tiff"]
 [[example]]
 name = "edf_recovery_probe"
 required-features = ["edf"]
+
+[[example]]
+name = "api_probe"
+required-features = ["wrappers"]

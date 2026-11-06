@@ -108,3 +108,7 @@ are subsequently addressed in [INPUT_APIS.md](INPUT_APIS.md)):
 Qualified reference bugs, incomplete source spans and metadata presentation
 conventions remain explicit in the prior reports. Writer/mutation/statistics
 interfaces are outside this native input crate's contract.
+
+The run companion and series/navigation continuation is now documented in
+[SERIES_COMPANIONS_PARITY.md](SERIES_COMPANIONS_PARITY.md), with independent
+source fixtures and direct pinned API comparisons.

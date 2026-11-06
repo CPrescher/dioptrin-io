@@ -1,4 +1,16 @@
-# Content discovery and streams, 2026-11-06
+# Series, navigation and companions, 2026-11-06
+
+The [reader continuation](2026-11-06-series-companions.json) preserves all 626
+input outcomes and 237 reference tests. A separate 37-test series audit verifies
+515 cursor actions, 10,010 filenames and 3,429 metadata-field occurrences. Run and
+CIF companion proofs each qualify 9 path/buffer/stdin comparisons under explicit
+source/projection contracts. No failed legacy helper is counted as successful
+read parity. See [combined evidence](../SERIES_COMPANIONS_PARITY.md) and
+[native checks](2026-11-06-series-companions-native-checks.json): 272 Rust tests,
+56 Python controls and 21 isolated feature checks pass. Exact/full FabIO parity
+remains false for the qualified differences and remaining grammar/variant scope.
+
+## Previous content discovery and streams, retained
 
 The [schema 10 report](2026-11-06-input-apis.json) qualifies **626 native stdin
 comparisons**, every content-discovery decision and three separate EDF header

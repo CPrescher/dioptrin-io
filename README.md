@@ -24,14 +24,14 @@ Every format dependency is optional; default features are empty.
 | `native` | NPY v1/2/3 scalars/complex arrays, C/Fortran storage; d*TREK/ADSC, Fit2D masks/spreadsheets, HiPiC, PNM and explicit raw input | Remaining dtype/dimension variants; general discovery is available through `wrapped::Input` |
 | `containers` | SPE v2/v3/ROI/frames, typed MRC stacks and nested DM3 image/tag selection | Unsupported layouts/types; pinned reference quirks documented |
 | `bruker`, `oxford`, `raxis` | Bruker86/100 tables/baselines, Oxford raw/TY1/TY5, R-AXIS words and explicit expanded-intensity view | Bruker LINEAR float encoding has an explicit decoded view; unknown record layouts fail |
-| `fixed` | GE intact/blank/EDF-prefixed headers and Pixi fixed frame records | Adjacent-file series traversal |
+| `fixed` | GE intact/blank/EDF-prefixed headers and Pixi fixed frame records | Explicit source manifests and fixed-layout variants outside the corpus |
 | `fit2d`, `kcd`, `mpa` | FIT2D primary/mask/axis arrays, separate KCD readouts/explicit sum, MPA CDAT maps and DATA spectra | Binary MPA and unsupported record layouts/types |
 | `esperanto` | Original signed32 Long32/AGI bitfield counts, row indexes, headers and strict source bounds | Unsupported header variants fail; no writer-style reshaping on read |
-| `mar345` | MAR345/MAR555 PCK V1, original unsigned counts, high-count tables and headers, both byte orders | V2, spiral/old IMAGE, degenerate predictor shapes and implicit series |
+| `mar345` | MAR345/MAR555 PCK V1, original unsigned counts, high-count tables and headers, both byte orders | V2, spiral/old IMAGE, degenerate predictor shapes; file series use explicit manifests |
 | `sparse` | Original HDF5 sparse events/components/attributes and explicit deterministic background reconstruction | Stochastic noise; native reference and Python fallback have separate semantics; reconstructed backgrounds are derived |
-| `xcalibur` | CCD characteristics/source records, explicit mask reconstruction and native lossless binary-mask decomposition | No fabricated source images; truncated machine tails require an explicit policy; .run companion records pending |
+| `xcalibur` | CCD characteristics/source records, explicit mask reconstruction and native lossless binary-mask decomposition and bounded .run acquisition records | No fabricated source images; truncated machine tails require an explicit policy |
 | `xsd` | Explicit 2D XSData XML arrays, base64/base32/base16, ten scalar/complex types and optional MD5 | Other ranks/types/encodings and namespaces |
-| `wrappers` | Bounded path/nonseekable/buffer input, gzip/bzip2 staging, conservative content discovery and EDF/TIFF/d*TREK header access; source checks on every read | Implicit neighboring-file series and variants outside the corpus; HDF5/sparse input requires its optional feature |
+| `wrappers` | Bounded path/nonseekable/buffer input, gzip/bzip2 staging, conservative content discovery and EDF/TIFF/d*TREK header access; source checks on every read | File series/navigation use explicit frozen manifests; variants outside the corpus; HDF5/sparse input requires its optional feature |
 
 **Full FabIO reading parity is not established.** The complete version-pinned
 [coverage inventory](docs/FORMAT_COVERAGE.md) tracks all 36 FabIO 2026.6.0
@@ -191,6 +191,9 @@ bytes and streams into a private temporary file. `source_bytes` bounds staged
 disk output; decoding does not retain the whole file in RAM. The original file
 is checked around staging and every frame read. There is no automatic source,
 CBF dialect or backend substitution.
+
+See [file series, navigation and companions](docs/SERIES_COMPANIONS_PARITY.md)
+for frozen manifests, checked global/local frame mapping and acquisition records.
 
 See [content discovery and stream input](docs/INPUT_APIS.md) for bounded
 nonseekable reads, explicit relative origins and conservative format decisions.
