@@ -27,6 +27,7 @@ pub struct Metadata {
     /// Parsed scalar/loop CIF metadata. Original text remains in header and
     /// unsupported/malformed syntax is reported in diagnostics.
     pub cif: CifHeader,
+    pub pilatus: Option<crate::pilatus::Header>,
 }
 /// Explicit handling of incompatible byte-offset escape dialects.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -206,6 +207,26 @@ impl Reader {
             .saturating_mul(2)
             .saturating_add(fields.len().saturating_mul(128));
         let cif = header::parse(&header[..start], limits.metadata_bytes.saturating_sub(used))?;
+        let pilatus = if cif
+            .fields
+            .get("_array_data.header_convention")
+            .is_some_and(|v| v == "PILATUS_1.2")
+        {
+            Some(
+                crate::pilatus::Header::parse(
+                    cif.fields
+                        .get("_array_data.header_contents")
+                        .map_or("", String::as_str),
+                    limits
+                        .metadata_bytes
+                        .saturating_sub(used)
+                        .saturating_sub(cif.retained_bytes()),
+                )
+                .map_err(Error)?,
+            )
+        } else {
+            None
+        };
         let mut trailer = Vec::new();
         input.seek(SeekFrom::Start(end))?;
         input
@@ -232,6 +253,7 @@ impl Reader {
                 header,
                 binary_fields: fields,
                 cif,
+                pilatus,
             },
             offset,
             bytes,

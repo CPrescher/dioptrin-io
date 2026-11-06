@@ -255,3 +255,66 @@ fn compressed_fit2d_auxiliary_arrays_keep_counts_and_invalidate_on_source_change
         assert!(actual.pixels().is_none());
     }
 }
+
+#[test]
+fn compressed_edf_general_headers_keep_source_scope_and_validate_original_identity() {
+    let general = b"{\nEDF_DataFormatVersion=1.0; EDF_BinarySize=0; Motor=general;\n}\n";
+    let local=b"{\nDim_1=2; Dim_2=1; DataType=UnsignedShort; ByteOrder=LowByteFirst; Size=4; Motor=local;\n}\n";
+    let mut bytes = general.to_vec();
+    bytes.extend_from_slice(local);
+    bytes.extend_from_slice(&[1, 0, 255, 255]);
+    for compression in [Compression::Gzip, Compression::Bzip2] {
+        let file = tempfile::NamedTempFile::new().unwrap();
+        std::fs::write(file.path(), encoded(&bytes, compression)).unwrap();
+        let mut reader = open(file.path(), Format::Edf).unwrap();
+        let headers = reader.edf_general_headers().unwrap();
+        assert_eq!(headers[0].header, general);
+        assert_eq!(headers[0].fields["MOTOR"], "general");
+        let dioptrin_io::wrapped::Metadata::Edf(local) = reader.metadata(0).unwrap() else {
+            panic!("EDF")
+        };
+        assert_eq!(local.fields["MOTOR"], "local");
+        let mut frame = FrameBuffer::default();
+        reader.read_frame_into(0, &mut frame).unwrap();
+        assert_eq!(
+            frame.pixels(),
+            Some(&dioptrin_io::PixelBuffer::U16(vec![1, 65535]))
+        );
+        std::fs::write(file.path(), b"changed outer original").unwrap();
+        assert!(reader.edf_general_headers().is_err());
+    }
+}
+
+#[test]
+fn compressed_header_only_indexing_keeps_metadata_without_requiring_pixels() {
+    use dioptrin_io::wrapped::{HeaderFormat, HeaderMetadata, HeaderReader};
+    let mut dtrek=b"{\nHEADER_BYTES=512; Data_type=long int; DIM=2; SIZE1=0; SIZE2=0; BYTE_ORDER=little_endian;\n}\n".to_vec();
+    dtrek.resize(512, b' ');
+    let tiff = std::fs::read(
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/tiff/uint16.tif"),
+    )
+    .unwrap();
+    for (format, bytes) in [(HeaderFormat::Dtrek, dtrek), (HeaderFormat::Tiff, tiff)] {
+        for compression in [Compression::Gzip, Compression::Bzip2] {
+            let file = tempfile::NamedTempFile::new().unwrap();
+            std::fs::write(file.path(), encoded(&bytes, compression)).unwrap();
+            let reader = HeaderReader::open(
+                file.path(),
+                format,
+                Limits::default(),
+                native::Limits::default(),
+                tiff::Limits::default(),
+            )
+            .unwrap();
+            assert_eq!(reader.compression(), compression);
+            assert_eq!(reader.source_prefix().unwrap(), bytes[..64]);
+            match reader.metadata().unwrap() {
+                HeaderMetadata::Dtrek(m) => assert_eq!(m.shape, [0, 0]),
+                HeaderMetadata::Tiff(pages) => assert_eq!(pages.len(), 1),
+            }
+            std::fs::write(file.path(), b"replaced compressed source").unwrap();
+            assert!(reader.metadata().is_err());
+            assert!(reader.source_prefix().is_err());
+        }
+    }
+}

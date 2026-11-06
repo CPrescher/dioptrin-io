@@ -23,6 +23,7 @@ pub(super) struct FileView {
     samples: Option<(ChunkWindows, Option<u64>)>,
 }
 pub(super) struct Admission {
+    pub entry_counts: BTreeMap<u64, u64>,
     pub file: FileView,
     pub photos: BTreeMap<u64, OriginalPhoto>,
     pub opaque: BTreeMap<u64, BTreeMap<u16, OpaqueTag>>,
@@ -63,6 +64,7 @@ impl Admission {
             }
             _ => return Err(Error("invalid TIFF version".into())),
         };
+        let mut entry_counts = BTreeMap::new();
         let mut visited = BTreeSet::new();
         let mut patches = BTreeMap::new();
         let mut photos = BTreeMap::new();
@@ -82,6 +84,7 @@ impl Admission {
             let mut count = [0; 8];
             read_at(&mut file, next, &mut count[..count_bytes as usize])?;
             let count = number(&count[..count_bytes as usize]);
+            entry_counts.insert(next, count);
             let entries = next
                 .checked_add(count_bytes)
                 .ok_or_else(|| Error("TIFF IFD offset overflow".into()))?;
@@ -248,6 +251,7 @@ impl Admission {
         }
         file.seek(SeekFrom::Start(0)).map_err(io)?;
         Ok(Self {
+            entry_counts,
             file: FileView {
                 file,
                 patches,

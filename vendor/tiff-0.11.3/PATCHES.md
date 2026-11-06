@@ -47,3 +47,12 @@ offset as an additional tile row: bottom padding vanished in subsequent planes,
 which could panic for a valid partial-edge tile or read the wrong output extent.
 This changes only geometry supplied to the same codec/predictor/raster pipeline;
 there is no alternate decoder, allocation scheme or count transformation.
+
+A metadata-only `DirectoryReader` now reuses the same header bootstrap, IFD
+parser and typed tag reader without constructing an image or selecting a sample
+codec. The normal image constructor uses the factored bootstrap unchanged.
+Metadata-directory reads apply a caller-sized entry-count bound before allocating
+a directory. The root header API also reuses source-range/cycle admission and
+rejects unknown field types or duplicate IDs rather than silently dropping them.
+This provides original primary-IFD metadata for unsupported pixel layouts; it
+never asserts sample availability, repairs a window or introduces a count decoder.

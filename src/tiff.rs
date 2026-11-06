@@ -11,6 +11,7 @@ use crate::{PixelBuffer, PixelType, source::Snapshot};
 pub mod compatibility;
 pub use compatibility::{Options, TileTables, UncompressedWindows};
 mod group3;
+pub mod header;
 mod ifd_view;
 #[cfg(feature = "jpeg")]
 mod jpeg_components;
@@ -203,6 +204,7 @@ impl Reader {
             mut opaque,
             retained,
             mut interpretations,
+            ..
         } = Admission::open(file, limits, options)?;
         let overrides = interpretations
             .iter()

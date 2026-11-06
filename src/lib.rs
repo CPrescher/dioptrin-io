@@ -87,3 +87,6 @@ pub mod esperanto;
 pub mod mar345;
 #[cfg(feature = "sparse")]
 pub use hdf5::sparse;
+
+#[cfg(any(feature = "cbf", feature = "tiff"))]
+pub mod pilatus;

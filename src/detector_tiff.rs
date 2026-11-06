@@ -24,17 +24,7 @@ pub enum Value {
     ShortArray(Vec<u16>),
     Bytes(Vec<u8>),
 }
-#[derive(Debug, Clone)]
-pub struct PilatusHeader {
-    /// Original ImageDescription text, including comments the field parser does
-    /// not interpret. Original TIFF tag values are also retained by image metadata.
-    pub description: String,
-    /// Last assignment to each key, as in the pinned reference. Units remain text.
-    pub fields: BTreeMap<String, String>,
-    /// Every interpreted assignment, retaining duplicate keys and source order.
-    pub entries: Vec<(String, String)>,
-    pub unparsed_lines: Vec<String>,
-}
+pub use crate::pilatus::Header as PilatusHeader;
 #[derive(Debug, Clone)]
 pub struct MarHeader {
     pub little_endian: bool,
@@ -78,10 +68,13 @@ impl Reader {
                             ));
                         }
                     };
-                    let header = parse_pilatus(description);
+                    let header =
+                        PilatusHeader::parse(description, limits.metadata_bytes).map_err(Error)?;
                     used = used
-                        .checked_add(description.len().saturating_mul(4))
-                        .and_then(|n| n.checked_add(header.entries.len().saturating_mul(256)))
+                        .checked_add(description.len().saturating_mul(8))
+                        .and_then(|n| {
+                            n.checked_add(description.lines().count().saturating_mul(512))
+                        })
                         .ok_or_else(|| Error("Pilatus header storage overflow".into()))?;
                     if used >= limits.metadata_bytes {
                         return Err(Error("Pilatus headers exceed metadata budget".into()));
@@ -149,40 +142,6 @@ impl Reader {
     pub fn read_frame_into(&mut self, index: usize, buffer: &mut FrameBuffer) -> Result<(), Error> {
         self.reader.read_frame_into(index, buffer)
     }
-}
-fn parse_pilatus(description: &str) -> PilatusHeader {
-    let mut header = PilatusHeader {
-        description: description.into(),
-        fields: BTreeMap::new(),
-        entries: Vec::new(),
-        unparsed_lines: Vec::new(),
-    };
-    for line in description.lines() {
-        let original = line.trim_matches(|c: char| c.is_whitespace() || c == '\0');
-        if original.is_empty() {
-            continue;
-        }
-        let Some(text) = original.strip_prefix("# ") else {
-            header.unparsed_lines.push(line.into());
-            continue;
-        };
-        let text = text.trim();
-        let Some(position) = text.find(|c: char| c.is_whitespace() || [',', ':', '='].contains(&c))
-        else {
-            header.unparsed_lines.push(line.into());
-            continue;
-        };
-        let key = text[..position].trim();
-        let value = text[position..]
-            .trim_start_matches(|c: char| c.is_whitespace() || [',', ':', '='].contains(&c));
-        if key.is_empty() {
-            header.unparsed_lines.push(line.into());
-            continue;
-        }
-        header.entries.push((key.into(), value.into()));
-        header.fields.insert(key.into(), value.into());
-    }
-    header
 }
 fn parse_mar(bytes: Vec<u8>) -> Result<MarHeader, Error> {
     if bytes.len() != 3072 || !bytes[4..20].starts_with(b"MMX\0") {

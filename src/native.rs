@@ -60,6 +60,52 @@ pub struct Metadata {
     pub fields: BTreeMap<String, String>,
 }
 
+/// Frozen d*TREK metadata independent of pixel availability. Empty declared
+/// dimensions are admitted here; the complete-image Reader remains strict.
+pub struct DtrekHeader {
+    snapshot: Snapshot,
+    file: File,
+    metadata: Metadata,
+}
+impl DtrekHeader {
+    /// Read only a bounded header using the same parser as the image reader.
+    /// # Errors
+    /// Invalid header/declared layout, resource bounds or source mutation.
+    pub fn open(path: impl AsRef<Path>, limits: Limits) -> Result<Self, Error> {
+        limits.validate()?;
+        let snapshot = Snapshot::open(path).map_err(Error)?;
+        let mut file = File::open(&snapshot.path)?;
+        snapshot.check_handle(&file).map_err(Error)?;
+        let (mut metadata, _) = dtrek(&mut file, limits, true)?;
+        metadata.format = Some(Format::Dtrek);
+        let cost = metadata
+            .header
+            .len()
+            .saturating_mul(2)
+            .saturating_add(metadata.fields.len().saturating_mul(128))
+            .saturating_add(metadata.source_shape.len().saturating_mul(16));
+        if cost > limits.metadata_bytes || metadata.frames > limits.frames {
+            return Err(Error("d*TREK header metadata/frame limit".into()));
+        }
+        // Nonempty geometry is checked without allocating or reading samples.
+        if !metadata.shape.contains(&0) {
+            limits.pixels(metadata.shape, metadata.pixel_type)?;
+        }
+        snapshot.check_handle(&file).map_err(Error)?;
+        Ok(Self {
+            snapshot,
+            file,
+            metadata,
+        })
+    }
+    /// # Errors
+    /// Original source changed since header indexing.
+    pub fn metadata(&self) -> Result<&Metadata, Error> {
+        self.snapshot.check_handle(&self.file).map_err(Error)?;
+        Ok(&self.metadata)
+    }
+}
+
 enum Storage {
     Scalar,
     Mask,
@@ -87,7 +133,7 @@ impl Reader {
         snapshot.check_handle(&file).map_err(Error)?;
         let (mut metadata, storage) = match format {
             Format::Npy => npy(&mut file, limits)?,
-            Format::Dtrek => dtrek(&mut file, limits)?,
+            Format::Dtrek => dtrek(&mut file, limits, false)?,
             Format::Fit2dMask => mask(&mut file, limits)?,
             Format::HiPic => hipic(&mut file, limits)?,
             Format::Pnm => pnm(&mut file, limits)?,
@@ -423,7 +469,7 @@ fn field<'a>(fields: &'a BTreeMap<String, String>, key: &str) -> Result<&'a str,
         .map(String::as_str)
         .ok_or_else(|| Error(format!("missing native header field {key}")))
 }
-fn dtrek(file: &mut File, limits: Limits) -> Result<(Metadata, Storage), Error> {
+fn dtrek(file: &mut File, limits: Limits, header_only: bool) -> Result<(Metadata, Storage), Error> {
     // HEADER_BYTES must be the first assignment. Read only a bounded prefix
     // before allocating the declared padded header.
     let mut prefix = Vec::new();
@@ -479,7 +525,7 @@ fn dtrek(file: &mut File, limits: Limits) -> Result<(Metadata, Storage), Error> 
         .rev()
         .map(|axis| {
             let size = number(field(&fields, &format!("SIZE{axis}"))?.as_bytes())?;
-            if size == 0 {
+            if size == 0 && !header_only {
                 return Err(Error("empty d*TREK dimension unsupported".into()));
             }
             Ok(size)

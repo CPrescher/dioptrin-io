@@ -100,7 +100,7 @@ enum Backend {
     Xsd(crate::xsd::Reader),
     Native(native::Reader),
     Edf(edf::Reader),
-    Cbf(cbf::Reader),
+    Cbf(Box<cbf::Reader>),
     Tiff(Box<tiff::Reader>),
 }
 #[derive(Default)]
@@ -303,7 +303,9 @@ impl Reader {
                     },
                 )?)
             }
-            Format::Cbf(mode) => Backend::Cbf(cbf::Reader::open_with_mode(input, image, mode)?),
+            Format::Cbf(mode) => {
+                Backend::Cbf(Box::new(cbf::Reader::open_with_mode(input, image, mode)?))
+            }
             Format::Tiff | Format::TiffWithOptions(_) => Backend::Tiff(Box::new(
                 tiff::Reader::open_with_options(
                     input,
@@ -680,5 +682,95 @@ impl Reader {
             return Err(error);
         }
         Ok(())
+    }
+}
+
+impl Reader {
+    /// Frozen EDF general headers from the indexed source, separate from inherited
+    /// per-frame fields. Outer source identity is validated before access.
+    /// # Errors
+    /// Non-EDF backend or changed outer source.
+    pub fn edf_general_headers(&self) -> Result<&[crate::edf::GeneralHeader], Error> {
+        self.source.check()?;
+        let Backend::Edf(reader) = &self.backend else {
+            return Err(Error(
+                "EDF general-header access requires EDF backend".into(),
+            ));
+        };
+        Ok(reader.general_headers())
+    }
+}
+
+/// Metadata indexing independent of image availability, including outer wrappers.
+#[derive(Clone, Copy, Debug)]
+pub enum HeaderFormat {
+    Dtrek,
+    Tiff,
+}
+pub enum HeaderMetadata<'a> {
+    Dtrek(&'a native::Metadata),
+    Tiff(&'a [tiff::header::Page]),
+}
+enum HeaderBackend {
+    Dtrek(native::DtrekHeader),
+    Tiff(tiff::header::Reader),
+}
+/// No frame/pixel API is provided: these are original declarations, not evidence
+/// that a codec can decode the payload or that all declared counts exist.
+pub struct HeaderReader {
+    backend: HeaderBackend,
+    source: PreparedSource,
+}
+impl HeaderReader {
+    /// Index headers with the existing bounded transport and format parsers.
+    /// # Errors
+    /// Malformed/truncated metadata, source mutation, transport or resource bounds.
+    pub fn open(
+        path: impl AsRef<Path>,
+        format: HeaderFormat,
+        transport: Limits,
+        image: native::Limits,
+        tiff: tiff::Limits,
+    ) -> Result<Self, Error> {
+        let source = PreparedSource::open(path, transport)?;
+        let backend = match format {
+            HeaderFormat::Dtrek => {
+                HeaderBackend::Dtrek(native::DtrekHeader::open(source.path(), image)?)
+            }
+            HeaderFormat::Tiff => HeaderBackend::Tiff(
+                tiff::header::Reader::open(source.path(), tiff)
+                    .map_err(|e| Error(e.to_string()))?,
+            ),
+        };
+        source.check()?;
+        Ok(Self { backend, source })
+    }
+    /// # Errors
+    /// Original or staged source changed since indexing.
+    pub fn metadata(&self) -> Result<HeaderMetadata<'_>, Error> {
+        self.source.check()?;
+        match &self.backend {
+            HeaderBackend::Dtrek(r) => Ok(HeaderMetadata::Dtrek(r.metadata()?)),
+            HeaderBackend::Tiff(r) => Ok(HeaderMetadata::Tiff(
+                r.pages().map_err(|e| Error(e.to_string()))?,
+            )),
+        }
+    }
+    #[must_use]
+    pub fn compression(&self) -> Compression {
+        self.source.compression()
+    }
+    /// Original first 64 unwrapped source bytes, without interpreting sample bits.
+    /// # Errors
+    /// Source changed or failed while reading the bounded prefix.
+    pub fn source_prefix(&self) -> Result<Vec<u8>, Error> {
+        use std::io::Read;
+        self.metadata()?;
+        let mut prefix = Vec::new();
+        std::fs::File::open(self.source.path())?
+            .take(64)
+            .read_to_end(&mut prefix)?;
+        self.metadata()?;
+        Ok(prefix)
     }
 }

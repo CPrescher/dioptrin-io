@@ -20,6 +20,39 @@ pub struct CifLoop {
     pub columns: Vec<String>,
     pub rows: Vec<Vec<String>>,
 }
+impl CifHeader {
+    pub(crate) fn retained_bytes(&self) -> usize {
+        let mut cost = 0usize;
+        let mut charge = |bytes: usize| {
+            cost = cost.saturating_add(bytes);
+        };
+        for block in &self.data_blocks {
+            charge(block.len().saturating_add(32));
+        }
+        for (key, value) in &self.fields {
+            charge(key.len().saturating_add(value.len()).saturating_add(128));
+        }
+        for (key, value) in &self.entries {
+            charge(key.len().saturating_add(value.len()).saturating_add(64));
+        }
+        for group in &self.loops {
+            charge(64);
+            for key in &group.columns {
+                charge(key.len().saturating_add(32));
+            }
+            for row in &group.rows {
+                charge(32);
+                for value in row {
+                    charge(value.len().saturating_add(32));
+                }
+            }
+        }
+        for message in &self.diagnostics {
+            charge(message.len().saturating_add(32));
+        }
+        cost
+    }
+}
 enum LexError {
     Syntax(&'static str),
     Budget,
