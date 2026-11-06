@@ -1,5 +1,30 @@
 # Validation, 2026-11-05
 
+## Four TIFF codec/layout sources, 2026-11-06
+
+All 156 Rust tests pass, with formatting, strict all-target/all-feature Clippy,
+no-default check/tests and 20 isolated optional-feature checks (25 commands).
+The full pinned 213 reference tests have no failures/errors and one upstream skip.
+Native results: 482 direct events / 2,404 frames, 26 other explicit views, four
+independently verified component/view events and one 100-frame sparse reconstruction.
+Rejections fall 44→40; matching events rise 509→513. The two known Pillow planar16
+mismatches remain explicit. Source, vendor, Cargo, bridge, executable and independent
+reference-library fingerprints are stable. No compared header/component differences
+or unexpected comparison failures occur.
+
+Legacy LZW keeps the mature vendored TIFF raster/predictor pipeline. YCbCr native
+grids, full stored padding and valid extents are explicit; scalar reads reject
+expansion. OJPEG source tables/windows/headers and documented legacy SOS behavior
+remain auditable through existing native JPEG decoding. RGB/grayscale is a
+separate exact view. The modern JPEG component path also retains truthful grids;
+a reproduced libtiff RAW reference defect is qualified and independently avoided.
+
+See `tiff-codec-gaps/README.md`, `fabio-parity/2026-11-06-tiff-codecs.json`,
+`fabio-parity/2026-11-06-tiff-codecs-native-checks.json`, and the verified all 91-event
+`rejection-audits/2026-11-06-after-tiff-codecs.json`. Earlier sections below retain
+historical results. This is local correctness evidence, without expanded platform
+CI, publication, universal format parity or new throughput qualification.
+
 ## Rejection classification and native gaps, 2026-11-06
 
 All 139 Rust tests pass, including external container/fixed/Esperanto/MAR345

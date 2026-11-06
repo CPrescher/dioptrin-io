@@ -1,5 +1,9 @@
 # Audit of the 91 remaining FabIO rejections
 
+The subsequent [TIFF codec continuation](../tiff-codec-gaps/README.md) closes four
+more events: the current total is 40 rejections. [Updated verified outcomes](2026-11-06-after-tiff-codecs.json) retain every original case. The remaining tables below
+record the preceding audit stage and its then-current 44 rejections.
+
 All **91 baseline read events / 31 distinct source hashes** are classified in
 [the complete audit](2026-11-06-rejections.json). Repeated reads remain counted.
 The baseline is the immutable [MAR345/sparse report](../fabio-parity/2026-11-05-mar-sparse.json).

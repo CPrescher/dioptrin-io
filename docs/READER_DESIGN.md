@@ -278,3 +278,22 @@ It preserves event order/dtypes and source components by default. Dense model
 output requires explicit deterministic reconstruction and is labelled derived;
 stochastic noise is not synthesized. See `SPARSE_READERS.md` for source, bounds
 and reference-backend qualifications.
+
+## Native TIFF component layouts and legacy codecs
+
+`Metadata.sample_layout` distinguishes uniform arrays from original YCbCr grids.
+For component pages, `uniform_sample_shape()` returns None and ordinary scalar
+reads invalidate output and reject implicit chroma expansion. `read_ycbcr_into`
+returns source-order TIFF units or separately labelled decoded JPEG components,
+with per-chunk plane dimensions, valid extents and source sampling. Padding is
+retained, including complete nominal last strips. Logical `sample_shape()` is
+not a native component allocation size. Explicit views carry source geometry and
+record all conversion operations. Wrapped sources check the compressed original
+around component reads and invalidate failed outputs.
+
+Legacy LZW reuses the vendored mature TIFF raster/predictor implementation; source
+manifest, complete minimal patch and license notices remain in `vendor`/`licenses`.
+Full-suite provenance hashes every vendored file and Cargo build input. Original
+TIFF JPEG table/header assembly reuses libtiff's documented container behavior and
+the existing bundled libjpeg-turbo decoder. Details and unsupported contracts are
+in `TIFF_LEGACY_LZW.md`, `OJPEG_READER.md` and `tiff-ycbcr/README.md`.

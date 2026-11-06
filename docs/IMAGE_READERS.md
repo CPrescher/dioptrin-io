@@ -2,9 +2,10 @@
 
 These optional readers preserve decoded source samples and stored row order.
 They do not apply TIFF/EXIF orientation, masks, correction flags, normalization,
-ICC profiles or detector geometry. Color output is HWC: `shape()` retains the
-spatial `[height,width]` API, while metadata and buffers expose `sample_shape()`
-with a trailing channel axis. Scalar `PixelBuffer` variants carry every channel.
+ICC profiles or detector geometry. Uniform color output is HWC: `shape()` retains the spatial `[height,width]` API.
+YCbCr source components have separate grids through `read_ycbcr_into`; their
+`uniform_sample_shape()` is None. Metadata `sample_shape()` remains a logical
+raster/channel shape, not a native component allocation size.
 Dependencies remain optional; there is no Python runtime bridge.
 
 ## TIFF and detector acquisition headers
@@ -36,8 +37,11 @@ JPEG's input colorspace rather than forcing RGB; TIFF photometric metadata
 identifies these channels. Native JPEG RGB/grayscale fixture values differ by at most one
 count from the independent libjpeg-turbo reference because IDCT rounding differs.
 That test is explicitly a bounded lossy comparison, not exact FabIO parity.
-Subsampled TIFF YCbCr currently fails in the upstream backend and remains a gap.
-Old-style JPEG, CCITT RLE, two-dimensional Group3, mixed scalar types/bit widths,
+Subsampled YCbCr now exposes original component grids and source padding, without
+implicit expansion. Lossless sampling units support none/LZW; original and modern
+JPEG components reuse libjpeg-turbo when `jpeg` is compiled. Bounded single-chunk
+old-style JPEG is admitted under its original table/interchange contract.
+CCITT RLE, fragmented legacy JPEG, two-dimensional Group3, mixed scalar types/bit widths,
 packed color, and LSB FillOrder outside uncompressed packed grayscale/Group3
 remain unsupported. The Group3 adapter reuses the optional MIT `fax` 0.2.7
 Huffman tables, requiring exact terminating runs within each source byte window,
@@ -221,3 +225,30 @@ full Deflate integrity validation. Truncation before required samples fails,
 and bytes beyond the declared chunk cannot supply samples or adapted metadata.
 `tests/tiff_alias_bounds.rs` independently exercises these distinctions for both
 Deflate IDs, packed rows, float16, padded edge tiles and repeated failed reads.
+
+## Additional native layouts, 2026-11-06
+
+[Legacy LZW](TIFF_LEGACY_LZW.md) reuses a narrowly vendored TIFF 0.11.3 pipeline
+with explicit first-clear-code LSB/late-change selection and the mature weezl
+decoder. Full source chunk counts, EOI and zero-bit terminal padding are checked
+before the existing predictor/raster placement; there is no failed-decoder retry.
+
+[YCbCr components](tiff-ycbcr/README.md) retain every source sampling unit and
+native plane, including full nominal last-strip padding hidden by normal libtiff
+reads. Scalar reads reject implicit expansion. `Buffer` identifies stored TIFF
+units versus decoded JPEG components. Plane geometry, valid extents, sampling and
+source types remain explicit; views carry every original component geometry.
+The existing modern JPEG source path also uses truthful component grids.
+
+[Original JPEG](OJPEG_READER.md) supports the two complete bounded legacy layouts
+through existing JPEG codecs. Source table/interchange windows, original headers,
+encoded dimensions and the libtiff-compatible obsolete SOS interpretation remain
+available as provenance. Native entropy warnings/partial frames are errors; the
+mature codec's small pre-EOI lookahead tolerance remains qualified. No production
+libtiff or Python dependency is added.
+
+RGB/grayscale output is a separate versioned view. It records chroma expansion,
+color conversion and legacy integer reference-level interpretation while retaining
+original tag types and values. The four previously rejected sources have exact
+independent native/source comparisons and exact explicit reference display views.
+This is scoped variant evidence, not arbitrary TIFF/OJPEG coverage.

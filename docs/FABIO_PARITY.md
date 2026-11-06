@@ -48,6 +48,7 @@ cargo build --release --locked --example parity_probe --all-features
   --fabio-source /tmp/dioptrin-io-fabio-2026.6.0 \
   --data /tmp/dioptrin-io-fabio-corpus \
   --probe target/release/examples/parity_probe --probe-timeout 300 \
+  --tiff-reference-library /opt/homebrew/lib/libtiff.6.dylib \
   --report /tmp/dioptrin-io-fabio-acceptance.json
 ```
 
@@ -69,7 +70,7 @@ loaded version. No user configuration file is changed.
 
 ## Current evidence and remaining work
 
-Schema 3 retains schema 2 admission statuses and separates source samples from
+Schema 4 retains earlier admission statuses and separates source samples from
 explicit reference views and modeled reconstruction:
 
 | Status | Meaning |
@@ -80,6 +81,7 @@ explicit reference views and modeled reconstruction:
 | `native_rejected` | The reader was called and explicitly rejected this variant, storage, source or malformed input. |
 | `counts_match` | Every exposed frame's shape/dtype/sample hash matches; semantic header gaps can still remain. |
 | `reference_view_match` | An explicitly selected display, inverse-encoding or exact dtype view matches; raw stored samples are recorded separately. |
+| `component_view_match` | Original native TIFF units/grids match an independent decoder, and the separately selected display view matches. |
 | `reconstruction_match` | An explicit deterministic sparse background view matches; original source components/events are compared independently. |
 
 The executable publishes its compiled features, known readers and adapter
@@ -88,7 +90,7 @@ container/legacy/image readers and detector TIFF acquisition headers. A separate
 feature-disabled run distinguishes unavailable compilation features from missing
 readers. Every original registry entry remains in the ledger.
 
-Current evidence is recorded in `fabio-parity/2026-11-06-rejection-continuation.json`;
+Current evidence is recorded in `fabio-parity/2026-11-06-tiff-codecs.json`;
 the earlier baseline and typed-HDF5 reports are retained. The current report is
 a failing full-parity gate, with exact native successes, unsupported layouts,
 reference differences and remaining readers kept separate.
@@ -210,3 +212,26 @@ Regenerate the complete classification from the three scoped audits with
 `scripts/aggregate_rejection_audits.py`. It rejects missing/duplicate source
 classifications, incorrect event counts, changed baselines and mismatched test
 identities; no case is removed merely because it is malformed.
+
+## TIFF component comparisons and dependency fingerprints
+
+Schema 4 does not fabricate an HWC source array for subsampled YCbCr. The probe
+records every original unit/plane hash, physical shape, valid extent, sampling,
+chunk origin, storage kind and explicit display policy. Source JPEG headers and
+legacy reconstruction windows remain separate from the derived image.
+
+Use `--tiff-reference-library /path/to/libtiff` for independent component checks.
+The test-only oracle records the library version/binary hash plus imagecodecs
+codec versions and native extension hashes. Lossless LZW decodes the complete
+original payload with imagecodecs, preserving padding that libtiff's ordinary
+strip read clips. Legacy JPEG uses libtiff RAW components. For aligned modern
+JPEG, explicit no-fancy YCbCr decoding followed by inverse nearest-grid decimation
+recovers source chroma samples; a reproduced libtiff RAW zero-fill defect makes
+that backend unsuitable for this source. Odd unqualified reference grids are
+rejected rather than inferred. Missing component-reference support is an explicit
+nonmatch, not unverified raw-count success. These are reference/test dependencies;
+production readers do not call Python, imagecodecs or system libtiff.
+
+The full report fingerprints Cargo inputs and every vendored dependency file
+before/after the run, in addition to native Rust, bridge and executable hashes.
+The exact old-LZW backend patch retains its archive/file provenance and licenses.

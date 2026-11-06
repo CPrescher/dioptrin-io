@@ -17,7 +17,7 @@ Every format dependency is optional; default features are empty.
 | Feature | Implemented scope | Important remaining gaps |
 |---|---|---|
 | `hdf5` | Typed 2D/3D images/stacks with ten standard scalar types, both byte orders, Eiger/LImA/Lambda discovery and explicit external-file snapshots; original u32 compatibility reader; opt-in indexed raw u16/u32 chunks and bounded parallel consumers | VDS/master relocation, raw external storage, complex/custom/float16 samples, arbitrary metadata and live refresh; raw fast path retains its narrower contract |
-| `tiff` | Scalar/packed/WhiteIsZero/palette/CFA/color/planar TIFF and BigTIFF; primary IFD pages, strips/tiles, lossless codecs, Group3 1D/Group4 and modern JPEG; Pilatus/MAR acquisition headers | SubIFD traversal and some photometric/compression layouts; F16 explicitly widens to F32; separate Pillow13/TiffIO display views and reference defects are qualified |
+| `tiff` | Scalar/packed/WhiteIsZero/palette/CFA/color/planar TIFF and BigTIFF; primary IFD pages, strips/tiles, lossless codecs, Group3 1D/Group4, legacy LZW, native YCbCr grids/units, modern JPEG and bounded OJPEG; Pilatus/MAR headers | OJPEG/JPEG component reads need `jpeg`; SubIFD/other layouts remain gaps; F16 widening and reference views qualified |
 | `jpeg`, `jpeg2000` | Mature libjpeg-turbo/OpenJPEG backends; lossless high-precision JPEG; original channels, precision, lossy provenance and headers | Unsupported precision/component layouts fail explicitly; see image contracts |
 | `cbf` | Eight integer types, explicit byte-offset dialects, Content-MD5 and raw CIF headers | Semantic CIF/Pilatus maps and multiple sections |
 | `edf` | Ten scalar types, stacks/general headers, internal/outer compression and bounded padding, explicit external-source snapshots | Volumes, float128, byte-offset; default Exact windows remain strict, with explicit bounded external-window compatibility |
@@ -106,8 +106,13 @@ Each module provides `Reader`, `Limits`, `FrameBuffer`, metadata access and
 `read_frame_into`. TIFF/EDF take a frame index; CBF admits one binary image.
 Header orientation remains metadata. TIFF WhiteIsZero samples bypass the
 backend's display inversion; source photometric metadata is retained. Original color channels are exposed through `sample_shape()` alongside
-spatial `shape()`. Consumers explicitly choose display/grayscale conversions through `tiff::view`;
+spatial `shape()`. YCbCr pages expose native component grids and stored sampling units through
+`read_ycbcr_into`, retaining padding and valid extents. `uniform_sample_shape()`
+returns `None` for these layouts; scalar reads reject implicit expansion.
+`sample_shape()` remains a logical shape and is not a component allocation size.
+Consumers explicitly choose display/grayscale conversions through `tiff::view`;
 raw samples remain available. Palette indices and original ColorMap are retained.
+Old-style JPEG requires `tiff,jpeg` and reuses the existing bundled codec.
 See [the image contracts](docs/IMAGE_READERS.md) for bounded chunk windows,
 opaque legacy description metadata and qualified reference display defects.
 
@@ -186,6 +191,10 @@ The [rejection audit](docs/rejection-audits/README.md) separates malformed or
 inconsistent inputs, real codec/layout gaps and unavailable source contracts.
 
 ## Provenance and build
+
+TIFF uses a [minimally patched vendored backend](docs/TIFF_LEGACY_LZW.md) so
+legacy LZW retains the existing raster/predictor implementation. Original upstream
+source hashes, the complete patch and licenses are retained.
 
 The initial HDF5 backend is adapted from `phasesmith-hdf5` 0.8.0. Its original
 MIT notice, independent fixtures and native-codec licenses remain unchanged;
