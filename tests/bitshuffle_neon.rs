@@ -4,6 +4,10 @@ use sha2::{Digest, Sha256};
 use std::ffi::c_void;
 
 unsafe extern "C" {
+    fn bshuf_using_NEON() -> i32;
+    fn bshuf_using_SSE2() -> i32;
+    fn bshuf_using_AVX2() -> i32;
+    fn bshuf_using_AVX512() -> i32;
     fn bshuf_default_block_size(element_bytes: usize) -> usize;
     fn dioptrin_bshuf_unshuffle_block(
         input: *const c_void,
@@ -27,6 +31,26 @@ unsafe extern "C" {
         element_bytes: usize,
         block_elements: usize,
     ) -> i64;
+}
+
+#[test]
+fn linked_backend_reports_isa_and_uses_neon_on_unix_arm64() {
+    hdf5_backend::sync::sync(hdf5_bitshuffle::register_bitshuffle_plugin);
+    // SAFETY: these linked codec queries have no arguments or mutable state.
+    let (neon, sse2, avx2, avx512) = unsafe {
+        (
+            bshuf_using_NEON(),
+            bshuf_using_SSE2(),
+            bshuf_using_AVX2(),
+            bshuf_using_AVX512(),
+        )
+    };
+    eprintln!("Linked Bitshuffle: NEON={neon}, SSE2={sse2}, AVX2={avx2}, AVX512={avx512}");
+    #[cfg(all(target_arch = "aarch64", any(target_os = "macos", target_os = "linux")))]
+    assert_eq!(
+        neon, 1,
+        "Unix ARM64 builds must exercise the optimized kernels"
+    );
 }
 
 #[test]
