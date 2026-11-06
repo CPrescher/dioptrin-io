@@ -1,0 +1,59 @@
+{
+  "crate": "hdf5-bitshuffle",
+  "version": "1.0.0",
+  "source": "https://crates.io/api/v1/crates/hdf5-bitshuffle/1.0.0/download",
+  "baseline_file_sha256": {
+    "Cargo.toml": "84246fea887a20ff5b1b719313fda8965286797916fe39b0c0bf9ff6c2183a65",
+    "Cargo.lock": "47ff9eb5e899a8c926efc75728824716ccff4d14590f9daf0fb2fd291465b255",
+    "build.rs": "23379c01439ba876806a68e7333ebb7a0d2ec88d1f4996a18eec705d5968f445",
+    "README.md": "01c80bd9a765ba573fbfa6033dfb555d89c4c60f6467b123c832f5085b28c5de",
+    "Cargo.toml.orig": "2b715daa1c983db62336c1353848889e4cc112139b005cebb7bf7f164015b417",
+    "patches/0001-bshuf_h5_filter-guard-comp_lvl-read.patch": "e0964b1456b5343cd70668213ece571ce67ee98d78e5a05fcd500734a6d787d2",
+    "src/lib.rs": "9101f467cc27a86a70618a6fc28274a5d8b46763a2ace94eed8e4b023401dd71",
+    "ext/bitshuffle/LICENSE": "ef357c2061cf67db298f9f1565572ee229ad9263582a9f9d0ebff5094f5d10ac",
+    "ext/bitshuffle/lz4/LICENSE": "8b58c446121a109ccf32edc094bba3010a3d85e4ee3702950db55e4d3e87736c",
+    "ext/bitshuffle/lz4/lz4.h": "26b82efc53d1570f3b54eef02e9c4764c1ad374ff03cac04e2ced5ea4d4c552f",
+    "ext/bitshuffle/lz4/README.md": "a26e68719f64ebdef6ea1a9c0ca7bf76892a49d041e336364bcf91bbfb1875eb",
+    "ext/bitshuffle/lz4/lz4.c": "9396f7de527bc8435de9c7569fb7998e56545a84b4f3c2d808c0235c01774539",
+    "ext/bitshuffle/src/bshuf_h5plugin.c": "02b9fd81c7d874cec2c79ffe4f1518528fec1e80988f9fc79addea8030b31547",
+    "ext/bitshuffle/src/iochain.h": "cf3254b6a1d4ca6f0e5bbb472a316a84bf1bae355b242cca70adaef34b5319ac",
+    "ext/bitshuffle/src/bitshuffle_core.h": "e00599bf1d6787597a97d53103917f318ec4bd1d18c3744509489a9e2f649f1e",
+    "ext/bitshuffle/src/bitshuffle.c": "133e9723eb6f672616fb6b0066c4d83dc07af3b7e65e672901f94841180f51f8",
+    "ext/bitshuffle/src/bshuf_h5filter.h": "5bd528e1aa29ee5e046b96f6a24c5000b953011a98ae4254ee7d708aa6c13f2f",
+    "ext/bitshuffle/src/bitshuffle_internals.h": "43b485812f9b118d50c1e46d5367b724467730eb09365f87af8224319d6e4879",
+    "ext/bitshuffle/src/iochain.c": "7115af0b2c435d10086faf7198403e9eb5e7df9f85abf8fde9a7fac3ecf024ba",
+    "ext/bitshuffle/src/hdf5_dl.c": "fd89006baa6308ec70bb77c89cad7cf917004ee4aabe43e66660645636451bb1",
+    "ext/bitshuffle/src/bshuf_h5filter.c": "338182f8c0f1e7fab6e856a4705c208990cdfa2e721c9ea9074ded3d3e343576",
+    "ext/bitshuffle/src/bitshuffle.h": "05622e61888903afd540ca7140600886cf2280ae74ce93a6e779e374bd68a713",
+    "ext/bitshuffle/src/bitshuffle_core.c": "27b3f5a2c3a8e51b3d3bf6008ed03148d180dcc095f3032629a83f190db67181",
+    "ext/bitshuffle/src/lzf_h5plugin.c": "a79ca239b4176f5b881832db33f44a3fe1298be3f012ee2d2ad3598fc3cbec9f"
+  },
+  "upstream_backports": [
+    {
+      "commit": "45af6537796e15099959529899edbd606002c3f5",
+      "file": "patches/0002-upstream-neon-movemask.patch",
+      "sha256": "1495af96fab9bc3b7e8b872ad96278d7de431474867b38014416f99c0dc5b87b",
+      "url": "https://github.com/kiyo-masui/bitshuffle/commit/45af6537796e15099959529899edbd606002c3f5"
+    },
+    {
+      "commit": "aa9bd80f076ccde6320d81833b19b835ecf2acfe",
+      "file": "patches/0003-upstream-msvc-alias.patch",
+      "sha256": "93e028aa53169e8d7230e01ad3bd9cdfdb06a0dbde59e63f22b1165239ad50e3",
+      "url": "https://github.com/kiyo-masui/bitshuffle/commit/aa9bd80f076ccde6320d81833b19b835ecf2acfe"
+    }
+  ],
+  "scope": "NEON kernel update and its upstream MSVC portability follow-up; original HDF5 compression-level bounds patch retained.",
+  "registry_archive_sha256": "59326c31adf0077c652b1a37d3f507873c93f70f83079090bf16a05ed13db492",
+  "registry_vcs": {
+    "git": {
+      "sha1": "f20495b005c09e6a801487135535f176254c6211"
+    },
+    "path_in_vcs": "hdf5-bitshuffle"
+  },
+  "local_adapter": {
+    "file": "dioptrin_unshuffle.c",
+    "sha256": "16c87664b78618c1f81db8190eaf0a2510b8294fa4cdf6e205251f1070655047",
+    "license": "MIT",
+    "scope": "Allocation-free single-block adapter using the unchanged upstream primitive pairs and compile-time ISA selection."
+  }
+}

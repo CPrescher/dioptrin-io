@@ -1,0 +1,50 @@
+{
+  "base_commit": "4fc9071f29d7d54d6388a97dab424c7ec845884c",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: aarch64-apple-darwin\nrelease: 1.99.1\nLLVM version: 23.1.1\n",
+  "source_sha256": {
+    "Cargo.toml": "5c81cdbb06fa1168d42a96a56f3403c6f5228397bb96b2eeb0a3716cf1f84538",
+    "Cargo.lock": "d5f4420491c043c50b7c750227d3f84cb06d50e33d91264590baad93d1034b8a",
+    "examples/benchmark_eiger_decode.rs": "3d0bac7d642a300cbd26fcbe37605d962a90f36394b4ec2b6361a4b893348999",
+    "scripts/benchmark_eiger_neon.py": "dce1253388a0d2d086f0b355629122001be42bbc7c1781dda7b6dab9e7e4fd00",
+    "scripts/generate_bitshuffle_neon_reference.py": "6f3bfcfa7136317eb74b840cccb4dff35d7b819559c61e022fe5bc4aca775189",
+    "src/hdf5/raw.rs": "aa1c6fa0a31303cc769214393039fec9975bff9c1e1d54eca59808e98d3927fc",
+    "tests/bitshuffle_neon.rs": "0dd31eea5b45562fe28b64cae80484f5cc660188ab9989928ef40d2f9a00dfd9",
+    "vendor/hdf5-bitshuffle-1.0.0/build.rs": "cd20fe98bbcaacd92df976b253fb5c96e7bcfe3484f66bfef79feef9e109b10e",
+    "vendor/hdf5-bitshuffle-1.0.0/patches/0002-upstream-neon-movemask.patch": "1495af96fab9bc3b7e8b872ad96278d7de431474867b38014416f99c0dc5b87b",
+    "vendor/hdf5-bitshuffle-1.0.0/patches/0003-upstream-msvc-alias.patch": "93e028aa53169e8d7230e01ad3bd9cdfdb06a0dbde59e63f22b1165239ad50e3"
+  },
+  "upstream": [
+    {
+      "commit": "45af6537796e15099959529899edbd606002c3f5",
+      "file": "patches/0002-upstream-neon-movemask.patch",
+      "sha256": "1495af96fab9bc3b7e8b872ad96278d7de431474867b38014416f99c0dc5b87b",
+      "url": "https://github.com/kiyo-masui/bitshuffle/commit/45af6537796e15099959529899edbd606002c3f5"
+    },
+    {
+      "commit": "aa9bd80f076ccde6320d81833b19b835ecf2acfe",
+      "file": "patches/0003-upstream-msvc-alias.patch",
+      "sha256": "93e028aa53169e8d7230e01ad3bd9cdfdb06a0dbde59e63f22b1165239ad50e3",
+      "url": "https://github.com/kiyo-masui/bitshuffle/commit/aa9bd80f076ccde6320d81833b19b835ecf2acfe"
+    }
+  ],
+  "scope": "Local source change; no application consumer changes or release. Baseline and NEON binaries use this same benchmark example, Cargo release profile, HDF5 backend, checked lz4_flex and data source; only Bitshuffle dependency kernel backport differs.",
+  "build_patch_verification": {
+    "git_apply_mode": "Explicit OUT_DIR git-dir prevents parent-worktree discovery; fail unless destination bytes change",
+    "compiled_core_contains_neonmovemask_bulk": true,
+    "compiled_filter_contains_guard": true
+  },
+  "checks": {
+    "cargo fmt --check": "passed",
+    "cargo clippy --all-targets --all-features -- -D warnings": "passed",
+    "cargo test --all-features": "405 passed; 0 failed",
+    "cargo build --no-default-features --locked": "passed",
+    "cargo build --release --features hdf5 --example benchmark_eiger_decode --locked": "passed",
+    "ruff check scripts/benchmark_eiger_neon.py scripts/generate_bitshuffle_neon_reference.py": "passed"
+  },
+  "generated_sources_sha256": {
+    "bitshuffle_core.c": "d50edf894abda3425ddb8f84a09057e9d50875ba8f7df97db6b0de530995df44",
+    "bshuf_h5filter.c": "abfc96be87e304d045b364ee735dcdfb1b40066e6431c1fb2c769ad75745f45e"
+  },
+  "results_sha256": "f384e36a80e987234f799c131af95801e9e1b1e4a2fc916df02c5641dc10ee3f",
+  "diagnostic_results_sha256": "de3a468b3476ea5c7fbc6780af4db99b248d49e2d5e103a3a011e3f00e21bd95"
+}

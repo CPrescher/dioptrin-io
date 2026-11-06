@@ -16,12 +16,13 @@ use std::{
 
 unsafe extern "C" {
     fn bshuf_default_block_size(element_size: usize) -> usize;
-    fn bshuf_bitunshuffle(
+    fn dioptrin_bshuf_unshuffle_block(
         input: *const c_void,
         output: *mut c_void,
+        scratch: *mut c_void,
+        scratch_bytes: usize,
         elements: usize,
         element_size: usize,
-        block_size: usize,
     ) -> i64;
 }
 
@@ -37,8 +38,14 @@ struct Chunk {
 pub struct FrameBuffer {
     pixels: PixelBuffer,
     compressed: Vec<u8>,
-    shuffled: Vec<u8>,
+    block_scratch: BlockScratch,
     shape: Option<[usize; 2]>,
+}
+
+#[derive(Debug, Default)]
+struct BlockScratch {
+    shuffled: Vec<u8>,
+    unshuffle: Vec<u8>,
 }
 impl FrameBuffer {
     /// Complete original pixels from the last successful read, or `None`.
@@ -227,8 +234,8 @@ impl RawReader {
     #[must_use]
     pub fn worker_payload_bytes(&self) -> usize {
         // The shuffled scratch is bounded by the decoded chunk, even if the
-        // stored block size is larger. Native unshuffle may allocate another
-        // block-sized temporary, covered by the second decoded-frame allowance.
+        // stored block size is larger. Both reusable block buffers are covered
+        // by the two decoded-frame allowances, including retained capacity.
         self.shape[1]
             .saturating_mul(self.shape[2])
             .saturating_mul(self.pixel_type.bytes())
@@ -260,7 +267,7 @@ impl RawReader {
                 self.pixel_type.bytes(),
                 self.chunk_limit,
                 self.configured_block,
-                &mut buffer.shuffled,
+                &mut buffer.block_scratch,
             )?;
         } else {
             if buffer.compressed.len() != output.len() {
@@ -360,7 +367,7 @@ fn decode_bitshuffle_lz4(
     element: usize,
     limit: usize,
     configured_block: usize,
-    scratch: &mut Vec<u8>,
+    scratch: &mut BlockScratch,
 ) -> Result<(), Error> {
     let bad = || Error("malformed or truncated Bitshuffle/LZ4 chunk".into());
     let header = input.get(..12).ok_or_else(bad)?;
@@ -394,23 +401,25 @@ fn decode_bitshuffle_lz4(
         source += 4;
         let end = source.checked_add(compressed).ok_or_else(bad)?;
         let block = input.get(source..end).ok_or_else(bad)?;
-        resize_bytes(scratch, bytes)?;
-        let actual = lz4_flex::block::decompress_into(block, scratch)
+        resize_bytes(&mut scratch.shuffled, bytes)?;
+        resize_bytes(&mut scratch.unshuffle, bytes)?;
+        let actual = lz4_flex::block::decompress_into(block, &mut scratch.shuffled)
             .map_err(|e| Error(format!("invalid LZ4 block: {e}")))?;
         if actual != bytes {
             return Err(bad());
         }
-        // SAFETY: both disjoint slices contain exactly elements*element bytes.
+        // SAFETY: all three disjoint slices contain elements*element bytes.
         // All lengths derive from admitted output, the LZ4 decoder is bounded,
         // and block size is a positive multiple of eight elements. This API
         // reads already decompressed bytes, never untrusted length prefixes.
         let result = unsafe {
-            bshuf_bitunshuffle(
-                scratch.as_ptr().cast(),
+            dioptrin_bshuf_unshuffle_block(
+                scratch.shuffled.as_ptr().cast(),
                 output[dest..dest + bytes].as_mut_ptr().cast(),
+                scratch.unshuffle.as_mut_ptr().cast(),
+                scratch.unshuffle.len(),
                 bytes / element,
                 element,
-                bytes / element,
             )
         };
         if result != bytes as i64 {
@@ -448,8 +457,32 @@ fn read_exact_at(file: &File, mut output: &mut [u8], mut offset: u64) -> std::io
 mod tests {
     use super::*;
     #[test]
+    fn frame_reads_retain_both_block_scratch_allocations() {
+        let path =
+            Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/counts-bitshuffle-lz4.h5");
+        let reader = RawReader::open_snapshot(path, "detector/data", Limits::default()).unwrap();
+        let mut buffer = FrameBuffer::default();
+        reader.read_frame_into(0, &mut buffer).unwrap();
+        let pointers = (
+            buffer.block_scratch.shuffled.as_ptr(),
+            buffer.block_scratch.unshuffle.as_ptr(),
+        );
+        assert!(!buffer.block_scratch.unshuffle.is_empty());
+        for index in [1, 0, 1] {
+            reader.read_frame_into(index, &mut buffer).unwrap();
+            assert_eq!(
+                pointers,
+                (
+                    buffer.block_scratch.shuffled.as_ptr(),
+                    buffer.block_scratch.unshuffle.as_ptr(),
+                )
+            );
+            assert!(buffer.pixels().is_some());
+        }
+    }
+    #[test]
     fn corrupt_chunks_are_bounded_and_rejected() {
-        let mut scratch = Vec::new();
+        let mut scratch = BlockScratch::default();
         let mut output = [0; 32];
         for length in 0..100 {
             assert!(
