@@ -12,6 +12,8 @@ Initial source release of native detector-file input for Rust consumers.
   external bindings, frozen file series and frame navigation.
 - Qualified corpus/proof evidence and a classified inventory separating known
   compatibility cases, optional variants and intentional differences.
+- Windows snapshots and decoded-count caches compare volume/file IDs as well
+  as timestamps/size, detecting same-metadata file replacement.
 - Explicit vendored TIFF/fax dependencies work when this crate is consumed by
   another application; no consumer-side Cargo patch is needed.
 

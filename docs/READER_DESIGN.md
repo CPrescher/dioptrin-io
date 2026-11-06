@@ -8,6 +8,10 @@ nonfinite floats and negative zero are retained when admitted by a backend.
 Stored row order is never flipped. Header orientation is metadata, not an action.
 
 Current backlog and release boundaries are classified in [READING_GAPS.md](READING_GAPS.md).
+Windows snapshots and decoded-count cache stamps include the volume serial and
+128-bit file ID from [FileIdInfo](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_id_info).
+File replacement must invalidate a snapshot even when size and timestamps match.
+Failure to obtain identity is an explicit source-check error.
 The raw fast-path restrictions below are separate from the broader typed reader.
 
 ## HDF5 general reader and raw snapshots

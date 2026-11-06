@@ -4,29 +4,12 @@ use std::{
     collections::BTreeMap,
     path::{Path, PathBuf},
     sync::{Arc, Mutex},
-    time::SystemTime,
 };
 
-#[cfg(unix)]
-use std::os::unix::fs::MetadataExt;
+use crate::source::Stamp;
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-struct Stamp {
-    bytes: u64,
-    modified: SystemTime,
-    created: Option<SystemTime>,
-    #[cfg(unix)]
-    identity: (u64, u64, i64, i64),
-}
 fn stamp(path: &Path) -> Result<Stamp, Error> {
-    let meta = std::fs::metadata(path).map_err(|e| Error(e.to_string()))?;
-    Ok(Stamp {
-        bytes: meta.len(),
-        modified: meta.modified().map_err(|e| Error(e.to_string()))?,
-        created: meta.created().ok(),
-        #[cfg(unix)]
-        identity: (meta.dev(), meta.ino(), meta.ctime(), meta.ctime_nsec()),
-    })
+    Stamp::from_path(path).map_err(Error)
 }
 fn copy_frame(frame: &Frame) -> Result<Frame, Error> {
     let mut pixels = Vec::new();
