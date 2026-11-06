@@ -55,8 +55,11 @@ license are retained under `vendor/tiff-0.11.3`. Existing weezl MIT/Apache notic
 are retained under `licenses/native-readers`. The root optional path dependency
 uses this backend in source/git checkouts. Future crates.io publication requires
 a separately published patched backend or another packaging design: Cargo strips
-the dependency path and registry TIFF 0.11.3 lacks this patch. No publication was
-performed.
+the dependency path and registry TIFF 0.11.3 lacks this patch. The source/Git
+release also binds the sibling patched fax crate explicitly in both manifests;
+a dependency consumer does not inherit a root-only Cargo patch. The additional
+manifest patch is retained in `dioptrin-source-dependencies.patch`. Registry
+publication is disabled for this source release.
 
 Reproduce the external count proof without modifying its source:
 

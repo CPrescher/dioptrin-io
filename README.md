@@ -52,12 +52,24 @@ cases remain documented compatibility gaps; acquired-detector relevance must
 be established separately. The next priority is the [real-file validation
 matrix](docs/READING_GAPS.md#next-acquired-detector-files).
 
-This development crate is not published. Use a local path dependency:
+Version 0.1.0 is distributed as a GitHub source release. Rust consumers can pin
+the release tag; format dependencies stay optional and defaults are empty:
 
 ```toml
 [dependencies]
-dioptrin-io = { path = "../dioptrin-io", features = ["hdf5", "tiff", "cbf", "edf"] }
+dioptrin-io = { git = "https://github.com/CPrescher/dioptrin-io.git", tag = "v0.1.0", features = ["wrappers", "hdf5", "jpeg", "jpeg2000", "mar345"] }
 ```
+
+The source release includes the patched TIFF/fax backends with explicit relative
+dependencies, so consumers need no Cargo patch section. Registry publication is
+disabled until those patched backends have a registry packaging strategy; this
+is a Git dependency, not a crates.io version. See [release scope and consumption](docs/RELEASING.md)
+and [documented unsupported variants](docs/READING_GAPS.md).
+
+No Python scientific package is needed by the readers. HDF5, JPEG/JPEG2000 and
+the small ThunderScan adapter compile bundled native code; the full-feature
+crate is not a pure-Rust codec implementation. A native compiler and CMake are
+build-time requirements for the relevant optional features.
 
 ## Reusable HDF5 input
 

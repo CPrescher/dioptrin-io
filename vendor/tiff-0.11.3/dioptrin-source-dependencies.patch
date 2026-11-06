@@ -1,0 +1,10 @@
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -109,6 +109,7 @@
+ 
+ [dependencies.fax34]
+ version = "0.2.6"
++path = "../fax-0.2.7"
+ optional = true
+ package = "fax"
+ 

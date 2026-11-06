@@ -60,7 +60,11 @@
     "src/decoder/legacy_lzw.rs: weezl exact counts/end boundaries; unchanged legacy padding; explicit recovered modern byte-aligned zero flush",
     "src/decoder/mod.rs: private codec module and explicit new_with_chunk_layouts hook; default constructor supplies no overrides",
     "src/decoder/image.rs: spatial tile index is relative to each plane for correct bottom/right padding in planar images",
-    "src/decoder/mod.rs: metadata-only explicit directory lookup and admitted-offset image constructor/seek reuse existing header, IFD, Image::from_reader and raster path; constructor limits apply before first IFD"
+    "src/decoder/mod.rs: metadata-only explicit directory lookup and admitted-offset image constructor/seek reuse existing header, IFD, Image::from_reader and raster path; constructor limits apply before first IFD",
+    "Cargo.toml: explicit sibling patched fax dependency so source/Git consumers retain strict row decoding without a root-only patch"
   ],
-  "complete_patch": "dioptrin-legacy-lzw.patch"
+  "complete_patch": "dioptrin-legacy-lzw.patch",
+  "additional_patches": [
+    "dioptrin-source-dependencies.patch"
+  ]
 }

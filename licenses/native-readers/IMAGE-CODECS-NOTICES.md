@@ -30,7 +30,9 @@ explicit consumer operations never run as part of stored-count decoding.
 
 The optional TIFF backend is a narrowly patched MIT `tiff` 0.11.3 source copy
 under `vendor/tiff-0.11.3`, with its original LICENSE, baseline file hashes and
-complete local codec patch retained. Legacy LSB/late-change TIFF LZW reuses the
+complete local codec patch retained. The separate source-dependency manifest
+patch binds the sibling MIT fax backend for source/Git consumers; all upstream
+baseline hashes and notices are unchanged. Legacy LSB/late-change TIFF LZW reuses the
 existing MIT/Apache-2.0 `weezl` 0.1.12 decoder; both exact notices are retained as
 `weezl-0.1.12-LICENSE-MIT` and `weezl-0.1.12-LICENSE-APACHE`.
 
