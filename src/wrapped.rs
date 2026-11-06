@@ -436,23 +436,79 @@ impl Reader {
                 tiff::view::read_pillow13(reader, index, max_output_bytes)
             }
             _ => {
-                let mut frame = tiff::FrameBuffer::default();
-                reader
-                    .read_frame_into(index, &mut frame)
-                    .map_err(|e| Error(e.to_string()))?;
-                tiff::view::convert(
-                    reader
+                if policy == tiff::view::Policy::Pillow13
+                    && reader
                         .metadata(index)
-                        .ok_or_else(|| Error("TIFF view frame outside source".into()))?,
-                    &frame,
-                    policy,
-                    max_output_bytes,
-                )
+                        .is_some_and(|metadata| metadata.uniform_sample_shape().is_none())
+                {
+                    let mut components = tiff::ycbcr::Buffer::default();
+                    reader
+                        .read_ycbcr_into(index, &mut components)
+                        .map_err(|error| Error(error.to_string()))?;
+                    tiff::view::convert_ycbcr(
+                        reader.metadata(index).unwrap(),
+                        &components,
+                        policy,
+                        max_output_bytes,
+                    )
+                } else {
+                    let mut frame = tiff::FrameBuffer::default();
+                    reader
+                        .read_frame_into(index, &mut frame)
+                        .map_err(|e| Error(e.to_string()))?;
+                    tiff::view::convert(
+                        reader
+                            .metadata(index)
+                            .ok_or_else(|| Error("TIFF view frame outside source".into()))?,
+                        &frame,
+                        policy,
+                        max_output_bytes,
+                    )
+                }
             }
         }
         .map_err(|e| Error(e.to_string()))?;
         self.source.check()?;
         Ok(image)
+    }
+
+    /// Read original TIFF Y/Cb/Cr grids without chroma expansion. The original
+    /// wrapper and decoded source are checked around each component read.
+    /// # Errors
+    /// Non-TIFF backend, unsupported component storage, bounds or changed source.
+    pub fn read_tiff_ycbcr_into(
+        &mut self,
+        index: usize,
+        buffer: &mut tiff::ycbcr::Buffer,
+    ) -> Result<(), Error> {
+        let result = (|| {
+            self.source.check()?;
+            let Backend::Tiff(reader) = &mut self.backend else {
+                return Err(Error(
+                    "TIFF component read requires the generic TIFF backend".into(),
+                ));
+            };
+            reader
+                .read_ycbcr_into(index, buffer)
+                .map_err(|error| Error(error.to_string()))?;
+            self.source.check()?;
+            Ok(())
+        })();
+        if result.is_err() {
+            *buffer = tiff::ycbcr::Buffer::default();
+        }
+        result
+    }
+
+    /// Original legacy JPEG source windows and header interpretation, when the
+    /// explicitly selected generic TIFF backend admits such a page.
+    #[cfg(feature = "jpeg")]
+    #[must_use]
+    pub fn tiff_ojpeg_metadata(&self, index: usize) -> Option<&tiff::ojpeg::SourceMetadata> {
+        match &self.backend {
+            Backend::Tiff(reader) => reader.ojpeg_metadata(index),
+            _ => None,
+        }
     }
 
     /// Read through the selected backend; original wrapper mutation invalidates

@@ -73,6 +73,10 @@ def main():
         if not comparison["selection"]["all_codec_modules"] or not all(comparison[key] for key in [
                 "probe_unchanged_during_run", "sources_unchanged_during_run", "bridge_unchanged_during_run"]):
             parser.error("comparison must be a complete suite with stable source/probe/bridge hashes")
+        if comparison.get("schema", 0) >= 4 and not all(comparison[key] for key in [
+                "vendored_sources_unchanged_during_run", "build_files_unchanged_during_run",
+                "reference_component_library_unchanged_during_run"]):
+            parser.error("comparison runtime dependency or native reference hashes changed")
         for row in rows:
             identity = row["baseline_sha256"]
             tested = [event for event in comparison["reads"] if event["codec"] == row["codec"]
@@ -96,7 +100,7 @@ def main():
                 parser.error(f"comparison event/test multiplicities differ for {identity}")
             outcomes = collections.Counter(event["status"] for event in tested)
             closed = row["reader_action"] in {"implemented", "explicit_compatibility_closed"}
-            allowed = {"counts_match", "reference_view_match"} if closed else {"native_rejected"}
+            allowed = {"counts_match", "reference_view_match", "component_view_match"} if closed else {"native_rejected"}
             if not set(outcomes) <= allowed:
                 parser.error(f"comparison contradicts classified action for {identity}: {dict(outcomes)}")
             if row["reader_action"] == "explicit_compatibility_closed" and any(not any(

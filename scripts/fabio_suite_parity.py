@@ -81,6 +81,33 @@ def flatten(suite):
             yield item
 
 
+def tiff_component_differences(native, reference):
+    differences = []
+    def compare(actual, expected, location):
+        for key, value in expected.items():
+            if actual.get(key) != value:
+                differences.append({"field": location + key, "native": actual.get(key), "reference": value})
+    compare(native, {key: reference[key] for key in ["shape", "subsampling", "precision", "storage"]}, "")
+    if len(native["chunks"]) != len(reference["chunks"]):
+        return differences + [{"field": "chunks", "native": len(native["chunks"]), "reference": len(reference["chunks"])}]
+    for index, (chunk, expected) in enumerate(zip(native["chunks"], reference["chunks"])):
+        prefix = f"chunks[{index}]."
+        compare(chunk, {key: expected[key] for key in ["origin", "image_shape"]}, prefix)
+        if reference["storage"] == "TiffSamplingUnits":
+            if chunk["sampling_units"] is None:
+                differences.append({"field": prefix + "sampling_units", "native": None, "reference": expected["sampling_units"]})
+            else:
+                compare(chunk["sampling_units"], expected["sampling_units"], prefix + "sampling_units.")
+        elif chunk["sampling_units"] is not None:
+            differences.append({"field": prefix + "sampling_units", "native": "present", "reference": "JPEG has decoded component grids, no stored packed sampling units"})
+        if len(chunk["planes"]) != 3:
+            differences.append({"field": prefix + "planes", "native": len(chunk["planes"]), "reference": 3})
+            continue
+        for plane, expected_plane in zip(chunk["planes"], expected["planes"]):
+            compare(plane, expected_plane, prefix + expected_plane["component"] + ".")
+    return differences
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--fabio-source", type=pathlib.Path, required=True)
@@ -92,6 +119,8 @@ def main():
     parser.add_argument("--probe-timeout", type=float, default=120)
     parser.add_argument("--rejected-source-dir", type=pathlib.Path,
                         help="optional external directory retaining exact rejected inputs before upstream cleanup")
+    parser.add_argument("--tiff-reference-library", type=pathlib.Path,
+                        help="explicit test-only libtiff library for independent native component comparisons")
     parser.add_argument("--reference-filters", choices=["bundled", "default"], default="bundled",
                         help="register the installed test-only hdf5plugin codecs explicitly (avoid host plugin ABI conflicts)")
     args = parser.parse_args()
@@ -134,14 +163,14 @@ def main():
         if {p.stem for p in paths} != requested:
             parser.error("unknown codec test module")
     ledger = json.loads((ROOT / "docs/fabio-2026.6.0-inventory.json").read_text())
-    report = {"schema": 3, "reference": ledger["reference"],
+    report = {"schema": 4, "reference": ledger["reference"],
               "selection": {"all_codec_modules": not bool(args.modules), "modules": []},
               "contract": "read-count/dtype/shape comparison at successful upstream .read calls; not Python API or full header parity",
               "gaps": ["semantic headers not completely compared", "native content autodetection not exercised", "file-like streams materialized by test harness", "read paths bypassing .read not intercepted"],
               "out_of_scope": ["Python mutation/writing APIs and numerical statistics"],
               "reads": [], "reference_rejections": [], "source_files": {}, "reference_import_errors": [], "reference_tests": {}}
     report["environment"] = {"python": sys.version, "packages": {}}
-    for name in ["fabio", "numpy", "h5py", "hdf5plugin", "Pillow", "glymur"]:
+    for name in ["fabio", "numpy", "h5py", "hdf5plugin", "Pillow", "glymur", "imagecodecs"]:
         try:
             report["environment"]["packages"][name] = importlib.metadata.version(name)
         except importlib.metadata.PackageNotFoundError:
@@ -151,13 +180,21 @@ def main():
         report["reference_native_libraries"] = {"glymur_openjpeg": glymur.version.openjpeg_version}
     except ImportError:
         report["reference_native_libraries"] = {"glymur_openjpeg": None}
+    component_reference = None
+    if args.tiff_reference_library is not None:
+        from tiff_component_reference import Reference
+        component_reference = Reference(args.tiff_reference_library)
+        report["reference_native_libraries"]["tiff_components"] = component_reference.metadata
     report["probe_sha256"] = sha_file(probe_path)
     report["rejected_source_capture"] = str(args.rejected_source_dir) if args.rejected_source_dir else None
     report["runtime_capabilities"] = capabilities
     report["reference_filters"] = args.reference_filters
     report["rust_sources_sha256"] = {str(p.relative_to(ROOT)): sha_file(p) for p in sorted((ROOT/"src").rglob("*.rs"))}
+    report["vendored_sources_sha256"] = {str(p.relative_to(ROOT)): sha_file(p)
+        for p in sorted((ROOT/"vendor").rglob("*")) if p.is_file() and not {"target", ".git"}.intersection(p.relative_to(ROOT/"vendor").parts)}
+    report["build_files_sha256"] = {name: sha_file(ROOT/name) for name in ["Cargo.toml", "Cargo.lock"]}
     report["bridge_sources_sha256"] = {name: sha_file(ROOT/name) for name in [
-        "scripts/fabio_suite_parity.py", "scripts/inventory_fabio.py", "examples/parity_probe.rs", "docs/fabio-2026.6.0-inventory.json"]}
+        "scripts/fabio_suite_parity.py", "scripts/tiff_component_reference.py", "scripts/inventory_fabio.py", "examples/parity_probe.rs", "docs/fabio-2026.6.0-inventory.json"]}
     active = False
     current_test = None
 
@@ -250,6 +287,11 @@ def main():
         if codec == "tifimage":
             record["reference_backend"] = getattr(image, "lib", None)
             selected = {"PIL":"tiff-pillow13", "TiffIO":"tiff-tiffio"}.get(record["reference_backend"])
+            compression = image.header.get("compression")
+            if "jpeg" not in capabilities["features"] and (compression == 6 or compression == 7 and selected == "tiff-pillow13"):
+                record.update(status="feature_disabled", required_features=["tiff", "jpeg"],
+                              reason="selected TIFF legacy/native-component or exact JPEG display path requires optional jpeg feature; this is not a missing decoder")
+                return
             if selected is not None:
                 if selected not in capabilities["adapters"]:
                     record.update(status="test_adapter_missing",reason="compiled TIFF reader lacks explicit reference-view adapter")
@@ -329,6 +371,26 @@ def main():
                     report["source_files"].update(manifest)
                 if codec == "edfimage":
                     record["payload_windows"]=[{"frame":frame["frame"],**frame["payload_window"]} for frame in frames]
+                component_frames = [frame for frame in frames if "tiff_components" in frame]
+                if component_frames:
+                    if component_reference is None:
+                        record.update(status="reference_components_unqualified",
+                                      reason="native component grids require the explicit independent --tiff-reference-library oracle")
+                        return
+                    checks = []
+                    for frame in component_frames:
+                        try:
+                            reference_components = component_reference.read(path, frame["frame"])
+                        except Exception as error:
+                            record.update(status="reference_component_error", error=f"{type(error).__name__}: {error}")
+                            return
+                        differences = tiff_component_differences(frame["tiff_components"], reference_components)
+                        checks.append({"frame": frame["frame"], "differences": differences,
+                                       "reference": reference_components})
+                    record["source_component_checks"] = checks
+                    if any(check["differences"] for check in checks):
+                        record.update(status="source_component_mismatch")
+                        return
                 if codec == "sparseimage":
                     import h5py
                     component_checks=[]
@@ -416,8 +478,16 @@ def main():
                         canonical = np.ascontiguousarray(ref.astype(ref.dtype.newbyteorder("<"), copy=False))
                     expected = {"shape": list(ref.shape), "dtype": ref.dtype.name,
                                 "sample_sha256": hashlib.sha256(canonical.tobytes()).hexdigest()}
-                    raw_differences = [{"frame": index, "field": key, "native": frame[key], "reference": value}
-                                       for key, value in expected.items() if frame[key] != value]
+                    if "tiff_components" in frame:
+                        raw_differences = [{"frame": index, "field": "sample_layout",
+                                            "native": "independently verified native component grids",
+                                            "reference": "derived display raster"}]
+                        if frame.get("reference_view") is None:
+                            record.update(status="component_view_unavailable", reason=frame.get("view_error", "no explicit reference display view"))
+                            return
+                    else:
+                        raw_differences = [{"frame": index, "field": key, "native": frame[key], "reference": value}
+                                           for key, value in expected.items() if frame[key] != value]
                     selected = frame
                     if raw_differences and frame.get("reference_view") is not None:
                         selected = frame["reference_view"]
@@ -431,7 +501,7 @@ def main():
                     for key, value in expected.items():
                         if selected[key] != value:
                             failures.append({"frame": index, "field": key, "native": selected[key], "reference": value})
-                status = "mismatch" if failures else "reconstruction_match" if reconstruction else "reference_view_match" if view_policies else "counts_match"
+                status = "mismatch" if failures else "component_view_match" if component_frames else "reconstruction_match" if reconstruction else "reference_view_match" if view_policies else "counts_match"
                 record.update(status=status, frames=len(frames), mismatches=failures)
                 if stored_differences:
                     record["stored_representation_differences"] = stored_differences
@@ -535,7 +605,7 @@ def main():
     report["summary"] = dict(collections.Counter(r["status"] for r in report["reads"]))
     # A green reference suite alone says nothing about Rust parity. Every gap,
     # absent codec, skipped reference test or unmatched read keeps this false.
-    matching_statuses = {"counts_match", "reference_view_match", "reconstruction_match"}
+    matching_statuses = {"counts_match", "reference_view_match", "component_view_match", "reconstruction_match"}
     compared_codecs = {r["codec"] for r in report["reads"] if r["status"] in matching_statuses}
     report["rejection_summary"] = dict(collections.Counter(r["status"] for r in report["reference_rejections"]))
     if any(r["status"] not in {"rejection_match", "reference_environment_difference"} for r in report["reference_rejections"]):
@@ -551,8 +621,13 @@ def main():
     report["download_hashes"] = UtilsTest.resources.all_data
     report["probe_unchanged_during_run"] = report["probe_sha256"] == sha_file(probe_path)
     report["sources_unchanged_during_run"] = all(sha_file(ROOT/p) == h for p,h in report["rust_sources_sha256"].items())
+    report["vendored_sources_unchanged_during_run"] = all(sha_file(ROOT/p) == h for p,h in report["vendored_sources_sha256"].items())
+    report["build_files_unchanged_during_run"] = all(sha_file(ROOT/p) == h for p,h in report["build_files_sha256"].items())
+    report["reference_component_library_unchanged_during_run"] = component_reference is None or component_reference.unchanged()
     report["bridge_unchanged_during_run"] = all(sha_file(ROOT/p) == h for p,h in report["bridge_sources_sha256"].items())
-    if not report["probe_unchanged_during_run"] or not report["sources_unchanged_during_run"] or not report["bridge_unchanged_during_run"]:
+    if not all(report[key] for key in ["probe_unchanged_during_run", "sources_unchanged_during_run",
+            "bridge_unchanged_during_run", "vendored_sources_unchanged_during_run",
+            "build_files_unchanged_during_run", "reference_component_library_unchanged_during_run"]):
         report["full_reading_parity"] = False
     args.report.parent.mkdir(parents=True, exist_ok=True)
     def json_scalar(value):

@@ -115,10 +115,29 @@ fn tiff_view_policy(image: &tiff::view::Image) -> serde_json::Value {
     let p = &image.provenance;
     json!({"name":format!("{:?}",p.policy),"kind":"consumer_display_view",
         "operations":p.operations.iter().map(|operation|format!("{operation:?}")).collect::<Vec<_>>(),
-        "source_shape":p.source_shape,"source_type":format!("{:?}",p.source_type),"source_bits_per_sample":p.source_bits_per_sample,
+        "source_shape":p.source_shape,"source_layout":format!("{:?}",p.source_layout),"source_components":p.source_components.iter().map(|source|json!({"origin":source.origin,"image_shape":source.image_shape,"shapes":source.shapes,"valid_shapes":source.valid_shapes,"sampling":source.sampling})).collect::<Vec<_>>(),"source_type":format!("{:?}",p.source_type),"source_bits_per_sample":p.source_bits_per_sample,
         "source_photometric":p.source_photometric,"source_planar_configuration":p.source_planar_configuration,
         "source_orientation":p.source_orientation,"source_compression":p.source_compression,"source_lossy":p.source_lossy,
         "output_type":format!("{:?}",p.output_type),"output_shape":p.shape})
+}
+
+fn tiff_components_record(buffer: &tiff::ycbcr::Buffer) -> serde_json::Value {
+    fn signature(bytes: &[u8], shape: impl Into<Vec<usize>>) -> serde_json::Value {
+        json!({"dtype":"uint8","shape":shape.into(),"sample_sha256":format!("{:x}",Sha256::digest(bytes))})
+    }
+    let [horizontal, vertical] = buffer.subsampling().unwrap();
+    let chunks: Vec<_> = buffer.chunks().unwrap().iter().map(|chunk| {
+        let planes: Vec<_> = chunk.planes.iter().map(|plane| {
+            let mut info = signature(&plane.samples, plane.shape);
+            info["component"] = json!(format!("{:?}", plane.component));
+            info["sampling"] = json!(plane.sampling);
+            info["valid_shape"] = json!(plane.valid_shape);
+            info
+        }).collect();
+        let units = chunk.sampling_units.as_ref().map(|bytes| signature(bytes, [chunk.planes[1].shape[0],chunk.planes[1].shape[1],horizontal*vertical+2]));
+        json!({"origin":chunk.origin,"image_shape":chunk.image_shape,"sampling_units":units,"planes":planes})
+    }).collect();
+    json!({"shape":buffer.shape(),"subsampling":buffer.subsampling(),"precision":buffer.precision(),"storage":format!("{:?}",buffer.storage().unwrap()),"chunks":chunks})
 }
 
 fn run() -> Result<(), Box<dyn Error>> {
@@ -466,6 +485,40 @@ fn run() -> Result<(), Box<dyn Error>> {
     )?;
     let mut buffer = wrapped::FrameBuffer::default();
     for i in 0..reader.frames() {
+        if let wrapped::Metadata::Tiff(metadata) = reader.metadata(i).unwrap()
+            && metadata.uniform_sample_shape().is_none()
+        {
+            let mut components = tiff::ycbcr::Buffer::default();
+            reader.read_tiff_ycbcr_into(i, &mut components)?;
+            let mut row = json!({"frame":i,"frames":reader.frames(),"fields":{},"sources":reader.source_paths(),"tiff_components":tiff_components_record(&components)});
+            #[cfg(feature = "jpeg")]
+            if let Some(original) = reader.tiff_ojpeg_metadata(i) {
+                row["source_codec"] = json!({
+                    "reconstruction":format!("{:?}",original.reconstruction),
+                    "encoded_shape":original.encoded_shape,"precision":original.precision,"subsampling":original.subsampling,
+                    "source_windows":original.source_windows.iter().map(|window|json!({"offset":window.offset,"bytes":window.bytes,"role":window.role})).collect::<Vec<_>>(),
+                    "baseline_sos_normalized":original.baseline_sos_normalized,
+                    "original_jpeg_header_bytes":original.original_jpeg_header.len(),
+                    "original_jpeg_header_sha256":format!("{:x}",Sha256::digest(&original.original_jpeg_header))});
+            }
+            let policy = match args[1].as_str() {
+                "tiff-pillow13" => Some(tiff::view::Policy::Pillow13),
+                "tiff-tiffio" => Some(tiff::view::Policy::FabioTiffIo),
+                _ => None,
+            };
+            if let Some(policy) = policy {
+                match reader.read_tiff_view(i, policy, limits.frame_bytes) {
+                    Ok(image) => {
+                        row["reference_view"] =
+                            tiff_view_record(i, reader.frames(), &image, &reader.source_paths());
+                        row["view_policy"] = tiff_view_policy(&image);
+                    }
+                    Err(error) => row["view_error"] = json!(error.to_string()),
+                }
+            }
+            println!("{row}");
+            continue;
+        }
         reader.read_frame_into(i, &mut buffer)?;
         let fields = match reader.metadata(i).unwrap() {
             #[cfg(feature = "mar345")]

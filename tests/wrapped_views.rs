@@ -3,6 +3,89 @@ use dioptrin_io::{PixelBuffer, native, tiff, wrapped};
 use std::io::Write;
 
 #[test]
+fn wrapped_ycbcr_keeps_native_grids_and_invalidates_them_on_original_source_changes() {
+    // Independent two-by-two TIFF: one original unit, no color expansion.
+    let entries: [(u16, u16, u32, u32); 12] = [
+        (256, 4, 1, 2),
+        (257, 4, 1, 2),
+        (258, 3, 3, 158),
+        (259, 3, 1, 1),
+        (262, 3, 1, 6),
+        (273, 4, 1, 164),
+        (274, 3, 1, 8),
+        (277, 3, 1, 3),
+        (278, 4, 1, 2),
+        (279, 4, 1, 6),
+        (284, 3, 1, 1),
+        (530, 3, 2, 0x0002_0002),
+    ];
+    let mut tiff_bytes = b"II*\0\x08\0\0\0".to_vec();
+    tiff_bytes.extend(12u16.to_le_bytes());
+    for (tag, kind, count, value) in entries {
+        tiff_bytes.extend(tag.to_le_bytes());
+        tiff_bytes.extend(kind.to_le_bytes());
+        tiff_bytes.extend(count.to_le_bytes());
+        tiff_bytes.extend(value.to_le_bytes());
+    }
+    tiff_bytes.extend(0u32.to_le_bytes());
+    tiff_bytes.extend([8, 0, 8, 0, 8, 0]);
+    tiff_bytes.extend([1, 2, 3, 4, 128, 128]);
+    let file = tempfile::NamedTempFile::new().unwrap();
+    for bzip in [false, true] {
+        let bytes = if bzip {
+            let mut encoder =
+                bzip2::write::BzEncoder::new(Vec::new(), bzip2::Compression::default());
+            encoder.write_all(&tiff_bytes).unwrap();
+            encoder.finish().unwrap()
+        } else {
+            let mut encoder =
+                flate2::write::GzEncoder::new(Vec::new(), flate2::Compression::default());
+            encoder.write_all(&tiff_bytes).unwrap();
+            encoder.finish().unwrap()
+        };
+        std::fs::write(file.path(), bytes).unwrap();
+        let mut reader = wrapped::Reader::open(
+            file.path(),
+            wrapped::Format::Tiff,
+            wrapped::Limits::default(),
+            native::Limits::default(),
+            tiff::Limits::default(),
+        )
+        .unwrap();
+        let mut buffer = tiff::ycbcr::Buffer::default();
+        reader.read_tiff_ycbcr_into(0, &mut buffer).unwrap();
+        assert_eq!(buffer.shape(), Some([2, 2]));
+        assert_eq!(buffer.chunks().unwrap()[0].planes[0].samples, [1, 2, 3, 4]);
+        assert_eq!(
+            buffer.chunks().unwrap()[0].sampling_units.as_deref(),
+            Some(&[1, 2, 3, 4, 128, 128][..])
+        );
+        let mut scalar = wrapped::FrameBuffer::default();
+        assert!(reader.read_frame_into(0, &mut scalar).is_err());
+        assert!(scalar.pixels().is_none());
+        let view = reader
+            .read_tiff_view(0, tiff::view::Policy::Pillow13, 16)
+            .unwrap();
+        assert_eq!(
+            view.provenance.source_layout,
+            tiff::SampleLayout::YCbCrComponents {
+                horizontal: 2,
+                vertical: 2
+            }
+        );
+        assert_eq!(view.provenance.source_orientation, 8);
+        reader.read_tiff_ycbcr_into(0, &mut buffer).unwrap();
+        assert_eq!(buffer.chunks().unwrap()[0].planes[0].samples, [1, 2, 3, 4]);
+        assert!(reader.read_tiff_ycbcr_into(1, &mut buffer).is_err());
+        assert!(buffer.shape().is_none() && buffer.chunks().is_none());
+        reader.read_tiff_ycbcr_into(0, &mut buffer).unwrap();
+        std::fs::write(file.path(), b"changed compressed original").unwrap();
+        assert!(reader.read_tiff_ycbcr_into(0, &mut buffer).is_err());
+        assert!(buffer.shape().is_none() && buffer.storage().is_none());
+    }
+}
+
+#[test]
 fn external_edf_window_compatibility_is_explicit_through_both_wrappers() {
     use dioptrin_io::edf::{ExternalPayloads, ExternalWindow};
     let directory = tempfile::tempdir().unwrap();
