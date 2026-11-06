@@ -1,0 +1,938 @@
+{
+  "schema": 1,
+  "baseline": "docs/fabio-parity/2026-11-06-tiff-codecs.json",
+  "baseline_sha256": "92a8ae29875fdc3671745d095fd0e8960bc4f07da3f5110887994942cfa6c6ab",
+  "audited_events": 2,
+  "audited_unique_sources": 1,
+  "reference": {
+    "h5py": "3.15.1",
+    "hdf5": "1.14.6",
+    "hdf5plugin": "6.0.0",
+    "h5py_native_library": {
+      "path": "/private/tmp/dioptrin-io-fabio-suite-env/lib/python3.13/site-packages/h5py/h5.cpython-313-darwin.so",
+      "sha256": "105b4be37ee63efb999e908b57b1b841dad5e447f165cf3a3bbbad5b0532fb44"
+    },
+    "h5py_vds_policy": "Reference-only implicit HDF5 basename fallback; separately checked against exact bound source assembly"
+  },
+  "probe_sha256": "d007bd45ddc328ab1e0107a68baecf079d2e4ce7b5d0e2e3ca1f95398e9b7bff",
+  "source_code_sha256": "e8e82c3152e40d589e196a31a5165723f056ed7f2875deb235dc8f587dd68207",
+  "rust_sources_sha256": {
+    "src/hdf5.rs": "17143e26bc1dbc3bd9df3c12c86f6bdbfe9c75199f11cdef7b30278576d2e0ec",
+    "src/hdf5/vds.rs": "e8e82c3152e40d589e196a31a5165723f056ed7f2875deb235dc8f587dd68207",
+    "src/hdf5/typed.rs": "8f9fc6e75624262f7aabc93a76f7b233cd6c4e101be0336c64d7ff6facaa8b6e",
+    "src/hdf5/sources.rs": "be360972436d1322c16f34c1a4903de09a5068f6e3861d9a6a40790cab40cfa7",
+    "src/source.rs": "956a62bf69093aa2f9544bc1476b1f03cd28548320353db96ae9987eb0853a02",
+    "src/pixels.rs": "89f9b646e2970e79c77c625529f367f5fe96bd35c9ecf73cad67bbb59dde3c12",
+    "Cargo.lock": "5b3ff211394765be7326de052478348313964c6eca8a00af2e6219b4af40e626"
+  },
+  "records": [
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_master.nxs",
+      "baseline_sha256": "afcebc2cc2f2965415a636e0c8b1e3989729731b87d9f9072f0a9ca58bfc4bf5",
+      "baseline_event_count": 2,
+      "baseline_tests": [
+        "fabio.test.codecs.test_lambdaimage.TestLambda.test_read",
+        "fabio.test.codecs.test_lambdaimage.TestLambda.test_write"
+      ],
+      "input_condition": "incomplete_exact_source_graph",
+      "reader_action": "explicit_source_layout_closed",
+      "classification": "implemented_explicit_immutable_vds_mosaic",
+      "read_policy": {
+        "filename_bindings": [
+          {
+            "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m01.nxs",
+            "actual_file": "/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m01.nxs"
+          },
+          {
+            "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m02.nxs",
+            "actual_file": "/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m02.nxs"
+          },
+          {
+            "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m03.nxs",
+            "actual_file": "/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m03.nxs"
+          }
+        ],
+        "unmapped_regions": "DeclaredFill",
+        "mapped_sources_require_complete_allocated_storage": true,
+        "default_virtual_datasets": "Reject",
+        "native_virtual_dataset_reads": false
+      },
+      "metadata": {
+        "frames": 5,
+        "shape": [
+          1813,
+          1555
+        ],
+        "pixel_type": "I16",
+        "declared_fill": 0,
+        "unmapped_pixels_per_frame": 413623,
+        "mappings": [
+          {
+            "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m01.nxs",
+            "actual_file": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m01.nxs",
+            "dataset": "/entry/instrument/detector/data",
+            "source_shape": [
+              5,
+              516,
+              1554
+            ],
+            "source_dtype": "int16",
+            "source_allocation_status": 2,
+            "source_chunks": [
+              1,
+              516,
+              1554
+            ],
+            "source_origin": [
+              0,
+              0,
+              0
+            ],
+            "virtual_origin": [
+              0,
+              0,
+              1
+            ],
+            "spatial_shape": [
+              516,
+              1554
+            ]
+          },
+          {
+            "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m02.nxs",
+            "actual_file": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m02.nxs",
+            "dataset": "/entry/instrument/detector/data",
+            "source_shape": [
+              5,
+              516,
+              1554
+            ],
+            "source_dtype": "int16",
+            "source_allocation_status": 2,
+            "source_chunks": [
+              1,
+              516,
+              1554
+            ],
+            "source_origin": [
+              0,
+              0,
+              0
+            ],
+            "virtual_origin": [
+              0,
+              647,
+              0
+            ],
+            "spatial_shape": [
+              516,
+              1554
+            ]
+          },
+          {
+            "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m03.nxs",
+            "actual_file": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m03.nxs",
+            "dataset": "/entry/instrument/detector/data",
+            "source_shape": [
+              5,
+              516,
+              1554
+            ],
+            "source_dtype": "int16",
+            "source_allocation_status": 2,
+            "source_chunks": [
+              1,
+              516,
+              1554
+            ],
+            "source_origin": [
+              0,
+              0,
+              0
+            ],
+            "virtual_origin": [
+              0,
+              1297,
+              0
+            ],
+            "spatial_shape": [
+              516,
+              1554
+            ]
+          }
+        ],
+        "source_graph": [
+          {
+            "path": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_master.nxs",
+            "sha256": "afcebc2cc2f2965415a636e0c8b1e3989729731b87d9f9072f0a9ca58bfc4bf5"
+          },
+          {
+            "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m01.nxs",
+            "path": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m01.nxs",
+            "sha256": "5955f4c717da616173f8a741a6444d40c2578deb297d1ffc538d474bb0db160e",
+            "original_exact_path_available": false
+          },
+          {
+            "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m02.nxs",
+            "path": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m02.nxs",
+            "sha256": "1f5d4008f2cff55da914aeb65dc09275e4bcc5f84d38206427814d52cc6621b0",
+            "original_exact_path_available": false
+          },
+          {
+            "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m03.nxs",
+            "path": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m03.nxs",
+            "sha256": "57113dc1a783c132f0e3183a8151764fcb15d5c63aacb3aaa470c7cec731f974",
+            "original_exact_path_available": false
+          }
+        ]
+      },
+      "verification": {
+        "frames": [
+          {
+            "frame": 0,
+            "native": {
+              "declared_shape": [
+                0,
+                1813,
+                1555
+              ],
+              "dtype": "I16",
+              "frame": 0,
+              "frames": 5,
+              "frozen_shape": [
+                5,
+                1813,
+                1555
+              ],
+              "mappings": [
+                {
+                  "declared_dataset": "/entry/instrument/detector/data",
+                  "mapped_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "resolved_dataset": "/entry/instrument/detector/data",
+                  "source_file": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m01.nxs",
+                  "source_origin": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "source_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m01.nxs",
+                  "virtual_origin": [
+                    0,
+                    0,
+                    1
+                  ]
+                },
+                {
+                  "declared_dataset": "/entry/instrument/detector/data",
+                  "mapped_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "resolved_dataset": "/entry/instrument/detector/data",
+                  "source_file": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m02.nxs",
+                  "source_origin": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "source_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m02.nxs",
+                  "virtual_origin": [
+                    0,
+                    647,
+                    0
+                  ]
+                },
+                {
+                  "declared_dataset": "/entry/instrument/detector/data",
+                  "mapped_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "resolved_dataset": "/entry/instrument/detector/data",
+                  "source_file": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m03.nxs",
+                  "source_origin": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "source_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m03.nxs",
+                  "virtual_origin": [
+                    0,
+                    1297,
+                    0
+                  ]
+                }
+              ],
+              "sample_sha256": "b8e665654fd8fdb36d2ed23cf942321efca7134b56b451a0aa17643f80a02c34",
+              "shape": [
+                1813,
+                1555
+              ],
+              "sources": [
+                "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_master.nxs",
+                "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m01.nxs",
+                "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m02.nxs",
+                "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m03.nxs"
+              ],
+              "unmapped_pixels_per_frame": 413623
+            },
+            "independent_assembly": {
+              "dtype": "int16",
+              "shape": [
+                1813,
+                1555
+              ],
+              "sample_sha256": "b8e665654fd8fdb36d2ed23cf942321efca7134b56b451a0aa17643f80a02c34"
+            },
+            "h5py_vds": {
+              "dtype": "int16",
+              "shape": [
+                1813,
+                1555
+              ],
+              "sample_sha256": "b8e665654fd8fdb36d2ed23cf942321efca7134b56b451a0aa17643f80a02c34"
+            },
+            "all_pixels_equal": true,
+            "minimum": 0,
+            "maximum": 548
+          },
+          {
+            "frame": 1,
+            "native": {
+              "declared_shape": [
+                0,
+                1813,
+                1555
+              ],
+              "dtype": "I16",
+              "frame": 1,
+              "frames": 5,
+              "frozen_shape": [
+                5,
+                1813,
+                1555
+              ],
+              "mappings": [
+                {
+                  "declared_dataset": "/entry/instrument/detector/data",
+                  "mapped_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "resolved_dataset": "/entry/instrument/detector/data",
+                  "source_file": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m01.nxs",
+                  "source_origin": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "source_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m01.nxs",
+                  "virtual_origin": [
+                    0,
+                    0,
+                    1
+                  ]
+                },
+                {
+                  "declared_dataset": "/entry/instrument/detector/data",
+                  "mapped_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "resolved_dataset": "/entry/instrument/detector/data",
+                  "source_file": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m02.nxs",
+                  "source_origin": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "source_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m02.nxs",
+                  "virtual_origin": [
+                    0,
+                    647,
+                    0
+                  ]
+                },
+                {
+                  "declared_dataset": "/entry/instrument/detector/data",
+                  "mapped_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "resolved_dataset": "/entry/instrument/detector/data",
+                  "source_file": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m03.nxs",
+                  "source_origin": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "source_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m03.nxs",
+                  "virtual_origin": [
+                    0,
+                    1297,
+                    0
+                  ]
+                }
+              ],
+              "sample_sha256": "5d3c3c1c5ff5763857007d9edd25a34602c67389b543d9cf723b72740ff9de18",
+              "shape": [
+                1813,
+                1555
+              ],
+              "sources": [
+                "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_master.nxs",
+                "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m01.nxs",
+                "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m02.nxs",
+                "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m03.nxs"
+              ],
+              "unmapped_pixels_per_frame": 413623
+            },
+            "independent_assembly": {
+              "dtype": "int16",
+              "shape": [
+                1813,
+                1555
+              ],
+              "sample_sha256": "5d3c3c1c5ff5763857007d9edd25a34602c67389b543d9cf723b72740ff9de18"
+            },
+            "h5py_vds": {
+              "dtype": "int16",
+              "shape": [
+                1813,
+                1555
+              ],
+              "sample_sha256": "5d3c3c1c5ff5763857007d9edd25a34602c67389b543d9cf723b72740ff9de18"
+            },
+            "all_pixels_equal": true,
+            "minimum": 0,
+            "maximum": 2159
+          },
+          {
+            "frame": 2,
+            "native": {
+              "declared_shape": [
+                0,
+                1813,
+                1555
+              ],
+              "dtype": "I16",
+              "frame": 2,
+              "frames": 5,
+              "frozen_shape": [
+                5,
+                1813,
+                1555
+              ],
+              "mappings": [
+                {
+                  "declared_dataset": "/entry/instrument/detector/data",
+                  "mapped_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "resolved_dataset": "/entry/instrument/detector/data",
+                  "source_file": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m01.nxs",
+                  "source_origin": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "source_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m01.nxs",
+                  "virtual_origin": [
+                    0,
+                    0,
+                    1
+                  ]
+                },
+                {
+                  "declared_dataset": "/entry/instrument/detector/data",
+                  "mapped_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "resolved_dataset": "/entry/instrument/detector/data",
+                  "source_file": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m02.nxs",
+                  "source_origin": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "source_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m02.nxs",
+                  "virtual_origin": [
+                    0,
+                    647,
+                    0
+                  ]
+                },
+                {
+                  "declared_dataset": "/entry/instrument/detector/data",
+                  "mapped_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "resolved_dataset": "/entry/instrument/detector/data",
+                  "source_file": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m03.nxs",
+                  "source_origin": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "source_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m03.nxs",
+                  "virtual_origin": [
+                    0,
+                    1297,
+                    0
+                  ]
+                }
+              ],
+              "sample_sha256": "d14f7371103b93a54ae05534fecff3146665410758f227933cd55c434f63f9c4",
+              "shape": [
+                1813,
+                1555
+              ],
+              "sources": [
+                "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_master.nxs",
+                "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m01.nxs",
+                "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m02.nxs",
+                "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m03.nxs"
+              ],
+              "unmapped_pixels_per_frame": 413623
+            },
+            "independent_assembly": {
+              "dtype": "int16",
+              "shape": [
+                1813,
+                1555
+              ],
+              "sample_sha256": "d14f7371103b93a54ae05534fecff3146665410758f227933cd55c434f63f9c4"
+            },
+            "h5py_vds": {
+              "dtype": "int16",
+              "shape": [
+                1813,
+                1555
+              ],
+              "sample_sha256": "d14f7371103b93a54ae05534fecff3146665410758f227933cd55c434f63f9c4"
+            },
+            "all_pixels_equal": true,
+            "minimum": 0,
+            "maximum": 3078
+          },
+          {
+            "frame": 3,
+            "native": {
+              "declared_shape": [
+                0,
+                1813,
+                1555
+              ],
+              "dtype": "I16",
+              "frame": 3,
+              "frames": 5,
+              "frozen_shape": [
+                5,
+                1813,
+                1555
+              ],
+              "mappings": [
+                {
+                  "declared_dataset": "/entry/instrument/detector/data",
+                  "mapped_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "resolved_dataset": "/entry/instrument/detector/data",
+                  "source_file": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m01.nxs",
+                  "source_origin": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "source_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m01.nxs",
+                  "virtual_origin": [
+                    0,
+                    0,
+                    1
+                  ]
+                },
+                {
+                  "declared_dataset": "/entry/instrument/detector/data",
+                  "mapped_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "resolved_dataset": "/entry/instrument/detector/data",
+                  "source_file": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m02.nxs",
+                  "source_origin": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "source_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m02.nxs",
+                  "virtual_origin": [
+                    0,
+                    647,
+                    0
+                  ]
+                },
+                {
+                  "declared_dataset": "/entry/instrument/detector/data",
+                  "mapped_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "resolved_dataset": "/entry/instrument/detector/data",
+                  "source_file": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m03.nxs",
+                  "source_origin": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "source_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m03.nxs",
+                  "virtual_origin": [
+                    0,
+                    1297,
+                    0
+                  ]
+                }
+              ],
+              "sample_sha256": "516943dec2b838f88a0e840c6b2951a34504977361595a0bd23d9e2b6d9865fc",
+              "shape": [
+                1813,
+                1555
+              ],
+              "sources": [
+                "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_master.nxs",
+                "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m01.nxs",
+                "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m02.nxs",
+                "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m03.nxs"
+              ],
+              "unmapped_pixels_per_frame": 413623
+            },
+            "independent_assembly": {
+              "dtype": "int16",
+              "shape": [
+                1813,
+                1555
+              ],
+              "sample_sha256": "516943dec2b838f88a0e840c6b2951a34504977361595a0bd23d9e2b6d9865fc"
+            },
+            "h5py_vds": {
+              "dtype": "int16",
+              "shape": [
+                1813,
+                1555
+              ],
+              "sample_sha256": "516943dec2b838f88a0e840c6b2951a34504977361595a0bd23d9e2b6d9865fc"
+            },
+            "all_pixels_equal": true,
+            "minimum": 0,
+            "maximum": 2641
+          },
+          {
+            "frame": 4,
+            "native": {
+              "declared_shape": [
+                0,
+                1813,
+                1555
+              ],
+              "dtype": "I16",
+              "frame": 4,
+              "frames": 5,
+              "frozen_shape": [
+                5,
+                1813,
+                1555
+              ],
+              "mappings": [
+                {
+                  "declared_dataset": "/entry/instrument/detector/data",
+                  "mapped_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "resolved_dataset": "/entry/instrument/detector/data",
+                  "source_file": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m01.nxs",
+                  "source_origin": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "source_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m01.nxs",
+                  "virtual_origin": [
+                    0,
+                    0,
+                    1
+                  ]
+                },
+                {
+                  "declared_dataset": "/entry/instrument/detector/data",
+                  "mapped_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "resolved_dataset": "/entry/instrument/detector/data",
+                  "source_file": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m02.nxs",
+                  "source_origin": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "source_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m02.nxs",
+                  "virtual_origin": [
+                    0,
+                    647,
+                    0
+                  ]
+                },
+                {
+                  "declared_dataset": "/entry/instrument/detector/data",
+                  "mapped_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "resolved_dataset": "/entry/instrument/detector/data",
+                  "source_file": "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m03.nxs",
+                  "source_origin": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "source_shape": [
+                    5,
+                    516,
+                    1554
+                  ],
+                  "stored_filename": "/gpfs/current/raw/_test_lambda/_fabio_test/l1_test02_00002_m03.nxs",
+                  "virtual_origin": [
+                    0,
+                    1297,
+                    0
+                  ]
+                }
+              ],
+              "sample_sha256": "889db7c5c5714bb0fe80d29b896c97397e21ec857a4df6888a027cc0e766357a",
+              "shape": [
+                1813,
+                1555
+              ],
+              "sources": [
+                "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_master.nxs",
+                "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m01.nxs",
+                "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m02.nxs",
+                "/private/tmp/dioptrin-io-fabio-corpus/l1_test02_00002_m03.nxs"
+              ],
+              "unmapped_pixels_per_frame": 413623
+            },
+            "independent_assembly": {
+              "dtype": "int16",
+              "shape": [
+                1813,
+                1555
+              ],
+              "sample_sha256": "889db7c5c5714bb0fe80d29b896c97397e21ec857a4df6888a027cc0e766357a"
+            },
+            "h5py_vds": {
+              "dtype": "int16",
+              "shape": [
+                1813,
+                1555
+              ],
+              "sample_sha256": "889db7c5c5714bb0fe80d29b896c97397e21ec857a4df6888a027cc0e766357a"
+            },
+            "all_pixels_equal": true,
+            "minimum": 0,
+            "maximum": 4092
+          }
+        ],
+        "all_five_frames_all_pixels_match_independent_assembly_and_h5py": true
+      }
+    }
+  ],
+  "related_preserved_records": [
+    {
+      "source": "/private/tmp/dioptrin-io-fabio-corpus/100nmfilmonglass_1_1.img",
+      "baseline_sha256": "8bb9119e24de97e0748f95bb2f5f32c9e333f90b81bfa2c91f80f171dd53c1b1",
+      "baseline_event_count": 2,
+      "input_condition": "well_formed_variant",
+      "reader_action": "implemented",
+      "classification": "closed_native_codec_gap",
+      "format": "Oxford TY5",
+      "evidence": {
+        "pinned_dxtbx_commit": "41fc3d3cfd26c12e8cb3595b68360a9a9bdbcb05",
+        "authority": [
+          {
+            "path": "src/dxtbx/boost_python/compression.cc",
+            "sha256": "5f7b97afbd4f9fb148e1833c0767b5ce7fc6374319153f41af9902f233cfe382",
+            "url": "https://github.com/cctbx/dxtbx/blob/41fc3d3cfd26c12e8cb3595b68360a9a9bdbcb05/src/dxtbx/boost_python/compression.cc"
+          },
+          {
+            "path": "src/dxtbx/format/FormatROD.py",
+            "sha256": "d172ad2c6e8eaf3d91a7fc93f8dfbc68d7bd6ec130f00ad4422009e7d3a16822",
+            "url": "https://github.com/cctbx/dxtbx/blob/41fc3d3cfd26c12e8cb3595b68360a9a9bdbcb05/src/dxtbx/format/FormatROD.py"
+          },
+          {
+            "path": "LICENSE.txt",
+            "sha256": "4d9ffdacdfaf05baf47e935461a44a7f9be64723e5a385e5250f6cf4882caf35",
+            "url": "https://github.com/cctbx/dxtbx/blob/41fc3d3cfd26c12e8cb3595b68360a9a9bdbcb05/LICENSE.txt"
+          }
+        ],
+        "source_layout": "NHEADER + NX*NY+2*OI+4*OL inline bytecode + NY little-endian u32 row offsets + retained trailer",
+        "original_row_offsets": 1024,
+        "original_trailer_bytes": 24,
+        "reference_bug": "Pinned FabIO ignores row offset table and resets on height rather than width; square baseline hides row-reset defect",
+        "verification": {
+          "independent_dxtbx_signature": {
+            "dtype": "int32",
+            "shape": [
+              1024,
+              1024
+            ],
+            "sample_sha256": "739f8a8e11f602331d874db23e0c4a2c34ad919217a12e9eed5e03b8a00e6bbd"
+          },
+          "native_signature": {
+            "dtype": "I32",
+            "frame_sha256": "739f8a8e11f602331d874db23e0c4a2c34ad919217a12e9eed5e03b8a00e6bbd",
+            "shape": [
+              1024,
+              1024
+            ]
+          },
+          "fabio_signature": {
+            "dtype": "float64",
+            "shape": [
+              1024,
+              1024
+            ],
+            "sample_sha256": "1d1afd868a8064ba591072df16f8e3941b48dc7b15b54730b539d51abc2bbe2b"
+          },
+          "all_samples_equal": true,
+          "sample_count": 1048576,
+          "minimum": -172,
+          "maximum": 460,
+          "representation_policy": "Native I32 retained; test-only exact I32-to-F64 view required for FabIO dtype comparison",
+          "independent_fixtures": [
+            {
+              "file": "non-square.img",
+              "samples_sha256": "8320f4fc7e8f9f56fb4148dab88a1501c9fe9eb4ab368950bb43b90e825784b9",
+              "native_matches": true
+            },
+            {
+              "file": "inline-extrema.img",
+              "samples_sha256": "fcc171478c4f789a00c8b688a03611b74894e293d44f9a30e9726ef9beb776ee",
+              "native_matches": true
+            },
+            {
+              "file": "single-column.img",
+              "samples_sha256": "5b6386faf3ae1527dc795720126b29ffbc439f83c38c7e4d40df44d51cd76672",
+              "native_matches": true
+            },
+            {
+              "file": "single-row.img",
+              "samples_sha256": "728df003f28fea37e52170cb399a0aaf26b3b5ed194537ada13a67acba0376a6",
+              "native_matches": true
+            },
+            {
+              "file": "negative-only.img",
+              "samples_sha256": "935a8cb128157ac785524c9941379b31e9cd81337a08f4b33dab921f7eaa1843",
+              "native_matches": true
+            }
+          ]
+        }
+      },
+      "baseline_tests": [
+        "fabio.test.codecs.test_oxdimage.TestOxd.test_read",
+        "fabio.test.codecs.test_oxdimage.TestOxd.test_write"
+      ]
+    }
+  ]
+}
