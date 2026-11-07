@@ -3,7 +3,9 @@ use dioptrin_io::{
     PixelBuffer,
     hdf5::{
         Limits, Reader,
-        raw::{FrameBuffer, PipelineOptions, RawReader},
+        raw::{
+            BlockBuffer, FrameBuffer, ParallelBlockBuffer, PipelineOptions, PixelBlock, RawReader,
+        },
     },
 };
 use std::{
@@ -113,7 +115,48 @@ fn u16_raw_and_bitshuffle_blocks_tails_and_sentinels_match_library() {
             }
             let reader = RawReader::open_snapshot(&fixture.0, "data", Limits::default()).unwrap();
             let mut buffer = FrameBuffer::default();
+            let mut blocks = BlockBuffer::default();
             for i in 0..2 {
+                let mut restored = Vec::new();
+                reader
+                    .read_frame_blocks(i, &mut blocks, |offset, block| {
+                        assert_eq!(offset, restored.len());
+                        let PixelBlock::U16(samples) = block else {
+                            panic!("dtype")
+                        };
+                        restored.extend_from_slice(samples);
+                        Ok(())
+                    })
+                    .unwrap();
+                assert_eq!(restored, values[i * count..(i + 1) * count]);
+                assert_eq!(blocks.shape(), Some([1, count]));
+                if count == 8193 {
+                    let mut parallel = ParallelBlockBuffer::default();
+                    let states = reader
+                        .fold_frame_blocks(
+                            i,
+                            &mut parallel,
+                            PipelineOptions {
+                                workers: 8,
+                                memory_bytes: 1024 * 1024,
+                            },
+                            |_, range| Ok((range, Vec::<u16>::new())),
+                            |(range, restored), offset, block| {
+                                assert_eq!(offset, range.start + restored.len());
+                                let PixelBlock::U16(v) = block else {
+                                    panic!("dtype");
+                                };
+                                restored.extend_from_slice(v);
+                                Ok(())
+                            },
+                        )
+                        .unwrap();
+                    assert_eq!(
+                        states.into_iter().flat_map(|(_, x)| x).collect::<Vec<_>>(),
+                        values[i * count..(i + 1) * count]
+                    );
+                }
+
                 reader.read_frame_into(i, &mut buffer).unwrap();
                 assert_eq!(
                     buffer.pixels(),
@@ -259,4 +302,259 @@ fn independent_compressed_payload_with_default_block_and_skipped_filter_is_exact
             counts[i * 12..(i + 1) * 12]
         );
     }
+}
+
+#[test]
+fn streamed_independent_u32_counts_and_callback_failure_are_transactional() {
+    let reader =
+        RawReader::open_snapshot(independent(), "detector/data", Limits::default()).unwrap();
+    let fallback = Reader::open(independent(), "detector/data", Limits::default()).unwrap();
+    let mut buffer = BlockBuffer::default();
+    for i in 0..2 {
+        let mut samples = Vec::new();
+        reader
+            .read_frame_blocks(i, &mut buffer, |offset, block| {
+                assert_eq!(offset, samples.len());
+                let PixelBlock::U32(v) = block else {
+                    panic!("dtype")
+                };
+                samples.extend_from_slice(v);
+                Ok(())
+            })
+            .unwrap();
+        assert_eq!(samples, fallback.read_frame(i).unwrap().pixels);
+    }
+    let mut called = 0;
+    let error = reader
+        .read_frame_blocks(0, &mut buffer, |_, _| {
+            called += 1;
+            Err(dioptrin_io::hdf5::Error::from(String::from(
+                "consumer canceled",
+            )))
+        })
+        .unwrap_err();
+    assert!(error.to_string().contains("consumer canceled"));
+    assert_eq!(called, 1);
+    assert!(buffer.shape().is_none());
+    assert!(
+        reader
+            .read_frame_blocks(2, &mut buffer, |_, _| Ok(()))
+            .is_err()
+    );
+    assert!(buffer.shape().is_none());
+    reader
+        .read_frame_blocks(0, &mut buffer, |_, _| Ok(()))
+        .unwrap();
+    assert_eq!(buffer.shape(), Some([3, 4]));
+}
+
+#[test]
+fn streamed_frame_is_invalidated_if_source_changes_during_callback() {
+    use std::io::Write;
+    let fixture = Fixture::new();
+    std::fs::copy(independent(), &fixture.0).unwrap();
+    let reader = RawReader::open_snapshot(&fixture.0, "detector/data", Limits::default()).unwrap();
+    let mut buffer = BlockBuffer::default();
+    let mut changed = false;
+    let result = reader.read_frame_blocks(0, &mut buffer, |_, _| {
+        if !changed {
+            std::fs::OpenOptions::new()
+                .append(true)
+                .open(&fixture.0)
+                .unwrap()
+                .write_all(&[0])
+                .unwrap();
+            changed = true;
+        }
+        Ok(())
+    });
+    assert!(changed && result.is_err());
+    assert!(buffer.shape().is_none());
+}
+
+#[test]
+fn corrupt_later_block_cannot_report_a_complete_frame() {
+    use std::io::{Read, Seek, SeekFrom, Write};
+    hdf5_backend::sync::sync(hdf5_bitshuffle::register_bitshuffle_plugin);
+    let fixture = Fixture::new();
+    let (address, size) = {
+        let file = hdf5_backend::File::create(&fixture.0).unwrap();
+        let data = file
+            .new_dataset::<u32>()
+            .shape((1, 1, 8193))
+            .chunk((1, 1, 8193))
+            .set_filters(&[hdf5_backend::filters::Filter::user(32008, &[0, 2])])
+            .create("data")
+            .unwrap();
+        data.write_raw(&(0..8193_u32).collect::<Vec<_>>()).unwrap();
+        let info = data.chunk_info(0).unwrap();
+        (info.addr, info.size as usize)
+    };
+    let mut file = std::fs::OpenOptions::new()
+        .read(true)
+        .write(true)
+        .open(&fixture.0)
+        .unwrap();
+    let mut encoded = vec![0; size];
+    file.seek(SeekFrom::Start(address)).unwrap();
+    file.read_exact(&mut encoded).unwrap();
+    let mut position = 12;
+    for _ in 0..3 {
+        position +=
+            4 + u32::from_be_bytes(encoded[position..position + 4].try_into().unwrap()) as usize;
+    }
+    file.seek(SeekFrom::Start(address + position as u64))
+        .unwrap();
+    file.write_all(&u32::MAX.to_be_bytes()).unwrap();
+    drop(file);
+    let reader = RawReader::open_snapshot(&fixture.0, "data", Limits::default()).unwrap();
+    let mut buffer = BlockBuffer::default();
+    let mut delivered = 0;
+    let result = reader.read_frame_blocks(0, &mut buffer, |_, _| {
+        delivered += 1;
+        Ok(())
+    });
+    assert!(result.is_err() && delivered == 3);
+    assert!(buffer.shape().is_none());
+}
+
+#[test]
+fn parallel_blocks_preserve_order_counts_budget_and_failure_contracts() {
+    let reader =
+        RawReader::open_snapshot(independent(), "detector/data", Limits::default()).unwrap();
+    let fallback = Reader::open(independent(), "detector/data", Limits::default()).unwrap();
+    let mut buffer = ParallelBlockBuffer::default();
+    for workers in [1, 8, 256] {
+        for frame in 0..2 {
+            let states = reader
+                .fold_frame_blocks(
+                    frame,
+                    &mut buffer,
+                    PipelineOptions {
+                        workers,
+                        memory_bytes: 1024 * 1024,
+                    },
+                    |_, range| Ok((range, Vec::<u32>::new())),
+                    |(range, pixels), offset, block| {
+                        assert_eq!(offset, range.start + pixels.len());
+                        let PixelBlock::U32(values) = block else {
+                            panic!("dtype");
+                        };
+                        pixels.extend_from_slice(values);
+                        Ok(())
+                    },
+                )
+                .unwrap();
+            let mut next = 0;
+            let mut all = Vec::new();
+            for (range, values) in states {
+                assert_eq!(range.start, next);
+                assert_eq!(values.len(), range.len());
+                next = range.end;
+                all.extend(values);
+            }
+            assert_eq!(all, fallback.read_frame(frame).unwrap().pixels);
+            assert_eq!(buffer.shape(), Some([3, 4]));
+        }
+    }
+    for options in [
+        PipelineOptions {
+            workers: 0,
+            memory_bytes: usize::MAX,
+        },
+        PipelineOptions {
+            workers: 257,
+            memory_bytes: usize::MAX,
+        },
+        PipelineOptions {
+            workers: 8,
+            memory_bytes: 1,
+        },
+    ] {
+        assert!(
+            reader
+                .fold_frame_blocks(0, &mut buffer, options, |_, _| Ok(()), |_, _, _| Ok(()))
+                .is_err()
+        );
+        assert!(buffer.shape().is_none());
+    }
+    assert!(
+        reader
+            .fold_frame_blocks(
+                0,
+                &mut buffer,
+                PipelineOptions::default(),
+                |_, _| Ok(()),
+                |_, _, _| Err(String::from("cancel").into())
+            )
+            .is_err()
+    );
+    assert!(buffer.shape().is_none());
+}
+
+#[test]
+fn parallel_block_failure_and_source_change_discard_all_states() {
+    let fixture = Fixture::new();
+    let data: Vec<u32> = (0..8193).map(|i| (i * 17) as u32).collect();
+    let writer = hdf5_backend::File::create(&fixture.0).unwrap();
+    let dataset = writer
+        .new_dataset::<u32>()
+        .shape((1, 1, data.len()))
+        .chunk((1, 1, data.len()))
+        .create("data")
+        .unwrap();
+    dataset.write_raw(&data).unwrap();
+    drop(dataset);
+    writer.flush().unwrap();
+    drop(writer);
+    let reader = RawReader::open_snapshot(&fixture.0, "data", Limits::default()).unwrap();
+    let mut buffer = ParallelBlockBuffer::default();
+    let states = reader
+        .fold_frame_blocks(
+            0,
+            &mut buffer,
+            PipelineOptions {
+                workers: 8,
+                memory_bytes: 1024 * 1024,
+            },
+            |_, range| Ok((range, Vec::<u32>::new())),
+            |(range, pixels), offset, block| {
+                assert_eq!(offset, range.start + pixels.len());
+                let PixelBlock::U32(values) = block else {
+                    panic!("dtype");
+                };
+                pixels.extend_from_slice(values);
+                Ok(())
+            },
+        )
+        .unwrap();
+    assert_eq!(states.len(), 5); // five 8192-byte pieces, including the tail
+    assert_eq!(
+        states.into_iter().flat_map(|(_, x)| x).collect::<Vec<_>>(),
+        data
+    );
+    let changed = std::sync::atomic::AtomicBool::new(false);
+    let result = reader.fold_frame_blocks(
+        0,
+        &mut buffer,
+        PipelineOptions {
+            workers: 8,
+            memory_bytes: 1024 * 1024,
+        },
+        |_, _| Ok(()),
+        |_, _, _| {
+            if !changed.swap(true, std::sync::atomic::Ordering::Relaxed) {
+                use std::io::Write;
+                std::fs::OpenOptions::new()
+                    .append(true)
+                    .open(&fixture.0)
+                    .unwrap()
+                    .write_all(&[0])
+                    .unwrap();
+            }
+            Ok(())
+        },
+    );
+    assert!(result.is_err());
+    assert!(buffer.shape().is_none());
 }

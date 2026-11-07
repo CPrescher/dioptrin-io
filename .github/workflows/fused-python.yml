@@ -1,0 +1,62 @@
+name: Fused Python bridge
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bridge:
+    name: Fused bridge (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-15, windows-latest, windows-11-arm]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          path: io
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: CPrescher/Dioptrin
+          ref: 72e9b72fa3ccaed19aa4ee09e3cb8bf002590a78
+          path: dioptrin
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.13'
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec
+        with:
+          components: rustfmt, clippy
+      - run: python -m pip install maturin numpy pytest h5py
+      - name: Independent HDF5 filter reference (available native wheels)
+        if: matrix.os != 'windows-11-arm'
+        run: python -m pip install --only-binary=":all:" hdf5plugin
+      - if: runner.os == 'Linux'
+        run: python -m pip install patchelf
+      - name: Build the matched Dioptrin Python reference
+        run: python -m pip install ./dioptrin
+      - name: Configure the pinned source dependency
+        shell: python
+        run: |
+          import json
+          from pathlib import Path
+          config = Path('io/python-fused/.cargo/config.toml')
+          config.parent.mkdir(parents=True, exist_ok=True)
+          source = json.dumps(Path('dioptrin').resolve().as_posix())
+          config.write_text('[patch.crates-io]\ndioptrin = { path = ' + source + ' }\n')
+      - run: cargo fmt --check
+        working-directory: io/python-fused
+      - run: cargo clippy --locked --all-targets -- -D warnings
+        working-directory: io/python-fused
+      - run: maturin build --locked --release --out dist
+        working-directory: io/python-fused
+      - run: python -m pip install --no-index --no-deps --find-links io/python-fused/dist dioptrin-io-fused
+      - run: python -m pytest io/python-fused/tests -q
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: fused-bridge-${{ matrix.os }}
+          path: io/python-fused/dist/*.whl
+          if-no-files-found: error

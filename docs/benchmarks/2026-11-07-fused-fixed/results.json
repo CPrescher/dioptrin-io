@@ -1,0 +1,1293 @@
+{
+  "backend": "Neon",
+  "bins": 2000,
+  "cache": "warm OS cache; no decoded-image cache",
+  "dataset": "entry_0000/instrument/eiger/data",
+  "file": "/Users/clemens/Programming/Dioptrin/test_data/eiger_0000.h5",
+  "independent_frame_hashes": 625,
+  "index_seconds": 0.013857125,
+  "input_order": "vertical flip mapped into the block consumer",
+  "latency": [
+    {
+      "frame": 0,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.0316735
+    },
+    {
+      "frame": 0,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.029951875
+    },
+    {
+      "frame": 0,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.031383084
+    },
+    {
+      "frame": 27,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.028531667
+    },
+    {
+      "frame": 27,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.031339417
+    },
+    {
+      "frame": 27,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.028834875
+    },
+    {
+      "frame": 54,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.031435375
+    },
+    {
+      "frame": 54,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.028307875
+    },
+    {
+      "frame": 54,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.031458125
+    },
+    {
+      "frame": 81,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.029978792
+    },
+    {
+      "frame": 81,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.029063708
+    },
+    {
+      "frame": 81,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.030775375
+    },
+    {
+      "frame": 108,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.02934975
+    },
+    {
+      "frame": 108,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.031174667
+    },
+    {
+      "frame": 108,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.028716333
+    },
+    {
+      "frame": 135,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.033051167
+    },
+    {
+      "frame": 135,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.029022458
+    },
+    {
+      "frame": 135,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.029472541
+    },
+    {
+      "frame": 162,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.028452417
+    },
+    {
+      "frame": 162,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.029848208
+    },
+    {
+      "frame": 162,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.032061167
+    },
+    {
+      "frame": 189,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.029917042
+    },
+    {
+      "frame": 189,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.031405958
+    },
+    {
+      "frame": 189,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.028790167
+    },
+    {
+      "frame": 217,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.031195792
+    },
+    {
+      "frame": 217,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.029144541
+    },
+    {
+      "frame": 217,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.03059975
+    },
+    {
+      "frame": 244,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.029904208
+    },
+    {
+      "frame": 244,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.029434125
+    },
+    {
+      "frame": 244,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.031757209
+    },
+    {
+      "frame": 271,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.029597334
+    },
+    {
+      "frame": 271,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.031757209
+    },
+    {
+      "frame": 271,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.030399333
+    },
+    {
+      "frame": 298,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.03167725
+    },
+    {
+      "frame": 298,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.02922775
+    },
+    {
+      "frame": 298,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.030154875
+    },
+    {
+      "frame": 325,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.028504417
+    },
+    {
+      "frame": 325,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.0294665
+    },
+    {
+      "frame": 325,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.03136775
+    },
+    {
+      "frame": 352,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.029579708
+    },
+    {
+      "frame": 352,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.031577208
+    },
+    {
+      "frame": 352,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.029231584
+    },
+    {
+      "frame": 379,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.031228917
+    },
+    {
+      "frame": 379,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.028765916
+    },
+    {
+      "frame": 379,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.029415666
+    },
+    {
+      "frame": 406,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.028481958
+    },
+    {
+      "frame": 406,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.028854959
+    },
+    {
+      "frame": 406,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.031055334
+    },
+    {
+      "frame": 434,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.029776833
+    },
+    {
+      "frame": 434,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.030868958
+    },
+    {
+      "frame": 434,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.028569875
+    },
+    {
+      "frame": 461,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.03075325
+    },
+    {
+      "frame": 461,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.028262625
+    },
+    {
+      "frame": 461,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.029065834
+    },
+    {
+      "frame": 488,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.028718375
+    },
+    {
+      "frame": 488,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.030260208
+    },
+    {
+      "frame": 488,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.030902333
+    },
+    {
+      "frame": 515,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.029247875
+    },
+    {
+      "frame": 515,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.031463375
+    },
+    {
+      "frame": 515,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.028659
+    },
+    {
+      "frame": 542,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.031154208
+    },
+    {
+      "frame": 542,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.028323958
+    },
+    {
+      "frame": 542,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.029502333
+    },
+    {
+      "frame": 569,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.028426708
+    },
+    {
+      "frame": 569,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.029756084
+    },
+    {
+      "frame": 569,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.031208042
+    },
+    {
+      "frame": 596,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.030226417
+    },
+    {
+      "frame": 596,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.03127825
+    },
+    {
+      "frame": 596,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.0283755
+    },
+    {
+      "frame": 624,
+      "mode": "fused-u32",
+      "poisson": false,
+      "seconds": 0.031152292
+    },
+    {
+      "frame": 624,
+      "mode": "current-f64",
+      "poisson": false,
+      "seconds": 0.02821675
+    },
+    {
+      "frame": 624,
+      "mode": "full-u32",
+      "poisson": false,
+      "seconds": 0.029657375
+    },
+    {
+      "frame": 0,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.038009416
+    },
+    {
+      "frame": 0,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.033818916
+    },
+    {
+      "frame": 0,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.035562334
+    },
+    {
+      "frame": 27,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.033666583
+    },
+    {
+      "frame": 27,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.0352665
+    },
+    {
+      "frame": 27,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.033122875
+    },
+    {
+      "frame": 54,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.034944292
+    },
+    {
+      "frame": 54,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.033075292
+    },
+    {
+      "frame": 54,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.033827959
+    },
+    {
+      "frame": 81,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.033357
+    },
+    {
+      "frame": 81,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.034182375
+    },
+    {
+      "frame": 81,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.035261625
+    },
+    {
+      "frame": 108,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.033317834
+    },
+    {
+      "frame": 108,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.035013042
+    },
+    {
+      "frame": 108,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.033455375
+    },
+    {
+      "frame": 135,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.035629125
+    },
+    {
+      "frame": 135,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.033757416
+    },
+    {
+      "frame": 135,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.033708875
+    },
+    {
+      "frame": 162,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.033990791
+    },
+    {
+      "frame": 162,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.033570583
+    },
+    {
+      "frame": 162,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.035447959
+    },
+    {
+      "frame": 189,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.033359583
+    },
+    {
+      "frame": 189,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.035324292
+    },
+    {
+      "frame": 189,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.033863875
+    },
+    {
+      "frame": 217,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.035378209
+    },
+    {
+      "frame": 217,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.033216875
+    },
+    {
+      "frame": 217,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.034051
+    },
+    {
+      "frame": 244,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.033449125
+    },
+    {
+      "frame": 244,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.034688
+    },
+    {
+      "frame": 244,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.035298667
+    },
+    {
+      "frame": 271,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.035042292
+    },
+    {
+      "frame": 271,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.035480208
+    },
+    {
+      "frame": 271,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.033899416
+    },
+    {
+      "frame": 298,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.035176167
+    },
+    {
+      "frame": 298,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.034522125
+    },
+    {
+      "frame": 298,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.034355792
+    },
+    {
+      "frame": 325,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.033970083
+    },
+    {
+      "frame": 325,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.034265916
+    },
+    {
+      "frame": 325,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.035491417
+    },
+    {
+      "frame": 352,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.035149417
+    },
+    {
+      "frame": 352,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.036509291
+    },
+    {
+      "frame": 352,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.033506583
+    },
+    {
+      "frame": 379,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.03570925
+    },
+    {
+      "frame": 379,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.03356725
+    },
+    {
+      "frame": 379,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.034522708
+    },
+    {
+      "frame": 406,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.033289167
+    },
+    {
+      "frame": 406,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.034593958
+    },
+    {
+      "frame": 406,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.037265875
+    },
+    {
+      "frame": 434,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.033769125
+    },
+    {
+      "frame": 434,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.035988292
+    },
+    {
+      "frame": 434,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.034310958
+    },
+    {
+      "frame": 461,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.03519375
+    },
+    {
+      "frame": 461,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.03347425
+    },
+    {
+      "frame": 461,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.034597916
+    },
+    {
+      "frame": 488,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.033880583
+    },
+    {
+      "frame": 488,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.0349675
+    },
+    {
+      "frame": 488,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.035288792
+    },
+    {
+      "frame": 515,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.033594958
+    },
+    {
+      "frame": 515,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.035567625
+    },
+    {
+      "frame": 515,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.036554792
+    },
+    {
+      "frame": 542,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.035087084
+    },
+    {
+      "frame": 542,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.033497958
+    },
+    {
+      "frame": 542,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.033598625
+    },
+    {
+      "frame": 569,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.032956416
+    },
+    {
+      "frame": 569,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.033369209
+    },
+    {
+      "frame": 569,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.034933125
+    },
+    {
+      "frame": 596,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.033675834
+    },
+    {
+      "frame": 596,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.035351166
+    },
+    {
+      "frame": 596,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.032993
+    },
+    {
+      "frame": 624,
+      "mode": "fused-u32",
+      "poisson": true,
+      "seconds": 0.035488625
+    },
+    {
+      "frame": 624,
+      "mode": "current-f64",
+      "poisson": true,
+      "seconds": 0.033348875
+    },
+    {
+      "frame": 624,
+      "mode": "full-u32",
+      "poisson": true,
+      "seconds": 0.033440083
+    }
+  ],
+  "mask": "fixed",
+  "method": "pixel_split",
+  "plan_seconds": 0.757783333,
+  "polarization": 0.965,
+  "shape": [
+    625,
+    3262,
+    3108
+  ],
+  "sums": "float64",
+  "timings": [
+    {
+      "decoder_and_image_capacity_bytes": 130951799,
+      "fps": 34.845961763731665,
+      "max_scaled_error": 0.0,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 17.936081209,
+      "workers": 1
+    },
+    {
+      "decoder_and_image_capacity_bytes": 49845431,
+      "fps": 34.027263876639346,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "full-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 18.367624334,
+      "workers": 1
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9300439,
+      "fps": 32.077091841960936,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 19.484309958,
+      "workers": 1
+    },
+    {
+      "decoder_and_image_capacity_bytes": 49845431,
+      "fps": 34.081332855417656,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "full-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 18.338484667,
+      "workers": 1
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9300439,
+      "fps": 32.14433199313866,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 19.443552292,
+      "workers": 1
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130951799,
+      "fps": 34.839120858667485,
+      "max_scaled_error": 0.0,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 17.939603084,
+      "workers": 1
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9300439,
+      "fps": 32.13350998625393,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 19.450100542,
+      "workers": 1
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130951799,
+      "fps": 34.83438224096626,
+      "max_scaled_error": 0.0,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 17.942043458,
+      "workers": 1
+    },
+    {
+      "decoder_and_image_capacity_bytes": 49845431,
+      "fps": 33.85347581356666,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "full-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 18.461915209,
+      "workers": 1
+    },
+    {
+      "decoder_and_image_capacity_bytes": 1047494036,
+      "fps": 220.40406174471042,
+      "max_scaled_error": 0.0,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 2.835700917,
+      "workers": 8
+    },
+    {
+      "decoder_and_image_capacity_bytes": 398645355,
+      "fps": 251.37213996320315,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "full-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 2.4863535,
+      "workers": 8
+    },
+    {
+      "decoder_and_image_capacity_bytes": 74273828,
+      "fps": 237.1275656669068,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 2.635712125,
+      "workers": 8
+    },
+    {
+      "decoder_and_image_capacity_bytes": 398613522,
+      "fps": 243.69402314658547,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "full-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 2.5646915420000003,
+      "workers": 8
+    },
+    {
+      "decoder_and_image_capacity_bytes": 74268066,
+      "fps": 232.56952276375586,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 2.687368459,
+      "workers": 8
+    },
+    {
+      "decoder_and_image_capacity_bytes": 1047453874,
+      "fps": 214.60215433499047,
+      "max_scaled_error": 0.0,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 2.912365917,
+      "workers": 8
+    },
+    {
+      "decoder_and_image_capacity_bytes": 74259587,
+      "fps": 227.98278662551027,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 2.741435041,
+      "workers": 8
+    },
+    {
+      "decoder_and_image_capacity_bytes": 1047477603,
+      "fps": 190.17856769753962,
+      "max_scaled_error": 0.0,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 3.286385041,
+      "workers": 8
+    },
+    {
+      "decoder_and_image_capacity_bytes": 398638911,
+      "fps": 216.39475007293584,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "full-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 2.8882401250000003,
+      "workers": 8
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130951799,
+      "fps": 29.48685135350556,
+      "max_scaled_error": 0.0,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 21.195888042,
+      "workers": 1
+    },
+    {
+      "decoder_and_image_capacity_bytes": 49845431,
+      "fps": 29.02891234235567,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "full-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 21.530258958,
+      "workers": 1
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9300439,
+      "fps": 27.645519768172193,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 22.6076415,
+      "workers": 1
+    },
+    {
+      "decoder_and_image_capacity_bytes": 49845431,
+      "fps": 28.88006748680493,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "full-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 21.641223667,
+      "workers": 1
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9300439,
+      "fps": 27.618838981014093,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 22.629481291,
+      "workers": 1
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130951799,
+      "fps": 29.405441843993145,
+      "max_scaled_error": 0.0,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 21.25456925,
+      "workers": 1
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9300439,
+      "fps": 27.892262654542453,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 22.407647875,
+      "workers": 1
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130951799,
+      "fps": 29.50996391294174,
+      "max_scaled_error": 0.0,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 21.179287167,
+      "workers": 1
+    },
+    {
+      "decoder_and_image_capacity_bytes": 49845431,
+      "fps": 29.01604294544608,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "full-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 21.539808208,
+      "workers": 1
+    },
+    {
+      "decoder_and_image_capacity_bytes": 1047474006,
+      "fps": 203.47202766769527,
+      "max_scaled_error": 0.0,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 3.071675292,
+      "workers": 8
+    },
+    {
+      "decoder_and_image_capacity_bytes": 398634425,
+      "fps": 218.9119428461197,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "full-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 2.85502925,
+      "workers": 8
+    },
+    {
+      "decoder_and_image_capacity_bytes": 74284213,
+      "fps": 208.185833670178,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 3.0021255,
+      "workers": 8
+    },
+    {
+      "decoder_and_image_capacity_bytes": 398621488,
+      "fps": 210.35504395098212,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "full-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 2.971167167,
+      "workers": 8
+    },
+    {
+      "decoder_and_image_capacity_bytes": 74240765,
+      "fps": 200.38500101697954,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 3.118995917,
+      "workers": 8
+    },
+    {
+      "decoder_and_image_capacity_bytes": 1047453973,
+      "fps": 180.89480480016283,
+      "max_scaled_error": 0.0,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 3.455046709,
+      "workers": 8
+    },
+    {
+      "decoder_and_image_capacity_bytes": 74218041,
+      "fps": 196.50880105932393,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 3.180519125,
+      "workers": 8
+    },
+    {
+      "decoder_and_image_capacity_bytes": 1047460301,
+      "fps": 175.8610125701127,
+      "max_scaled_error": 0.0,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 3.553942917,
+      "workers": 8
+    },
+    {
+      "decoder_and_image_capacity_bytes": 398634221,
+      "fps": 197.50203115591887,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "full-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 3.164524417,
+      "workers": 8
+    }
+  ],
+  "validation": [
+    {
+      "decoder_and_image_capacity_bytes": 130951799,
+      "frames": 625,
+      "max_scaled_error": 0.0,
+      "mode": "current-f64",
+      "workers": 1
+    },
+    {
+      "decoder_and_image_capacity_bytes": 49845431,
+      "frames": 625,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "full-u32",
+      "workers": 1
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9300439,
+      "frames": 625,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "fused-u32",
+      "workers": 1
+    },
+    {
+      "decoder_and_image_capacity_bytes": 1047474173,
+      "frames": 625,
+      "max_scaled_error": 0.0,
+      "mode": "current-f64",
+      "workers": 8
+    },
+    {
+      "decoder_and_image_capacity_bytes": 398606980,
+      "frames": 625,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "full-u32",
+      "workers": 8
+    },
+    {
+      "decoder_and_image_capacity_bytes": 74271396,
+      "frames": 625,
+      "max_scaled_error": 6.2576363652768716e-15,
+      "mode": "fused-u32",
+      "workers": 8
+    }
+  ],
+  "weights": "float64"
+}

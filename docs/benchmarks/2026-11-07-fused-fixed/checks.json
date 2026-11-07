@@ -1,0 +1,21 @@
+{
+  "dioptrin": {
+    "passed": 193,
+    "suites": 2,
+    "strict_clippy": true
+  },
+  "standalone_benchmark": {
+    "release_build": true,
+    "strict_clippy": true,
+    "rustfmt": true
+  },
+  "dioptrin-io": {
+    "passed": 414,
+    "suites": 69,
+    "strict_clippy": true,
+    "no_default_features_build": true
+  },
+  "manuals": {
+    "sphinx_nitpicky_warnings_as_errors": true
+  }
+}

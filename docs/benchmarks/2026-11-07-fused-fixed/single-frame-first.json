@@ -1,0 +1,4623 @@
+{
+  "backend": "Neon",
+  "latency": [
+    {
+      "decoder_and_image_capacity_bytes": 130786547,
+      "frame": 0,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.029279834
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9135187,
+      "frame": 0,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.031099292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9135187,
+      "frame": 0,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030461833
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9307219,
+      "frame": 0,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.005231291
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9135187,
+      "frame": 27,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030631209
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9135187,
+      "frame": 27,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030529167
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9307219,
+      "frame": 27,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.005872458
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130786547,
+      "frame": 27,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.02835075
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9135187,
+      "frame": 54,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030830917
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9307219,
+      "frame": 54,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.005567083
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130786547,
+      "frame": 54,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.028669833
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9135187,
+      "frame": 54,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030760292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9315995,
+      "frame": 81,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.005519208
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130795323,
+      "frame": 81,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.028143125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9143963,
+      "frame": 81,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.031056625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9143963,
+      "frame": 81,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.03130325
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130795323,
+      "frame": 108,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.028328209
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9143963,
+      "frame": 108,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030199291
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9143963,
+      "frame": 108,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030973583
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9315995,
+      "frame": 108,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.008119417
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9143963,
+      "frame": 135,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030021292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9143963,
+      "frame": 135,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030313166
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9315995,
+      "frame": 135,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.005206208
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130795323,
+      "frame": 135,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.031095
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9143963,
+      "frame": 162,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030887375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9315995,
+      "frame": 162,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.00622475
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130795323,
+      "frame": 162,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.028944041
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9143963,
+      "frame": 162,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030162375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9315995,
+      "frame": 189,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.005241833
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130795323,
+      "frame": 189,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.028388167
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9143963,
+      "frame": 189,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.0303845
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9143963,
+      "frame": 189,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.031236209
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130899055,
+      "frame": 217,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.028703542
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 217,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030193709
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 217,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030515041
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9419727,
+      "frame": 217,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.006055875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 244,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.0300665
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 244,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.031402875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9419727,
+      "frame": 244,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.005229333
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130899055,
+      "frame": 244,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.028380375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 271,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030353375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9419727,
+      "frame": 271,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.0050245
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130899055,
+      "frame": 271,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.028620583
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 271,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030670209
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9419727,
+      "frame": 298,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.005759709
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130899055,
+      "frame": 298,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.028188208
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 298,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030325958
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 298,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030738208
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130899055,
+      "frame": 325,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.02875225
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 325,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.029857625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 325,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030600834
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9419727,
+      "frame": 325,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.008236792
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 352,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030407834
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 352,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.031068583
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9419727,
+      "frame": 352,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.005259
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130899055,
+      "frame": 352,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.028164959
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 379,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.03081125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9419727,
+      "frame": 379,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.005374625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130899055,
+      "frame": 379,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.028245792
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 379,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030229208
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 406,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.005473833
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 406,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.029337875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 406,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030315
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 406,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030985792
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 434,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.028757708
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 434,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030529875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 434,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030365042
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 434,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.005053416
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 461,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.03027575
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 461,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.031291042
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 461,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.004910167
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 461,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.028048708
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 488,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.03042925
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 488,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.005028083
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 488,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.028592084
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 488,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030954958
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 515,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.005442542
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 515,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.027878791
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 515,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.0305495
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 515,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030312958
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 542,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.028389375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 542,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030328167
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 542,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.031048209
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 542,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.004897208
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 569,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.029911625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 569,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030638125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 569,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.005094209
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 569,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030697083
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 596,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.031452417
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 596,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.005205791
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 596,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.028270542
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 596,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030733333
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 624,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.005759792
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 624,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.028337333
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 624,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.031209292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 624,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": false,
+      "seconds": 0.030346833
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 0,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030372792
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 0,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.0303085
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 0,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.006258708
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 0,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.027954333
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 27,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030894
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 27,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.005523
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 27,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.028897958
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 27,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030146833
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 54,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.005749125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 54,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.028597542
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 54,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.03001875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 54,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030775
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 81,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.028724959
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 81,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030464125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 81,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.031316292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 81,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.008315792
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 108,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030706125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 108,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030409666
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 108,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.005179292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 108,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.028668541
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 135,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.031017583
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 135,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.004936708
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 135,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.028520416
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 135,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030794209
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 162,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.005709375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 162,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.0287315
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 162,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.03019875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 162,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.03118675
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 189,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.028527875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 189,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030421709
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 189,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030659625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 189,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.005473125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 217,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.029781542
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 217,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.031642
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 217,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.00847925
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 217,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.028689083
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 244,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030749792
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 244,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.004991209
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 244,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.028678333
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 244,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.031285041
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 271,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.005666208
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 271,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.028387167
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 271,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.03088475
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 271,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.031160708
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 298,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.028489792
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 298,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030363167
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 298,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.031724625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 298,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.005329708
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 325,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030415125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 325,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.031125083
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 325,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.005362458
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 325,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.028331833
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 352,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.032772291
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 352,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.005449833
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 352,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.028456166
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 352,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030064625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 379,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.005326
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 379,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.02900225
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 379,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030683084
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 379,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.043968084
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 406,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.028823375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 406,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030451166
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 406,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030684459
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 406,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.00558675
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 434,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030721459
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 434,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.031134
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 434,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.004997083
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 434,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.028491458
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 461,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.031209584
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 461,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.005481292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 461,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.028791041
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 461,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030584083
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 488,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.005537375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 488,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.028821333
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 488,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.03093175
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 488,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.031527042
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 515,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.028960583
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 515,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030455208
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 515,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.031016542
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 515,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.005942958
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 542,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.03081775
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 542,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.031224459
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 542,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.005146
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 542,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.028456458
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 569,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030818541
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 569,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.005862458
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 569,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.027980708
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 569,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.03042425
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 596,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.004755708
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 596,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.028381917
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 596,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030706417
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 596,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030706542
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 624,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.028420791
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 624,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030942875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 624,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.030689916
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 624,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": false,
+      "seconds": 0.004902292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 0,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030805375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 0,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.005147375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 0,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.029172791
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 0,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.031129833
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 27,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.005485417
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 27,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.028522083
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 27,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030464292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 27,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.032040833
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 54,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.028609875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 54,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030485917
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 54,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.03117325
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 54,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.005450625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 81,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030137125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 81,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.031092
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 81,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.005177125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 81,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.027996083
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 108,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.031137625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 108,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.00533425
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 108,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.029368875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 108,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.032919167
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 135,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.005331542
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 135,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.028556541
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 135,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030926583
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 135,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030367959
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 162,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.028493958
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 162,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030559541
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 162,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.031054417
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 162,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.005831542
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 189,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030604667
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 189,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030628959
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 189,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.005333709
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 189,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.028820542
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 217,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030617834
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 217,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.00556375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 217,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.028777042
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 217,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030549792
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 244,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.005607042
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 244,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.028370167
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 244,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030371208
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 244,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030891875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 271,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.028675917
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 271,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.03036575
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 271,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030855125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 271,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.006435125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 298,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030567958
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 298,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030987667
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 298,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.005129291
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 298,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.028016375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 325,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.03115725
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 325,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.005147416
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 325,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.028803208
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 325,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030396542
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 352,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.005371459
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 352,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.028461375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 352,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030552666
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 352,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.03077625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 379,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.0285385
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 379,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030351792
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 379,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.031017166
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 379,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.005437875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 406,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030193
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 406,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030950417
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 406,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.005123834
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 406,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.028168084
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 434,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.031495167
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 434,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.006404917
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 434,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.029076958
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 434,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.031182167
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 461,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.006121209
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 461,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.0285215
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 461,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030658
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 461,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030290208
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 488,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.028768833
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 488,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030413334
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 488,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030496083
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 488,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.005624833
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 515,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030094834
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 515,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030167333
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 515,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.005596334
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 515,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.0285495
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 542,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030581375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 542,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.005696375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 542,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030995958
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 542,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030496958
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 569,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.00553375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 569,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.028406458
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 569,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030613125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 569,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.031106875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 596,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.028554209
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 596,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.0308415
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 596,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030480459
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 596,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.005301042
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 624,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030688208
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 624,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.030590334
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 624,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.005370083
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 624,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": false,
+      "seconds": 0.028332709
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130786547,
+      "frame": 0,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.033968917
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9135187,
+      "frame": 0,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036760917
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9135187,
+      "frame": 0,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036695375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9307219,
+      "frame": 0,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.006643334
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9135187,
+      "frame": 27,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.03578875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9135187,
+      "frame": 27,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036686708
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9307219,
+      "frame": 27,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.0066355
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130786547,
+      "frame": 27,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.03382625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9135187,
+      "frame": 54,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036802959
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9307219,
+      "frame": 54,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.00604125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130786547,
+      "frame": 54,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.033639042
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9135187,
+      "frame": 54,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036507583
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9315995,
+      "frame": 81,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.005911
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130795323,
+      "frame": 81,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.033699792
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9143963,
+      "frame": 81,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036058916
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9143963,
+      "frame": 81,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036834167
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130795323,
+      "frame": 108,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.033199417
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9143963,
+      "frame": 108,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036196541
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9143963,
+      "frame": 108,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036406
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9315995,
+      "frame": 108,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.006028834
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9143963,
+      "frame": 135,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.035948958
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9143963,
+      "frame": 135,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036259459
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9315995,
+      "frame": 135,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.00645275
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130795323,
+      "frame": 135,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.033010583
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9143963,
+      "frame": 162,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036439292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9315995,
+      "frame": 162,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.006293
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130795323,
+      "frame": 162,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.033246541
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9143963,
+      "frame": 162,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036528375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9315995,
+      "frame": 189,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.006373292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130795323,
+      "frame": 189,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.033054417
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9143963,
+      "frame": 189,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.037141042
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9143963,
+      "frame": 189,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036499667
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130899055,
+      "frame": 217,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.0341045
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 217,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.037001334
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 217,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036402708
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9419727,
+      "frame": 217,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.006455417
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 244,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036604959
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 244,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.035736292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9419727,
+      "frame": 244,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.006655791
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130899055,
+      "frame": 244,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.033392833
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 271,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036439417
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9419727,
+      "frame": 271,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.006149625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130899055,
+      "frame": 271,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.033207459
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 271,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036030666
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9419727,
+      "frame": 298,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.011012708
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130899055,
+      "frame": 298,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.033592208
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 298,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036117708
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 298,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.03702975
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130899055,
+      "frame": 325,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.033056166
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 325,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.03640625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 325,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036325291
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9419727,
+      "frame": 325,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.005914958
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 352,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.035752667
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 352,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036680709
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9419727,
+      "frame": 352,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.006111375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130899055,
+      "frame": 352,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.033409875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 379,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036660375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9419727,
+      "frame": 379,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.006662709
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130899055,
+      "frame": 379,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.033611709
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9247695,
+      "frame": 379,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036500208
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 406,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.006421334
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 406,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.033485209
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 406,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036806875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 406,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036863042
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 434,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.033721958
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 434,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.037316042
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 434,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.037286625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 434,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.006834583
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 461,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036350375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 461,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036744292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 461,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.0061525
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 461,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.033234042
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 488,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036562333
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 488,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.006004375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 488,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.033672584
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 488,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036830125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 515,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.006701125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 515,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.033536125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 515,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036425709
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 515,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036939875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 542,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.033136375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 542,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.0368095
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 542,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036311625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 542,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.007781583
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 569,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.03676925
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 569,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036457625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 569,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.006064083
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 569,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.032885
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 596,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.0368095
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 596,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.006108459
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 596,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.033491166
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 596,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036503
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 624,
+      "mode": "fused-blocks-8",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.006131
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 624,
+      "mode": "current-f64",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.033645917
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 624,
+      "mode": "fused-u32",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036257458
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 624,
+      "mode": "fused-blocks-1",
+      "pass": 0,
+      "poisson": true,
+      "seconds": 0.036603916
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 0,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.03593825
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 0,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.03649925
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 0,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.006563
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 0,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.034287667
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 27,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.037363583
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 27,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.005901917
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 27,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.033320041
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 27,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036615292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 54,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.006421375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 54,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.03323425
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 54,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.03649275
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 54,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.037349125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 81,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.033425625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 81,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036321834
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 81,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036950042
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 81,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.006921792
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 108,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036315709
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 108,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.03659925
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 108,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.00651975
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 108,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.033935708
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 135,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036509917
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 135,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.006097541
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 135,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.034112166
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 135,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036805709
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 162,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.006249917
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 162,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.0332715
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 162,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036677375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 162,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036092042
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 189,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.033555375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 189,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.045722875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 189,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.042419833
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 189,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.01493975
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 217,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.043072875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 217,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.039919292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 217,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.011043583
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 217,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.034585
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 244,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.03684125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 244,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.006182292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 244,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.033792042
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 244,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.0363775
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 271,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.007937
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 271,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.033334166
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 271,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.03663825
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 271,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036355458
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 298,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.033402792
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 298,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036320083
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 298,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036901416
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 298,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.006509834
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 325,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036834959
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 325,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036503292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 325,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.006633458
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 325,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.033402
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 352,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.03895075
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 352,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.006008917
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 352,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.033232375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 352,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036174333
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 379,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.005888208
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 379,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.033224916
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 379,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036169458
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 379,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036371291
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 406,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.032910917
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 406,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.0364785
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 406,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036628
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 406,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.006193375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 434,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036563625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 434,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036106417
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 434,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.005869875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 434,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.033338166
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 461,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.037300292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 461,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.006103958
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 461,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.033696791
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 461,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036313333
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 488,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.00679775
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 488,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.033373792
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 488,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.0366425
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 488,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.037916208
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 515,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.033237
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 515,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036434291
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 515,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.037193583
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 515,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.006284625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 542,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036731958
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 542,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036848167
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 542,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.005992208
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 542,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.033619375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 569,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.037011292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 569,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.006860584
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 569,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.0335755
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 569,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036633292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 596,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.006079917
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 596,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.033025458
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 596,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036521708
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 596,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036279875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 624,
+      "mode": "current-f64",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.033177083
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 624,
+      "mode": "fused-u32",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036320292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 624,
+      "mode": "fused-blocks-1",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.036781167
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 624,
+      "mode": "fused-blocks-8",
+      "pass": 1,
+      "poisson": true,
+      "seconds": 0.00620025
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 0,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036986875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 0,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.006229583
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 0,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.03322025
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 0,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036882084
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 27,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.0059675
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 27,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.033176
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 27,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036573834
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 27,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036542208
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 54,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.032964083
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 54,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036481042
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 54,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.039450667
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 54,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.006237708
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 81,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.03601
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 81,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036410416
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 81,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.00615325
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 81,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.033495958
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 108,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.037097708
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 108,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.006820583
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 108,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.033424166
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 108,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036558584
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 135,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.00593225
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 135,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.03304325
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 135,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036286625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 135,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.037330833
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 162,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.033669125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 162,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036455458
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 162,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.037213375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 162,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.007709792
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 189,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036346958
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 189,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.037123292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 189,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.006005625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 189,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.033857583
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 217,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.037003
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 217,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.006333042
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 217,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.033656083
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 217,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036127291
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 244,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.006674917
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 244,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.032956667
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 244,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036345042
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 244,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036164875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 271,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.033152125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 271,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.035920583
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 271,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.0367675
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 271,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.006055916
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 298,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036342541
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 298,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036948916
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 298,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.007011792
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 298,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.032981083
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 325,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.037426792
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 325,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.005979167
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 325,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.033672792
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 325,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036084125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 352,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.006147083
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 352,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.033991125
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 352,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036026583
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 352,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036646292
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 379,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.033170042
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 379,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036339625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 379,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036756875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 379,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.006242583
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 406,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036586042
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 406,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.03703225
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 406,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.006446917
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 406,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.0337575
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 434,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.039605584
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 434,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.006006958
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 434,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.034149084
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 434,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.037147875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 461,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.006360084
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 461,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.03357925
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 461,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036220541
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 461,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.037071334
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 488,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.033738083
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 488,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036746875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 488,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.037720208
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 488,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.006054
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 515,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036136541
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 515,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036478417
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 515,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.006317416
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 515,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.033038708
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 542,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036597583
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 542,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.0064335
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 542,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.033973291
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 542,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036176333
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 569,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.00602875
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 569,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.033255375
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 569,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036702792
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 569,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.03733525
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 596,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.033438667
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 596,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.037216625
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 596,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036978208
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 596,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.006270708
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 624,
+      "mode": "fused-u32",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.037215333
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9251083,
+      "frame": 624,
+      "mode": "fused-blocks-1",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.036677833
+    },
+    {
+      "decoder_and_image_capacity_bytes": 9423115,
+      "frame": 624,
+      "mode": "fused-blocks-8",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.006312166
+    },
+    {
+      "decoder_and_image_capacity_bytes": 130902443,
+      "frame": 624,
+      "mode": "current-f64",
+      "pass": 2,
+      "poisson": true,
+      "seconds": 0.033751583
+    }
+  ],
+  "max_scaled_error": 6.2576363652768716e-15,
+  "parallel_count_checks": "every block compared exactly with previously independently hash-validated full-frame decoder",
+  "passes": 3,
+  "scope": "one frame at a time; parallel blocks within each frame",
+  "shape": [
+    625,
+    3262,
+    3108
+  ],
+  "validation_frames": 625
+}

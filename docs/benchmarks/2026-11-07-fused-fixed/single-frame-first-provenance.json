@@ -1,0 +1,43 @@
+{
+  "recorded_utc": "2026-11-07T07:50:06.668927+00:00",
+  "hardware": {
+    "cpu": "Apple M4 Pro",
+    "memory_bytes": "51539607552",
+    "physical_cpus": "14",
+    "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83",
+    "rust": "rustc 1.99.1 (58cf8f9c3 2026-10-13)"
+  },
+  "bases": {
+    "dioptrin": "bc27eb5bfae376f83ecc99befc7b578624a7dfbd",
+    "dioptrin-io": "f3589d64023eb9ff32a27553dd70e4b07b23c767"
+  },
+  "source_sha256": {
+    "/Users/clemens/Programming/dioptrin-io-worktrees/fused-blocks/src/hdf5/raw.rs": "781d08009e6ebd712d1c4717e0ba09fbea8fd3a59eef3b4bd8335798c92316ee",
+    "/Users/clemens/Programming/dioptrin-io-worktrees/fused-blocks/tests/raw.rs": "5988ed19c3bc066c68df6e7f9e5e2b5157c2007f4555cc42814ad6895b906841",
+    "/Users/clemens/Programming/dioptrin-io-worktrees/fused-blocks/benchmarks/fused-eiger/src/main.rs": "4c9cf5f3d96b815c86a57364fc5468092aad219a6e633b15ee634aa01d569232",
+    "/Users/clemens/Programming/dioptrin-io-worktrees/fused-blocks/benchmarks/fused-eiger/Cargo.toml": "e2b9f97723fa3e0a8b763bf61dc53185eb7423e0dab0f61ca9e0bd2351b0a32d",
+    "/Users/clemens/Programming/dioptrin-io-worktrees/fused-blocks/benchmarks/fused-eiger/Cargo.lock": "07d06d060c6813e1d7ec2e38b52da8e5925c22d23191bcc46885c67bd40a2719",
+    "/Users/clemens/Programming/Dioptrin-fused-blocks/src/integration.rs": "545030b98fb9fe6fb4f9e192e25f8f233f10ef3314c722b681936dd45c0d5fd3",
+    "/Users/clemens/Programming/Dioptrin-fused-blocks/src/integration/fixed.rs": "2a94ee11582393dda5bc57ad52ecc62a7a9261bb206f1e6226d3921f4e43f563",
+    "/Users/clemens/Programming/Dioptrin-fused-blocks/src/lut/csc.rs": "8c220b1cc6f4b52a7e554bea75c2847c3c0686c61014a495063a70b1baf33d88",
+    "/Users/clemens/Programming/Dioptrin-fused-blocks/src/lut/prepared.rs": "70ebb88e45d30cfeca53130f48d27e64e28ab9e5dea69b15ff92da0ee5200c13",
+    "/Users/clemens/Programming/Dioptrin-fused-blocks/src/lut/mod.rs": "79d23d56d821112abeedd81c6f67f05667ad76b6aeaa14da68e3e22e48f0719d"
+  },
+  "binary_sha256": "31eab9503aba2ffad3fce37c5f05e95703f238b490563517c1ad9da9cad45b8f",
+  "inputs": {
+    "file": "/Users/clemens/Programming/Dioptrin/test_data/eiger_0000.h5",
+    "file_bytes": 5687072680,
+    "count_reference_sha256": "2f44251471cf500a69bb4e7a8a0d69e690da063a227c2d6aad72985ba4ef54b9",
+    "count_reference_path": "/Users/clemens/Programming/dioptrin-io/docs/benchmarks/2026-11-05-native-eiger/count-reference.json",
+    "poni_sha256": "5999ef2e03bf1ef2db21e6ab042f3170bc86f81e99ce59488d1bd896ddf1b00e",
+    "mask_raw_sha256": "0c510a98b4afac57dab92441a40a58d1c740807ac51f89fd6178baf895175af1",
+    "mask_original": "/Users/clemens/Programming/Dioptrin/test_data/eiger_0000.mask",
+    "mask_original_sha256": "65801632091fd5b0198cc32127056590ee789121b0fe6ff5ef67c034f513bb5d"
+  },
+  "load_at_start": "load averages 11.15 9.39 8.46 (includes preceding compilation); mediaanalysisd ~98%, WindowServer ~51%, Chrome helpers ~82%; own benchmark setup excluded from timing",
+  "commands": {
+    "build": "cargo build --manifest-path benchmarks/fused-eiger/Cargo.toml --release --config patch.crates-io.dioptrin.path=PATH_TO_MODIFIED_DIOPTRIN",
+    "run": "fused-eiger-bench FILE PONI MASK_U8 COUNT_REFERENCE_JSON single-frame.json 3 single"
+  },
+  "scope": "Single-frame parallel API; one compressed read and 1 or 8 block workers per image, three latency passes."
+}

@@ -1,0 +1,8 @@
+index 0.019s; fixed float64 CSC setup 0.795s
+Parallel 1/8-core counts and float64/Poisson results validated for all 625 frames; max scaled error 6.2576363652768716e-15
+Completed single-frame pass 0, poisson=false
+Completed single-frame pass 1, poisson=false
+Completed single-frame pass 2, poisson=false
+Completed single-frame pass 0, poisson=true
+Completed single-frame pass 1, poisson=true
+Completed single-frame pass 2, poisson=true
