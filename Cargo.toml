@@ -131,3 +131,7 @@ required-features = ["edf"]
 [[example]]
 name = "api_probe"
 required-features = ["wrappers"]
+
+[[example]]
+name = "benchmark_windows_simd"
+required-features = ["hdf5"]

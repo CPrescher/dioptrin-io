@@ -53,6 +53,7 @@ fn patch_core(ext: &Path, manifest: &Path, out_dir: &Path) -> PathBuf {
     for name in [
         "0002-upstream-neon-movemask.patch",
         "0003-upstream-msvc-alias.patch",
+        "0004-msvc-simd-selection.patch",
     ] {
         let patch = manifest.join("patches").join(name);
         println!("cargo:rerun-if-changed={}", patch.display());
@@ -101,7 +102,9 @@ fn compile(
         "src/bshuf_h5plugin.c",
         "src/iochain.c",
     ];
-    cc::Build::new()
+    let avx2 = env::var("CARGO_CFG_TARGET_ARCH").as_deref() == Ok("x86_64");
+    let mut build = cc::Build::new();
+    build
         .files(src.iter().map(|s| ext.join(s)))
         .file(h5filter)
         .file(core)
@@ -109,8 +112,52 @@ fn compile(
         .flag("-w")
         .include(hdf5_include)
         .include(lz4_include)
-        .include(src_include)
-        .compile("bitshuffle");
+        .include(src_include);
+    if avx2 {
+        build.define("DIOPTRIN_HAVE_AVX2", None);
+    }
+    build.compile("bitshuffle");
+    if avx2 {
+        compile_avx2(core, src_include);
+    }
+}
+
+// Keep AVX2 instructions in a separate translation unit. The normal library
+// remains baseline-compatible; Rust dispatch checks both CPU and OS support.
+// Extract the exact two pinned upstream function bodies instead of maintaining
+// another copy of the SIMD algorithm. Their SSE remainder helpers stay baseline.
+fn compile_avx2(core: &Path, src_include: &Path) {
+    let text = fs::read_to_string(core).unwrap();
+    let mut source = String::from("/* MIT: generated from retained upstream Bitshuffle. */\n#include <immintrin.h>\n#include <stdint.h>\n#include <stddef.h>\n#define CHECK_MULT_EIGHT(n) do { if ((n) % 8) return -80; } while (0)\nint64_t bshuf_trans_byte_bitrow_SSE(const void *, void *, size_t, size_t);\nint64_t bshuf_shuffle_bit_eightelem_SSE(const void *, void *, size_t, size_t);\n");
+    for (name, renamed) in [
+        (
+            "bshuf_trans_byte_bitrow_AVX",
+            "dioptrin_trans_byte_bitrow_avx2",
+        ),
+        (
+            "bshuf_shuffle_bit_eightelem_AVX",
+            "dioptrin_shuffle_bit_eightelem_avx2",
+        ),
+    ] {
+        let start = text
+            .find(&format!("int64_t {name}("))
+            .expect("missing upstream AVX2 kernel");
+        let end = start + text[start..].find("\n}\n").expect("missing kernel end") + 3;
+        let function = &text[start..end];
+        assert!(function.contains("__m256i"), "selected an AVX2 stub");
+        source.push_str(&function.replace(name, renamed));
+        source.push('\n');
+    }
+    let dest = core.with_file_name("dioptrin_avx2.c");
+    fs::write(&dest, source).unwrap();
+    let mut build = cc::Build::new();
+    build.file(dest).include(src_include).flag("-w");
+    if build.get_compiler().is_like_msvc() {
+        build.flag("/arch:AVX2");
+    } else {
+        build.flag("-mavx2");
+    }
+    build.compile("dioptrin_bitshuffle_avx2");
 }
 
 fn write_cmake_file(includes: &[&Path]) {

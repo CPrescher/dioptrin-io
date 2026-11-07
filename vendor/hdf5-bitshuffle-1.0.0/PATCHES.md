@@ -39,3 +39,20 @@ or scalar builds, using disjoint scratch supplied by the Rust frame worker.
 It handles one validated block without generic blocking or heap allocations.
 Compressed parsing, checked LZ4, tail handling and resource admission remain in
 Rust. Original upstream source files and patches remain unchanged.
+
+## Windows SIMD and runtime AVX2
+
+Local patch `0004-msvc-simd-selection.patch` recognizes MSVC x64 and ARM64
+macros, selects `arm64_neon.h` with MSVC, and uses a byte-array load for the
+NEON mask constant. It does not change the mask values or kernel arithmetic.
+
+The build extracts the two exact upstream AVX2 decode primitives from the
+pinned patched core and compiles them separately with `/arch:AVX2` or `-mavx2`.
+Their SSE remainder helpers remain in the baseline object. The raw reader uses
+Rust CPU/OS feature detection before allowing AVX2; the rest of the library is
+not compiled with that flag. General HDF5 filter reads use the baseline SSE2 or
+NEON kernels; runtime AVX2 selection applies to the indexed raw reader.
+
+The raw reader exposes Auto/Scalar/Sse2/Avx2/Neon selection for reproducible
+comparisons, rejecting explicit unsupported choices. Auto prefers AVX2 where
+available, then NEON, SSE2 and scalar. Each worker keeps its reusable scratch.

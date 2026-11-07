@@ -289,6 +289,8 @@ Matched Eiger9M read/decode measurements are documented in
 [`docs/benchmarks/2026-11-06-neon-eiger/`](docs/benchmarks/2026-11-06-neon-eiger/);
 the subsequent scratch-reuse comparison is in
 [`docs/benchmarks/2026-11-06-scratch-eiger/`](docs/benchmarks/2026-11-06-scratch-eiger/).
+Windows SSE2/NEON support, runtime AVX2 dispatch and matched native CI benchmarks
+are described in [`docs/benchmarks/2026-11-07-windows-simd/`](docs/benchmarks/2026-11-07-windows-simd/).
 The HDF5 feature requires a C compiler, CMake >=3.26 and Git in addition to Rust.
 TIFF, CBF and EDF use Rust libraries without an installed HDF5/Python requirement.
 JPEG/JPEG2000 build their vendored C codecs; those optional features also require

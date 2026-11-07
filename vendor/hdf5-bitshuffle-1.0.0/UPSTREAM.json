@@ -52,8 +52,15 @@
   },
   "local_adapter": {
     "file": "dioptrin_unshuffle.c",
-    "sha256": "16c87664b78618c1f81db8190eaf0a2510b8294fa4cdf6e205251f1070655047",
+    "sha256": "0c3a107e5ead65d09ad5d57ec39295b5ba58d1fb5733c85ce36f7d5e51e102ba",
     "license": "MIT",
-    "scope": "Allocation-free single-block adapter using the unchanged upstream primitive pairs and compile-time ISA selection."
-  }
+    "scope": "Allocation-free block adapter, explicit scalar/SSE2/NEON selection and separately compiled AVX2 kernels with runtime CPU/OS checks in Rust."
+  },
+  "local_patches": [
+    {
+      "file": "patches/0004-msvc-simd-selection.patch",
+      "sha256": "db5b411e55f68dd6b6f11eee723af8cc8bc35b9ced92e35f730fd87182b0dfdf",
+      "scope": "Recognize MSVC x64/ARM64 and ARM64 header; replace compiler-specific vector casts and initializers with equivalent NEON reinterpret/load intrinsics."
+    }
+  ]
 }
