@@ -1,0 +1,689 @@
+{
+  "source": "/Users/clemens/Programming/Dioptrin/test_data/eiger_0000.h5",
+  "source_sha256": "2b749693d7a942b35d89806d99b9a1025ee119850be0ade27428f1dc11d0a1f3",
+  "reference_sha256": "2f44251471cf500a69bb4e7a8a0d69e690da063a227c2d6aad72985ba4ef54b9",
+  "shape": [
+    625,
+    3262,
+    3108
+  ],
+  "workers": [
+    1,
+    8
+  ],
+  "repeats": 3,
+  "python": "3.13.5 (main, Jun 12 2025, 12:22:43) [Clang 20.1.4 ]",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "cpu_physical": 14,
+  "cpu_logical": 14,
+  "ram_bytes": 51539607552,
+  "versions": {
+    "bslz4-to-sparse": "0.0.22a3",
+    "h5py": "3.16.0",
+    "numpy": "2.4.1"
+  },
+  "jon_build": {
+    "built_utc": "2026-10-27T20:47:55Z",
+    "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+    "git": "v0.0.22.a3",
+    "modified": [],
+    "platform": "darwin_arm64",
+    "src_sha256": "fe6b3c32d2a22d0e0a06fa000a3c14df7ee26459db697fa603a65369a7db9ced",
+    "version": "0.0.22a3"
+  },
+  "binary_sha256": {
+    "native-neon-allocating": "3ea8b2aa1bf3ca114e995e5723e9422e0646384d28716df9f7d8d25e63eca096",
+    "native-neon-scratch": "9f8a833fdbee27594b7de8f65a1d0f972ffa47d7bd911a064f7c99a035d8ab2a"
+  },
+  "validation": [
+    {
+      "fps": 12.445714365966982,
+      "frames": 625,
+      "mode": "verify",
+      "seconds": 50.218089667,
+      "setup_seconds": 0.009986708,
+      "shape": [
+        625,
+        3262,
+        3108
+      ],
+      "worker_payload_bytes": 130935415,
+      "workers": 1,
+      "implementation": "native-neon-allocating",
+      "load_average_before": [
+        4.86279296875,
+        6.4482421875,
+        5.90283203125
+      ],
+      "all_count_hashes_match": true,
+      "ordered_count_hashes_sha256": "98d985d87e0fd37da5fa0e3c4285bce805332b688cead95ec41ee0b7d25e58ac"
+    },
+    {
+      "fps": 12.541551246380923,
+      "frames": 625,
+      "mode": "verify",
+      "seconds": 49.834345666,
+      "setup_seconds": 0.019692625,
+      "shape": [
+        625,
+        3262,
+        3108
+      ],
+      "worker_payload_bytes": 130935415,
+      "workers": 1,
+      "implementation": "native-neon-scratch",
+      "load_average_before": [
+        3.8251953125,
+        5.92724609375,
+        5.740234375
+      ],
+      "all_count_hashes_match": true,
+      "ordered_count_hashes_sha256": "98d985d87e0fd37da5fa0e3c4285bce805332b688cead95ec41ee0b7d25e58ac"
+    },
+    {
+      "workers": 1,
+      "mode": "verify",
+      "frames": 625,
+      "seconds": 15.22046133398544,
+      "fps": 41.063144295399965,
+      "setup_seconds": 0.005680124973878264,
+      "worker_payload_bytes": 130935415,
+      "implementation": "jon-kcb",
+      "load_average_before": [
+        2.82177734375,
+        5.34619140625,
+        5.53515625
+      ],
+      "all_count_hashes_match": true,
+      "ordered_count_hashes_sha256": "98d985d87e0fd37da5fa0e3c4285bce805332b688cead95ec41ee0b7d25e58ac"
+    },
+    {
+      "workers": 1,
+      "mode": "verify",
+      "frames": 625,
+      "seconds": 14.139528250030708,
+      "fps": 44.20232336949733,
+      "setup_seconds": 0.002352458017412573,
+      "worker_payload_bytes": 130935415,
+      "implementation": "jon-neon",
+      "load_average_before": [
+        2.7802734375,
+        5.2138671875,
+        5.48388671875
+      ],
+      "all_count_hashes_match": true,
+      "ordered_count_hashes_sha256": "98d985d87e0fd37da5fa0e3c4285bce805332b688cead95ec41ee0b7d25e58ac"
+    },
+    {
+      "fps": 94.79297032974144,
+      "frames": 625,
+      "mode": "verify",
+      "seconds": 6.593315916,
+      "setup_seconds": 0.008639166,
+      "shape": [
+        625,
+        3262,
+        3108
+      ],
+      "worker_payload_bytes": 130935415,
+      "workers": 8,
+      "implementation": "native-neon-allocating",
+      "load_average_before": [
+        3.0498046875,
+        5.1533203125,
+        5.45751953125
+      ],
+      "all_count_hashes_match": true,
+      "ordered_count_hashes_sha256": "98d985d87e0fd37da5fa0e3c4285bce805332b688cead95ec41ee0b7d25e58ac"
+    },
+    {
+      "fps": 95.3139488018074,
+      "frames": 625,
+      "mode": "verify",
+      "seconds": 6.557277375,
+      "setup_seconds": 0.008543833,
+      "shape": [
+        625,
+        3262,
+        3108
+      ],
+      "worker_payload_bytes": 130935415,
+      "workers": 8,
+      "implementation": "native-neon-scratch",
+      "load_average_before": [
+        3.60595703125,
+        5.2333984375,
+        5.48388671875
+      ],
+      "all_count_hashes_match": true,
+      "ordered_count_hashes_sha256": "98d985d87e0fd37da5fa0e3c4285bce805332b688cead95ec41ee0b7d25e58ac"
+    },
+    {
+      "workers": 8,
+      "mode": "verify",
+      "frames": 625,
+      "seconds": 2.0725788329727948,
+      "fps": 301.5566839035666,
+      "setup_seconds": 0.00223687500692904,
+      "worker_payload_bytes": 130935415,
+      "implementation": "jon-kcb",
+      "load_average_before": [
+        4.11767578125,
+        5.3125,
+        5.51025390625
+      ],
+      "all_count_hashes_match": true,
+      "ordered_count_hashes_sha256": "98d985d87e0fd37da5fa0e3c4285bce805332b688cead95ec41ee0b7d25e58ac"
+    },
+    {
+      "workers": 8,
+      "mode": "verify",
+      "frames": 625,
+      "seconds": 1.9221657919697464,
+      "fps": 325.1540541461457,
+      "setup_seconds": 0.002257417014334351,
+      "worker_payload_bytes": 130935415,
+      "implementation": "jon-neon",
+      "load_average_before": [
+        4.42822265625,
+        5.35693359375,
+        5.5244140625
+      ],
+      "all_count_hashes_match": true,
+      "ordered_count_hashes_sha256": "98d985d87e0fd37da5fa0e3c4285bce805332b688cead95ec41ee0b7d25e58ac"
+    }
+  ],
+  "samples": [
+    {
+      "fps": 95.36829809863364,
+      "frames": 625,
+      "mode": "bench",
+      "seconds": 6.553540458,
+      "setup_seconds": 0.008764583,
+      "shape": [
+        625,
+        3262,
+        3108
+      ],
+      "worker_payload_bytes": 130935415,
+      "workers": 1,
+      "implementation": "native-neon-allocating",
+      "load_average_before": [
+        4.42822265625,
+        5.35693359375,
+        5.5244140625
+      ],
+      "repeat": 0
+    },
+    {
+      "fps": 97.6204920561027,
+      "frames": 625,
+      "mode": "bench",
+      "seconds": 6.402344291,
+      "setup_seconds": 0.008720708,
+      "shape": [
+        625,
+        3262,
+        3108
+      ],
+      "worker_payload_bytes": 130935415,
+      "workers": 1,
+      "implementation": "native-neon-scratch",
+      "load_average_before": [
+        4.26904296875,
+        5.29443359375,
+        5.5
+      ],
+      "repeat": 0
+    },
+    {
+      "workers": 1,
+      "mode": "bench",
+      "frames": 625,
+      "seconds": 7.90117895900039,
+      "fps": 79.10211922083477,
+      "setup_seconds": 0.002286000002641231,
+      "worker_payload_bytes": 130935415,
+      "implementation": "jon-kcb",
+      "load_average_before": [
+        4.0869140625,
+        5.2392578125,
+        5.4794921875
+      ],
+      "repeat": 0
+    },
+    {
+      "workers": 1,
+      "mode": "bench",
+      "frames": 625,
+      "seconds": 6.741002749942709,
+      "fps": 92.71617638864068,
+      "setup_seconds": 0.0022020419710315764,
+      "worker_payload_bytes": 130935415,
+      "implementation": "jon-neon",
+      "load_average_before": [
+        3.91943359375,
+        5.18505859375,
+        5.458984375
+      ],
+      "repeat": 0
+    },
+    {
+      "fps": 646.9762746543598,
+      "frames": 625,
+      "mode": "bench",
+      "seconds": 0.966032333,
+      "setup_seconds": 0.008988375,
+      "shape": [
+        625,
+        3262,
+        3108
+      ],
+      "worker_payload_bytes": 130935415,
+      "workers": 8,
+      "implementation": "native-neon-allocating",
+      "load_average_before": [
+        3.7841796875,
+        5.11279296875,
+        5.4296875
+      ],
+      "repeat": 0
+    },
+    {
+      "fps": 725.3485227116777,
+      "frames": 625,
+      "mode": "bench",
+      "seconds": 0.86165475,
+      "setup_seconds": 0.008860625,
+      "shape": [
+        625,
+        3262,
+        3108
+      ],
+      "worker_payload_bytes": 130935415,
+      "workers": 8,
+      "implementation": "native-neon-scratch",
+      "load_average_before": [
+        3.7841796875,
+        5.11279296875,
+        5.4296875
+      ],
+      "repeat": 0
+    },
+    {
+      "workers": 8,
+      "mode": "bench",
+      "frames": 625,
+      "seconds": 1.011337625037413,
+      "fps": 617.9934223023483,
+      "setup_seconds": 0.002206167031545192,
+      "worker_payload_bytes": 130935415,
+      "implementation": "jon-kcb",
+      "load_average_before": [
+        3.7841796875,
+        5.11279296875,
+        5.4296875
+      ],
+      "repeat": 0
+    },
+    {
+      "workers": 8,
+      "mode": "bench",
+      "frames": 625,
+      "seconds": 0.8733044169493951,
+      "fps": 715.6725511399956,
+      "setup_seconds": 0.0023279580054804683,
+      "worker_payload_bytes": 130935415,
+      "implementation": "jon-neon",
+      "load_average_before": [
+        3.7841796875,
+        5.11279296875,
+        5.4296875
+      ],
+      "repeat": 0
+    },
+    {
+      "workers": 1,
+      "mode": "bench",
+      "frames": 625,
+      "seconds": 6.654111167008523,
+      "fps": 93.92689486445417,
+      "setup_seconds": 0.0022878339514136314,
+      "worker_payload_bytes": 130935415,
+      "implementation": "jon-neon",
+      "load_average_before": [
+        4.28173828125,
+        5.19384765625,
+        5.4560546875
+      ],
+      "repeat": 1
+    },
+    {
+      "workers": 1,
+      "mode": "bench",
+      "frames": 625,
+      "seconds": 7.744345167011488,
+      "fps": 80.70404747225194,
+      "setup_seconds": 0.0022807500208728015,
+      "worker_payload_bytes": 130935415,
+      "implementation": "jon-kcb",
+      "load_average_before": [
+        4.0986328125,
+        5.140625,
+        5.435546875
+      ],
+      "repeat": 1
+    },
+    {
+      "fps": 97.13497791845388,
+      "frames": 625,
+      "mode": "bench",
+      "seconds": 6.434345417,
+      "setup_seconds": 0.008832291,
+      "shape": [
+        625,
+        3262,
+        3108
+      ],
+      "worker_payload_bytes": 130935415,
+      "workers": 1,
+      "implementation": "native-neon-scratch",
+      "load_average_before": [
+        3.85009765625,
+        5.07177734375,
+        5.4091796875
+      ],
+      "repeat": 1
+    },
+    {
+      "fps": 95.35068350897915,
+      "frames": 625,
+      "mode": "bench",
+      "seconds": 6.554751125,
+      "setup_seconds": 0.00897425,
+      "shape": [
+        625,
+        3262,
+        3108
+      ],
+      "worker_payload_bytes": 130935415,
+      "workers": 1,
+      "implementation": "native-neon-allocating",
+      "load_average_before": [
+        3.57177734375,
+        4.97021484375,
+        5.369140625
+      ],
+      "repeat": 1
+    },
+    {
+      "workers": 8,
+      "mode": "bench",
+      "frames": 625,
+      "seconds": 0.8753340839757584,
+      "fps": 714.0130967610178,
+      "setup_seconds": 0.00226116698468104,
+      "worker_payload_bytes": 130935415,
+      "implementation": "jon-neon",
+      "load_average_before": [
+        3.60595703125,
+        4.9541015625,
+        5.36083984375
+      ],
+      "repeat": 1
+    },
+    {
+      "workers": 8,
+      "mode": "bench",
+      "frames": 625,
+      "seconds": 1.008097582962364,
+      "fps": 619.9796632419201,
+      "setup_seconds": 0.002214666979853064,
+      "worker_payload_bytes": 130935415,
+      "implementation": "jon-kcb",
+      "load_average_before": [
+        3.60595703125,
+        4.9541015625,
+        5.36083984375
+      ],
+      "repeat": 1
+    },
+    {
+      "fps": 733.8512366127188,
+      "frames": 625,
+      "mode": "bench",
+      "seconds": 0.85167125,
+      "setup_seconds": 0.008784708,
+      "shape": [
+        625,
+        3262,
+        3108
+      ],
+      "worker_payload_bytes": 130935415,
+      "workers": 8,
+      "implementation": "native-neon-scratch",
+      "load_average_before": [
+        4.19775390625,
+        5.05419921875,
+        5.3935546875
+      ],
+      "repeat": 1
+    },
+    {
+      "fps": 655.3797453541189,
+      "frames": 625,
+      "mode": "bench",
+      "seconds": 0.953645584,
+      "setup_seconds": 0.009043459,
+      "shape": [
+        625,
+        3262,
+        3108
+      ],
+      "worker_payload_bytes": 130935415,
+      "workers": 8,
+      "implementation": "native-neon-allocating",
+      "load_average_before": [
+        4.19775390625,
+        5.05419921875,
+        5.3935546875
+      ],
+      "repeat": 1
+    },
+    {
+      "fps": 96.66267101849745,
+      "frames": 625,
+      "mode": "bench",
+      "seconds": 6.4657845,
+      "setup_seconds": 0.008743833,
+      "shape": [
+        625,
+        3262,
+        3108
+      ],
+      "worker_payload_bytes": 130935415,
+      "workers": 1,
+      "implementation": "native-neon-allocating",
+      "load_average_before": [
+        4.19775390625,
+        5.05419921875,
+        5.3935546875
+      ],
+      "repeat": 2
+    },
+    {
+      "fps": 98.04154818313542,
+      "frames": 625,
+      "mode": "bench",
+      "seconds": 6.374848333,
+      "setup_seconds": 0.008722541,
+      "shape": [
+        625,
+        3262,
+        3108
+      ],
+      "worker_payload_bytes": 130935415,
+      "workers": 1,
+      "implementation": "native-neon-scratch",
+      "load_average_before": [
+        4.021484375,
+        5.00341796875,
+        5.37353515625
+      ],
+      "repeat": 2
+    },
+    {
+      "workers": 1,
+      "mode": "bench",
+      "frames": 625,
+      "seconds": 7.37190087500494,
+      "fps": 84.78138957607473,
+      "setup_seconds": 0.002270166005473584,
+      "worker_payload_bytes": 130935415,
+      "implementation": "jon-kcb",
+      "load_average_before": [
+        3.779296875,
+        4.9365234375,
+        5.34765625
+      ],
+      "repeat": 2
+    },
+    {
+      "workers": 1,
+      "mode": "bench",
+      "frames": 625,
+      "seconds": 6.662810874986462,
+      "fps": 93.80425344900247,
+      "setup_seconds": 0.002284749993123114,
+      "worker_payload_bytes": 130935415,
+      "implementation": "jon-neon",
+      "load_average_before": [
+        3.3515625,
+        4.806640625,
+        5.29638671875
+      ],
+      "repeat": 2
+    },
+    {
+      "fps": 655.6220574862533,
+      "frames": 625,
+      "mode": "bench",
+      "seconds": 0.953293125,
+      "setup_seconds": 0.008747833,
+      "shape": [
+        625,
+        3262,
+        3108
+      ],
+      "worker_payload_bytes": 130935415,
+      "workers": 8,
+      "implementation": "native-neon-allocating",
+      "load_average_before": [
+        3.2431640625,
+        4.759765625,
+        5.27685546875
+      ],
+      "repeat": 2
+    },
+    {
+      "fps": 730.5274970625869,
+      "frames": 625,
+      "mode": "bench",
+      "seconds": 0.855546167,
+      "setup_seconds": 0.008861667,
+      "shape": [
+        625,
+        3262,
+        3108
+      ],
+      "worker_payload_bytes": 130935415,
+      "workers": 8,
+      "implementation": "native-neon-scratch",
+      "load_average_before": [
+        3.2431640625,
+        4.759765625,
+        5.27685546875
+      ],
+      "repeat": 2
+    },
+    {
+      "workers": 8,
+      "mode": "bench",
+      "frames": 625,
+      "seconds": 1.0073872079956345,
+      "fps": 620.416851672697,
+      "setup_seconds": 0.0023875830229371786,
+      "worker_payload_bytes": 130935415,
+      "implementation": "jon-kcb",
+      "load_average_before": [
+        3.7041015625,
+        4.830078125,
+        5.29833984375
+      ],
+      "repeat": 2
+    },
+    {
+      "workers": 8,
+      "mode": "bench",
+      "frames": 625,
+      "seconds": 0.8749794589821249,
+      "fps": 714.3024828572212,
+      "setup_seconds": 0.002307875023689121,
+      "worker_payload_bytes": 130935415,
+      "implementation": "jon-neon",
+      "load_average_before": [
+        3.7041015625,
+        4.830078125,
+        5.29833984375
+      ],
+      "repeat": 2
+    }
+  ],
+  "limits": "Complete 625-frame Eiger9M warm-cache read/decode to stored-orientation uint32 consumer; no masking, float conversion, normalization or integration. Raw file reads, decompression, worker/buffer creation, source checks and delivery are timed. Opening/chunk indexing, interpreter startup and SHA256 validation are excluded. Fresh process and workers per pass, one reusable output per worker; both readers dynamically assign frame indices to fixed worker loops without a decoded-frame queue. Each implementation/worker count first validates all 625 frames against the independent h5py/HDF5 reference; those full passes also warm the file cache. Native uses bounded lz4_flex plus Bitshuffle; Jon uses his installed package's LZ4 and public default KCB API. jon-neon is an explicitly selected private native entry-point diagnostic with the same per-frame buffer policy. Native compressed buffers are reusable; os.pread returns new bytes for Python. Each API's required overheads are included. Host not reserved; background load recorded, no cold-disk claim.",
+  "summary": {
+    "1": {
+      "native-neon-allocating": {
+        "median_fps": 95.36829809863364,
+        "min_fps": 95.35068350897915,
+        "max_fps": 96.66267101849745
+      },
+      "native-neon-scratch": {
+        "median_fps": 97.6204920561027,
+        "min_fps": 97.13497791845388,
+        "max_fps": 98.04154818313542
+      },
+      "jon-kcb": {
+        "median_fps": 80.70404747225194,
+        "min_fps": 79.10211922083477,
+        "max_fps": 84.78138957607473
+      },
+      "jon-neon": {
+        "median_fps": 93.80425344900247,
+        "min_fps": 92.71617638864068,
+        "max_fps": 93.92689486445417
+      }
+    },
+    "8": {
+      "native-neon-allocating": {
+        "median_fps": 655.3797453541189,
+        "min_fps": 646.9762746543598,
+        "max_fps": 655.6220574862533
+      },
+      "native-neon-scratch": {
+        "median_fps": 730.5274970625869,
+        "min_fps": 725.3485227116777,
+        "max_fps": 733.8512366127188
+      },
+      "jon-kcb": {
+        "median_fps": 619.9796632419201,
+        "min_fps": 617.9934223023483,
+        "max_fps": 620.416851672697
+      },
+      "jon-neon": {
+        "median_fps": 714.3024828572212,
+        "min_fps": 714.0130967610178,
+        "max_fps": 715.6725511399956
+      }
+    }
+  }
+}

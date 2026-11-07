@@ -1,0 +1,195 @@
+--- a/src/hdf5/raw.rs
++++ b/src/hdf5/raw.rs
+@@ -16,12 +16,13 @@
+ 
+ unsafe extern "C" {
+     fn bshuf_default_block_size(element_size: usize) -> usize;
+-    fn bshuf_bitunshuffle(
++    fn dioptrin_bshuf_unshuffle_block(
+         input: *const c_void,
+         output: *mut c_void,
++        scratch: *mut c_void,
++        scratch_bytes: usize,
+         elements: usize,
+         element_size: usize,
+-        block_size: usize,
+     ) -> i64;
+ }
+ 
+@@ -37,8 +38,14 @@
+ pub struct FrameBuffer {
+     pixels: PixelBuffer,
+     compressed: Vec<u8>,
++    block_scratch: BlockScratch,
++    shape: Option<[usize; 2]>,
++}
++
++#[derive(Debug, Default)]
++struct BlockScratch {
+     shuffled: Vec<u8>,
+-    shape: Option<[usize; 2]>,
++    unshuffle: Vec<u8>,
+ }
+ impl FrameBuffer {
+     /// Complete original pixels from the last successful read, or `None`.
+@@ -227,8 +234,8 @@
+     #[must_use]
+     pub fn worker_payload_bytes(&self) -> usize {
+         // The shuffled scratch is bounded by the decoded chunk, even if the
+-        // stored block size is larger. Native unshuffle may allocate another
+-        // block-sized temporary, covered by the second decoded-frame allowance.
++        // stored block size is larger. Both reusable block buffers are covered
++        // by the two decoded-frame allowances, including retained capacity.
+         self.shape[1]
+             .saturating_mul(self.shape[2])
+             .saturating_mul(self.pixel_type.bytes())
+@@ -260,7 +267,7 @@
+                 self.pixel_type.bytes(),
+                 self.chunk_limit,
+                 self.configured_block,
+-                &mut buffer.shuffled,
++                &mut buffer.block_scratch,
+             )?;
+         } else {
+             if buffer.compressed.len() != output.len() {
+@@ -360,7 +367,7 @@
+     element: usize,
+     limit: usize,
+     configured_block: usize,
+-    scratch: &mut Vec<u8>,
++    scratch: &mut BlockScratch,
+ ) -> Result<(), Error> {
+     let bad = || Error("malformed or truncated Bitshuffle/LZ4 chunk".into());
+     let header = input.get(..12).ok_or_else(bad)?;
+@@ -394,23 +401,25 @@
+         source += 4;
+         let end = source.checked_add(compressed).ok_or_else(bad)?;
+         let block = input.get(source..end).ok_or_else(bad)?;
+-        resize_bytes(scratch, bytes)?;
+-        let actual = lz4_flex::block::decompress_into(block, scratch)
++        resize_bytes(&mut scratch.shuffled, bytes)?;
++        resize_bytes(&mut scratch.unshuffle, bytes)?;
++        let actual = lz4_flex::block::decompress_into(block, &mut scratch.shuffled)
+             .map_err(|e| Error(format!("invalid LZ4 block: {e}")))?;
+         if actual != bytes {
+             return Err(bad());
+         }
+-        // SAFETY: both disjoint slices contain exactly elements*element bytes.
++        // SAFETY: all three disjoint slices contain elements*element bytes.
+         // All lengths derive from admitted output, the LZ4 decoder is bounded,
+         // and block size is a positive multiple of eight elements. This API
+         // reads already decompressed bytes, never untrusted length prefixes.
+         let result = unsafe {
+-            bshuf_bitunshuffle(
+-                scratch.as_ptr().cast(),
++            dioptrin_bshuf_unshuffle_block(
++                scratch.shuffled.as_ptr().cast(),
+                 output[dest..dest + bytes].as_mut_ptr().cast(),
++                scratch.unshuffle.as_mut_ptr().cast(),
++                scratch.unshuffle.len(),
+                 bytes / element,
+                 element,
+-                bytes / element,
+             )
+         };
+         if result != bytes as i64 {
+@@ -448,8 +457,32 @@
+ mod tests {
+     use super::*;
+     #[test]
++    fn frame_reads_retain_both_block_scratch_allocations() {
++        let path =
++            Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/counts-bitshuffle-lz4.h5");
++        let reader = RawReader::open_snapshot(path, "detector/data", Limits::default()).unwrap();
++        let mut buffer = FrameBuffer::default();
++        reader.read_frame_into(0, &mut buffer).unwrap();
++        let pointers = (
++            buffer.block_scratch.shuffled.as_ptr(),
++            buffer.block_scratch.unshuffle.as_ptr(),
++        );
++        assert!(!buffer.block_scratch.unshuffle.is_empty());
++        for index in [1, 0, 1] {
++            reader.read_frame_into(index, &mut buffer).unwrap();
++            assert_eq!(
++                pointers,
++                (
++                    buffer.block_scratch.shuffled.as_ptr(),
++                    buffer.block_scratch.unshuffle.as_ptr(),
++                )
++            );
++            assert!(buffer.pixels().is_some());
++        }
++    }
++    #[test]
+     fn corrupt_chunks_are_bounded_and_rejected() {
+-        let mut scratch = Vec::new();
++        let mut scratch = BlockScratch::default();
+         let mut output = [0; 32];
+         for length in 0..100 {
+             assert!(
+--- a/vendor/hdf5-bitshuffle-1.0.0/build.rs
++++ b/vendor/hdf5-bitshuffle-1.0.0/build.rs
+@@ -11,6 +11,7 @@
+ fn main() {
+     println!("cargo:rerun-if-changed=ext/bitshuffle");
+     println!("cargo:rerun-if-changed=patches");
++    println!("cargo:rerun-if-changed=dioptrin_unshuffle.c");
+     let hdf5_include = PathBuf::from(
+         env::var("DEP_HDF5_INCLUDE").expect("hdf5-sys did not export its include directory"),
+     );
+@@ -104,6 +105,7 @@
+         .files(src.iter().map(|s| ext.join(s)))
+         .file(h5filter)
+         .file(core)
++        .file(Path::new(env!("CARGO_MANIFEST_DIR")).join("dioptrin_unshuffle.c"))
+         .flag("-w")
+         .include(hdf5_include)
+         .include(lz4_include)
+--- /dev/null
++++ b/vendor/hdf5-bitshuffle-1.0.0/dioptrin_unshuffle.c
+@@ -0,0 +1,45 @@
++/* SPDX-License-Identifier: MIT
++ * Single-block adapter to upstream Bitshuffle primitives, with caller-owned
++ * scratch. No codec algorithm is duplicated here. Compiled with the core's
++ * flags, preserving its compile-time ISA selection and primitive pairing.
++ */
++#include <stddef.h>
++#include <stdint.h>
++
++#if defined(__AVX512F__) && defined(__AVX512BW__) && defined(__AVX2__) && defined(__SSE2__)
++#define FIRST bshuf_trans_byte_bitrow_AVX
++#define SECOND bshuf_shuffle_bit_eightelem_AVX512
++#elif defined(__AVX2__) && defined(__SSE2__)
++#define FIRST bshuf_trans_byte_bitrow_AVX
++#define SECOND bshuf_shuffle_bit_eightelem_AVX
++#elif defined(__SSE2__) || defined(NO_WARN_X86_INTRINSICS)
++#define FIRST bshuf_trans_byte_bitrow_SSE
++#define SECOND bshuf_shuffle_bit_eightelem_SSE
++#elif (defined(__ARM_NEON__) || defined(__ARM_NEON)) && defined(__aarch64__)
++#define FIRST bshuf_trans_byte_bitrow_NEON
++#define SECOND bshuf_shuffle_bit_eightelem_NEON
++#else
++#define FIRST bshuf_trans_byte_bitrow_scal
++#define SECOND bshuf_shuffle_bit_eightelem_scal
++#endif
++
++int64_t FIRST(const void *, void *, size_t, size_t);
++int64_t SECOND(const void *, void *, size_t, size_t);
++
++/* All three buffers must be disjoint and contain elements * width bytes.
++ * Handles exactly one block, a multiple of eight elements; the Rust caller
++ * validates compressed framing and handles the final unshuffled tail.
++ */
++int64_t dioptrin_bshuf_unshuffle_block(const void *input, void *output,
++                                     void *scratch, size_t scratch_bytes,
++                                     size_t elements, size_t width) {
++    if (width == 0 || elements % 8 != 0 || elements > SIZE_MAX / width)
++        return -80;
++    const size_t bytes = elements * width;
++    if (bytes > scratch_bytes || bytes > INT64_MAX)
++        return -91;
++    const int64_t count = FIRST(input, scratch, elements, width);
++    if (count < 0)
++        return count;
++    return SECOND(scratch, output, elements, width);
++}

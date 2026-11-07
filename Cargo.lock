@@ -273,8 +273,6 @@ checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
 [[package]]
 name = "hdf5-bitshuffle"
 version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59326c31adf0077c652b1a37d3f507873c93f70f83079090bf16a05ed13db492"
 dependencies = [
  "cc",
  "hdf5-metno-src",

@@ -287,6 +287,18 @@ MIT notice, independent fixtures and native-codec licenses remain unchanged;
 SPE/MRC/DM3, fixed/legacy records, XML and image codecs have separate scoped
 contracts under `docs/`; the complete inventory links their validation evidence.
 HDF5, zlib, LZF and Bitshuffle/LZ4 build from pinned native Cargo dependencies.
+The vendored `hdf5-bitshuffle` backend backports the upstream ARM NEON bulk
+movemask kernels and their MSVC portability fix. Its original sources and MIT
+notices are retained; `vendor/hdf5-bitshuffle-1.0.0/UPSTREAM.json` records the
+baseline hashes and upstream commits, and `PATCHES.md` describes the build.
+The indexed reader retains checked Rust LZ4 decoding and original pixel types,
+and reuses worker-owned scratch for native bit unshuffle.
+Matched Eiger9M read/decode measurements are documented in
+[`docs/benchmarks/2026-11-06-neon-eiger/`](docs/benchmarks/2026-11-06-neon-eiger/);
+the subsequent scratch-reuse comparison is in
+[`docs/benchmarks/2026-11-06-scratch-eiger/`](docs/benchmarks/2026-11-06-scratch-eiger/).
+Windows SSE2/NEON support, runtime AVX2 dispatch and matched native CI benchmarks
+are described in [`docs/benchmarks/2026-11-07-windows-simd/`](docs/benchmarks/2026-11-07-windows-simd/).
 The HDF5 feature requires a C compiler, CMake >=3.26 and Git in addition to Rust.
 TIFF, CBF and EDF use Rust libraries without an installed HDF5/Python requirement.
 JPEG/JPEG2000 build their vendored C codecs; those optional features also require

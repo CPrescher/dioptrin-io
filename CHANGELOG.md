@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+- Backport the upstream Bitshuffle NEON kernels and reuse worker-owned decoder
+  scratch buffers for indexed HDF5 reads.
+- Select scalar, SSE2, AVX2 or NEON at runtime according to compiled capabilities
+  and CPU/OS support; keep AVX2 compilation separate from baseline code.
+- Enable SSE2/AVX2 on Windows x86-64 and NEON on Windows ARM64, with independent
+  count checks and matched synthetic read/decode benchmarks in CI.
+- Extend native reader CI to Linux ARM64 and Windows ARM64 alongside Linux
+  x86-64, macOS and Windows x86-64.
+
 ## 0.1.0
 
 Initial source release of native detector-file input for Rust consumers.

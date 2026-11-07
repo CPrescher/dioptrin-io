@@ -15,6 +15,9 @@ SERIES_COMPANIONS_PARITY
 TIFF_API_PARITY
 VDS_ADVANCED_OJPEG_PARITY
 benchmarks/2026-11-05-native-eiger/README
+benchmarks/2026-11-06-neon-eiger/README
+benchmarks/2026-11-06-scratch-eiger/README
+benchmarks/2026-11-07-windows-simd/README
 edf-recovery/2026-11-06-updated-edf-audit
 fabio-parity/README
 metadata-parity/HEADER_ATTRIBUTES

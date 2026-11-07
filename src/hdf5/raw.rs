@@ -16,13 +16,69 @@ use std::{
 
 unsafe extern "C" {
     fn bshuf_default_block_size(element_size: usize) -> usize;
-    fn bshuf_bitunshuffle(
+    fn bshuf_using_NEON() -> i32;
+    fn bshuf_using_SSE2() -> i32;
+    #[cfg(target_arch = "x86_64")]
+    fn dioptrin_bshuf_avx2_compiled() -> i32;
+    fn dioptrin_bshuf_unshuffle_block(
         input: *const c_void,
         output: *mut c_void,
+        scratch: *mut c_void,
+        scratch_bytes: usize,
         elements: usize,
         element_size: usize,
-        block_size: usize,
+        backend: i32,
     ) -> i64;
+}
+
+/// Native unshuffle kernel. Auto selects only instructions supported by the
+/// current CPU and operating system; explicit unsupported choices are rejected.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[repr(i32)]
+pub enum UnshuffleBackend {
+    #[default]
+    Auto = 0,
+    Scalar = 1,
+    Sse2 = 2,
+    Avx2 = 3,
+    Neon = 4,
+}
+impl UnshuffleBackend {
+    /// Whether this build and CPU can execute this backend safely.
+    #[must_use]
+    pub fn is_available(self) -> bool {
+        match self {
+            Self::Auto | Self::Scalar => true,
+            // SAFETY: immutable, argument-free linked codec capability queries.
+            Self::Sse2 => unsafe { bshuf_using_SSE2() != 0 },
+            Self::Neon => unsafe { bshuf_using_NEON() != 0 },
+            Self::Avx2 => {
+                #[cfg(target_arch = "x86_64")]
+                // Rust's feature detector also verifies OS support for AVX state.
+                {
+                    std::arch::is_x86_feature_detected!("avx2")
+                        && unsafe { dioptrin_bshuf_avx2_compiled() != 0 }
+                }
+                #[cfg(not(target_arch = "x86_64"))]
+                false
+            }
+        }
+    }
+    fn resolve(self) -> Result<Self, Error> {
+        if self == Self::Auto {
+            return Ok([Self::Avx2, Self::Neon, Self::Sse2, Self::Scalar]
+                .into_iter()
+                .find(|b| b.is_available())
+                .unwrap());
+        }
+        if self.is_available() {
+            Ok(self)
+        } else {
+            Err(Error(format!(
+                "unavailable native unshuffle backend: {self:?}"
+            )))
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -37,8 +93,14 @@ struct Chunk {
 pub struct FrameBuffer {
     pixels: PixelBuffer,
     compressed: Vec<u8>,
-    shuffled: Vec<u8>,
+    block_scratch: BlockScratch,
     shape: Option<[usize; 2]>,
+}
+
+#[derive(Debug, Default)]
+struct BlockScratch {
+    shuffled: Vec<u8>,
+    unshuffle: Vec<u8>,
 }
 impl FrameBuffer {
     /// Complete original pixels from the last successful read, or `None`.
@@ -88,6 +150,7 @@ pub struct RawReader {
     max_encoded: usize,
     chunk_limit: usize,
     configured_block: usize,
+    backend: UnshuffleBackend,
 }
 impl RawReader {
     /// Index exactly the requested dataset as a frozen immutable snapshot.
@@ -210,7 +273,20 @@ impl RawReader {
             max_encoded,
             chunk_limit: limits.chunk_bytes,
             configured_block,
+            backend: UnshuffleBackend::Auto.resolve()?,
         })
+    }
+    /// Override the kernel while retaining identical IO and decoding semantics.
+    /// # Errors
+    /// The requested kernel is not compiled or unsupported by this CPU/OS.
+    pub fn with_unshuffle_backend(mut self, backend: UnshuffleBackend) -> Result<Self, Error> {
+        self.backend = backend.resolve()?;
+        Ok(self)
+    }
+    /// Actual selected kernel (never Auto).
+    #[must_use]
+    pub fn unshuffle_backend(&self) -> UnshuffleBackend {
+        self.backend
     }
     /// Frozen `(frames,height,width)` dimensions.
     #[must_use]
@@ -227,8 +303,8 @@ impl RawReader {
     #[must_use]
     pub fn worker_payload_bytes(&self) -> usize {
         // The shuffled scratch is bounded by the decoded chunk, even if the
-        // stored block size is larger. Native unshuffle may allocate another
-        // block-sized temporary, covered by the second decoded-frame allowance.
+        // stored block size is larger. Both reusable block buffers are covered
+        // by the two decoded-frame allowances, including retained capacity.
         self.shape[1]
             .saturating_mul(self.shape[2])
             .saturating_mul(self.pixel_type.bytes())
@@ -260,7 +336,8 @@ impl RawReader {
                 self.pixel_type.bytes(),
                 self.chunk_limit,
                 self.configured_block,
-                &mut buffer.shuffled,
+                &mut buffer.block_scratch,
+                self.backend,
             )?;
         } else {
             if buffer.compressed.len() != output.len() {
@@ -360,7 +437,8 @@ fn decode_bitshuffle_lz4(
     element: usize,
     limit: usize,
     configured_block: usize,
-    scratch: &mut Vec<u8>,
+    scratch: &mut BlockScratch,
+    backend: UnshuffleBackend,
 ) -> Result<(), Error> {
     let bad = || Error("malformed or truncated Bitshuffle/LZ4 chunk".into());
     let header = input.get(..12).ok_or_else(bad)?;
@@ -394,23 +472,26 @@ fn decode_bitshuffle_lz4(
         source += 4;
         let end = source.checked_add(compressed).ok_or_else(bad)?;
         let block = input.get(source..end).ok_or_else(bad)?;
-        resize_bytes(scratch, bytes)?;
-        let actual = lz4_flex::block::decompress_into(block, scratch)
+        resize_bytes(&mut scratch.shuffled, bytes)?;
+        resize_bytes(&mut scratch.unshuffle, bytes)?;
+        let actual = lz4_flex::block::decompress_into(block, &mut scratch.shuffled)
             .map_err(|e| Error(format!("invalid LZ4 block: {e}")))?;
         if actual != bytes {
             return Err(bad());
         }
-        // SAFETY: both disjoint slices contain exactly elements*element bytes.
+        // SAFETY: all three disjoint slices contain elements*element bytes.
         // All lengths derive from admitted output, the LZ4 decoder is bounded,
         // and block size is a positive multiple of eight elements. This API
         // reads already decompressed bytes, never untrusted length prefixes.
         let result = unsafe {
-            bshuf_bitunshuffle(
-                scratch.as_ptr().cast(),
+            dioptrin_bshuf_unshuffle_block(
+                scratch.shuffled.as_ptr().cast(),
                 output[dest..dest + bytes].as_mut_ptr().cast(),
+                scratch.unshuffle.as_mut_ptr().cast(),
+                scratch.unshuffle.len(),
                 bytes / element,
                 element,
-                bytes / element,
+                backend as i32,
             )
         };
         if result != bytes as i64 {
@@ -448,13 +529,45 @@ fn read_exact_at(file: &File, mut output: &mut [u8], mut offset: u64) -> std::io
 mod tests {
     use super::*;
     #[test]
+    fn frame_reads_retain_both_block_scratch_allocations() {
+        let path =
+            Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/data/counts-bitshuffle-lz4.h5");
+        let reader = RawReader::open_snapshot(path, "detector/data", Limits::default()).unwrap();
+        let mut buffer = FrameBuffer::default();
+        reader.read_frame_into(0, &mut buffer).unwrap();
+        let pointers = (
+            buffer.block_scratch.shuffled.as_ptr(),
+            buffer.block_scratch.unshuffle.as_ptr(),
+        );
+        assert!(!buffer.block_scratch.unshuffle.is_empty());
+        for index in [1, 0, 1] {
+            reader.read_frame_into(index, &mut buffer).unwrap();
+            assert_eq!(
+                pointers,
+                (
+                    buffer.block_scratch.shuffled.as_ptr(),
+                    buffer.block_scratch.unshuffle.as_ptr(),
+                )
+            );
+            assert!(buffer.pixels().is_some());
+        }
+    }
+    #[test]
     fn corrupt_chunks_are_bounded_and_rejected() {
-        let mut scratch = Vec::new();
+        let mut scratch = BlockScratch::default();
         let mut output = [0; 32];
         for length in 0..100 {
             assert!(
-                decode_bitshuffle_lz4(&vec![0; length], &mut output, 4, 1024, 0, &mut scratch)
-                    .is_err()
+                decode_bitshuffle_lz4(
+                    &vec![0; length],
+                    &mut output,
+                    4,
+                    1024,
+                    0,
+                    &mut scratch,
+                    UnshuffleBackend::Scalar
+                )
+                .is_err()
             );
         }
         let mut input = Vec::from(32_u64.to_be_bytes());
@@ -462,7 +575,18 @@ mod tests {
         for payload in [vec![], vec![255; 4], vec![0, 0, 0, 1, 0]] {
             let mut bad = input.clone();
             bad.extend(payload);
-            assert!(decode_bitshuffle_lz4(&bad, &mut output, 4, 1024, 0, &mut scratch).is_err());
+            assert!(
+                decode_bitshuffle_lz4(
+                    &bad,
+                    &mut output,
+                    4,
+                    1024,
+                    0,
+                    &mut scratch,
+                    UnshuffleBackend::Scalar
+                )
+                .is_err()
+            );
         }
     }
 }

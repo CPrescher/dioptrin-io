@@ -1,0 +1,40 @@
+[package]
+name = "hdf5-bitshuffle"
+version = "1.0.0"
+authors = ["Vadim Dyadkin <dyadkin@3lp.cx>"]
+edition = "2021"
+links = "bitshuffle"
+build = "build.rs"
+description = "HDF5 bitshuffle plugin for Rust"
+repository = "https://git.3lp.cx/dyadkin/cryiorust"
+license = "MIT"
+keywords = ["hdf5", "bitshuffle"]
+exclude = [
+    "ext/bitshuffle/.github",
+    "ext/bitshuffle/.gitignore",
+    "ext/bitshuffle/.gitmodules",
+    "ext/bitshuffle/MANIFEST.in",
+    "ext/bitshuffle/README.rst",
+    "ext/bitshuffle/bitshuffle",
+    "ext/bitshuffle/conda-recipe",
+    "ext/bitshuffle/lzf",
+    "ext/bitshuffle/pyproject.toml",
+    "ext/bitshuffle/requirements.txt",
+    "ext/bitshuffle/setup.cfg.example",
+    "ext/bitshuffle/setup.py",
+    "ext/bitshuffle/tests",
+]
+
+[dependencies]
+#deprecated is needed for H5push1 in bitshuffle
+#threadsafe is needed for tests
+[target.'cfg(unix)'.dependencies]
+hdf5-sys = { package = "hdf5-metno-sys", version = "0.12", features = ["static", "zlib", "deprecated", "threadsafe"] }
+hdf5-src = { package = "hdf5-metno-src", version = "0.10", features = ["zlib", "deprecated", "threadsafe"] }
+
+[target.'cfg(windows)'.dependencies]
+hdf5-sys = { package = "hdf5-metno-sys", version = "0.12", features = ["static", "zlib", "deprecated"] }
+hdf5-src = { package = "hdf5-metno-src", version = "0.10", features = ["zlib", "deprecated"] }
+
+[build-dependencies]
+cc = { version = "1.2", features = ["parallel"] }

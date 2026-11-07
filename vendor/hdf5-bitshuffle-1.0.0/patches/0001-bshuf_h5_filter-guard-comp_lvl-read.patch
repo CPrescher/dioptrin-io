@@ -1,0 +1,23 @@
+diff --git a/src/bshuf_h5filter.c b/src/bshuf_h5filter.c
+index 7a5e68a..f5e4588 100644
+--- a/src/bshuf_h5filter.c
++++ b/src/bshuf_h5filter.c
+@@ -12,6 +12,9 @@
+ 
+ #include "bitshuffle.h"
+ #include "bshuf_h5filter.h"
++#ifdef ZSTD_SUPPORT
++#include "zstd.h"
++#endif
+ 
+ 
+ #define PUSH_ERR(func, minor, str)                                      \
+@@ -114,7 +117,7 @@ size_t bshuf_h5_filter(unsigned int flags, size_t cd_nelmts,
+     }
+     elem_size = cd_values[2];
+ #ifdef ZSTD_SUPPORT
+-    const int comp_lvl = cd_values[5];
++    const int comp_lvl = cd_nelmts > 5 ? cd_values[5] : ZSTD_CLEVEL_DEFAULT;
+ #endif
+ 
+     // User specified block size.

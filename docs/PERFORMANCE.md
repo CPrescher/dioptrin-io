@@ -66,8 +66,9 @@ integration matrix. Changing the decoder backend does not change those weights.
 
 ## Scalar, SSE2, AVX2 and NEON
 
-The runtime backend-selection API in this section requires development revision
-`9c780a9` or a later descendant; it is newer than the `v0.1.0` source release.
+The runtime backend-selection API in this section is available on `main`, which
+includes revision `9c780a9`. It is newer than the `v0.1.0` source release; pin
+that revision or a later descendant when using these APIs.
 
 These are implementations of the same bit-unshuffle operation in dioptrin-io.
 They reconstruct the same integer pixels; selecting SIMD does not reduce
