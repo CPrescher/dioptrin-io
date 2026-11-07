@@ -1,15 +1,33 @@
 """The source bridge preserves the full-frame float64 scientific contract."""
 from pathlib import Path
 import shutil
+import hashlib
+import json
+import importlib.util
 
 import h5py
-import hdf5plugin  # register the independent reference decoder
 import numpy as np
 import pytest
 import dioptrin
 import dioptrin_io_fused as fused
 
 SOURCE = Path(__file__).parents[2] / "tests/data/counts-bitshuffle-lz4.h5"
+def reference_frames():
+    # These fixture counts are independently recorded by the h5py producer.
+    # Check their original hashes even where hdf5plugin has no native wheel.
+    manifest = json.loads(SOURCE.with_suffix(".json").read_text())
+    assert hashlib.sha256(SOURCE.read_bytes()).hexdigest() == manifest["sha256"]
+    frames = np.arange(24, dtype="<u4").reshape(2, 3, 4)
+    frames[0, 0] = [0, 70000, 2**32 - 2, 2**32 - 1]
+    for frame, expected in zip(frames, manifest["frame_sha256"], strict=True):
+        assert hashlib.sha256(frame.tobytes()).hexdigest() == expected
+    if importlib.util.find_spec("hdf5plugin") is not None:
+        import hdf5plugin  # noqa: F401 - register the independent reference decoder
+        with h5py.File(SOURCE) as f:
+            np.testing.assert_array_equal(f["detector/data"][:], frames)
+    return frames
+
+
 PONI = dict(pixel1=75e-6, pixel2=75e-6, distance=.18, poni1=.0001,
             poni2=.0002, rot1=.01, rot2=.02, rot3=0., wavelength=3.7e-11)
 
@@ -17,7 +35,7 @@ PONI = dict(pixel1=75e-6, pixel2=75e-6, distance=.18, poni1=.0001,
 @pytest.mark.parametrize("workers", [1, 8])
 @pytest.mark.parametrize("errors", [False, True])
 def test_bslz4_frames_match_current_float64_and_reuse_buffers(workers, errors):
-    with h5py.File(SOURCE) as f: frames = f["detector/data"][:]
+    frames = reference_frames()
     shape = frames.shape[1:]
     mask = np.zeros(shape, np.uint8); mask[0, 1] = 1
     reader = fused.FusedHdf5Integrator(SOURCE, "detector/data", PONI, 8,
@@ -74,7 +92,7 @@ def test_invalid_options_rejected(kwargs):
 
 
 def test_combined_display_counts_pattern_ownership_and_source_switch(tmp_path):
-    with h5py.File(SOURCE) as f: frames = f["detector/data"][:]
+    frames = reference_frames()
     reader = fused.FusedHdf5Integrator(SOURCE, "detector/data", PONI, 8)
     kept = []
     for index in [0, 1, 0]:
