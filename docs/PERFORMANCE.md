@@ -192,3 +192,34 @@ Also record the CPU, worker count, reader/backend, compression/filter layout,
 image size, cache state and the range of repeated measurements. Compare scalar
 and SIMD on the same machine. Use acquired data to estimate the gain for an
 actual experiment; synthetic patterns qualify a controlled workload.
+
+## Combined loading and fixed-mask integration in Qt
+
+Fused block decoding can integrate one frame while its independent codec blocks
+are decoded on several cores. The [native Eiger report](benchmarks/2026-11-07-fused-fixed/README.md)
+records 5.38/6.09 ms (intensity/Poisson), versus 16.73/17.31 ms for full-frame
+decoding followed by eight-core integration, with float64 arithmetic, warm cache
+and a prepared lookup.
+
+The first Qt adapter reread images that were already decoded for display. It was
+slower than integrating the resident array. That historical result motivated the
+**combined loader**: one native decode now returns original typed display pixels
+and the float64 pattern together. Qt consumes the prepared pattern instead of
+reading or integrating those pixels a second time.
+
+The [full Qt comparison](benchmarks/2026-11-07-qt-combined/README.md) includes the
+real image/pattern controllers, snapshot creation, worker dispatch, pattern
+application and the normal 25 ms debounce. On the M4 Pro/Eiger 9M test, combined
+loading reduced warm open-to-pattern latency by approximately **20%**. This is a
+whole-operation result, distinct from the native pipeline's roughly threefold
+speedup. Qt was offscreen at 1200×900; physical-monitor/GPU presentation was not
+qualified. Source timings, p95 values, all 625 count/float64 comparisons and exact
+conditions are retained in that report.
+
+The combined route requires fixed masks and a supported self-contained full-frame
+Bitshuffle/LZ4 uint16/uint32 HDF5 source. Initial files retain the authoritative
+LImA dataset/header; selected HDF5 sources keep their selection. Corrections,
+transforms, dynamic masks, busy bulk workers and unsupported metadata/layouts use
+the existing path. Batch/map and 2D integration algorithms are unchanged. Mask or
+calibration edits after loading invalidate a prepared result and integrate the
+resident image; they do not trigger a fused reread.

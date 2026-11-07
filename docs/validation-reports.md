@@ -19,6 +19,7 @@ benchmarks/2026-11-06-neon-eiger/README
 benchmarks/2026-11-06-scratch-eiger/README
 benchmarks/2026-11-07-windows-simd/README
 benchmarks/2026-11-07-fused-fixed/README
+benchmarks/2026-11-07-qt-combined/README
 edf-recovery/2026-11-06-updated-edf-audit
 fabio-parity/README
 metadata-parity/HEADER_ATTRIBUTES

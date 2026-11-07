@@ -1,0 +1,46 @@
+Format layouts and encoding descriptions consulted/adapted from FabIO 2026.6.0:
+https://github.com/silx-kit/fabio/tree/9ddb6f6ce22e79056bec0f6e6b97d7ebc29cbece
+
+src/fabio/raxisimage.py (fixed field-name/layout table adapted in src/raxis.rs)
+Copyright Brian R. Pauw
+
+src/fabio/brukerimage.py, src/fabio/bruker100image.py
+Copyright 2007-2009 Risoe National Laboratory; 2010-2020 ESRF;
+2015-2020 ESRF, 2016 GWDG
+Authors Henning O. Sorensen, Erik Knudsen, Jon Wright, Jerome Kieffer,
+and the authors listed in the pinned upstream source.
+
+src/fabio/OXDimage.py
+Copyright Jerome Kieffer
+
+src/fabio/fit2dimage.py, src/fabio/kcdimage.py
+Copyright 2010-2016 European Synchrotron Radiation Facility
+Author Jerome Kieffer
+
+src/fabio/mpaimage.py
+Copyright 2017 Cornell High Energy Synchrotron Source
+Author Jesse Hopkins
+
+The broader original notices are retained in FabIO-2026.6.0-copyright.txt.
+No FabIO Python runtime, GPL or LGPL reader is incorporated. The independent
+fixture generator and all generated detector fixtures are CC0-1.0.
+
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
