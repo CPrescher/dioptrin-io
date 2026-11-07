@@ -68,3 +68,8 @@ python scripts/report_simd_benchmark.py /tmp/simd-benchmark.json
 On Windows, choose a Windows output path instead of `/tmp`. No Python packages
 are needed for the report or CI compiler preflight. All generation, reading,
 decoding, validation and measured work are native Rust/C.
+
+MSVC compilation uses C11 mode, ensuring the upstream header includes complete
+standard integer types instead of its old C89 fallback typedefs. The AVX2
+extractor normalizes LF/CRLF in generated text; a regression checks identical
+output for Unix and Windows checkouts. Original vendored files are not rewritten.

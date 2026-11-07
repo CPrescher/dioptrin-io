@@ -62,5 +62,9 @@
       "sha256": "db5b411e55f68dd6b6f11eee723af8cc8bc35b9ced92e35f730fd87182b0dfdf",
       "scope": "Recognize MSVC x64/ARM64 and ARM64 header; replace compiler-specific vector casts and initializers with equivalent NEON reinterpret/load intrinsics."
     }
-  ]
+  ],
+  "local_build_helpers": {
+    "avx2_source.rs": "c0784c8063ea9797f11cac933b301de7c8256f792cb45637fa4611189322bb1c"
+  },
+  "local_build_settings": "C11 for complete MSVC stdint types; normalize LF/CRLF only in extracted AVX2 source, leaving retained upstream files untouched."
 }

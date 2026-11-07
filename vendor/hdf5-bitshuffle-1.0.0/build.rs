@@ -1,3 +1,4 @@
+mod avx2_source;
 use std::env;
 use std::fs::{self, File};
 use std::io::Write;
@@ -11,6 +12,7 @@ static BITSHUFFLE_PATCH: &str = "0001-bshuf_h5_filter-guard-comp_lvl-read.patch"
 fn main() {
     println!("cargo:rerun-if-changed=ext/bitshuffle");
     println!("cargo:rerun-if-changed=patches");
+    println!("cargo:rerun-if-changed=avx2_source.rs");
     println!("cargo:rerun-if-changed=dioptrin_unshuffle.c");
     let hdf5_include = PathBuf::from(
         env::var("DEP_HDF5_INCLUDE").expect("hdf5-sys did not export its include directory"),
@@ -130,27 +132,7 @@ fn compile(
 // Extract the exact two pinned upstream function bodies instead of maintaining
 // another copy of the SIMD algorithm. Their SSE remainder helpers stay baseline.
 fn compile_avx2(core: &Path, src_include: &Path) {
-    let text = fs::read_to_string(core).unwrap();
-    let mut source = String::from("/* MIT: generated from retained upstream Bitshuffle. */\n#include <immintrin.h>\n#include <stdint.h>\n#include <stddef.h>\n#define CHECK_MULT_EIGHT(n) do { if ((n) % 8) return -80; } while (0)\nint64_t bshuf_trans_byte_bitrow_SSE(const void *, void *, size_t, size_t);\nint64_t bshuf_shuffle_bit_eightelem_SSE(const void *, void *, size_t, size_t);\n");
-    for (name, renamed) in [
-        (
-            "bshuf_trans_byte_bitrow_AVX",
-            "dioptrin_trans_byte_bitrow_avx2",
-        ),
-        (
-            "bshuf_shuffle_bit_eightelem_AVX",
-            "dioptrin_shuffle_bit_eightelem_avx2",
-        ),
-    ] {
-        let start = text
-            .find(&format!("int64_t {name}("))
-            .expect("missing upstream AVX2 kernel");
-        let end = start + text[start..].find("\n}\n").expect("missing kernel end") + 3;
-        let function = &text[start..end];
-        assert!(function.contains("__m256i"), "selected an AVX2 stub");
-        source.push_str(&function.replace(name, renamed));
-        source.push('\n');
-    }
+    let source = avx2_source::generate(&fs::read_to_string(core).unwrap());
     let dest = core.with_file_name("dioptrin_avx2.c");
     fs::write(&dest, source).unwrap();
     let mut build = cc::Build::new();
