@@ -6,6 +6,7 @@ rust-version = "1.89"
 license = "MIT"
 description = "Native detector-image input shared by diffraction applications"
 repository = "https://github.com/CPrescher/dioptrin-io"
+documentation = "https://dioptrin-io.readthedocs.io/en/latest/"
 readme = "README.md"
 # Source/Git releases retain the patched backend crates; registry publication is separate.
 publish = false

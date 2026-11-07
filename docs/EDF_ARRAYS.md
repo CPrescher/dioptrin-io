@@ -151,7 +151,7 @@ same EDF dialect. EDF byte-offset remains an unqualified legacy-codec gap;
 there is no failed-codec retry or raw reinterpretation. Existing explicit
 legacy raw-label policy remains separate from this array implementation.
 
-The previous [MAR345 V2 audit](MAR345_READER.md#pck-v2-audit-and-unsupported-scope)
+The previous [MAR345 V2 audit](MAR345_READER.md#pck-v2-support-and-qualified-reference-scope)
 was reviewed read-only: the pinned permissive `unpack_pck` path is explicitly
 V1-only, while V2 selection lives in the separate legacy LGPL path. This lane
 adds no speculative V2 decoder or changed MAR345 claim.

@@ -10,6 +10,14 @@ integer and floating samples in their native types, without a full-frame f64
 conversion. Worker buffers reuse allocations and invalidate their public data
 when a read fails.
 
+## User manual
+
+The [user manual](https://dioptrin-io.readthedocs.io/en/latest/) collects the
+reader guides, format coverage, explicit limitations and validation records.
+See [reading performance and CPU backends](https://dioptrin-io.readthedocs.io/en/latest/PERFORMANCE.html)
+for file-reading comparisons, image density, worker counts and SIMD measurements.
+The [manual source](docs/index.md) is maintained in this repository.
+
 ## Inspiration and acknowledgments
 
 [FabIO](https://github.com/silx-kit/fabio) is our inspiration and a central
