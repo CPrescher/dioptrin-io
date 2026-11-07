@@ -44,7 +44,10 @@ The published manual is at
 
 The root `.readthedocs.yaml` uses Ubuntu 24.04, Python 3.13 and
 `docs/requirements.txt`, with `docs/conf.py` and warnings treated as errors.
-`latest` should track `main`. Release versions must contain this configuration;
+The hosted `latest` version tracks `main`. A signed GitHub incoming webhook
+delivers repository updates for automatic builds. Project settings are managed
+in [Read the Docs](https://app.readthedocs.org/projects/dioptrin-io/).
+Release versions must contain this configuration;
 the older `v0.1.0` tag does not gain this manual automatically. Development
 benchmarks identify their measured commit separately from that release.
 
