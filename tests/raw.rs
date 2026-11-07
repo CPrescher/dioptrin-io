@@ -189,6 +189,10 @@ fn source_mutation_and_truncation_invalidate_reused_output() {
 
 #[test]
 fn independent_compressed_payload_with_default_block_and_skipped_filter_is_exact() {
+    // This test reads through HDF5 directly before constructing our reader.
+    // Register first; neither test order nor installed external plugins may
+    // supply the filter implicitly.
+    hdf5_backend::sync::sync(hdf5_bitshuffle::register_bitshuffle_plugin);
     use std::ffi::c_void;
     use std::io::{Read, Seek, SeekFrom};
     unsafe extern "C" {
@@ -214,7 +218,6 @@ fn independent_compressed_payload_with_default_block_and_skipped_filter_is_exact
     compressed[8..12].fill(0);
     let fixture = Fixture::new();
     {
-        hdf5_backend::sync::sync(hdf5_bitshuffle::register_bitshuffle_plugin);
         let f = hdf5_backend::File::create(&fixture.0).unwrap();
         let ds = f
             .new_dataset::<u32>()
