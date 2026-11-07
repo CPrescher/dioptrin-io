@@ -25,5 +25,5 @@ with tempfile.TemporaryDirectory(prefix='dioptrin-msvc-') as temp:
     batch = work / 'compile.cmd'
     batch.write_text('@echo off\n' + f'call "{vcvars}" {arch}\n' +
                      'if errorlevel 1 exit /b 1\n' +
-                     f'cl /nologo /W0 /O2 /c /I"{include}" /Fo"{work / "core.obj"}" "{core}"\n')
+                     f'cl /nologo /std:c11 /W0 /O2 /c /I"{include}" /Fo"{work / "core.obj"}" "{core}"\n')
     subprocess.run(['cmd.exe', '/d', '/c', str(batch)], check=True)

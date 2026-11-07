@@ -104,6 +104,9 @@ fn compile(
     ];
     let avx2 = env::var("CARGO_CFG_TARGET_ARCH").as_deref() == Ok("x86_64");
     let mut build = cc::Build::new();
+    // MSVC's default C mode omits __STDC_VERSION__, making the old upstream
+    // header use incomplete fallback typedefs (notably missing int16_t).
+    build.std("c11");
     build
         .files(src.iter().map(|s| ext.join(s)))
         .file(h5filter)
@@ -151,6 +154,7 @@ fn compile_avx2(core: &Path, src_include: &Path) {
     let dest = core.with_file_name("dioptrin_avx2.c");
     fs::write(&dest, source).unwrap();
     let mut build = cc::Build::new();
+    build.std("c11");
     build.file(dest).include(src_include).flag("-w");
     if build.get_compiler().is_like_msvc() {
         build.flag("/arch:AVX2");

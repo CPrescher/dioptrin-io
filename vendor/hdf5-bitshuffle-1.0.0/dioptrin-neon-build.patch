@@ -90,7 +90,7 @@
      hdf5_include: &Path,
      lz4_include: &Path,
      src_include: &Path,
-@@ -55,18 +99,65 @@
+@@ -55,18 +99,69 @@
      let src = [
          "lz4/lz4.c",
          "src/bitshuffle.c",
@@ -101,6 +101,9 @@
 -    cc::Build::new()
 +    let avx2 = env::var("CARGO_CFG_TARGET_ARCH").as_deref() == Ok("x86_64");
 +    let mut build = cc::Build::new();
++    // MSVC's default C mode omits __STDC_VERSION__, making the old upstream
++    // header use incomplete fallback typedefs (notably missing int16_t).
++    build.std("c11");
 +    build
          .files(src.iter().map(|s| ext.join(s)))
          .file(h5filter)
@@ -150,6 +153,7 @@
 +    let dest = core.with_file_name("dioptrin_avx2.c");
 +    fs::write(&dest, source).unwrap();
 +    let mut build = cc::Build::new();
++    build.std("c11");
 +    build.file(dest).include(src_include).flag("-w");
 +    if build.get_compiler().is_like_msvc() {
 +        build.flag("/arch:AVX2");
