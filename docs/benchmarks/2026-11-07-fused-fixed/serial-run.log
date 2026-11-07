@@ -1,0 +1,44 @@
+index 0.014s; fixed float64 CSC setup 0.758s
+All 625 full-frame and streamed count hashes match independent h5py references
+Validated current-f64 workers=1: max scaled error 0e0; payload 130951799
+Validated full-u32 workers=1: max scaled error 6.2576363652768716e-15; payload 49845431
+Validated fused-u32 workers=1: max scaled error 6.2576363652768716e-15; payload 9300439
+Validated current-f64 workers=8: max scaled error 0e0; payload 1047474173
+Validated full-u32 workers=8: max scaled error 6.2576363652768716e-15; payload 398606980
+Validated fused-u32 workers=8: max scaled error 6.2576363652768716e-15; payload 74271396
+current-f64 workers=1 poisson=false pass=0: 34.85 fps
+full-u32 workers=1 poisson=false pass=0: 34.03 fps
+fused-u32 workers=1 poisson=false pass=0: 32.08 fps
+full-u32 workers=1 poisson=false pass=1: 34.08 fps
+fused-u32 workers=1 poisson=false pass=1: 32.14 fps
+current-f64 workers=1 poisson=false pass=1: 34.84 fps
+fused-u32 workers=1 poisson=false pass=2: 32.13 fps
+current-f64 workers=1 poisson=false pass=2: 34.83 fps
+full-u32 workers=1 poisson=false pass=2: 33.85 fps
+current-f64 workers=8 poisson=false pass=0: 220.40 fps
+full-u32 workers=8 poisson=false pass=0: 251.37 fps
+fused-u32 workers=8 poisson=false pass=0: 237.13 fps
+full-u32 workers=8 poisson=false pass=1: 243.69 fps
+fused-u32 workers=8 poisson=false pass=1: 232.57 fps
+current-f64 workers=8 poisson=false pass=1: 214.60 fps
+fused-u32 workers=8 poisson=false pass=2: 227.98 fps
+current-f64 workers=8 poisson=false pass=2: 190.18 fps
+full-u32 workers=8 poisson=false pass=2: 216.39 fps
+current-f64 workers=1 poisson=true pass=0: 29.49 fps
+full-u32 workers=1 poisson=true pass=0: 29.03 fps
+fused-u32 workers=1 poisson=true pass=0: 27.65 fps
+full-u32 workers=1 poisson=true pass=1: 28.88 fps
+fused-u32 workers=1 poisson=true pass=1: 27.62 fps
+current-f64 workers=1 poisson=true pass=1: 29.41 fps
+fused-u32 workers=1 poisson=true pass=2: 27.89 fps
+current-f64 workers=1 poisson=true pass=2: 29.51 fps
+full-u32 workers=1 poisson=true pass=2: 29.02 fps
+current-f64 workers=8 poisson=true pass=0: 203.47 fps
+full-u32 workers=8 poisson=true pass=0: 218.91 fps
+fused-u32 workers=8 poisson=true pass=0: 208.19 fps
+full-u32 workers=8 poisson=true pass=1: 210.36 fps
+fused-u32 workers=8 poisson=true pass=1: 200.39 fps
+current-f64 workers=8 poisson=true pass=1: 180.89 fps
+fused-u32 workers=8 poisson=true pass=2: 196.51 fps
+current-f64 workers=8 poisson=true pass=2: 175.86 fps
+full-u32 workers=8 poisson=true pass=2: 197.50 fps

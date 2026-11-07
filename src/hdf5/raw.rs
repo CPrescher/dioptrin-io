@@ -102,11 +102,79 @@ struct BlockScratch {
     shuffled: Vec<u8>,
     unshuffle: Vec<u8>,
 }
+
+/// Borrowed original samples, valid only during the block callback.
+#[derive(Clone, Copy, Debug)]
+pub enum PixelBlock<'a> {
+    U16(&'a [u16]),
+    U32(&'a [u32]),
+}
+
+/// Reusable compressed-frame and decoded-block storage; never assembles an image.
+#[derive(Debug, Default)]
+pub struct BlockBuffer {
+    compressed: Vec<u8>,
+    pixels: PixelBuffer,
+    scratch: BlockScratch,
+    shape: Option<[usize; 2]>,
+}
+/// Reusable storage for one compressed frame and private per-block-worker scratch.
+#[derive(Debug, Default)]
+pub struct ParallelBlockBuffer {
+    compressed: Vec<u8>,
+    workers: Vec<BlockBuffer>,
+    shape: Option<[usize; 2]>,
+}
+impl ParallelBlockBuffer {
+    pub fn shape(&self) -> Option<[usize; 2]> {
+        self.shape
+    }
+    /// Compressed, decoded and codec-scratch capacities; excludes block metadata.
+    pub fn payload_capacity_bytes(&self) -> usize {
+        self.compressed.capacity()
+            + self
+                .workers
+                .iter()
+                .map(BlockBuffer::payload_capacity_bytes)
+                .sum::<usize>()
+    }
+}
+
+impl BlockBuffer {
+    /// Set only after the complete frame and final source check succeed.
+    pub fn shape(&self) -> Option<[usize; 2]> {
+        self.shape
+    }
+    /// Retained decoder payload, excluding allocator bookkeeping and consumers.
+    pub fn payload_capacity_bytes(&self) -> usize {
+        let pixels = match &self.pixels {
+            PixelBuffer::U16(v) => v.capacity() * 2,
+            PixelBuffer::U32(v) => v.capacity() * 4,
+            _ => 0,
+        };
+        self.compressed.capacity()
+            + pixels
+            + self.scratch.shuffled.capacity()
+            + self.scratch.unshuffle.capacity()
+    }
+}
 impl FrameBuffer {
     /// Complete original pixels from the last successful read, or `None`.
     #[must_use]
     pub fn pixels(&self) -> Option<&PixelBuffer> {
         self.shape.map(|_| &self.pixels)
+    }
+    /// Retained decoder payload, excluding allocator bookkeeping and consumers.
+    pub fn payload_capacity_bytes(&self) -> usize {
+        let pixels = match &self.pixels {
+            PixelBuffer::U16(v) => v.capacity() * 2,
+            PixelBuffer::U32(v) => v.capacity() * 4,
+            _ => 0,
+        };
+        self.compressed.capacity()
+            + pixels
+            + self.block_scratch.shuffled.capacity()
+            + self.block_scratch.unshuffle.capacity()
     }
     /// Stored detector height and width; invalidated before every attempted read.
     #[must_use]
@@ -354,6 +422,258 @@ impl RawReader {
         buffer.shape = Some([self.shape[1], self.shape[2]]);
         Ok(())
     }
+    /// Deliver codec blocks in stored pixel order, with their linear pixel offset.
+    ///
+    /// Callbacks are provisional: discard consumer accumulators on ANY error,
+    /// including the final source check. Only publish results after `Ok(())`.
+    /// The compressed frame is read once. Decoded storage is bounded by the
+    /// admitted codec block size (unfiltered chunks use 8192-byte blocks).
+    /// Byte order is converted before delivery; values and orientation are original.
+    /// # Errors
+    /// Invalid/changed source, malformed codec input, allocation or consumer error.
+    pub fn read_frame_blocks<F>(
+        &self,
+        index: usize,
+        buffer: &mut BlockBuffer,
+        mut consume: F,
+    ) -> Result<(), Error>
+    where
+        F: FnMut(usize, PixelBlock<'_>) -> Result<(), Error>,
+    {
+        buffer.shape = None;
+        self.snapshot.check_handle(&self.file).map_err(Error)?;
+        let chunk = self
+            .chunks
+            .get(index)
+            .ok_or_else(|| Error("HDF5 frame index outside snapshot".into()))?;
+        resize_bytes(&mut buffer.compressed, chunk.bytes)?;
+        read_exact_at(&self.file, &mut buffer.compressed, chunk.address)
+            .map_err(|e| Error(e.to_string()))?;
+        let element = self.pixel_type.bytes();
+        let total = self.shape[1] * self.shape[2] * element;
+        let mut deliver = |offset: usize, encoded: &[u8], bytes: usize, filtered: bool| {
+            buffer
+                .pixels
+                .resize(self.pixel_type, bytes / element)
+                .map_err(Error)?;
+            let output = buffer.pixels.bytes_mut();
+            decode_block(
+                encoded,
+                output,
+                element,
+                &mut buffer.scratch,
+                self.backend,
+                filtered,
+            )?;
+            if self.little_endian != cfg!(target_endian = "little") {
+                for sample in output.chunks_exact_mut(element) {
+                    sample.reverse();
+                }
+            }
+            let block = match &buffer.pixels {
+                PixelBuffer::U16(v) => PixelBlock::U16(v),
+                PixelBuffer::U32(v) => PixelBlock::U32(v),
+                _ => unreachable!("raw admission allows only u16/u32"),
+            };
+            consume(offset / element, block)
+        };
+        if chunk.filtered {
+            visit_encoded_blocks(
+                &buffer.compressed,
+                total,
+                element,
+                self.chunk_limit,
+                self.configured_block,
+                &mut deliver,
+            )?;
+        } else {
+            if buffer.compressed.len() != total {
+                return Err(Error("unfiltered raw chunk size mismatch".into()));
+            }
+            for (i, bytes) in buffer.compressed.chunks(8192).enumerate() {
+                deliver(i * 8192, bytes, bytes.len(), false)?;
+            }
+        }
+        self.snapshot.check_handle(&self.file).map_err(Error)?;
+        buffer.shape = Some([self.shape[1], self.shape[2]]);
+        Ok(())
+    }
+
+    /// Decode contiguous portions of ONE frame concurrently into private states.
+    ///
+    /// The compressed frame is read once. `init(worker, pixel_range)` creates each
+    /// worker state, and `consume` receives ordered blocks within that range.
+    /// Returned states are in range order and cover the complete frame exactly.
+    /// They are returned only after all workers and the final source check succeed.
+    /// On any error, every state is discarded; callbacks must not publish results.
+    ///
+    /// `memory_bytes` bounds compressed/decoded/scratch payload, excluding consumer
+    /// states and block descriptors. At most 256 workers may be requested.
+    pub fn fold_frame_blocks<S, I, F>(
+        &self,
+        index: usize,
+        buffer: &mut ParallelBlockBuffer,
+        options: PipelineOptions,
+        init: I,
+        consume: F,
+    ) -> Result<Vec<S>, Error>
+    where
+        S: Send,
+        I: Fn(usize, Range<usize>) -> Result<S, Error> + Sync,
+        F: Fn(&mut S, usize, PixelBlock<'_>) -> Result<(), Error> + Sync,
+    {
+        buffer.shape = None;
+        if options.workers == 0 || options.workers > 256 {
+            return Err(Error("invalid block worker count".into()));
+        }
+        self.snapshot.check_handle(&self.file).map_err(Error)?;
+        let chunk = self
+            .chunks
+            .get(index)
+            .ok_or_else(|| Error("HDF5 frame index outside snapshot".into()))?;
+        if chunk.bytes > options.memory_bytes {
+            return Err(Error(
+                "parallel blocks exceed decoder payload budget".into(),
+            ));
+        }
+        if buffer.compressed.capacity() > self.max_encoded {
+            buffer.compressed = Vec::new();
+        }
+        resize_bytes(&mut buffer.compressed, chunk.bytes)?;
+        read_exact_at(&self.file, &mut buffer.compressed, chunk.address)
+            .map_err(|e| Error(e.to_string()))?;
+        let element = self.pixel_type.bytes();
+        let total = self.shape[1] * self.shape[2] * element;
+        struct Encoded<'a> {
+            offset: usize,
+            input: &'a [u8],
+            bytes: usize,
+            filtered: bool,
+        }
+        let mut blocks = Vec::new();
+        let mut record = |offset, input, bytes, filtered| {
+            blocks.try_reserve(1).map_err(|e| Error(e.to_string()))?;
+            blocks.push(Encoded {
+                offset,
+                input,
+                bytes,
+                filtered,
+            });
+            Ok(())
+        };
+        if chunk.filtered {
+            visit_encoded_blocks(
+                &buffer.compressed,
+                total,
+                element,
+                self.chunk_limit,
+                self.configured_block,
+                &mut record,
+            )?;
+        } else {
+            if buffer.compressed.len() != total {
+                return Err(Error("unfiltered raw chunk size mismatch".into()));
+            }
+            for (i, bytes) in buffer.compressed.chunks(8192).enumerate() {
+                record(i * 8192, bytes, bytes.len(), false)?;
+            }
+        }
+        let workers = options.workers.min(blocks.len());
+        let block_bytes = blocks.iter().map(|b| b.bytes).max().unwrap_or(0);
+        let per_worker = block_bytes
+            .checked_mul(3)
+            .ok_or_else(|| Error("block payload overflow".into()))?;
+        if per_worker
+            .checked_mul(workers)
+            .and_then(|n| n.checked_add(buffer.compressed.capacity()))
+            .is_none_or(|n| n > options.memory_bytes)
+        {
+            return Err(Error(
+                "parallel blocks exceed decoder payload budget".into(),
+            ));
+        }
+        buffer.workers.resize_with(workers, BlockBuffer::default);
+        buffer.workers.truncate(workers);
+        for scratch in &mut buffer.workers {
+            if scratch.payload_capacity_bytes() > per_worker {
+                *scratch = BlockBuffer::default();
+            }
+        }
+        let stop = AtomicBool::new(false);
+        let states = std::thread::scope(|scope| {
+            let mut handles = Vec::new();
+            for (worker, scratch) in buffer.workers.iter_mut().enumerate() {
+                let selected =
+                    &blocks[worker * blocks.len() / workers..(worker + 1) * blocks.len() / workers];
+                let (init, consume, stop) = (&init, &consume, &stop);
+                handles.push(scope.spawn(move || {
+                    let first = selected.first().unwrap();
+                    let last = selected.last().unwrap();
+                    let range = first.offset / element..(last.offset + last.bytes) / element;
+                    let result = (|| {
+                        let mut state = init(worker, range)?;
+                        for block in selected {
+                            if stop.load(Ordering::Relaxed) {
+                                return Err(Error("parallel block operation canceled".into()));
+                            }
+                            scratch
+                                .pixels
+                                .resize(self.pixel_type, block.bytes / element)
+                                .map_err(Error)?;
+                            let output = scratch.pixels.bytes_mut();
+                            decode_block(
+                                block.input,
+                                output,
+                                element,
+                                &mut scratch.scratch,
+                                self.backend,
+                                block.filtered,
+                            )?;
+                            if self.little_endian != cfg!(target_endian = "little") {
+                                for sample in output.chunks_exact_mut(element) {
+                                    sample.reverse();
+                                }
+                            }
+                            let pixels = match &scratch.pixels {
+                                PixelBuffer::U16(v) => PixelBlock::U16(v),
+                                PixelBuffer::U32(v) => PixelBlock::U32(v),
+                                _ => unreachable!("raw admission allows only u16/u32"),
+                            };
+                            consume(&mut state, block.offset / element, pixels)?;
+                        }
+                        Ok(state)
+                    })();
+                    if result.is_err() {
+                        stop.store(true, Ordering::Relaxed);
+                    }
+                    result
+                }));
+            }
+            let mut states = Vec::new();
+            let mut error = None;
+            for handle in handles {
+                match handle
+                    .join()
+                    .unwrap_or_else(|_| Err(Error("block worker panicked".into())))
+                {
+                    Ok(state) => states.push(state),
+                    Err(e) => {
+                        if error.is_none() {
+                            error = Some(e);
+                        }
+                    }
+                }
+            }
+            match error {
+                Some(e) => Err(e),
+                None => Ok(states),
+            }
+        })?;
+        self.snapshot.check_handle(&self.file).map_err(Error)?;
+        buffer.shape = Some([self.shape[1], self.shape[2]]);
+        Ok(states)
+    }
+
     /// Process a range with bounded worker-owned storage. Callbacks run on worker
     /// threads in unspecified order and borrow pixels only until they return.
     /// No full-scan decoded queue or full-frame float conversion is created.
@@ -440,6 +760,36 @@ fn decode_bitshuffle_lz4(
     scratch: &mut BlockScratch,
     backend: UnshuffleBackend,
 ) -> Result<(), Error> {
+    visit_encoded_blocks(
+        input,
+        output.len(),
+        element,
+        limit,
+        configured_block,
+        |offset, encoded, bytes, filtered| {
+            decode_block(
+                encoded,
+                &mut output[offset..offset + bytes],
+                element,
+                scratch,
+                backend,
+                filtered,
+            )
+        },
+    )
+}
+
+fn visit_encoded_blocks<'a, F>(
+    input: &'a [u8],
+    output_bytes: usize,
+    element: usize,
+    limit: usize,
+    configured_block: usize,
+    mut consume: F,
+) -> Result<(), Error>
+where
+    F: FnMut(usize, &'a [u8], usize, bool) -> Result<(), Error>,
+{
     let bad = || Error("malformed or truncated Bitshuffle/LZ4 chunk".into());
     let header = input.get(..12).ok_or_else(bad)?;
     let decoded = u64::from_be_bytes(header[..8].try_into().unwrap());
@@ -452,7 +802,7 @@ fn decode_bitshuffle_lz4(
     } else {
         stored_block
     };
-    if decoded != output.len() as u64
+    if decoded != output_bytes as u64
         || block_bytes == 0
         || block_bytes > limit
         || block_bytes % (8 * element) != 0
@@ -462,7 +812,7 @@ fn decode_bitshuffle_lz4(
     }
     let mut source = 12_usize;
     let mut dest = 0;
-    let shuffled_bytes = output.len() / (8 * element) * (8 * element);
+    let shuffled_bytes = output_bytes / (8 * element) * (8 * element);
     while dest < shuffled_bytes {
         let bytes = block_bytes.min(shuffled_bytes - dest);
         let length = input
@@ -472,39 +822,56 @@ fn decode_bitshuffle_lz4(
         source += 4;
         let end = source.checked_add(compressed).ok_or_else(bad)?;
         let block = input.get(source..end).ok_or_else(bad)?;
-        resize_bytes(&mut scratch.shuffled, bytes)?;
-        resize_bytes(&mut scratch.unshuffle, bytes)?;
-        let actual = lz4_flex::block::decompress_into(block, &mut scratch.shuffled)
-            .map_err(|e| Error(format!("invalid LZ4 block: {e}")))?;
-        if actual != bytes {
-            return Err(bad());
-        }
-        // SAFETY: all three disjoint slices contain elements*element bytes.
-        // All lengths derive from admitted output, the LZ4 decoder is bounded,
-        // and block size is a positive multiple of eight elements. This API
-        // reads already decompressed bytes, never untrusted length prefixes.
-        let result = unsafe {
-            dioptrin_bshuf_unshuffle_block(
-                scratch.shuffled.as_ptr().cast(),
-                output[dest..dest + bytes].as_mut_ptr().cast(),
-                scratch.unshuffle.as_mut_ptr().cast(),
-                scratch.unshuffle.len(),
-                bytes / element,
-                element,
-                backend as i32,
-            )
-        };
-        if result != bytes as i64 {
-            return Err(Error(format!("native bit-unshuffle failed: {result}")));
-        }
+        consume(dest, block, bytes, true)?;
         source = end;
         dest += bytes;
     }
-    let tail = output.len() - dest;
+    let tail = output_bytes - dest;
     if input.len().checked_sub(source) != Some(tail) {
         return Err(bad());
     }
-    output[dest..].copy_from_slice(&input[source..]);
+    if tail != 0 {
+        consume(dest, &input[source..], tail, false)?;
+    }
+    Ok(())
+}
+
+fn decode_block(
+    input: &[u8],
+    output: &mut [u8],
+    element: usize,
+    scratch: &mut BlockScratch,
+    backend: UnshuffleBackend,
+    filtered: bool,
+) -> Result<(), Error> {
+    if !filtered {
+        output.copy_from_slice(input);
+        return Ok(());
+    }
+    let bytes = output.len();
+    resize_bytes(&mut scratch.shuffled, bytes)?;
+    resize_bytes(&mut scratch.unshuffle, bytes)?;
+    let actual = lz4_flex::block::decompress_into(input, &mut scratch.shuffled)
+        .map_err(|e| Error(format!("invalid LZ4 block: {e}")))?;
+    if actual != bytes {
+        return Err(Error("invalid decoded block length".into()));
+    }
+    // SAFETY: checked LZ4 output and three disjoint, correctly sized buffers.
+    // The framing walker admits only multiples of eight complete elements.
+    let result = unsafe {
+        dioptrin_bshuf_unshuffle_block(
+            scratch.shuffled.as_ptr().cast(),
+            output.as_mut_ptr().cast(),
+            scratch.unshuffle.as_mut_ptr().cast(),
+            scratch.unshuffle.len(),
+            bytes / element,
+            element,
+            backend as i32,
+        )
+    };
+    if result != bytes as i64 {
+        return Err(Error(format!("native bit-unshuffle failed: {result}")));
+    }
     Ok(())
 }
 

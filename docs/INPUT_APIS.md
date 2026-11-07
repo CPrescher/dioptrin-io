@@ -182,3 +182,44 @@ File-series/frame navigation and run/CIF companion access are subsequently
 qualified in [SERIES_COMPANIONS_PARITY.md](SERIES_COMPANIONS_PARITY.md). That
 continuation also strengthens source-path alias checks without changing this
 input API's count/provenance contracts.
+
+## Streaming raw HDF5 codec blocks
+
+`hdf5::raw::RawReader::read_frame_blocks` accepts the same immutable, full-frame
+chunk snapshots as `read_frame_into`. It delivers borrowed `PixelBlock::U16` or
+`PixelBlock::U32` slices with a linear offset in stored image order. Reuse one
+`BlockBuffer` per worker. The compressed frame is read into memory, while decoded
+storage is bounded by the admitted codec block size. This API does not infer
+orientation, discard reserved counts, apply masks, or normalize intensities.
+
+Callbacks are provisional. A later corrupt block, consumer error or final source
+change check can fail after earlier blocks have been delivered. Consumers must
+abort their frame accumulator on any error and publish a result only after the
+reader returns `Ok(())`. `BlockBuffer::shape()` is set only after success.
+
+Dioptrin's `Fixed1dPlan` supplies a fixed-mask float64 accumulator for this API.
+The two crates remain independent: applications connect the callback to the
+accumulator. See the [matched fused integration benchmark](benchmarks/2026-11-07-fused-fixed/README.md)
+for a complete bridge and measured scope. This API does not implement dynamic
+mask plugins.
+
+`RawReader::fold_frame_blocks` splits **one frame** into contiguous codec-block
+ranges and decodes those ranges concurrently. Reuse a `ParallelBlockBuffer` and
+supply `PipelineOptions` with the core count and decoder payload budget. An init
+closure creates private consumer state for each range; a consume closure receives
+its ordered blocks. The returned states cover the image exactly in range order.
+They are returned only after all workers and the final source check succeed. On
+any failure every state is discarded; callbacks must not publish partial results.
+The compressed frame is read once, with separate decoded blocks and scratch per
+core. Payload budgets exclude consumer state and block-descriptor metadata.
+
+Connect these ranges to Dioptrin's `begin_range`, then call `finish_ranges` only
+after `fold_frame_blocks` succeeds. This merges float64 partial histograms and
+normalizes once. Thread launch/join happens within each frame call; do not combine
+8 frame workers with 8 block workers without considering CPU oversubscription.
+
+Each call processes one frame. Applications can reuse the reader, buffers and
+fixed integration plan for successive frames, or apply the same approach to
+compatible frames from other files. The decoder is mask-agnostic; the fused
+Dioptrin accumulator currently requires a fixed mask. No Dioptas batch/map
+selection or dynamic-mask behavior changes as part of these Rust APIs.
