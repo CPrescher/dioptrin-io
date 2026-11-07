@@ -155,6 +155,18 @@ Rust consumers retain empty default features and no Python dependency. A smaller
 Python build can use `maturin build --no-default-features`, retaining
 NPY/d*TREK/HiPiC/PNM, TIFF, CBF, EDF and outer gzip/bzip2 wrappers.
 
+## Fused fixed-mask integration (0.2.0)
+
+Standard wheels also provide `dioptrin_io_fused.FusedHdf5Integrator`, so Qt
+Dioptas can use single-decode fixed-mask Eiger display/integration without
+building a separate adapter. The bridge preserves uint16/uint32 display counts
+and uses float64 weights, sums and Poisson terms. It supports multiple workers
+within a frame. Dynamic masks and batch/map keep their existing application
+paths. See the [bridge contract](../python-fused/README.md).
+
+The reader API is unchanged. The Rust reader crate remains independent of
+Dioptrin; the Python binding's default `fused` feature links the fixed-mask plan.
+
 ## Development and packaging
 
 ```sh

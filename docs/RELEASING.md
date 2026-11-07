@@ -45,7 +45,10 @@ Git during its bundled build. Original MIT/native codec notices remain included.
 
 The Python distribution is named `dioptrin-io` and imports as `dioptrin_io`.
 Its separate manifest is `python/Cargo.toml`; the core manifest stays independent
-of PyO3/NumPy. The Python default features enable supported dense readers;
+of PyO3/NumPy and integration mathematics. The Python default `fused` feature
+links a pinned Dioptrin implementation and supplies `dioptrin_io_fused` in the
+same wheel. Every release wheel checks counts and float64 patterns against
+recorded independent reference results. The Python default features enable supported dense readers;
 specialized source/recovery policies remain outside this initial Python API.
 
 The `Python release wheels` workflow (`python-release.yml`) builds and tests 33

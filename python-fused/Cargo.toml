@@ -13,7 +13,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 dioptrin-io = { path = "..", features = ["hdf5"] }
-dioptrin = "=0.9.0"
+dioptrin = { git = "https://github.com/CPrescher/Dioptrin", rev = "0501406b24a122bd9468cb2f63ddf33bba3c85bc", version = "=0.10.0" }
 numpy = "0.29"
 pyo3 = { version = "0.29", features = ["extension-module"] }
 

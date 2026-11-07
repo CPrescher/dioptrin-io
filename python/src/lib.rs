@@ -7,6 +7,9 @@ use pyo3::{
     types::{PyBytes, PyDict},
 };
 use std::{path::PathBuf, sync::Mutex};
+#[cfg(feature = "fused")]
+#[path = "../../python-fused/src/bridge.rs"]
+mod fused;
 mod headers;
 
 fn read_error(error: impl std::fmt::Display) -> PyErr {
@@ -446,6 +449,8 @@ mod _native {
     #[pymodule_init]
     fn init(module: &pyo3::Bound<'_, pyo3::types::PyModule>) -> pyo3::PyResult<()> {
         use pyo3::types::PyModuleMethods;
+        #[cfg(feature = "fused")]
+        super::fused::register(module)?;
         module.add("__version__", env!("CARGO_PKG_VERSION"))
     }
 }

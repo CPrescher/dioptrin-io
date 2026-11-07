@@ -6,11 +6,12 @@
 
 ## Optional fused integration adapter
 
-The source-built `python-fused` adapter connects the raw HDF5 block reader to
-Dioptrin's fixed-mask float64 plan. It supports parallel decoding and integration
-within a single frame. It is separate from the ordinary `dioptrin_io` reader wheel;
-the application checks for it explicitly and can keep the existing reader path
-when it is unavailable. Build instructions and the full contract are in
+Starting with 0.2.0, the standard `dioptrin-io` wheels include the
+`dioptrin_io_fused` compatibility module used by Qt Dioptas. Install it with
+`python -m pip install --only-binary=:all: dioptrin-io`; no separate adapter build
+or locally patched Cargo dependency is needed. The Python wheel links Dioptrin's
+fixed-mask float64 plan; the core Rust reader crate remains independent of
+Dioptrin and integration mathematics. The bridge contract is described in
 [`python-fused/README.md`](../python-fused/README.md).
 
 The [native benchmark](benchmarks/2026-11-07-fused-fixed/README.md) compares
@@ -30,6 +31,6 @@ The [combined Qt report](benchmarks/2026-11-07-qt-combined/README.md) measures t
 real image/pattern controllers, coordinator, default 25 ms debounce and pattern
 application. It reports approximately 20% lower latency on the tested M4 Pro/Eiger
 9M setup, while preserving all 625 independent count hashes and float64 outputs.
-The adapter is source-built and optional; existing released wheels do not gain
-this API automatically. Dynamic masks and batch/map processing retain their
-existing paths.
+The API is bundled in 0.2.0 wheels. Older wheels retain their existing reader
+API and do not gain fused integration automatically. Dynamic masks and batch/map
+processing retain their existing application paths.

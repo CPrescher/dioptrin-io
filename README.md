@@ -20,7 +20,9 @@ Install the Python package with `python -m pip install dioptrin-io`. Release
 wheels cover macOS, Windows and Linux; see the [Python guide](python/README.md)
 for interpreter and architecture coverage. Python bindings live in a separate
 crate; the core Rust library retains its empty default features and no Python
-dependency. Source builds use `python -m pip install .` and require Rust and
+dependency. Starting with 0.2.0, Python wheels also bundle the fixed-mask
+`dioptrin_io_fused` bridge used by Dioptas; its float64 integration comes from
+Dioptrin. Source builds use `python -m pip install .` and require Rust and
 native build tools.
 
 Readers preserve original samples, source dtype metadata, reserved values,
@@ -94,12 +96,12 @@ cases remain documented compatibility gaps; acquired-detector relevance must
 be established separately. The next priority is the [real-file validation
 matrix](docs/READING_GAPS.md#next-acquired-detector-files).
 
-Version 0.1.0 is distributed as a GitHub source release. Rust consumers can pin
+Version 0.2.0 is distributed as a GitHub source release. Rust consumers can pin
 the release tag; format dependencies stay optional and defaults are empty:
 
 ```toml
 [dependencies]
-dioptrin-io = { git = "https://github.com/CPrescher/dioptrin-io.git", tag = "v0.1.0", features = ["wrappers", "hdf5", "jpeg", "jpeg2000", "mar345"] }
+dioptrin-io = { git = "https://github.com/CPrescher/dioptrin-io.git", tag = "v0.2.0", features = ["wrappers", "hdf5", "jpeg", "jpeg2000", "mar345"] }
 ```
 
 The source release includes the patched TIFF/fax backends with explicit relative

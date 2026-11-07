@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+## 0.2.0 — 2026-11-07
+
+- Include the fixed-mask float64 Eiger integration bridge in the standard Python
+  wheels, preserving the `dioptrin_io_fused` import used by Qt Dioptas. No local
+  Rust checkout or separate adapter build is required for wheel users.
+- Read original uint16/uint32 display pixels and integrate from one block decode,
+  with scratch reuse and multicore integration within a single frame. Geometry,
+  weights and normalization are shared; sums and Poisson terms remain float64.
+- Preserve runtime-dispatched scalar/SSE2/AVX2/NEON decoding, platform fallbacks
+  and original detector counts. The core Rust reader remains independent of the
+  integration library. Existing reader API and application dynamic-mask/bulk
+  paths are unchanged.
+- Record the matched warm-cache Eiger 9M Qt improvement: median open-to-pattern
+  latency 180–182 ms to 143–145 ms. All 625 frames match independent pixel hashes;
+  see docs/benchmarks/2026-11-07-qt-combined for precision, timing and scope.
+
+
 - Backport the upstream Bitshuffle NEON kernels and reuse worker-owned decoder
   scratch buffers for indexed HDF5 reads.
 - Select scalar, SSE2, AVX2 or NEON at runtime according to compiled capabilities

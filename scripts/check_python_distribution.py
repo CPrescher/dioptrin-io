@@ -15,6 +15,9 @@ def check_wheel(path):
         names = archive.namelist()
         required = [
             "dioptrin_io/__init__.py", "dioptrin_io/__init__.pyi",
+            "dioptrin_io_fused/__init__.py", "dioptrin_io_fused/__init__.pyi",
+            "licenses/licenses/Dioptrin-MIT.txt",
+            "licenses/licenses/tiff-0.8.1-LICENSE",
             "dioptrin_io/py.typed", "licenses/LICENSE",
             "licenses/licenses/hdf5/HDF5.txt",
             "licenses/licenses/native-readers/FabIO-2026.6.0-copyright.txt",
@@ -53,7 +56,9 @@ def main():
         source = next(p for p in root.iterdir() if p.is_dir())
         for relative in [
             "src/lib.rs", "python/src/lib.rs", "python/Cargo.lock",
-            "python/tests/test_read.py", "native/tiff-thunderscan/wrapper.c",
+            "python/tests/test_read.py", "python-fused/src/bridge.rs",
+            "python/dioptrin_io_fused/__init__.py",
+            "native/tiff-thunderscan/wrapper.c",
             "vendor/tiff-0.11.3/src/lib.rs", "vendor/fax-0.2.7/src/lib.rs",
             "vendor/hdf5-bitshuffle-1.0.0/ext/bitshuffle/src/bitshuffle.c",
         ]:

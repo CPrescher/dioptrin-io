@@ -1,31 +1,22 @@
 # Python bridge for fused fixed-mask integration
 
-This optional source-built adapter joins the Rust `dioptrin-io` block reader and
-Dioptrin's `Fixed1dPlan`. It does not change the standalone reader package or its
-Python wheel. The integration mathematics and float64 weights remain in Dioptrin;
-the detector counts, block decoding and source checks remain in dioptrin-io.
-
-The adapter requires Dioptrin commit `72e9b72fa3ccaed19aa4ee09e3cb8bf002590a78`.
-The current source dependencies are not published Rust registry packages. In this
-directory create an ignored `.cargo/config.toml` pointing to that checkout:
-
-```toml
-[patch.crates-io]
-dioptrin = { path = "/absolute/path/to/Dioptrin-fused-blocks" }
-```
-
-Build from this directory so Cargo metadata and Maturin both find the patch:
+Starting with dioptrin-io 0.2.0, release wheels bundle this bridge. Existing
+applications continue to import `dioptrin_io_fused`; a separate Python package
+or source build is unnecessary:
 
 ```sh
-maturin build --release --interpreter /path/to/python --out /tmp/fused-wheels
-python -m pip install /tmp/fused-wheels/dioptrin_io_fused-*.whl
-python -m pytest tests
+python -m pip install --only-binary=:all: "dioptrin>=0.10.0" "dioptrin-io>=0.2.0"
 ```
 
-The Python module is `dioptrin_io_fused`. No package publication is implied by a
-local build. Distribution through normal release wheels needs a separate paired
-release/packaging decision; Qt can detect an absent adapter and retain its existing
-backend. The core reader and its ordinary Python distribution stay independent.
+The integration mathematics and float64 weights remain in Dioptrin; detector
+counts, block decoding and source checks remain in dioptrin-io. The core Rust
+reader crate has no Dioptrin dependency. Only the Python binding's optional
+`fused` Cargo feature links the pinned Dioptrin implementation.
+
+Developers may still build the standalone adapter from this directory with
+`maturin build --release`. Its Cargo manifest pins the tested public source
+revision; a local Cargo patch is no longer required. Release publication uses
+the standard dioptrin-io wheel and its compatibility shim.
 
 `FusedHdf5Integrator(path, dataset, poni, n_points, mask=..., unit="2th_deg",
 polarization_factor=..., supersampling=1, num_workers=8)` admits one immutable

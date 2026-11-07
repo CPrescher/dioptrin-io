@@ -1,6 +1,6 @@
 [package]
 name = "dioptrin-io-python"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 rust-version = "1.89"
 license = "MIT"
@@ -13,7 +13,8 @@ name = "_native"
 crate-type = ["cdylib"]
 
 [features]
-default = ["hdf5", "formats"]
+default = ["hdf5", "formats", "fused"]
+fused = ["hdf5", "dep:dioptrin"]
 hdf5 = ["dioptrin-io/hdf5", "dep:hdf5-backend", "dep:hdf5-sys"]
 formats = [
     "dioptrin-io/jpeg", "dioptrin-io/jpeg2000", "dioptrin-io/containers",
@@ -24,6 +25,7 @@ formats = [
 ]
 
 [dependencies]
+dioptrin = { git = "https://github.com/CPrescher/Dioptrin", rev = "0501406b24a122bd9468cb2f63ddf33bba3c85bc", version = "=0.10.0", optional = true }
 dioptrin-io = { path = "..", features = ["wrappers"] }
 numpy = "0.29"
 pyo3 = "0.29"

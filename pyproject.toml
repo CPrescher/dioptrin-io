@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "dioptrin-io"
-version = "0.1.0"
+version = "0.2.0"
 description = "Native detector-file readers returning original counts as NumPy arrays"
 authors = [{ name = "Clemens Prescher" }]
 readme = "python/README.md"
@@ -35,9 +35,10 @@ test = ["pytest>=8", "h5py>=3.11", "tifffile>=2024.1.30"]
 [tool.maturin]
 manifest-path = "python/Cargo.toml"
 python-source = "python"
+python-packages = ["dioptrin_io", "dioptrin_io_fused"]
 module-name = "dioptrin_io._native"
 features = ["pyo3/extension-module"]
-include = [{ path = "python/tests/**", format = "sdist" }]
+include = [{ path = "python/tests/**", format = "sdist" }, { path = "python-fused/src/bridge.rs", format = "sdist" }, { path = "python-fused/tests/**", format = "sdist" }, { path = "tests/data/counts-bitshuffle-lz4.*", format = "sdist" }]
 
 [tool.pytest.ini_options]
 testpaths = ["python/tests"]
