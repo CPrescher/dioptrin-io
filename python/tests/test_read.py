@@ -5,7 +5,6 @@ import gzip
 import os
 import struct
 
-import h5py
 import numpy as np
 import pytest
 import tifffile
@@ -101,6 +100,7 @@ def test_iteration_order_and_independent_positions(tmp_path, format):
     elif format == "tiff":
         tifffile.imwrite(path, expected, photometric="minisblack")
     else:
+        h5py = pytest.importorskip("h5py", reason="reference encoder unavailable")
         with h5py.File(path, "w") as handle:
             handle.create_dataset("/counts", data=expected)
         options["dataset"] = "/counts"
@@ -306,7 +306,7 @@ def test_tiff_stack(tmp_path):
 
 
 @pytest.mark.parametrize("dtype", [">u4", "<u8", ">i8", "f2", "c8", "c16", "bool"])
-def test_hdf5_explicit_dataset(tmp_path, dtype):
+def test_hdf5_explicit_dataset(tmp_path, dtype, h5py):
     path = tmp_path / "images.h5"
     expected = np.arange(24).reshape(2, 3, 4).astype(dtype)
     if expected.dtype.kind == "u":
@@ -326,7 +326,7 @@ def test_hdf5_explicit_dataset(tmp_path, dtype):
         np.testing.assert_array_equal(reader.read(0).data, expected[0])
 
 
-def test_hdf5_convention_discovery(tmp_path):
+def test_hdf5_convention_discovery(tmp_path, h5py):
     path = tmp_path / "eiger.h5"
     expected = np.arange(24, dtype="u4").reshape(2, 3, 4)
     with h5py.File(path, "w") as handle:
@@ -336,7 +336,7 @@ def test_hdf5_convention_discovery(tmp_path):
         np.testing.assert_array_equal(source.read(1).data, expected[1])
 
 
-def test_external_hdf5_links_rejected(tmp_path):
+def test_external_hdf5_links_rejected(tmp_path, h5py):
     target = tmp_path / "target.h5"
     master = tmp_path / "master.h5"
     with h5py.File(target, "w") as handle:

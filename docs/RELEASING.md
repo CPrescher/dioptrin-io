@@ -1,6 +1,6 @@
 # Source release and Rust desktop consumption
 
-The first release is `v0.1.0`, a GitHub source/tag release of the Rust crate.
+The first Rust release is `v0.1.0`, a GitHub source/tag release of the Rust crate.
 The intended consumer of that release is Rust desktop Dioptas; it does not
 change Dioptas. The working tree also provides an optional Python binding crate
 and `pyproject.toml`; see [Python packaging](../python/README.md). These additions
@@ -48,12 +48,33 @@ Its separate manifest is `python/Cargo.toml`; the core manifest stays independen
 of PyO3/NumPy. The Python default features enable supported dense readers;
 specialized source/recovery policies remain outside this initial Python API.
 
-Before any PyPI publication, build and install wheels on the supported platforms,
-run `python -m pytest`, inspect bundled license notices, and rebuild a wheel from
-the generated sdist in a clean directory. CI performs wheel checks on Linux,
-macOS and Windows and an sdist round trip on Linux. These are validation jobs,
-not publishing jobs; PyPI credentials/trusted publishing and public wheel release
-remain separate setup. The Python and binding-crate version fields must agree.
+The `Python release wheels` workflow (`python-release.yml`) builds and tests 33
+portable wheels: CPython 3.10–3.15 for macOS Intel/Apple Silicon, Windows x64 and
+manylinux 2.28+ x64/ARM64, plus CPython 3.13–3.15 for Windows ARM64. The sdist is
+rebuilt and tested outside the source checkout. Wheel notices and strict Twine
+metadata validation are required. The normal `Python package` CI additionally
+checks the binding crate and representative Python versions on all three OSes.
+
+For a Python release:
+
+1. Set matching versions in `pyproject.toml` and `python/Cargo.toml`, updating
+   `python/Cargo.lock`. Do not move or replace the original Rust `v0.1.0` tag.
+2. Push the candidate branch `codex/python-pypi-release` (or dispatch the wheel
+   workflow) and require its complete wheel matrix, source archive, Rust CI and
+   Python CI to pass. Keep the successful wheel workflow run ID.
+3. Fast-forward `main` to that tested commit, then tag it `python-vVERSION`.
+4. Dispatch `pypi-publish.yml` at that tag with `artifact_run_id` and `release_tag`.
+   It verifies that the successful build run and release tag point to its exact
+   source commit, checks all 33 portable wheels plus the sdist, and publishes only
+   those tested artifacts. It does not rebuild artifacts in the publishing job.
+5. Verify PyPI file names/hashes and wheel-only installation, then attach the same
+   archives to a GitHub release for the Python tag.
+
+PyPI Trusted Publishing is scoped to owner `CPrescher`, repository `dioptrin-io`,
+workflow `pypi-publish.yml`, and environment `pypi`. The upload job alone has
+OIDC permission; build and validation jobs have no publishing credentials.
+For the first upload, configure this as a pending publisher for `dioptrin-io`.
+No long-lived PyPI token is stored in the repository.
 
 ## Release acceptance
 

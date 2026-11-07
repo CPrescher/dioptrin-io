@@ -16,10 +16,12 @@ with dioptrin_io.open("image.edf") as source:
     metadata = image.metadata
 ```
 
-Install from this checkout with `python -m pip install .` (requires Rust and
-native build tools). Python bindings live in a separate crate; the core Rust
-library retains its empty default features and no Python dependency. This is
-source-build support; a PyPI release and platform wheels are not yet published.
+Install the Python package with `python -m pip install dioptrin-io`. Release
+wheels cover macOS, Windows and Linux; see the [Python guide](python/README.md)
+for interpreter and architecture coverage. Python bindings live in a separate
+crate; the core Rust library retains its empty default features and no Python
+dependency. Source builds use `python -m pip install .` and require Rust and
+native build tools.
 
 Readers preserve original samples, source dtype metadata, reserved values,
 headers and stored orientation within their documented scope. Consumers own

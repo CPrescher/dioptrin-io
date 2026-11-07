@@ -3,6 +3,17 @@
 Native detector-file readers with NumPy image arrays. All decoding uses the
 existing Rust library; FabIO and h5py are not runtime dependencies.
 
+Install from PyPI:
+
+```sh
+python -m pip install dioptrin-io
+```
+
+The release provides standard CPython 3.10–3.15 wheels for macOS Intel/Apple
+Silicon, Windows x64, and manylinux 2.28+ x64/ARM64. Windows ARM64 wheels cover
+CPython 3.13–3.15. Supported wheels need no Rust compiler, CMake, FabIO or h5py
+installation; NumPy is the runtime Python dependency. macOS wheels target 11.0+.
+
 From a source checkout (Rust >=1.89, a C/C++ compiler, CMake and Git required):
 
 ```sh
@@ -158,5 +169,13 @@ maturin sdist --out dist
 
 The source distribution includes the core path dependency and vendored native
 backends. Wheels include native-reader/codec license notices. Building a wheel
-locally does not publish it to PyPI; publication and platform wheel validation
-are separate release steps.
+locally does not publish it to PyPI. The `Python release wheels` workflow builds
+and tests every release wheel. `Publish Python package` validates the complete
+artifact matrix and tested commit before uploading through PyPI Trusted
+Publishing. Existing Rust tag `v0.1.0` retains its original source release;
+Python releases use separate `python-vVERSION` tags.
+
+h5py is an optional independent test encoder. Where its CPython 3.15 encoder
+wheel is unavailable, those encoder-generated tests are explicitly skipped;
+the pre-generated licensed HDF5 corpus is still compared bit-for-bit through
+the Python/NumPy interface on every release interpreter.

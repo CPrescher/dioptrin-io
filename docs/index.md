@@ -16,6 +16,7 @@ corpus does not establish support for every acquired detector file.
 :maxdepth: 1
 
 Installation and release scope <RELEASING>
+Python package and API <PYTHON_API>
 Overview and examples <overview>
 INPUT_APIS
 READER_DESIGN

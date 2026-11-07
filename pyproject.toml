@@ -6,6 +6,7 @@ build-backend = "maturin"
 name = "dioptrin-io"
 version = "0.1.0"
 description = "Native detector-file readers returning original counts as NumPy arrays"
+authors = [{ name = "Clemens Prescher" }]
 readme = "python/README.md"
 requires-python = ">=3.10"
 license = "MIT"
@@ -13,12 +14,20 @@ license-files = ["LICENSE", "licenses/**/*", "vendor/**/LICENSE*", "native/**/LI
 dependencies = ["numpy>=2,<3"]
 classifiers = [
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Programming Language :: Rust",
     "Topic :: Scientific/Engineering",
 ]
 
 [project.urls]
 Repository = "https://github.com/CPrescher/dioptrin-io"
+Documentation = "https://dioptrin-io.readthedocs.io/en/latest/PYTHON_API.html"
+Issues = "https://github.com/CPrescher/dioptrin-io/issues"
 
 [project.optional-dependencies]
 test = ["pytest>=8", "h5py>=3.11", "tifffile>=2024.1.30"]

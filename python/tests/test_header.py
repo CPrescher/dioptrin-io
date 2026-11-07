@@ -1,7 +1,6 @@
 """Independent source headers verify values, source types and field boundaries."""
 from pathlib import Path
 
-import h5py
 import numpy as np
 import pytest
 import tifffile
@@ -58,7 +57,7 @@ def test_cbf_cif_fields_loops_and_binary_declarations(tmp_path):
         np.testing.assert_array_equal(image.data, [[1, 3]])
 
 
-def test_hdf5_attributes_are_scoped_typed_and_independent(tmp_path):
+def test_hdf5_attributes_are_scoped_typed_and_independent(tmp_path, h5py):
     path = tmp_path / "scan.h5"
     expected = np.arange(12, dtype="u4").reshape(2, 2, 3)
     with h5py.File(path, "w") as handle:
@@ -105,7 +104,7 @@ def test_hdf5_attributes_are_scoped_typed_and_independent(tmp_path):
 
 
 @pytest.mark.parametrize("shape", [(140_000,), (600_000, 0)])
-def test_hdf5_header_allocation_bounds(tmp_path, shape):
+def test_hdf5_header_allocation_bounds(tmp_path, shape, h5py):
     path = tmp_path / "bounded.h5"
     with h5py.File(path, "w") as handle:
         data = handle.create_dataset("counts", data=np.ones((2, 3), dtype="u1"), track_order=True)
@@ -118,7 +117,7 @@ def test_hdf5_header_allocation_bounds(tmp_path, shape):
             source[0]
 
 
-def test_hdf5_declared_utf8_is_validated(tmp_path):
+def test_hdf5_declared_utf8_is_validated(tmp_path, h5py):
     path = tmp_path / "invalid-text.h5"
     with h5py.File(path, "w") as handle:
         data = handle.create_dataset("counts", data=np.ones((2, 3), dtype="u1"))
