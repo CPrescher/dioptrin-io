@@ -17,6 +17,8 @@ version = "0.11.3"
 authors = ["The image-rs Developers"]
 build = false
 exclude = [
+    "Cargo.toml.orig",
+    ".cargo_vcs_info.json",
     "tests/images/*",
     "tests/fuzz_images/*",
     "tests/**/*.tif",

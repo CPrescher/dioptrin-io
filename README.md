@@ -3,6 +3,24 @@
 Native detector-file input for Dioptrin, PhaseSmith and other Rust consumers.
 No Python, NumPy, FabIO, h5py or integration-kernel runtime dependency.
 
+An optional [Python package](python/README.md) now wraps the same Rust readers:
+
+```python
+import dioptrin_io
+
+with dioptrin_io.open("image.edf") as source:
+    print(source.nframes)  # Detected frame count
+    image = source[0]
+    data = image.data  # NumPy array, original counts and axes
+    header = image.header  # Parsed source header fields
+    metadata = image.metadata
+```
+
+Install from this checkout with `python -m pip install .` (requires Rust and
+native build tools). Python bindings live in a separate crate; the core Rust
+library retains its empty default features and no Python dependency. This is
+source-build support; a PyPI release and platform wheels are not yet published.
+
 Readers preserve original samples, source dtype metadata, reserved values,
 headers and stored orientation within their documented scope. Consumers own
 flips, masks, corrections, normalization and integration. `PixelBuffer` keeps

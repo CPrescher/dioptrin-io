@@ -17,6 +17,8 @@ authors = ["Vadim Dyadkin <dyadkin@3lp.cx>"]
 build = "build.rs"
 links = "bitshuffle"
 exclude = [
+    "Cargo.toml.orig",
+    ".cargo_vcs_info.json",
     "ext/bitshuffle/.github",
     "ext/bitshuffle/.gitignore",
     "ext/bitshuffle/.gitmodules",

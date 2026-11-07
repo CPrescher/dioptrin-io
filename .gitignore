@@ -2,8 +2,13 @@
 /benchmarks/eiger/target/
 *.crate
 __pycache__/
-
 # Documentation builds
 /.venv-docs/
 /docs/_build/
 /docs/__pycache__/
+/python/target/
+/.venv/
+/dist/
+/.pytest_cache/
+/python/dioptrin_io/*.so
+/python/dioptrin_io/*.pyd

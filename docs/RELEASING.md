@@ -1,8 +1,10 @@
 # Source release and Rust desktop consumption
 
 The first release is `v0.1.0`, a GitHub source/tag release of the Rust crate.
-The intended consumer is Rust desktop Dioptas. Python bindings and application
-migration are separate work; this release does not change Dioptas.
+The intended consumer of that release is Rust desktop Dioptas; it does not
+change Dioptas. The working tree also provides an optional Python binding crate
+and `pyproject.toml`; see [Python packaging](../python/README.md). These additions
+do not retroactively change the original `v0.1.0` archives.
 
 ## Dependency contract
 
@@ -31,12 +33,27 @@ release does not advertise `dioptrin-io = "0.1.0"` on crates.io.
 
 ## Runtime and build requirements
 
-The readers need no installed Python, NumPy, FabIO or h5py. Python is used only
-for reference qualification and development checks. Optional HDF5/filter,
+The core Rust readers need no installed Python, NumPy, FabIO or h5py. The optional
+Python package requires Python >=3.10 and NumPy >=2; FabIO/h5py remain unnecessary
+at runtime. Optional HDF5/filter,
 JPEG/JPEG2000 and ThunderScan code includes native libraries; this is native
 code without Python decoding, not a pure-Rust implementation of every codec.
 The relevant features require a C/native compiler and CMake; HDF5 also requires
 Git during its bundled build. Original MIT/native codec notices remain included.
+
+## Python release validation
+
+The Python distribution is named `dioptrin-io` and imports as `dioptrin_io`.
+Its separate manifest is `python/Cargo.toml`; the core manifest stays independent
+of PyO3/NumPy. The Python default features enable supported dense readers;
+specialized source/recovery policies remain outside this initial Python API.
+
+Before any PyPI publication, build and install wheels on the supported platforms,
+run `python -m pytest`, inspect bundled license notices, and rebuild a wheel from
+the generated sdist in a clean directory. CI performs wheel checks on Linux,
+macOS and Windows and an sdist round trip on Linux. These are validation jobs,
+not publishing jobs; PyPI credentials/trusted publishing and public wheel release
+remain separate setup. The Python and binding-crate version fields must agree.
 
 ## Release acceptance
 

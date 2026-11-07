@@ -17,6 +17,8 @@ version = "0.2.7"
 authors = ["Sebastian K <s3bk@protonmail.com>"]
 build = false
 exclude = [
+    "Cargo.toml.orig",
+    ".cargo_vcs_info.json",
     "T-REC-T.6-198811-I!!PDF-E.pdf",
     ".vscode/*",
     ".gitignore",

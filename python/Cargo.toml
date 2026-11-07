@@ -1,0 +1,32 @@
+[package]
+name = "dioptrin-io-python"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.89"
+license = "MIT"
+description = "Python and NumPy bindings for the dioptrin-io detector readers"
+repository = "https://github.com/CPrescher/dioptrin-io"
+publish = false
+
+[lib]
+name = "_native"
+crate-type = ["cdylib"]
+
+[features]
+default = ["hdf5", "formats"]
+hdf5 = ["dioptrin-io/hdf5", "dep:hdf5-backend", "dep:hdf5-sys"]
+formats = [
+    "dioptrin-io/jpeg", "dioptrin-io/jpeg2000", "dioptrin-io/containers",
+    "dioptrin-io/bruker", "dioptrin-io/oxford", "dioptrin-io/raxis",
+    "dioptrin-io/fixed", "dioptrin-io/fit2d", "dioptrin-io/kcd",
+    "dioptrin-io/mpa", "dioptrin-io/esperanto", "dioptrin-io/mar345",
+    "dioptrin-io/xsd",
+]
+
+[dependencies]
+dioptrin-io = { path = "..", features = ["wrappers"] }
+numpy = "0.29"
+pyo3 = "0.29"
+bytemuck = "1.24"
+hdf5-backend = { package = "hdf5-metno", version = "=0.15.1", optional = true }
+hdf5-sys = { package = "hdf5-metno-sys", version = "=0.12.5", optional = true }
