@@ -36,8 +36,10 @@ when a read fails.
 
 The [user manual](https://dioptrin-io.readthedocs.io/en/latest/) collects the
 reader guides, format coverage, explicit limitations and validation records.
-See [reading performance and CPU backends](https://dioptrin-io.readthedocs.io/en/latest/PERFORMANCE.html)
-for file-reading comparisons, image density, worker counts and SIMD measurements.
+See [reading performance and CPU backends](docs/PERFORMANCE.md) for file-reading
+comparisons, image density, worker counts and SIMD measurements. The
+[benchmark index](docs/benchmarks/index.md) separates reader throughput,
+integration timings and application latency, with versioned methods and evidence.
 The [manual source](docs/index.md) is maintained in this repository.
 
 ## Inspiration and acknowledgments
@@ -315,20 +317,16 @@ notices are retained; `vendor/hdf5-bitshuffle-1.0.0/UPSTREAM.json` records the
 baseline hashes and upstream commits, and `PATCHES.md` describes the build.
 The indexed reader retains checked Rust LZ4 decoding and original pixel types,
 and reuses worker-owned scratch for native bit unshuffle.
-Matched Eiger9M read/decode measurements are documented in
-[`docs/benchmarks/2026-11-06-neon-eiger/`](docs/benchmarks/2026-11-06-neon-eiger/);
-the subsequent scratch-reuse comparison is in
-[`docs/benchmarks/2026-11-06-scratch-eiger/`](docs/benchmarks/2026-11-06-scratch-eiger/).
-Windows SSE2/NEON support, runtime AVX2 dispatch and matched native CI benchmarks
-are described in [`docs/benchmarks/2026-11-07-windows-simd/`](docs/benchmarks/2026-11-07-windows-simd/).
+The [performance guide](docs/PERFORMANCE.md) describes decoder selection and
+links the acquired-file and synthetic SIMD measurements with their tested revisions.
 The HDF5 feature requires a C compiler, CMake >=3.26 and Git in addition to Rust.
 TIFF, CBF and EDF use Rust libraries without an installed HDF5/Python requirement.
 JPEG/JPEG2000 build their vendored C codecs; those optional features also require
 a native compiler and CMake. No installed Python is required.
 
-Dioptrin and PhaseSmith remain independent consumers. A small opt-in typed
-Dioptrin adapter is tested separately for the benchmark; no PhaseSmith migration
-or Dioptas changes are included.
+Dioptrin and PhaseSmith remain independent consumers. Integration and Qt loader
+benchmarks have separate consumer dependencies and timing boundaries; see the
+[benchmark reports](docs/benchmarks/index.md).
 
 See [layout and type qualification](docs/LAYOUT_TYPE_PARITY.md) for source-rank
 EDF arrays, NumPy Boolean/binary16/empty arrays, HDF5 exact types/raw windows

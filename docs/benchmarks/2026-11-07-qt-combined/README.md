@@ -1,5 +1,8 @@
 # Combined HDF5 loading and fixed-mask integration in Qt
 
+[Benchmark index](../index.md) · Historical measurement: 2026-11-07.
+Results and implementation descriptions apply to the recorded source revisions.
+
 The combined path decodes a supported frame **once** and returns both original
 integer display pixels and a float64 1D pattern. Eight block workers share one
 fixed lookup and own their histograms; raw histograms are merged and normalized

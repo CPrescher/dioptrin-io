@@ -1,10 +1,14 @@
 # Fused fixed-mask Eiger integration
 
+[Benchmark index](../index.md) · Historical measurement: 2026-11-07.
+Results and implementation descriptions apply to the recorded source revisions.
+
 This local implementation connects dioptrin-io's raw HDF5 block reader to
 Dioptrin's fixed-mask CSC accumulator. It decodes all original integer counts
 and uses float64 geometry weights, signal sums, normalization and Poisson terms.
-It does not implement Jon Wright's selective bit-plane decoding or zero-aware
-LZ4 algorithm, and contains no newly copied upstream decoder code.
+The comparison is between native full-frame and fused block paths. It includes
+no timing measurement of
+[`jonwright/bslz4_to_sparse`](https://github.com/jonwright/bslz4_to_sparse).
 
 ## Single-image parallel decoding and integration
 

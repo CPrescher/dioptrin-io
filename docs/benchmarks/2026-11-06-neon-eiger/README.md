@@ -1,10 +1,23 @@
 # Upstream NEON kernels: Eiger9M read/decode comparison
 
+[Benchmark index](../index.md) · Historical measurement: 2026-11-06.
+Results and implementation descriptions apply to the recorded source revisions.
+
 The optional HDF5 backend now backports upstream Bitshuffle's bulk ARM NEON
 movemask implementation. The indexed reader retains bounded, checked Rust LZ4
-decoding. It does not depend on Jon Wright's package. Original native sources,
+decoding. It does not depend on `bslz4_to_sparse`. Original native sources,
 license notices, baseline hashes, and the two exact upstream patches are retained
 in `vendor/hdf5-bitshuffle-1.0.0/`.
+
+## Comparison implementation
+
+The external reader/decoder is
+[`jonwright/bslz4_to_sparse`](https://github.com/jonwright/bslz4_to_sparse),
+installed as `bslz4-to-sparse==0.0.22a3` (recorded build tag `v0.0.22.a3`).
+The [benchmark index](../index.md) defines the measured APIs and maps the
+historical JSON identifiers to these labels.
+Both external variants return full uint32 images; sparse-output and fused
+integration paths are outside this comparison.
 
 ## Results
 
@@ -12,12 +25,12 @@ in `vendor/hdf5-bitshuffle-1.0.0/`.
 |---|---:|---:|
 | dioptrin-io before | 31.48 (31.29–31.54) | 207.27 (199.56–209.76) |
 | dioptrin-io upstream NEON | 94.31 (93.96–94.52) | 597.37 (594.01–598.12) |
-| Jon public default (KCB) | 80.20 (78.86–81.42) | 543.62 (532.24–543.75) |
-| Jon explicit NEON (diagnostic) | 93.21 (91.99–93.69) | 641.68 (619.65–653.36) |
+| `bslz4_to_sparse` public default (KCB) | 80.20 (78.86–81.42) | 543.62 (532.24–543.75) |
+| `bslz4_to_sparse` explicit NEON (diagnostic) | 93.21 (91.99–93.69) | 641.68 (619.65–653.36) |
 
 The update gives **3.00×** the previous native throughput at one worker and
-**2.88×** at eight. In this run it is 17.6% / 9.9% faster than Jon's
-public default at 1 / 8 workers. Against his explicit NEON path the native
+**2.88×** at eight. In this run it is 17.6% / 9.9% faster than the `bslz4_to_sparse`
+public default at 1 / 8 workers. Against its explicit NEON path the native
 median is 1.2% higher at one worker and 6.9% lower at eight workers. The
 remaining eight-worker difference has not been isolated to a particular stage.
 
@@ -25,8 +38,9 @@ remaining eight-worker difference has not been isolated to a particular stage.
 These are complete **file read + decompression** passes into original uint32
 pixels. They exclude masking, normalization, conversion and integration, so they
 must not be compared directly with the older read-to-Dioptrin integration rates.
-Opening/indexing setup is recorded separately in `results.json`: median native
-setup was about 9.1 ms and Jon setup about 2.3 ms, across the timed samples.
+Opening/indexing setup is recorded separately in [raw results](results.json):
+median native setup was about 9.1 ms and `bslz4_to_sparse` setup about 2.3 ms,
+across the timed samples.
 
 ## Method and limitations
 
@@ -53,20 +67,22 @@ setup was about 9.1 ms and Jon setup about 2.3 ms, across the timed samples.
 - Native baseline is the prior reader at `4fc9071f29d7d54d6388a97dab424c7ec845884c`
   built with the same new benchmark example. Both native binaries use identical
   Rust release profiles, checked `lz4_flex` 0.14.0, HDF5 and callback semantics.
-- Jon default is installed `bslz4-to-sparse` 0.0.22a3's public CPU
-  `decompress_from_buffer`, which selects KCB. Jon NEON is a separately labelled
-  diagnostic using that package's native NEON selector with the same frame API
-  semantics; it is not the public default or Jon's fused integration path.
-- Jon and native retain their own LZ4 implementations. This compares the usable
-  reader/decoder paths; it does not isolate NEON instruction throughput alone.
+- The public `decompress_from_buffer` API selects KCB in the installed
+  `bslz4-to-sparse` 0.0.22a3 build. Explicit NEON uses that package's private
+  native selector with the same frame API semantics. It is a diagnostic,
+  separate from the public default and the repository's fused integration path.
+- `bslz4_to_sparse` and dioptrin-io retain their own LZ4 implementations. This
+  compares the usable reader/decoder paths; it does not isolate NEON instruction
+  throughput alone.
 
 ## Independent validation and build checks
 
-`../2026-11-05-native-eiger/count-reference.json` retains independent h5py/HDF5
-pixel hashes for every frame. `results.json` records all eight complete count
+[Count references](../2026-11-05-native-eiger/count-reference.json) retain
+independent h5py/HDF5 pixel hashes for every frame. [Raw results](results.json)
+record all eight complete count
 validation passes, every timing sample, executable hashes, package versions and
-Jon's installed build metadata. Every original pixel must match, including zeros,
-high bits and reserved values.
+the installed `bslz4_to_sparse` build metadata. Every original pixel must match,
+including zeros, high bits and reserved values.
 
 `tests/bitshuffle_neon.rs` additionally checks both encode and decode against
 24 independently stock-Bitshuffle-encoded synthetic vectors: 1/2/4/8-byte samples,
@@ -93,7 +109,7 @@ guard is included and non-ARM kernels are unchanged.
   Sebastian Pop; [MSVC alias guard](https://github.com/kiyo-masui/bitshuffle/commit/aa9bd80f076ccde6320d81833b19b835ecf2acfe),
   Christoph Gohlke. Original upstream MIT attribution remains intact.
 
-`provenance.json` records source/compiler/patch hashes, generated patched-source
+[Provenance](provenance.json) records source/compiler/patch hashes, generated patched-source
 hashes, and checks. This is a local implementation and benchmark, with no
 application consumer change, publication or release.
 
@@ -110,6 +126,8 @@ prove that the optimized kernel was selected.
 
 Use the reference Python environment containing `h5py`, `numpy`, `psutil` and
 `bslz4-to-sparse==0.0.22a3`. Keep the original immutable detector file external.
+Restore the updated reader's source state from the recorded provenance before
+building; a newer checkout is a different experiment.
 Build a baseline from the prior commit with the same benchmark example:
 
 ```sh

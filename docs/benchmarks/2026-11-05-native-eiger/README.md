@@ -1,5 +1,8 @@
 # Native HDF5 → typed Dioptrin, 2026-11-05
 
+[Benchmark index](../index.md) · Historical measurement: 2026-11-05.
+Results and implementation descriptions apply to the recorded source revisions.
+
 The new raw-chunk snapshot reader preserves all original Eiger counts and feeds
 native u32 samples into existing float64 Dioptrin integration kernels. It removes
 serialized HDF5 decompression from the measured path. This is a validated first
@@ -20,9 +23,10 @@ bundled native Bitshuffle unshuffle; bundled HDF5 2.2.0 for metadata/general rea
 
 Within this run, median speedups are **4.63× intensity** and **4.35× Poisson**.
 The host was not reserved/isolated and the observed ranges should accompany the
-medians. These numbers do not replace the earlier Python/Jon comparisons or
-establish superiority over the earlier optimized reusable prototype (193/172
-fps in its separately documented run). No new Jon result is claimed here.
+medians. This report compares two dioptrin-io readers with the same consumer.
+It does not measure `bslz4_to_sparse`; the separate
+[repository/API comparison](../index.md)
+uses a different read/decode-only scope.
 
 The operating-system page cache was not purged. Counts are validated before
 timing, and each error mode/workflow gets a complete warmup. These are **warm

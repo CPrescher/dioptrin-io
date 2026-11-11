@@ -27,6 +27,7 @@ READER_DESIGN
 :maxdepth: 1
 
 HDF5_LAYOUTS
+HDF5_SOURCE_CONTRACTS
 TIFF_LAYOUTS
 IMAGE_READERS
 SPARSE_READERS
@@ -40,11 +41,12 @@ reader-reference
 :maxdepth: 1
 
 PERFORMANCE
+Benchmark reports <benchmarks/index>
 FORMAT_COVERAGE
 READING_GAPS
 VALIDATION
 FABIO_PARITY
-validation-reports
+Validation reports <validation-reports>
 ```
 
 ```{toctree}

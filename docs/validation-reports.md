@@ -1,7 +1,9 @@
-# Validation reports and benchmark methods
+# Validation reports
 
 These records retain the scope of their tested source and reference revisions.
 Use the current coverage catalog and gap inventory for the maintained reading scope.
+Performance measurements have a separate [benchmark index](benchmarks/index.md),
+organized by measured operation, input and reference implementation.
 
 ```{toctree}
 :maxdepth: 1
@@ -14,12 +16,6 @@ MARV2_VDS_OJPEG_PARITY
 SERIES_COMPANIONS_PARITY
 TIFF_API_PARITY
 VDS_ADVANCED_OJPEG_PARITY
-benchmarks/2026-11-05-native-eiger/README
-benchmarks/2026-11-06-neon-eiger/README
-benchmarks/2026-11-06-scratch-eiger/README
-benchmarks/2026-11-07-windows-simd/README
-benchmarks/2026-11-07-fused-fixed/README
-benchmarks/2026-11-07-qt-combined/README
 edf-recovery/2026-11-06-updated-edf-audit
 fabio-parity/README
 metadata-parity/HEADER_ATTRIBUTES

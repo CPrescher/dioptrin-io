@@ -1,4 +1,4 @@
-# Performance, image density and CPU backends
+# Reading performance and CPU backends
 
 [Manual index](index.md)
 
@@ -6,7 +6,12 @@ A processing rate is meaningful only with its data, hardware and measured steps.
 Reading compressed images, creating masks and integrating pixels can each limit
 a batch. A fast decoder rate does not give the complete map-integration rate.
 
-## Reading and integration
+## Measurement scope
+
+The [benchmark index](benchmarks/index.md) groups the retained reports by
+measured operation and identifies their inputs, source revisions and comparison
+implementations. All published numbers here are historical measurements; they
+do not benchmark the current checkout or automatically qualify later releases.
 
 A typical workflow has these stages:
 
@@ -17,11 +22,7 @@ A typical workflow has these stages:
 | Integrate | Accumulate pixel contributions using the calibrated geometry and lookup table |
 | Produce results | Calculate normalized intensities, requested uncertainties and output arrays |
 
-Dioptrin handles integration. Its current Python array interface accepts
-C-contiguous two-dimensional `float64` arrays. An application can read those
-arrays using h5py; see the [Dioptrin HDF5 guide](https://dioptrin.readthedocs.io/en/latest/HDF5_USAGE.html).
-
-The separate Rust library **dioptrin-io** provides native file reading. Its
+**dioptrin-io** provides native file reading; Dioptrin handles integration. The
 indexed HDF5 `RawReader` supports admitted immutable snapshots, including
 full-frame uint16/uint32 Bitshuffle/LZ4 chunks. It indexes chunks through HDF5,
 then performs positional file reads and checked decoding in frame workers
@@ -66,9 +67,11 @@ integration matrix. Changing the decoder backend does not change those weights.
 
 ## Scalar, SSE2, AVX2 and NEON
 
-The runtime backend-selection API in this section is available on `main`, which
-includes revision `9c780a9`. It is newer than the `v0.1.0` source release; pin
-that revision or a later descendant when using these APIs.
+The Scalar/SSE2/AVX2/NEON runtime-selection API was introduced in revision
+[`9c780a9`](https://github.com/CPrescher/dioptrin-io/commit/9c780a9f8131088df55d0a6836a526fa44ee6d01)
+and is included in the `v0.3.0` Rust source release. The measurements below
+remain tied to the measured revision. See [release scope](RELEASING.md) for
+installation and packaging.
 
 These are implementations of the same bit-unshuffle operation in dioptrin-io.
 They reconstruct the same integer pixels; selecting SIMD does not reduce
@@ -106,7 +109,7 @@ HDF5 reader uses the baseline kernel under the HDF5 mutex; the tested Windows
 builds use SSE2 or NEON there. There
 is no corresponding `AVX2` option on Dioptrin's Python `Integrator`.
 
-For Rust consumers using the reader revision described below:
+For Rust consumers:
 
 ```rust
 use dioptrin_io::hdf5::{
@@ -135,11 +138,36 @@ Eight workers do not mean eight physical CPU cores. More workers than allocated
 CPUs can oversubscribe a machine, and throughput may stop increasing before all
 cores are used because another processing stage or shared resource limits it.
 
+## Acquired Eiger read/decode measurements
+
+The [November 6 reusable-buffer report](benchmarks/2026-11-06-scratch-eiger/README.md)
+compares complete read/decode passes over 625 acquired Eiger 9M frames
+(3262 × 3108 uint32) on an Apple M4 Pro, with warm OS caches. Three alternating
+passes per implementation follow independent all-frame count validation at
+both worker counts. Opening/indexing, hashing, masking and integration are
+excluded; file reads, decoding, source checks and worker/buffer creation are
+included. The machine was not isolated.
+
+| Reader/decoder | 1 worker fps, median (range) | 8 workers fps, median (range) |
+|---|---:|---:|
+| dioptrin-io, allocating NEON wrapper | 95.37 (95.35–96.66) | 655.38 (646.98–655.62) |
+| dioptrin-io, reusable NEON buffers | 97.62 (97.13–98.04) | 730.53 (725.35–733.85) |
+| `bslz4_to_sparse` 0.0.22a3, public default (KCB) | 80.70 (79.10–84.78) | 619.98 (617.99–620.42) |
+| `bslz4_to_sparse` 0.0.22a3, explicit NEON (diagnostic) | 93.80 (92.72–93.93) | 714.30 (714.01–715.67) |
+
+The external implementation is
+[`jonwright/bslz4_to_sparse`](https://github.com/jonwright/bslz4_to_sparse).
+Its public `decompress_from_buffer` API and private NEON diagnostic both return
+full original images in this test. The [comparison definition](benchmarks/index.md)
+identifies the recorded build and entry points. These rates compare complete
+reader/decoder paths with different LZ4 implementations and API overheads;
+they do not measure the repository's sparse-output or fused integration paths.
+
+The earlier [NEON-kernel report](benchmarks/2026-11-06-neon-eiger/README.md)
+measures a different implementation step in a separate session. Use paired
+results within each report when assessing a change.
+
 ## Windows read/decode measurements
-
-Pin the measured development revision when reproducing these results; the
-earlier `v0.1.0` tag does not include the decoder changes measured here.
-
 
 These results measure **file reading plus decoding only**, with original uint32
 pixel delivery. They exclude masking, image conversion, normalization and
@@ -193,33 +221,20 @@ image size, cache state and the range of repeated measurements. Compare scalar
 and SIMD on the same machine. Use acquired data to estimate the gain for an
 actual experiment; synthetic patterns qualify a controlled workload.
 
-## Combined loading and fixed-mask integration in Qt
+## Consumer and application measurements
 
-Fused block decoding can integrate one frame while its independent codec blocks
-are decoded on several cores. The [native Eiger report](benchmarks/2026-11-07-fused-fixed/README.md)
-records 5.38/6.09 ms (intensity/Poisson), versus 16.73/17.31 ms for full-frame
-decoding followed by eight-core integration, with float64 arithmetic, warm cache
-and a prepared lookup.
+The [native typed-consumer report](benchmarks/2026-11-05-native-eiger/README.md)
+includes decoding, orientation mapping and Dioptrin integration. The later
+[fixed-mask block-fusion report](benchmarks/2026-11-07-fused-fixed/README.md)
+separately measures scan throughput and single-image latency, with a prepared
+lookup and float64 arithmetic. Those numbers include more work than the reader
+measurements above.
 
-The first Qt adapter reread images that were already decoded for display. It was
-slower than integrating the resident array. That historical result motivated the
-**combined loader**: one native decode now returns original typed display pixels
-and the float64 pattern together. Qt consumes the prepared pattern instead of
-reading or integrating those pixels a second time.
-
-The [full Qt comparison](benchmarks/2026-11-07-qt-combined/README.md) includes the
-real image/pattern controllers, snapshot creation, worker dispatch, pattern
-application and the normal 25 ms debounce. On the M4 Pro/Eiger 9M test, combined
-loading reduced warm open-to-pattern latency by approximately **20%**. This is a
-whole-operation result, distinct from the native pipeline's roughly threefold
-speedup. Qt was offscreen at 1200×900; physical-monitor/GPU presentation was not
-qualified. Source timings, p95 values, all 625 count/float64 comparisons and exact
-conditions are retained in that report.
-
-The combined route requires fixed masks and a supported self-contained full-frame
-Bitshuffle/LZ4 uint16/uint32 HDF5 source. Initial files retain the authoritative
-LImA dataset/header; selected HDF5 sources keep their selection. Corrections,
-transforms, dynamic masks, busy bulk workers and unsupported metadata/layouts use
-the existing path. Batch/map and 2D integration algorithms are unchanged. Mask or
-calibration edits after loading invalidate a prepared result and integrate the
-resident image; they do not trigger a fused reread.
+The [combined Qt loader report](benchmarks/2026-11-07-qt-combined/README.md)
+measures open-to-pattern latency through real image/pattern controllers,
+snapshots, dispatch and the normal 25 ms debounce. On its M4 Pro/Eiger 9M test,
+combined loading reduced median latency by about 20%. Qt ran offscreen at
+1200 × 900; physical-monitor/GPU presentation was not qualified. This result
+applies to that fixed-mask configuration and recorded application revision.
+The report retains timings, p95 values, all-frame validation, eligibility rules
+and reproduction commands.

@@ -1,5 +1,8 @@
 # Windows SIMD correctness and matched read/decode benchmark
 
+[Benchmark index](../index.md) · Historical measurement: 2026-11-07.
+Results and implementation descriptions apply to the recorded source revisions.
+
 MSVC now recognizes x64 SSE2 and ARM64 NEON in the vendored Bitshuffle core.
 The indexed raw reader additionally builds the exact upstream AVX2 decode
 primitive pair in a separate object and selects it only after Rust's CPU/OS
