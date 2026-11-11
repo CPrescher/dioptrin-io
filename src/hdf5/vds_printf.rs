@@ -142,7 +142,7 @@ pub(super) fn has_substitutions(
     Ok(inspect(filename, limits.text_bytes)?.substitutions > 0
         || inspect(dataset, limits.text_bytes)?.substitutions > 0)
 }
-pub(super) fn validate_plan(plan: &PrintfMapping, limits: Limits) -> Result<(), Error> {
+pub(in crate::hdf5) fn validate_plan(plan: &PrintfMapping, limits: Limits) -> Result<(), Error> {
     if plan
         .source_file
         .as_ref()
@@ -519,6 +519,19 @@ pub(super) fn validate_domain(
         return Err(Error("approved printf prefix does not cover its original mapped samples within the final frozen domain".into()));
     }
     Ok(())
+}
+
+/// Parse the native pattern grammar for bounded caller source resolution.
+pub(in crate::hdf5) fn contract_name(
+    text: &str,
+    index: usize,
+    limits: Limits,
+) -> Result<(String, bool), Error> {
+    let pattern = inspect(text, limits.text_bytes)?;
+    Ok((
+        name(text, pattern, index, limits.text_bytes)?,
+        pattern.substitutions > 0,
+    ))
 }
 
 #[cfg(test)]

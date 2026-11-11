@@ -192,116 +192,14 @@ impl Reader {
         origin: Option<&Path>,
     ) -> Result<Self, Error> {
         let limits = options.limits;
-        if [
-            limits.frames,
-            limits.frame_bytes,
-            limits.chunk_bytes,
-            limits.metadata_bytes,
-            limits.text_bytes,
-            limits.source_files,
-            limits.datasets,
-            limits.group_members,
-            limits.link_traversals,
-        ]
-        .contains(&0)
-            || limits.text_bytes == usize::MAX
-        {
-            return Err(Error(
-                "typed HDF5 limits must be positive and finite".into(),
-            ));
-        }
+        validate_limits(limits)?;
         super::register_filters()?;
         let mut sources = Sources::new_with_origin(path, limits, options.external_links, origin)?;
         let mut bindings = None;
         let mut raw_bindings = None;
         let mut indexed_datasets = 0usize;
         let mut fields = BTreeMap::new();
-        let requests = match selection {
-            Selection::Dataset(path) => {
-                let (source, path) = sources.resolve(0, path)?;
-                if sources.file(source).loc_type_by_name(&path)? == LocationType::Group {
-                    vec![(source, format!("{}/data", path.trim_end_matches('/')))]
-                } else {
-                    vec![(source, path)]
-                }
-            }
-            Selection::Eiger => {
-                let (source, entry, group) = sources.group(0, "/entry")?;
-                let names = sources.names(&group)?;
-                if names.iter().any(|n| n == "data") {
-                    let (source, path) = sources.resolve(source, &format!("{entry}/data"))?;
-                    if sources.file(source).loc_type_by_name(&path)? == LocationType::Group {
-                        let group = sources.file(source).group(&path)?;
-                        sources
-                            .names(&group)?
-                            .into_iter()
-                            .filter(|n| n.starts_with("data"))
-                            .map(|n| (source, format!("{path}/{n}")))
-                            .collect()
-                    } else {
-                        vec![(source, path)]
-                    }
-                } else {
-                    names
-                        .into_iter()
-                        .filter(|n| n.starts_with("data"))
-                        .map(|n| (source, format!("{entry}/{n}")))
-                        .collect()
-                }
-            }
-            Selection::Lima => {
-                let attr = sources.file(0).attr("default")?;
-                let entry = read_text(&attr, limits.text_bytes, true)?;
-                sources.charge(entry.len())?;
-                let (source, path, group) = sources.group(0, &entry)?;
-                let has_default = hdf5_backend::sync::sync(|| {
-                    // SAFETY: live group and a static NUL-terminated name.
-                    let exists = unsafe { H5Aexists(group.id(), c"default".as_ptr()) };
-                    if exists < 0 {
-                        Err(Error("cannot inspect LImA default metadata".into()))
-                    } else {
-                        Ok(exists > 0)
-                    }
-                })?;
-                if has_default {
-                    let attr = group.attr("default")?;
-                    let default = read_text(&attr, limits.text_bytes, true)?;
-                    let detector = default
-                        .trim_end_matches('/')
-                        .rsplit('/')
-                        .nth(1)
-                        .ok_or_else(|| Error("invalid LImA detector default path".into()))?;
-                    fields.insert("detector".into(), detector.into());
-                    sources.charge(default.len())?;
-                } else {
-                    fields.insert("detector".into(), "detector".into());
-                }
-                fields.insert("default_entry".into(), entry);
-                vec![(source, format!("{path}/measurement/data"))]
-            }
-            Selection::Lambda => {
-                let base = "/entry/instrument/detector";
-                let (source, path) = sources.resolve(0, &format!("{base}/description"))?;
-                let description_dataset = sources.file(source).dataset(&path)?;
-                let description = read_text(&description_dataset, limits.text_bytes, false)?;
-                if description != "Lambda" {
-                    return Err(Error("HDF5 detector description is not Lambda".into()));
-                }
-                fields.insert("description".into(), description);
-                let (_, _, group) = sources.group(0, base)?;
-                let names = sources.names(&group)?;
-                if names.iter().any(|n| n == "local_name") {
-                    let (source, path) = sources.resolve(0, &format!("{base}/local_name"))?;
-                    let name_dataset = sources.file(source).dataset(&path)?;
-                    let name = read_text(&name_dataset, limits.text_bytes, false)?;
-                    sources.charge(name.len())?;
-                    fields.insert("detector".into(), name);
-                } else {
-                    fields.insert("detector".into(), "detector".into());
-                }
-                vec![(0, format!("{base}/data"))]
-            }
-        };
+        let requests = requests(&mut sources, selection, limits, &mut fields)?;
         if requests.is_empty() || requests.len() > limits.datasets {
             return Err(Error(
                 "HDF5 discovery found no datasets or exceeds dataset limit".into(),
@@ -904,4 +802,122 @@ pub(super) fn read_text(
     let end = bytes.iter().position(|&b| b == 0).unwrap_or(bytes.len());
     String::from_utf8(bytes[..end].to_vec())
         .map_err(|_| Error("non-UTF8 HDF5 discovery text is unsupported".into()))
+}
+
+/// Resolve the same image selection for both source-contract discovery and reading.
+pub(super) fn requests(
+    sources: &mut Sources,
+    selection: Selection<'_>,
+    limits: Limits,
+    fields: &mut BTreeMap<String, String>,
+) -> Result<Vec<(usize, String)>, Error> {
+    let requests = match selection {
+        Selection::Dataset(path) => {
+            let (source, path) = sources.resolve(0, path)?;
+            if sources.file(source).loc_type_by_name(&path)? == LocationType::Group {
+                vec![(source, format!("{}/data", path.trim_end_matches('/')))]
+            } else {
+                vec![(source, path)]
+            }
+        }
+        Selection::Eiger => {
+            let (source, entry, group) = sources.group(0, "/entry")?;
+            let names = sources.names(&group)?;
+            if names.iter().any(|n| n == "data") {
+                let (source, path) = sources.resolve(source, &format!("{entry}/data"))?;
+                if sources.file(source).loc_type_by_name(&path)? == LocationType::Group {
+                    let group = sources.file(source).group(&path)?;
+                    sources
+                        .names(&group)?
+                        .into_iter()
+                        .filter(|n| n.starts_with("data"))
+                        .map(|n| (source, format!("{path}/{n}")))
+                        .collect()
+                } else {
+                    vec![(source, path)]
+                }
+            } else {
+                names
+                    .into_iter()
+                    .filter(|n| n.starts_with("data"))
+                    .map(|n| (source, format!("{entry}/{n}")))
+                    .collect()
+            }
+        }
+        Selection::Lima => {
+            let attr = sources.file(0).attr("default")?;
+            let entry = read_text(&attr, limits.text_bytes, true)?;
+            sources.charge(entry.len())?;
+            let (source, path, group) = sources.group(0, &entry)?;
+            let has_default = hdf5_backend::sync::sync(|| {
+                // SAFETY: live group and a static NUL-terminated name.
+                let exists = unsafe { H5Aexists(group.id(), c"default".as_ptr()) };
+                if exists < 0 {
+                    Err(Error("cannot inspect LImA default metadata".into()))
+                } else {
+                    Ok(exists > 0)
+                }
+            })?;
+            if has_default {
+                let attr = group.attr("default")?;
+                let default = read_text(&attr, limits.text_bytes, true)?;
+                let detector = default
+                    .trim_end_matches('/')
+                    .rsplit('/')
+                    .nth(1)
+                    .ok_or_else(|| Error("invalid LImA detector default path".into()))?;
+                fields.insert("detector".into(), detector.into());
+                sources.charge(default.len())?;
+            } else {
+                fields.insert("detector".into(), "detector".into());
+            }
+            fields.insert("default_entry".into(), entry);
+            vec![(source, format!("{path}/measurement/data"))]
+        }
+        Selection::Lambda => {
+            let base = "/entry/instrument/detector";
+            let (source, path) = sources.resolve(0, &format!("{base}/description"))?;
+            let description_dataset = sources.file(source).dataset(&path)?;
+            let description = read_text(&description_dataset, limits.text_bytes, false)?;
+            if description != "Lambda" {
+                return Err(Error("HDF5 detector description is not Lambda".into()));
+            }
+            fields.insert("description".into(), description);
+            let (_, _, group) = sources.group(0, base)?;
+            let names = sources.names(&group)?;
+            if names.iter().any(|n| n == "local_name") {
+                let (source, path) = sources.resolve(0, &format!("{base}/local_name"))?;
+                let name_dataset = sources.file(source).dataset(&path)?;
+                let name = read_text(&name_dataset, limits.text_bytes, false)?;
+                sources.charge(name.len())?;
+                fields.insert("detector".into(), name);
+            } else {
+                fields.insert("detector".into(), "detector".into());
+            }
+            vec![(0, format!("{base}/data"))]
+        }
+    };
+    Ok(requests)
+}
+
+pub(super) fn validate_limits(limits: Limits) -> Result<(), Error> {
+    if [
+        limits.frames,
+        limits.frame_bytes,
+        limits.chunk_bytes,
+        limits.metadata_bytes,
+        limits.text_bytes,
+        limits.source_files,
+        limits.datasets,
+        limits.group_members,
+        limits.link_traversals,
+    ]
+    .contains(&0)
+        || limits.text_bytes == usize::MAX
+    {
+        return Err(Error(
+            "typed HDF5 limits must be positive and finite".into(),
+        ));
+    }
+    Ok(())
 }

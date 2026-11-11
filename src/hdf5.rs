@@ -7,6 +7,8 @@
 
 pub mod attributes;
 pub mod cache;
+pub mod catalog;
+pub mod contracts;
 pub mod nexus;
 pub mod raw;
 mod sources;

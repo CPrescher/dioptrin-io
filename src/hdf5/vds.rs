@@ -28,7 +28,7 @@ mod finite;
 #[path = "vds_graph.rs"]
 mod graph;
 #[path = "vds_printf.rs"]
-mod printf;
+pub(super) mod printf;
 #[path = "vds_unlimited.rs"]
 mod unlimited;
 pub use printf::{PrintfDeclaration, PrintfExpansion, PrintfMapping};

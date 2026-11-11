@@ -343,3 +343,9 @@ The [nested/printf VDS and OJPEG continuation](docs/VDS_ADVANCED_OJPEG_PARITY.md
 records bounded source expansion, nested selection composition and additional
 legacy JPEG profiles, with independent counts and reference limitations kept
 separate.
+
+HDF5 consumers can resolve exact declared master/VDS/raw companion paths through
+[`SourceContracts`](docs/HDF5_SOURCE_CONTRACTS.md), receive structured missing-file
+and finite-printf requirements, and open them with the same wrapped reader.
+Image candidate aliases are exposed by `hdf5::catalog::image_paths`; all sample
+admission and immutable-source guards remain native.

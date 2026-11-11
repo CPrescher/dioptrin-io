@@ -238,6 +238,19 @@ impl Input {
         options: crate::hdf5::typed::Options,
         vds: Option<crate::hdf5::typed::VdsOptions<'_>>,
     ) -> Result<Reader, Error> {
+        self.read_hdf5_with_storage(selection, options, vds, None)
+    }
+    #[cfg(feature = "hdf5")]
+    /// Select HDF5 storage with separate explicit VDS and raw source contracts.
+    /// # Errors
+    /// Unsupported storage, mutation, bounds or incomplete source contracts.
+    pub fn read_hdf5_with_storage(
+        self,
+        selection: crate::hdf5::typed::Selection<'_>,
+        options: crate::hdf5::typed::Options,
+        vds: Option<crate::hdf5::typed::VdsOptions<'_>>,
+        raw: Option<crate::hdf5::typed::ExternalRawOptions<'_>>,
+    ) -> Result<Reader, Error> {
         if self.source.is_stream()
             && self.source.source_directory().is_none()
             && options.external_links != crate::hdf5::typed::ExternalLinks::Reject
@@ -246,11 +259,12 @@ impl Input {
                 "external HDF5 stream policy requires an explicit origin directory".into(),
             ));
         }
-        let reader = crate::hdf5::typed::Reader::open_snapshot_with_origin(
+        let reader = crate::hdf5::typed::Reader::open_snapshot_with_storage(
             self.source.path(),
             selection,
             options,
             vds,
+            raw,
             self.source.source_directory(),
         )
         .map_err(|e| Error(e.to_string()))?;
@@ -259,6 +273,68 @@ impl Input {
             backend: super::Backend::Hdf5(reader),
             source: self.source,
         })
+    }
+    #[cfg(feature = "hdf5")]
+    /// Resolve exact declared HDF5 source paths in this input's actual origin.
+    /// Keep this Input alive while inspecting the returned metadata contract.
+    /// # Errors
+    /// Invalid metadata/choices, cycles, source mutation or resource limits.
+    pub fn hdf5_source_contracts(
+        &self,
+        selection: crate::hdf5::typed::Selection<'_>,
+        options: crate::hdf5::typed::Options,
+        choices: &[crate::hdf5::contracts::FileChoice],
+        printf: &[crate::hdf5::typed::PrintfMapping],
+    ) -> Result<crate::hdf5::contracts::SourceContracts, Error> {
+        if self.source.is_stream() && self.source.source_directory().is_none() {
+            return Err(Error(
+                "HDF5 declared-path resolution for a stream requires an explicit origin directory"
+                    .into(),
+            ));
+        }
+        self.source.check()?;
+        let contracts = crate::hdf5::contracts::SourceContracts::resolve_snapshot(
+            self.source.path(),
+            selection,
+            options,
+            choices,
+            printf,
+            self.source.source_directory(),
+        )
+        .map_err(|e| Error(e.to_string()))?;
+        self.source.check()?;
+        Ok(contracts)
+    }
+    #[cfg(feature = "hdf5")]
+    /// Open the same immutable input with a complete metadata-derived contract.
+    /// # Errors
+    /// Incomplete/wrong-root/stale contracts or typed reader admission failures.
+    pub fn read_hdf5_with_contracts(
+        self,
+        selection: crate::hdf5::typed::Selection<'_>,
+        options: crate::hdf5::typed::Options,
+        contracts: &crate::hdf5::contracts::SourceContracts,
+        fill: crate::hdf5::typed::UnmappedRegions,
+    ) -> Result<Reader, Error> {
+        self.source.check()?;
+        if std::fs::canonicalize(self.source.path())? != contracts.root() {
+            return Err(Error(
+                "HDF5 source contract belongs to a different input".into(),
+            ));
+        }
+        contracts
+            .require_complete()
+            .map_err(|e| Error(e.to_string()))?;
+        let reader = self.read_hdf5_with_storage(
+            selection,
+            options,
+            Some(contracts.vds_options(fill)),
+            Some(contracts.external_raw_options()),
+        )?;
+        contracts
+            .check_sources()
+            .map_err(|e| Error(e.to_string()))?;
+        Ok(reader)
     }
     #[cfg(feature = "sparse")]
     /// Open source sparse components; dense reconstruction still requires opt-in.
