@@ -1,0 +1,48 @@
+[
+  {
+    "arch": "arm64",
+    "command": [
+      "clang",
+      "-arch",
+      "arm64",
+      "-O2",
+      "-g",
+      "-std=c11",
+      "-fsanitize=address,undefined",
+      "-DBITSHUF_USE_IFUNC=0",
+      "-Ivendor/hdf5-bitshuffle-1.0.0/ext/kcb",
+      "-Ivendor/hdf5-bitshuffle-1.0.0/ext/bitshuffle/lz4",
+      "tests/native/codec_fixture.c",
+      "vendor/hdf5-bitshuffle-1.0.0/ext/kcb/bitshuffle.c",
+      "vendor/hdf5-bitshuffle-1.0.0/ext/bitshuffle/lz4/lz4.c",
+      "-o",
+      "/Users/clemens/Codex/dioptrin-io-codec-benchmark-20261111/codec-sanitized-arm64"
+    ],
+    "build_exit": 0,
+    "run_exit": 0,
+    "output": "independent KCB counts, bounded LZ4 and buffer guards match\n"
+  },
+  {
+    "arch": "x86_64",
+    "command": [
+      "clang",
+      "-arch",
+      "x86_64",
+      "-O2",
+      "-g",
+      "-std=c11",
+      "-fsanitize=address,undefined",
+      "-DBITSHUF_USE_IFUNC=0",
+      "-Ivendor/hdf5-bitshuffle-1.0.0/ext/kcb",
+      "-Ivendor/hdf5-bitshuffle-1.0.0/ext/bitshuffle/lz4",
+      "tests/native/codec_fixture.c",
+      "vendor/hdf5-bitshuffle-1.0.0/ext/kcb/bitshuffle.c",
+      "vendor/hdf5-bitshuffle-1.0.0/ext/bitshuffle/lz4/lz4.c",
+      "-o",
+      "/Users/clemens/Codex/dioptrin-io-codec-benchmark-20261111/codec-sanitized-x86_64"
+    ],
+    "build_exit": 0,
+    "run_exit": 0,
+    "output": "independent KCB counts, bounded LZ4 and buffer guards match\n"
+  }
+]

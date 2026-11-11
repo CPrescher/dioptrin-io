@@ -9,7 +9,7 @@ publish = false
 [dependencies]
 dioptrin-io = { path = "../..", features = ["hdf5"] }
 # Supply the implementing Dioptrin checkout with --config patch.crates-io.dioptrin.path=...
-dioptrin = "=0.9.0"
+dioptrin = "=0.12.0"
 rayon = "1.12"
 serde_json = "1"
 sha2 = "0.10"

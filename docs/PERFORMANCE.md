@@ -135,6 +135,21 @@ Eight workers do not mean eight physical CPU cores. More workers than allocated
 CPUs can oversubscribe a machine, and throughput may stop increasing before all
 cores are used because another processing stage or shared resource limits it.
 
+## Optional bounded native LZ4
+
+The raw reader's LZ4 stage defaults to checked Rust decoding. Rust consumers can
+explicitly select `reader.with_lz4_backend(Lz4Backend::Native)` to reuse the
+already bundled `LZ4_decompress_safe` implementation, with exact input/output
+bounds and decoded-length checks. Bit-unshuffle selection is independent.
+
+The [November 11 current-main comparison](benchmarks/2026-11-11-codecs/README.md)
+found a 7.5% paired read/decode gain on the acquired Eiger9M file on an M4 Pro,
+and modest Poisson integration gains. Intensity-only complete-frame results were
+mixed, so the default remains unchanged on every platform. All original counts
+and complete timed consumer outputs matched exactly between codec variants.
+KCB was slower than the current optimized NEON path and was not retained in the
+production decoder. These are macOS measurements, not Windows performance claims.
+
 ## Windows read/decode measurements
 
 Pin the measured development revision when reproducing these results; the

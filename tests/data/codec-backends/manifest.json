@@ -1,0 +1,55 @@
+{
+  "license": "MIT; generated synthetic values, no external detector data",
+  "h5py": "3.15.1",
+  "hdf5plugin": "5.1.0",
+  "numpy": "2.4.2",
+  "compressor_sha256": "5c72c26d1bf1ca1f20293ae4692ee7a264dbabae21d390e2c4aae7e41fbcea47",
+  "shape": [
+    2,
+    1,
+    8209
+  ],
+  "sha256": "34b0d88204e763ff893dc07eaf7c4afa6c0686d85e3fad00bb0dd0300ed4e8e1",
+  "cases": [
+    {
+      "dataset": "u16_le",
+      "dtype": "uint16",
+      "byte_order": "<",
+      "width": 2,
+      "frame_sha256_le": [
+        "20b4951b5c1e0916657061b3852c379961527c0e01f3c5fbeb706b4c1034d26e",
+        "d987bd35d2a67a3f87a78d8de420aa87c88f87c7d03f0da3c632a758344c489a"
+      ]
+    },
+    {
+      "dataset": "u16_be",
+      "dtype": ">u2",
+      "byte_order": ">",
+      "width": 2,
+      "frame_sha256_le": [
+        "20b4951b5c1e0916657061b3852c379961527c0e01f3c5fbeb706b4c1034d26e",
+        "d987bd35d2a67a3f87a78d8de420aa87c88f87c7d03f0da3c632a758344c489a"
+      ]
+    },
+    {
+      "dataset": "u32_le",
+      "dtype": "uint32",
+      "byte_order": "<",
+      "width": 4,
+      "frame_sha256_le": [
+        "163cca4507fd4f3e009e7a9b771bb36864e768306b1ba009f8e7c139924f4194",
+        "99fc9674352fd79a60a5a4bd51a2add012470ece8c1dc94164d43f74f1213e4c"
+      ]
+    },
+    {
+      "dataset": "u32_be",
+      "dtype": ">u4",
+      "byte_order": ">",
+      "width": 4,
+      "frame_sha256_le": [
+        "163cca4507fd4f3e009e7a9b771bb36864e768306b1ba009f8e7c139924f4194",
+        "99fc9674352fd79a60a5a4bd51a2add012470ece8c1dc94164d43f74f1213e4c"
+      ]
+    }
+  ]
+}

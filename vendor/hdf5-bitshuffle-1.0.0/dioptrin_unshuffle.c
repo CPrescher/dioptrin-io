@@ -5,6 +5,12 @@
  */
 #include <stddef.h>
 #include <stdint.h>
+#include "lz4.h"
+
+int dioptrin_lz4_decompress_safe(const char *input, char *output,
+                                int input_bytes, int output_bytes) {
+    return LZ4_decompress_safe(input, output, input_bytes, output_bytes);
+}
 
 typedef int64_t (*kernel)(const void *, void *, size_t, size_t);
 #define DECLARE_PAIR(tag) \

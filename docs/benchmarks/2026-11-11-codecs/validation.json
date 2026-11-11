@@ -1,0 +1,88 @@
+{
+  "tests_passed": 422,
+  "checks": [
+    {
+      "name": "fmt-final",
+      "args": [
+        "cargo",
+        "fmt",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.392
+    },
+    {
+      "name": "fmt-bench-final",
+      "args": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "benchmarks/fused-eiger/Cargo.toml",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.049
+    },
+    {
+      "name": "clippy-final",
+      "args": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--all-features",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 3.222
+    },
+    {
+      "name": "test-all-features-final",
+      "args": [
+        "cargo",
+        "test",
+        "--all-features",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 46.859
+    },
+    {
+      "name": "no-default-final",
+      "args": [
+        "cargo",
+        "check",
+        "--no-default-features",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "seconds": 0.231
+    },
+    {
+      "name": "bench-build-final",
+      "args": [
+        "cargo",
+        "build",
+        "--manifest-path",
+        "benchmarks/fused-eiger/Cargo.toml",
+        "--release",
+        "--locked",
+        "--config",
+        "patch.crates-io.dioptrin.path=\"/Users/clemens/Programming/Dioptrin\""
+      ],
+      "exit_code": 0,
+      "seconds": 11.987
+    }
+  ],
+  "benchmark_clippy": "cargo clippy --manifest-path benchmarks/fused-eiger/Cargo.toml --release --all-targets --locked --config patch.crates-io.dioptrin.path=PINNED_DIOPTRIN -- -D warnings: passed",
+  "native_source_sha256": {
+    "src/hdf5/raw.rs": "a181174c30167314bdb863ddff7e37ae4f6fa6f5af64b115e0e300348840f934",
+    "vendor/hdf5-bitshuffle-1.0.0/dioptrin_unshuffle.c": "d4c97c9197a2de0a6085153d48363240c04fa0f48999d572b97f2b93b7e5526e"
+  },
+  "default": "unchanged: upstream SIMD auto policy and checked Rust LZ4 on every platform",
+  "selected": "bounded native LZ4 is explicit opt-in; KCB absent from production code",
+  "experimental_branch_commit": "9a767d967bffffe81cf1dd9cd424e0dcd538d6c1",
+  "platform_scope": "Local ARM64 macOS full tests and acquired-file benchmark; ARM64 and x86-64 Rosetta ASan/UBSan smoke checks; no Windows/Linux performance claim"
+}

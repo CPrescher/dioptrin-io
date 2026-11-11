@@ -1,0 +1,43 @@
+{
+  "recorded": "2026-11-11T22:11:23.076485+01:00",
+  "main_base": "dc6e30394e4374350020f8e1335f805f19e8364e",
+  "consumer_main": "c6ef97878ca38019874bd35c7db75959ecc8ce7e",
+  "binary_sha256": "cf3c3bdc62195edc60879ae07325435c7bf50af98e3208c805dab9e51d4ea68c",
+  "source_sha256": {
+    "src/hdf5/raw.rs": "382ec4831586a5c6001d647d7867407febad884fa6fdc5fc70a8f3fda244717e",
+    "benchmarks/fused-eiger/src/main.rs": "06be3d92b15d1c87e0d63f0e32d517d96d1bf9e3df1590da30bb352aade03503",
+    "benchmarks/fused-eiger/src/codecs.rs": "ff455374fe1395285e6de41f1e8a386d2f75a0bd5f1f2f6485ce8233d2469e1c",
+    "benchmarks/fused-eiger/Cargo.toml": "77b6be2417a5ac52b0c2f190a53a041f666a49337003f3cd05a76881f0110339",
+    "benchmarks/fused-eiger/Cargo.lock": "e2aa9afdbe7273ab81e7eda76c9d757f676d7246d4dca7afd541b4b1fe828f64",
+    "vendor/hdf5-bitshuffle-1.0.0/build.rs": "0335b4a7d161817778d35239b376651a3ca9ea34134ca6bf48e5da6aa5998b15",
+    "vendor/hdf5-bitshuffle-1.0.0/dioptrin_unshuffle.c": "3aa32ec77c2757b3ac446cdc5b499d320ca2c2f57db57c903fcfc9f24df0b2ed"
+  },
+  "consumer_fixed_source_sha256": "2a94ee11582393dda5bc57ad52ecc62a7a9261bb206f1e6226d3921f4e43f563",
+  "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: aarch64-apple-darwin\nrelease: 1.99.1\nLLVM version: 23.1.1\n",
+  "hardware": "Apple M4 Pro\n14\n51539607552\n",
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83\n",
+  "load_at_start": "22:11  up 17:25, 5 users, load averages: 4.46 3.10 2.86\n",
+  "scope": "factorial codec variants in the same optimized binary; main = original Auto unshuffle and checked Rust LZ4 algorithms; one unchanged current Dioptrin main consumer; setup excluded",
+  "exact_source_overlay": "experiment-source-overlay.tar.gz",
+  "source_overlay_sha256": "6e9ead395bc765b284a8853c606c55f102f7cdaef03c9facda8ecda0ad1a8906",
+  "source_note": "All compiled source hashes are preserved in the overlay. The later committed benchmark pins the old Auto policy explicitly; it resolves to the same Neon backend on this host.",
+  "independent_reference_sha256": "93a095c62c9c7dadef02e7f32bea9e956679220e2fe408d0f3075f939180f2f6",
+  "independent_reference_note": "Fresh h5py hashes and complete source SHA256 matched all 625 retained independent references at docs/benchmarks/2026-11-05-native-eiger/count-reference.json; the fresh manifest is retained in the local run directory.",
+  "load_at_end": "22:27  up 17:41, 5 users, load averages: 12.40 9.33 6.55\n",
+  "fresh_independent_reference_metadata": {
+    "source": "/Users/clemens/Programming/Dioptrin/test_data/eiger_0000.h5",
+    "dataset": "entry_0000/instrument/eiger/data",
+    "bytes": 5687072680,
+    "sha256": "2b749693d7a942b35d89806d99b9a1025ee119850be0ade27428f1dc11d0a1f3",
+    "h5py": "3.15.1",
+    "hdf5plugin": "5.1.0",
+    "numpy": "2.4.2",
+    "mask_sha256": "0c510a98b4afac57dab92441a40a58d1c740807ac51f89fd6178baf895175af1",
+    "shape": [
+      625,
+      3262,
+      3108
+    ],
+    "dtype": "uint32"
+  }
+}

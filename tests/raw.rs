@@ -4,7 +4,8 @@ use dioptrin_io::{
     hdf5::{
         Limits, Reader,
         raw::{
-            BlockBuffer, FrameBuffer, ParallelBlockBuffer, PipelineOptions, PixelBlock, RawReader,
+            BlockBuffer, FrameBuffer, Lz4Backend, ParallelBlockBuffer, PipelineOptions, PixelBlock,
+            RawReader, UnshuffleBackend,
         },
     },
 };
@@ -33,6 +34,108 @@ impl Drop for Fixture {
 }
 fn independent() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/counts-bitshuffle-lz4.h5")
+}
+
+#[test]
+fn codec_backends_preserve_independent_counts_and_existing_endian_admission() {
+    use sha2::{Digest, Sha256};
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/codec-backends");
+    let source = root.join("counts.h5");
+    let manifest: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(root.join("manifest.json")).unwrap()).unwrap();
+    assert_eq!(
+        format!("{:x}", Sha256::digest(std::fs::read(&source).unwrap())),
+        manifest["sha256"].as_str().unwrap()
+    );
+    fn bytes(block: PixelBlock<'_>) -> Vec<u8> {
+        match block {
+            PixelBlock::U16(v) => v.iter().flat_map(|x| x.to_le_bytes()).collect(),
+            PixelBlock::U32(v) => v.iter().flat_map(|x| x.to_le_bytes()).collect(),
+        }
+    }
+    for case in manifest["cases"].as_array().unwrap() {
+        // The existing legacy Reader used by RawReader admits native-endian
+        // scalar types only. Keep its rejection contract; codec work must not
+        // silently broaden which source types this entry point accepts.
+        let native_order = if cfg!(target_endian = "little") {
+            "<"
+        } else {
+            ">"
+        };
+        if case["byte_order"].as_str().unwrap() != native_order {
+            assert!(
+                RawReader::open_snapshot(
+                    &source,
+                    case["dataset"].as_str().unwrap(),
+                    Limits::default()
+                )
+                .is_err()
+            );
+            continue;
+        }
+        for backend in [
+            UnshuffleBackend::Scalar,
+            UnshuffleBackend::Sse2,
+            UnshuffleBackend::Avx2,
+            UnshuffleBackend::Neon,
+        ]
+        .into_iter()
+        .filter(|b| b.is_available())
+        {
+            for lz4 in [Lz4Backend::Rust, Lz4Backend::Native] {
+                let reader = RawReader::open_snapshot(
+                    &source,
+                    case["dataset"].as_str().unwrap(),
+                    Limits::default(),
+                )
+                .unwrap()
+                .with_unshuffle_backend(backend)
+                .unwrap()
+                .with_lz4_backend(lz4);
+                let mut frame = FrameBuffer::default();
+                let mut blocks = BlockBuffer::default();
+                let mut parallel = ParallelBlockBuffer::default();
+                for i in [0, 1, 0] {
+                    reader.read_frame_into(i, &mut frame).unwrap();
+                    let decoded = match frame.pixels().unwrap() {
+                        PixelBuffer::U16(v) => bytes(PixelBlock::U16(v)),
+                        PixelBuffer::U32(v) => bytes(PixelBlock::U32(v)),
+                        _ => panic!("original dtype changed"),
+                    };
+                    let expected = case["frame_sha256_le"][i].as_str().unwrap();
+                    assert_eq!(format!("{:x}", Sha256::digest(&decoded)), expected);
+                    let mut streamed = Vec::new();
+                    reader
+                        .read_frame_blocks(i, &mut blocks, |offset, block| {
+                            assert_eq!(
+                                offset * case["width"].as_u64().unwrap() as usize,
+                                streamed.len()
+                            );
+                            streamed.extend(bytes(block));
+                            Ok(())
+                        })
+                        .unwrap();
+                    assert_eq!(streamed, decoded);
+                    let states = reader
+                        .fold_frame_blocks(
+                            i,
+                            &mut parallel,
+                            PipelineOptions {
+                                workers: 8,
+                                memory_bytes: 1024 * 1024,
+                            },
+                            |_, _| Ok(Vec::new()),
+                            |state, _, block| {
+                                state.extend(bytes(block));
+                                Ok(())
+                            },
+                        )
+                        .unwrap();
+                    assert_eq!(states.into_iter().flatten().collect::<Vec<u8>>(), decoded);
+                }
+            }
+        }
+    }
 }
 
 #[test]

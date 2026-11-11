@@ -1,4 +1,5 @@
 //! Matched native file-read/decode/integration comparisons; no Python in timing.
+mod codecs;
 use dioptrin::{
     geometry::Geometry,
     integration::{
@@ -242,6 +243,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let plan = integrator.prepare_fixed1d((height, width), 2000)?;
     let setup_seconds = start.elapsed().as_secs_f64();
     eprintln!("index {index_seconds:.3}s; fixed float64 CSC setup {setup_seconds:.3}s");
+    if args.get(7).is_some_and(|x| x == "codecs") {
+        return codecs::benchmark(&plan, &args, passes);
+    }
     if args.get(7).is_some_and(|x| x == "single") {
         return single_image(&plan, &reader, &args[5], passes);
     }

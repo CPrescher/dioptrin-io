@@ -15,6 +15,12 @@ use std::{
 };
 
 unsafe extern "C" {
+    fn dioptrin_lz4_decompress_safe(
+        input: *const u8,
+        output: *mut u8,
+        input_bytes: i32,
+        output_bytes: i32,
+    ) -> i32;
     fn bshuf_default_block_size(element_size: usize) -> usize;
     fn bshuf_using_NEON() -> i32;
     fn bshuf_using_SSE2() -> i32;
@@ -77,6 +83,32 @@ impl UnshuffleBackend {
             Err(Error(format!(
                 "unavailable native unshuffle backend: {self:?}"
             )))
+        }
+    }
+}
+
+/// Bounded LZ4 block decompressor. Both require the exact decoded block length.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum Lz4Backend {
+    /// Checked Rust decoder; remains the default on every platform.
+    #[default]
+    Rust,
+    /// Reuse the bounded LZ4 decoder bundled with the HDF5 Bitshuffle filter.
+    /// Reads reject encoded or decoded blocks larger than `i32::MAX` bytes.
+    Native,
+}
+
+#[derive(Clone, Copy, Debug)]
+struct CodecOptions {
+    unshuffle: UnshuffleBackend,
+    lz4: Lz4Backend,
+}
+
+impl From<UnshuffleBackend> for CodecOptions {
+    fn from(unshuffle: UnshuffleBackend) -> Self {
+        Self {
+            unshuffle,
+            lz4: Lz4Backend::default(),
         }
     }
 }
@@ -218,7 +250,7 @@ pub struct RawReader {
     max_encoded: usize,
     chunk_limit: usize,
     configured_block: usize,
-    backend: UnshuffleBackend,
+    codec: CodecOptions,
 }
 impl RawReader {
     /// Index exactly the requested dataset as a frozen immutable snapshot.
@@ -341,20 +373,30 @@ impl RawReader {
             max_encoded,
             chunk_limit: limits.chunk_bytes,
             configured_block,
-            backend: UnshuffleBackend::Auto.resolve()?,
+            codec: UnshuffleBackend::Auto.resolve()?.into(),
         })
     }
     /// Override the kernel while retaining identical IO and decoding semantics.
     /// # Errors
     /// The requested kernel is not compiled or unsupported by this CPU/OS.
     pub fn with_unshuffle_backend(mut self, backend: UnshuffleBackend) -> Result<Self, Error> {
-        self.backend = backend.resolve()?;
+        self.codec.unshuffle = backend.resolve()?;
         Ok(self)
     }
     /// Actual selected kernel (never Auto).
     #[must_use]
     pub fn unshuffle_backend(&self) -> UnshuffleBackend {
-        self.backend
+        self.codec.unshuffle
+    }
+    /// Choose the bounded LZ4 implementation without changing source contracts.
+    #[must_use]
+    pub fn with_lz4_backend(mut self, backend: Lz4Backend) -> Self {
+        self.codec.lz4 = backend;
+        self
+    }
+    #[must_use]
+    pub fn lz4_backend(&self) -> Lz4Backend {
+        self.codec.lz4
     }
     /// Frozen `(frames,height,width)` dimensions.
     #[must_use]
@@ -405,7 +447,7 @@ impl RawReader {
                 self.chunk_limit,
                 self.configured_block,
                 &mut buffer.block_scratch,
-                self.backend,
+                self.codec,
             )?;
         } else {
             if buffer.compressed.len() != output.len() {
@@ -462,7 +504,7 @@ impl RawReader {
                 output,
                 element,
                 &mut buffer.scratch,
-                self.backend,
+                self.codec,
                 filtered,
             )?;
             if self.little_endian != cfg!(target_endian = "little") {
@@ -626,7 +668,7 @@ impl RawReader {
                                 output,
                                 element,
                                 &mut scratch.scratch,
-                                self.backend,
+                                self.codec,
                                 block.filtered,
                             )?;
                             if self.little_endian != cfg!(target_endian = "little") {
@@ -758,7 +800,7 @@ fn decode_bitshuffle_lz4(
     limit: usize,
     configured_block: usize,
     scratch: &mut BlockScratch,
-    backend: UnshuffleBackend,
+    codec: CodecOptions,
 ) -> Result<(), Error> {
     visit_encoded_blocks(
         input,
@@ -772,7 +814,7 @@ fn decode_bitshuffle_lz4(
                 &mut output[offset..offset + bytes],
                 element,
                 scratch,
-                backend,
+                codec,
                 filtered,
             )
         },
@@ -836,12 +878,41 @@ where
     Ok(())
 }
 
+fn decode_lz4(input: &[u8], output: &mut [u8], backend: Lz4Backend) -> Result<(), Error> {
+    let bytes = output.len();
+    let actual = match backend {
+        Lz4Backend::Rust => lz4_flex::block::decompress_into(input, output)
+            .map_err(|e| Error(format!("invalid LZ4 block: {e}")))?,
+        Lz4Backend::Native => {
+            let input_bytes = i32::try_from(input.len())
+                .map_err(|_| Error("LZ4 encoded block exceeds native length limit".into()))?;
+            let output_bytes = i32::try_from(bytes)
+                .map_err(|_| Error("LZ4 decoded block exceeds native length limit".into()))?;
+            // SAFETY: disjoint slices have exactly these checked i32 lengths.
+            // The bundled safe API bounds both input reads and output writes.
+            let result = unsafe {
+                dioptrin_lz4_decompress_safe(
+                    input.as_ptr(),
+                    output.as_mut_ptr(),
+                    input_bytes,
+                    output_bytes,
+                )
+            };
+            usize::try_from(result).map_err(|_| Error("invalid native LZ4 block".into()))?
+        }
+    };
+    if actual != output.len() {
+        return Err(Error("invalid decoded block length".into()));
+    }
+    Ok(())
+}
+
 fn decode_block(
     input: &[u8],
     output: &mut [u8],
     element: usize,
     scratch: &mut BlockScratch,
-    backend: UnshuffleBackend,
+    codec: CodecOptions,
     filtered: bool,
 ) -> Result<(), Error> {
     if !filtered {
@@ -851,11 +922,7 @@ fn decode_block(
     let bytes = output.len();
     resize_bytes(&mut scratch.shuffled, bytes)?;
     resize_bytes(&mut scratch.unshuffle, bytes)?;
-    let actual = lz4_flex::block::decompress_into(input, &mut scratch.shuffled)
-        .map_err(|e| Error(format!("invalid LZ4 block: {e}")))?;
-    if actual != bytes {
-        return Err(Error("invalid decoded block length".into()));
-    }
+    decode_lz4(input, &mut scratch.shuffled, codec.lz4)?;
     // SAFETY: checked LZ4 output and three disjoint, correctly sized buffers.
     // The framing walker admits only multiples of eight complete elements.
     let result = unsafe {
@@ -866,7 +933,7 @@ fn decode_block(
             scratch.unshuffle.len(),
             bytes / element,
             element,
-            backend as i32,
+            codec.unshuffle as i32,
         )
     };
     if result != bytes as i64 {
@@ -895,6 +962,67 @@ fn read_exact_at(file: &File, mut output: &mut [u8], mut offset: u64) -> std::io
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn bounded_lz4_backends_match_and_preserve_guards() {
+        for size in [8, 32, 128, 2048, 8192, 16384] {
+            for pattern in 0..4 {
+                let mut state = 0x31415926_u64;
+                let original: Vec<u8> = (0..size)
+                    .map(|i| {
+                        state ^= state << 13;
+                        state ^= state >> 7;
+                        state ^= state << 17;
+                        match pattern {
+                            0 => 0,
+                            1 => 255,
+                            2 => (i % 17) as u8,
+                            _ => state as u8,
+                        }
+                    })
+                    .collect();
+                let compressed = lz4_flex::block::compress(&original);
+                for backend in [Lz4Backend::Rust, Lz4Backend::Native] {
+                    let mut guarded = vec![0xA5; size + 32];
+                    decode_lz4(&compressed, &mut guarded[16..16 + size], backend).unwrap();
+                    assert_eq!(guarded[16..16 + size], original);
+                    assert_eq!(guarded[..16], [0xA5; 16]);
+                    assert_eq!(guarded[16 + size..], [0xA5; 16]);
+                    // Both truncated source and incorrectly sized destinations fail.
+                    assert!(
+                        decode_lz4(
+                            &compressed[..compressed.len() - 1],
+                            &mut guarded[16..16 + size],
+                            backend
+                        )
+                        .is_err()
+                    );
+                    assert!(decode_lz4(&compressed, &mut guarded[16..15 + size], backend).is_err());
+                    assert_eq!(guarded[..16], [0xA5; 16]);
+                    assert_eq!(guarded[16 + size..], [0xA5; 16]);
+                }
+            }
+        }
+        let mut state = 0x27182818_u64;
+        for size in 0..256 {
+            let input: Vec<u8> = (0..size)
+                .map(|_| {
+                    state ^= state << 13;
+                    state ^= state >> 7;
+                    state ^= state << 17;
+                    state as u8
+                })
+                .collect();
+            let mut results = Vec::new();
+            for backend in [Lz4Backend::Rust, Lz4Backend::Native] {
+                let mut guarded = [0xA5; 64];
+                let result = decode_lz4(&input, &mut guarded[16..48], backend);
+                assert_eq!(guarded[..16], [0xA5; 16]);
+                assert_eq!(guarded[48..], [0xA5; 16]);
+                results.push(result.map(|()| guarded[16..48].to_vec()).ok());
+            }
+            assert_eq!(results[0], results[1]);
+        }
+    }
     #[test]
     fn frame_reads_retain_both_block_scratch_allocations() {
         let path =
@@ -932,7 +1060,7 @@ mod tests {
                     1024,
                     0,
                     &mut scratch,
-                    UnshuffleBackend::Scalar
+                    UnshuffleBackend::Scalar.into()
                 )
                 .is_err()
             );
@@ -950,7 +1078,7 @@ mod tests {
                     1024,
                     0,
                     &mut scratch,
-                    UnshuffleBackend::Scalar
+                    UnshuffleBackend::Scalar.into()
                 )
                 .is_err()
             );
