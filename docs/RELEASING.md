@@ -1,5 +1,9 @@
 # Source release and Rust desktop consumption
 
+The current Rust source release is `v0.3.0`. Its HDF5 source-contract APIs are
+described in [the native contract guide](HDF5_SOURCE_CONTRACTS.md). The Python
+distribution remains independently versioned at 0.2.0 for this Rust-only release.
+
 The first Rust release is `v0.1.0`, a GitHub source/tag release of the Rust crate.
 The intended consumer of that release is Rust desktop Dioptas; it does not
 change Dioptas. The working tree also provides an optional Python binding crate
@@ -10,7 +14,7 @@ do not retroactively change the original `v0.1.0` archives.
 
 ```toml
 [dependencies]
-dioptrin-io = { git = "https://github.com/CPrescher/dioptrin-io.git", tag = "v0.1.0", features = ["wrappers", "hdf5", "jpeg", "jpeg2000", "mar345"] }
+dioptrin-io = { git = "https://github.com/CPrescher/dioptrin-io.git", tag = "v0.3.0", features = ["wrappers", "hdf5", "jpeg", "jpeg2000", "mar345"] }
 ```
 
 Select any additional formats required by the application: `containers`,
@@ -29,7 +33,7 @@ metadata from a separate temporary Cargo project, without a patch section.
 Registry publication is disabled (`publish = false`). Cargo would strip path
 references and select unpatched registry TIFF/fax versions. Publishing patched
 backends or incorporating them differently is a separate packaging task; this
-release does not advertise `dioptrin-io = "0.1.0"` on crates.io.
+release does not advertise `dioptrin-io = "0.3.0"` on crates.io.
 
 ## Runtime and build requirements
 
@@ -92,7 +96,7 @@ No long-lived PyPI token is stored in the repository.
    `python scripts/check_consumer.py --all-features --git file:///path/to/dioptrin-io --rev COMMIT`.
 5. Push the candidate branch and require the Linux/macOS/Windows CI and inventory
    jobs to pass. Advance the default branch only by fast-forward from the verified
-   remote head, then tag the tested commit `v0.1.0`.
+   remote head, then tag the tested commit `vVERSION`.
 6. Publish the GitHub release with this scope and links to
    [unsupported variants](READING_GAPS.md), then verify a consumer resolves the
    released Git revision. Registry publishing is not part of these steps.

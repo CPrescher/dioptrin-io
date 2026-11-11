@@ -58,7 +58,7 @@ fn exact_missing_absolute_names_need_choices_and_never_search_basenames() {
     .unwrap();
     assert_eq!(missing.requirements().len(), 2);
     assert!(missing.require_complete().is_err());
-    assert!(missing.requirements().iter().all(|r|matches!(r, Requirement::File { kind:FileKind::Virtual, expected_file, .. } if expected_file.starts_with("/missing/acquisition"))));
+    assert!(missing.requirements().iter().all(|r|matches!(r, Requirement::File { kind:FileKind::Virtual, owner, stored_filename, expected_file } if owner.as_path() == missing.root() && stored_filename.starts_with("/missing/acquisition/") && *expected_file == owner.parent().unwrap().join(stored_filename))));
     let choices: Vec<_> = ["module-a.h5", "module-b.h5"]
         .into_iter()
         .map(|n| FileChoice {

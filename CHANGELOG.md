@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+## 0.3.0 — 2026-11-11 (Rust source)
+
+- Resolve exact declared HDF5 master/VDS/raw companion paths with the native
+  reader's shared dataset/convention and external-link rules.
+- Expose structured missing-file and finite-printf requirements. Applications
+  can select exact local companions without scanning neighboring filenames,
+  inferring frame counts from availability or filling missing measurements.
+- Add wrapped source-contract and external-raw storage entry points, retaining
+  input ownership, original typed counts and immutable graph checks.
+- Centralize bounded image candidate enumeration while retaining master aliases
+  and avoiding HDF5 conditional VDS lookup.
+- Preserve the existing explicit reader defaults, native storage admission,
+  empty default features and independent Python 0.2.0 distribution.
+- Qualify exact finite/nested/printf source words, raw windows, missing/changed
+  companions, stream origins and contract ownership. See
+  [source contracts](docs/HDF5_SOURCE_CONTRACTS.md) for APIs and limits.
+
 ## 0.2.0 — 2026-11-07
 
 - Include the fixed-mask float64 Eiger integration bridge in the standard Python

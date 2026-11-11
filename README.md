@@ -96,12 +96,12 @@ cases remain documented compatibility gaps; acquired-detector relevance must
 be established separately. The next priority is the [real-file validation
 matrix](docs/READING_GAPS.md#next-acquired-detector-files).
 
-Version 0.2.0 is distributed as a GitHub source release. Rust consumers can pin
+Version 0.3.0 is distributed as a GitHub source release. Rust consumers can pin
 the release tag; format dependencies stay optional and defaults are empty:
 
 ```toml
 [dependencies]
-dioptrin-io = { git = "https://github.com/CPrescher/dioptrin-io.git", tag = "v0.2.0", features = ["wrappers", "hdf5", "jpeg", "jpeg2000", "mar345"] }
+dioptrin-io = { git = "https://github.com/CPrescher/dioptrin-io.git", tag = "v0.3.0", features = ["wrappers", "hdf5", "jpeg", "jpeg2000", "mar345"] }
 ```
 
 The source release includes the patched TIFF/fax backends with explicit relative
