@@ -157,3 +157,33 @@ this method so later runs remain inspectable when runner hardware changes.
 
 The previous long Windows SIMD example remains manually available. Historical
 Windows reports keep their pinned source, workload and Rust-LZ4 baseline.
+
+### Initial CI observations at the measured source
+
+[CI run 43178638558](https://github.com/CPrescher/dioptrin-io/actions/runs/43178638558)
+tests production revision `48dd774b730864744f0b27ad26865e447f224e6b`, including
+the new default. The Mac/Linux artifact source, generator, reader and native-shim
+hashes were checked against that revision; re-summarizing raw samples reproduced
+the uploaded summaries exactly. All 88/88/132 count validations matched on
+macOS ARM64/Linux ARM64/Linux x86-64 respectively. Every Mac automatic reader
+selected Native; both Linux variants retained Rust.
+
+| Runner | Automatic unshuffle; allocated CPUs | Sparse 1M pixels, native/Rust paired medians | Dense full-width 1M | Dense 16-bit-range uint32 1M |
+| --- | --- | ---: | ---: | ---: |
+| macOS 15, Apple M1 (Virtual) | NEON; 3 | 2.35–2.86× | 1.19–1.27× | 0.902× / 0.927× |
+| Linux ARM64; CPU model unavailable in `/proc/cpuinfo` | NEON; 4 | 1.57–1.58× | 1.11–1.15× | 0.937× / 0.931× |
+| Linux x86-64, AMD EPYC 9V74 | AVX2; 4 | 2.09–3.17× | 1.17–1.25× | 1.042× / 1.067× |
+
+Sparse/full-width ranges span uint16/uint32 and one/up-to-four workers. The last
+column gives one/multiple-worker paired medians. These are ratios within each
+host, not relative machine speeds. Full per-case scalar/SIMD/LZ4 rankings,
+short-frame results, raw timing ranges and Windows results are published in the
+same run's job summaries/artifacts.
+
+The M1 and Linux ARM results show that native LZ4 can be roughly 6–10% slower
+for the dense-16-bit-range uint32 pattern, despite winning the other large
+patterns. This exception is retained explicitly; it is not hidden by an aggregate
+score. It reinforces the Rust override and retaining other platforms' defaults
+pending fuller application qualification. The Mac result supports native for
+large sparse/full-width workloads on another Apple CPU, without establishing
+universal superiority for every Apple Silicon workload.

@@ -250,6 +250,15 @@ CI uses five short matched samples per configuration. Count mismatches or
 incomplete results fail the job; timing differences do not. Shared runners can
 change hardware and load, so use the per-case ratios and ranges to identify
 candidates for longer qualification. CI does not automatically rewrite defaults.
+
+The [first codec CI run](https://github.com/CPrescher/dioptrin-io/actions/runs/43178638558)
+also illustrates a workload-specific exception. For dense 16-bit-range values
+**stored as uint32**, native/Rust paired medians were 0.902×/0.927× on the virtual
+M1 (one/three workers), and 0.937×/0.931× on Linux ARM64 (one/four workers).
+Rust was faster in these cases, while native won the large sparse and full-width
+dense cases on both hosts. Linux x86-64 favored native for this pattern too
+(1.042×/1.067×). The Apple default is therefore a general choice based on the
+qualified workloads; use the Rust override when your own data favors it.
 Reproduce a short run, or a longer Auto-kernel LZ4 comparison, with:
 
 ```sh
