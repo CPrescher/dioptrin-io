@@ -314,8 +314,8 @@ movemask kernels and their MSVC portability fix. Its original sources and MIT
 notices are retained; `vendor/hdf5-bitshuffle-1.0.0/UPSTREAM.json` records the
 baseline hashes and upstream commits, and `PATCHES.md` describes the build.
 The indexed reader preserves original pixel types and reuses worker-owned scratch
-for native bit unshuffle. It defaults to bounded native LZ4 on macOS ARM64 and
-checked Rust LZ4 elsewhere. A configured chunk budget above `i32::MAX` selects
+for native bit unshuffle. It defaults to bounded native LZ4 on Linux/Windows
+x86-64 and macOS/Linux/Windows ARM64, with checked Rust LZ4 on other targets. A configured chunk budget above `i32::MAX` selects
 Rust automatically; `with_lz4_backend(Lz4Backend::Rust)` retains an explicit override.
 The [codec qualification](docs/benchmarks/2026-11-12-codec-qualification/README.md)
 records dense, uint16 and small-frame measurements and the cross-platform CI

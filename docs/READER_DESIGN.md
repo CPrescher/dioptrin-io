@@ -31,12 +31,12 @@ already bundled native Bitshuffle unshuffle function outside the HDF5 mutex.
 Only admitted decompressed slices reach native bit-unshuffle; native unbounded
 compressed-input decoding is never called by this path.
 
-On macOS ARM64, the default selects the already bundled
-`LZ4_decompress_safe` implementation. Both encoded and decoded block
+On Linux/Windows x86-64 and macOS/Linux/Windows ARM64, the default selects the
+already bundled `LZ4_decompress_safe` implementation. Both encoded and decoded block
 lengths are checked against the C API's signed 32-bit limit before calling it,
-and the returned length must exactly match the declared output. Other platforms
-retain checked Rust LZ4. If the configured `Limits::chunk_bytes` exceeds
-`i32::MAX`, automatic selection uses Rust even on macOS ARM64. Explicit
+and the returned length must exactly match the declared output. Unqualified
+targets retain checked Rust LZ4. If the configured `Limits::chunk_bytes` exceeds
+`i32::MAX`, automatic selection uses Rust on every target. Explicit
 `with_lz4_backend(Lz4Backend::Rust)` / `Native` overrides remain available;
 `lz4_backend()` reports the selected decoder. Explicit native selection retains
 its strict block-size rejection. See the

@@ -1,0 +1,1797 @@
+{
+  "run_id": 43180447512,
+  "scope": "Five short matched repetitions; warm reads, source checks, decode and typed counts; diagnostic shared runners. All original count hashes matched the local generator oracle. Source hashes account for Windows CRLF checkouts. Raw artifacts retained in the referenced GitHub run and local qualification directory.",
+  "validation_passes": 528,
+  "runners": [
+    {
+      "commit": "7374c8d3583e33e5a01ab7fb95314325e98e6ad9",
+      "os": "macos",
+      "arch": "aarch64",
+      "cpu": "Apple M1 (Virtual)",
+      "allocated_cpus": 3,
+      "worker_counts": [
+        1,
+        3
+      ],
+      "repeats": 5,
+      "benchmark_source_sha256": "43b5cfe0ad0b0d934c0d0c511a54dd89943c7af5e54be46aabcef5b65018f79c",
+      "fixture_generator_sha256": "3f337bd72b9f5922f24b6195410e074702d92f272bcb937821ac7e1a54dfe7b3",
+      "reader_source_sha256": "631bc4d8d898457f2e8f592840d919a3ef360e29c54b74a4c3fae2ba56340583",
+      "native_shim_source_sha256": "d4c97c9197a2de0a6085153d48363240c04fa0f48999d572b97f2b93b7e5526e",
+      "runner": "macos-15",
+      "artifact": {
+        "id": 13926147983,
+        "name": "codec-benchmark-macos-15",
+        "digest": "sha256:2b4a18602764fb84916e97c2bcd6a696401c6695f32d44913bdb625a55376184",
+        "run_id": 43180447512,
+        "commit": "7374c8d3583e33e5a01ab7fb95314325e98e6ad9"
+      },
+      "validation_passes": 88,
+      "all_counts_match": true,
+      "lz4_comparisons": [
+        {
+          "case": "u16-sparse-1m",
+          "dtype": "u16",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 2.759451226148595,
+          "native_over_rust_min": 1.5033581979255155,
+          "native_over_rust_max": 5.624306089833149
+        },
+        {
+          "case": "u16-sparse-1m",
+          "dtype": "u16",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 3,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 2.4164735692989896,
+          "native_over_rust_min": 2.1290781691418434,
+          "native_over_rust_max": 2.446688842867089
+        },
+        {
+          "case": "u16-dense-1m",
+          "dtype": "u16",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.0875910707740937,
+          "native_over_rust_min": 0.9739860443637743,
+          "native_over_rust_max": 1.5305117878704557
+        },
+        {
+          "case": "u16-dense-1m",
+          "dtype": "u16",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 3,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.2175873032125943,
+          "native_over_rust_min": 0.8566812252133467,
+          "native_over_rust_max": 1.4479668913868413
+        },
+        {
+          "case": "u16-small-64",
+          "dtype": "u16",
+          "shape": [
+            32,
+            64,
+            64
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.1052087459824556,
+          "native_over_rust_min": 0.7718966150791188,
+          "native_over_rust_max": 1.77009106423172
+        },
+        {
+          "case": "u16-small-64",
+          "dtype": "u16",
+          "shape": [
+            32,
+            64,
+            64
+          ],
+          "workers": 3,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.0742673588299894,
+          "native_over_rust_min": 0.9122698584074349,
+          "native_over_rust_max": 2.0628606536998024
+        },
+        {
+          "case": "u16-tiny-8",
+          "dtype": "u16",
+          "shape": [
+            64,
+            8,
+            8
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.1626209274087886,
+          "native_over_rust_min": 0.9566951914321162,
+          "native_over_rust_max": 1.2581421001035429
+        },
+        {
+          "case": "u16-tiny-8",
+          "dtype": "u16",
+          "shape": [
+            64,
+            8,
+            8
+          ],
+          "workers": 3,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.3404200471689178,
+          "native_over_rust_min": 0.9380415689695213,
+          "native_over_rust_max": 1.495967756401919
+        },
+        {
+          "case": "u16-tail-65x63",
+          "dtype": "u16",
+          "shape": [
+            32,
+            65,
+            63
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.362655573202263,
+          "native_over_rust_min": 0.8922889386377543,
+          "native_over_rust_max": 2.3264317392306135
+        },
+        {
+          "case": "u16-tail-65x63",
+          "dtype": "u16",
+          "shape": [
+            32,
+            65,
+            63
+          ],
+          "workers": 3,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.1769014240754148,
+          "native_over_rust_min": 0.9300806386761091,
+          "native_over_rust_max": 1.271206405780236
+        },
+        {
+          "case": "u32-sparse-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 2.460932812610949,
+          "native_over_rust_min": 2.1938501134994675,
+          "native_over_rust_max": 3.3913283228305486
+        },
+        {
+          "case": "u32-sparse-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 3,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 2.844419844276631,
+          "native_over_rust_min": 2.648267076612759,
+          "native_over_rust_max": 3.521061516755426
+        },
+        {
+          "case": "u32-dense-full-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.2111199578841243,
+          "native_over_rust_min": 0.773710508927544,
+          "native_over_rust_max": 1.3653339699413558
+        },
+        {
+          "case": "u32-dense-full-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 3,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.1762275482878566,
+          "native_over_rust_min": 0.8858171519181103,
+          "native_over_rust_max": 1.4841745712114092
+        },
+        {
+          "case": "u32-small-64",
+          "dtype": "u32",
+          "shape": [
+            32,
+            64,
+            64
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.0113847453782767,
+          "native_over_rust_min": 0.8882780108649193,
+          "native_over_rust_max": 1.109668526020726
+        },
+        {
+          "case": "u32-small-64",
+          "dtype": "u32",
+          "shape": [
+            32,
+            64,
+            64
+          ],
+          "workers": 3,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.0324166134708166,
+          "native_over_rust_min": 0.961437180564794,
+          "native_over_rust_max": 1.3089780517197784
+        },
+        {
+          "case": "u32-tiny-8",
+          "dtype": "u32",
+          "shape": [
+            64,
+            8,
+            8
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 0.8179748459865533,
+          "native_over_rust_min": 0.7336340733117709,
+          "native_over_rust_max": 1.8838925694197453
+        },
+        {
+          "case": "u32-tiny-8",
+          "dtype": "u32",
+          "shape": [
+            64,
+            8,
+            8
+          ],
+          "workers": 3,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 0.8791586297380578,
+          "native_over_rust_min": 0.8134505351043583,
+          "native_over_rust_max": 1.047384596391961
+        },
+        {
+          "case": "u32-tail-65x63",
+          "dtype": "u32",
+          "shape": [
+            32,
+            65,
+            63
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.1344633452590345,
+          "native_over_rust_min": 0.801868642877903,
+          "native_over_rust_max": 1.31202184422357
+        },
+        {
+          "case": "u32-tail-65x63",
+          "dtype": "u32",
+          "shape": [
+            32,
+            65,
+            63
+          ],
+          "workers": 3,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.095395399687861,
+          "native_over_rust_min": 0.9201478473631924,
+          "native_over_rust_max": 1.18422830119238
+        },
+        {
+          "case": "u32-dense-u16-range-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.11164963355418,
+          "native_over_rust_min": 0.6758669454246382,
+          "native_over_rust_max": 1.1964579430294708
+        },
+        {
+          "case": "u32-dense-u16-range-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 3,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 0.843679427982193,
+          "native_over_rust_min": 0.7577043594657905,
+          "native_over_rust_max": 1.0127642688158067
+        }
+      ]
+    },
+    {
+      "commit": "7374c8d3583e33e5a01ab7fb95314325e98e6ad9",
+      "os": "linux",
+      "arch": "aarch64",
+      "cpu": null,
+      "allocated_cpus": 4,
+      "worker_counts": [
+        1,
+        4
+      ],
+      "repeats": 5,
+      "benchmark_source_sha256": "43b5cfe0ad0b0d934c0d0c511a54dd89943c7af5e54be46aabcef5b65018f79c",
+      "fixture_generator_sha256": "3f337bd72b9f5922f24b6195410e074702d92f272bcb937821ac7e1a54dfe7b3",
+      "reader_source_sha256": "631bc4d8d898457f2e8f592840d919a3ef360e29c54b74a4c3fae2ba56340583",
+      "native_shim_source_sha256": "d4c97c9197a2de0a6085153d48363240c04fa0f48999d572b97f2b93b7e5526e",
+      "runner": "ubuntu-24.04-arm",
+      "artifact": {
+        "id": 13926232687,
+        "name": "codec-benchmark-ubuntu-24.04-arm",
+        "digest": "sha256:91226ec92840a15c65c91f80dc210deadbbb4e01e6f416c0016bb4c505cb167a",
+        "run_id": 43180447512,
+        "commit": "7374c8d3583e33e5a01ab7fb95314325e98e6ad9"
+      },
+      "validation_passes": 88,
+      "all_counts_match": true,
+      "lz4_comparisons": [
+        {
+          "case": "u16-sparse-1m",
+          "dtype": "u16",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.5712633360783288,
+          "native_over_rust_min": 1.5695674177088184,
+          "native_over_rust_max": 1.578008789540728
+        },
+        {
+          "case": "u16-sparse-1m",
+          "dtype": "u16",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 4,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.5538913731826678,
+          "native_over_rust_min": 1.5159213809174275,
+          "native_over_rust_max": 1.5662671120902143
+        },
+        {
+          "case": "u16-dense-1m",
+          "dtype": "u16",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.1097222784076102,
+          "native_over_rust_min": 1.0916494531166159,
+          "native_over_rust_max": 1.119708482632356
+        },
+        {
+          "case": "u16-dense-1m",
+          "dtype": "u16",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 4,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.1147009296934032,
+          "native_over_rust_min": 1.1074771675064745,
+          "native_over_rust_max": 1.119077425257556
+        },
+        {
+          "case": "u16-small-64",
+          "dtype": "u16",
+          "shape": [
+            32,
+            64,
+            64
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.0742112387641454,
+          "native_over_rust_min": 1.0664498070618234,
+          "native_over_rust_max": 1.077792596581356
+        },
+        {
+          "case": "u16-small-64",
+          "dtype": "u16",
+          "shape": [
+            32,
+            64,
+            64
+          ],
+          "workers": 4,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.065881539993556,
+          "native_over_rust_min": 1.0581033523434158,
+          "native_over_rust_max": 1.0809209508957727
+        },
+        {
+          "case": "u16-tiny-8",
+          "dtype": "u16",
+          "shape": [
+            64,
+            8,
+            8
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 0.9992503155881884,
+          "native_over_rust_min": 0.994621269075354,
+          "native_over_rust_max": 1.0102055971680046
+        },
+        {
+          "case": "u16-tiny-8",
+          "dtype": "u16",
+          "shape": [
+            64,
+            8,
+            8
+          ],
+          "workers": 4,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.0077927613340127,
+          "native_over_rust_min": 0.9683720898327977,
+          "native_over_rust_max": 1.0231978335601386
+        },
+        {
+          "case": "u16-tail-65x63",
+          "dtype": "u16",
+          "shape": [
+            32,
+            65,
+            63
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.070827999710579,
+          "native_over_rust_min": 1.0699379154244997,
+          "native_over_rust_max": 1.0757936463762348
+        },
+        {
+          "case": "u16-tail-65x63",
+          "dtype": "u16",
+          "shape": [
+            32,
+            65,
+            63
+          ],
+          "workers": 4,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.0590963497389627,
+          "native_over_rust_min": 1.0428784126380268,
+          "native_over_rust_max": 1.0779904788768435
+        },
+        {
+          "case": "u32-sparse-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.5921932952126825,
+          "native_over_rust_min": 1.5841227225387526,
+          "native_over_rust_max": 1.6057828905987448
+        },
+        {
+          "case": "u32-sparse-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 4,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.553347038912809,
+          "native_over_rust_min": 1.4940207387315765,
+          "native_over_rust_max": 1.5677557618919709
+        },
+        {
+          "case": "u32-dense-full-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.1596524983605045,
+          "native_over_rust_min": 1.151846909699151,
+          "native_over_rust_max": 1.1890617369774321
+        },
+        {
+          "case": "u32-dense-full-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 4,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.1390410404946212,
+          "native_over_rust_min": 1.1251655213137275,
+          "native_over_rust_max": 1.1750639057191736
+        },
+        {
+          "case": "u32-small-64",
+          "dtype": "u32",
+          "shape": [
+            32,
+            64,
+            64
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.1177516050934584,
+          "native_over_rust_min": 1.1169001375153895,
+          "native_over_rust_max": 1.124287565319839
+        },
+        {
+          "case": "u32-small-64",
+          "dtype": "u32",
+          "shape": [
+            32,
+            64,
+            64
+          ],
+          "workers": 4,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.1086294608407348,
+          "native_over_rust_min": 1.0811897489583366,
+          "native_over_rust_max": 1.1428942114636782
+        },
+        {
+          "case": "u32-tiny-8",
+          "dtype": "u32",
+          "shape": [
+            64,
+            8,
+            8
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.0032275714921748,
+          "native_over_rust_min": 0.9985051581939728,
+          "native_over_rust_max": 1.0107498075808385
+        },
+        {
+          "case": "u32-tiny-8",
+          "dtype": "u32",
+          "shape": [
+            64,
+            8,
+            8
+          ],
+          "workers": 4,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 0.9952814764323159,
+          "native_over_rust_min": 0.990253705806043,
+          "native_over_rust_max": 1.0143468976444276
+        },
+        {
+          "case": "u32-tail-65x63",
+          "dtype": "u32",
+          "shape": [
+            32,
+            65,
+            63
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.1145412260754857,
+          "native_over_rust_min": 1.1107819544000852,
+          "native_over_rust_max": 1.1208030119659251
+        },
+        {
+          "case": "u32-tail-65x63",
+          "dtype": "u32",
+          "shape": [
+            32,
+            65,
+            63
+          ],
+          "workers": 4,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.1066587850651888,
+          "native_over_rust_min": 1.0731038230171248,
+          "native_over_rust_max": 1.11710336354604
+        },
+        {
+          "case": "u32-dense-u16-range-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 0.9313665700150795,
+          "native_over_rust_min": 0.9248403313896636,
+          "native_over_rust_max": 0.9431791121873243
+        },
+        {
+          "case": "u32-dense-u16-range-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 4,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 0.9323888537087929,
+          "native_over_rust_min": 0.9088156483450885,
+          "native_over_rust_max": 0.9586153986229715
+        }
+      ]
+    },
+    {
+      "commit": "7374c8d3583e33e5a01ab7fb95314325e98e6ad9",
+      "os": "linux",
+      "arch": "x86_64",
+      "cpu": "model name\t: AMD EPYC 7763 64-Core Processor",
+      "allocated_cpus": 4,
+      "worker_counts": [
+        1,
+        4
+      ],
+      "repeats": 5,
+      "benchmark_source_sha256": "43b5cfe0ad0b0d934c0d0c511a54dd89943c7af5e54be46aabcef5b65018f79c",
+      "fixture_generator_sha256": "3f337bd72b9f5922f24b6195410e074702d92f272bcb937821ac7e1a54dfe7b3",
+      "reader_source_sha256": "631bc4d8d898457f2e8f592840d919a3ef360e29c54b74a4c3fae2ba56340583",
+      "native_shim_source_sha256": "d4c97c9197a2de0a6085153d48363240c04fa0f48999d572b97f2b93b7e5526e",
+      "runner": "ubuntu-latest",
+      "artifact": {
+        "id": 13925349819,
+        "name": "codec-benchmark-ubuntu-latest",
+        "digest": "sha256:6712efe47e38eff45c9b0e5bd82ecd58f119dbafd6cf1560b5d62ac7d4e0e817",
+        "run_id": 43180447512,
+        "commit": "7374c8d3583e33e5a01ab7fb95314325e98e6ad9"
+      },
+      "validation_passes": 132,
+      "all_counts_match": true,
+      "lz4_comparisons": [
+        {
+          "case": "u16-sparse-1m",
+          "dtype": "u16",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 2.2295496100939647,
+          "native_over_rust_min": 2.221439083598477,
+          "native_over_rust_max": 2.242617031651725
+        },
+        {
+          "case": "u16-sparse-1m",
+          "dtype": "u16",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 4,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 2.258926375861502,
+          "native_over_rust_min": 2.2493969214996636,
+          "native_over_rust_max": 2.334485183725117
+        },
+        {
+          "case": "u16-dense-1m",
+          "dtype": "u16",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.1846317803694175,
+          "native_over_rust_min": 1.183503134240958,
+          "native_over_rust_max": 1.1855868223788069
+        },
+        {
+          "case": "u16-dense-1m",
+          "dtype": "u16",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 4,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.204319302476796,
+          "native_over_rust_min": 1.1982148197501197,
+          "native_over_rust_max": 1.21874071051323
+        },
+        {
+          "case": "u16-small-64",
+          "dtype": "u16",
+          "shape": [
+            32,
+            64,
+            64
+          ],
+          "workers": 1,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.0716480918213427,
+          "native_over_rust_min": 1.0659456873316497,
+          "native_over_rust_max": 1.0773651789905714
+        },
+        {
+          "case": "u16-small-64",
+          "dtype": "u16",
+          "shape": [
+            32,
+            64,
+            64
+          ],
+          "workers": 4,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.0903823755967486,
+          "native_over_rust_min": 1.0664240005877332,
+          "native_over_rust_max": 1.103297268568134
+        },
+        {
+          "case": "u16-tiny-8",
+          "dtype": "u16",
+          "shape": [
+            64,
+            8,
+            8
+          ],
+          "workers": 1,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 0.9988056793520336,
+          "native_over_rust_min": 0.9964791730036933,
+          "native_over_rust_max": 1.002733970378552
+        },
+        {
+          "case": "u16-tiny-8",
+          "dtype": "u16",
+          "shape": [
+            64,
+            8,
+            8
+          ],
+          "workers": 4,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.0014176882207484,
+          "native_over_rust_min": 0.9975653517699083,
+          "native_over_rust_max": 1.006070373134124
+        },
+        {
+          "case": "u16-tail-65x63",
+          "dtype": "u16",
+          "shape": [
+            32,
+            65,
+            63
+          ],
+          "workers": 1,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.0753939622019109,
+          "native_over_rust_min": 1.0721812041706829,
+          "native_over_rust_max": 1.0760029806757272
+        },
+        {
+          "case": "u16-tail-65x63",
+          "dtype": "u16",
+          "shape": [
+            32,
+            65,
+            63
+          ],
+          "workers": 4,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.0890930453580188,
+          "native_over_rust_min": 1.0832561803282132,
+          "native_over_rust_max": 1.0926172263336562
+        },
+        {
+          "case": "u32-sparse-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 3.283068816153779,
+          "native_over_rust_min": 3.2786876493091506,
+          "native_over_rust_max": 3.2976024538222055
+        },
+        {
+          "case": "u32-sparse-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 4,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 3.151427372614633,
+          "native_over_rust_min": 3.038016302543061,
+          "native_over_rust_max": 3.3497989693415233
+        },
+        {
+          "case": "u32-dense-full-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.2234963216474588,
+          "native_over_rust_min": 1.2164378422309656,
+          "native_over_rust_max": 1.2420734991407023
+        },
+        {
+          "case": "u32-dense-full-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 4,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.2644435782425048,
+          "native_over_rust_min": 1.248562086890331,
+          "native_over_rust_max": 1.2933204821807616
+        },
+        {
+          "case": "u32-small-64",
+          "dtype": "u32",
+          "shape": [
+            32,
+            64,
+            64
+          ],
+          "workers": 1,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.1467762930713292,
+          "native_over_rust_min": 1.1417735700969438,
+          "native_over_rust_max": 1.1484019115526587
+        },
+        {
+          "case": "u32-small-64",
+          "dtype": "u32",
+          "shape": [
+            32,
+            64,
+            64
+          ],
+          "workers": 4,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.1771822477775005,
+          "native_over_rust_min": 1.1754177558331764,
+          "native_over_rust_max": 1.1976293634943915
+        },
+        {
+          "case": "u32-tiny-8",
+          "dtype": "u32",
+          "shape": [
+            64,
+            8,
+            8
+          ],
+          "workers": 1,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.0044326054308201,
+          "native_over_rust_min": 0.9894384057401521,
+          "native_over_rust_max": 1.0074043975515845
+        },
+        {
+          "case": "u32-tiny-8",
+          "dtype": "u32",
+          "shape": [
+            64,
+            8,
+            8
+          ],
+          "workers": 4,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 0.9976013128246727,
+          "native_over_rust_min": 0.9699048523086619,
+          "native_over_rust_max": 1.0000091532130921
+        },
+        {
+          "case": "u32-tail-65x63",
+          "dtype": "u32",
+          "shape": [
+            32,
+            65,
+            63
+          ],
+          "workers": 1,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.1444960164707112,
+          "native_over_rust_min": 1.140458101952342,
+          "native_over_rust_max": 1.145711450772517
+        },
+        {
+          "case": "u32-tail-65x63",
+          "dtype": "u32",
+          "shape": [
+            32,
+            65,
+            63
+          ],
+          "workers": 4,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.1721845398686814,
+          "native_over_rust_min": 1.1500911567067618,
+          "native_over_rust_max": 1.1766641340857869
+        },
+        {
+          "case": "u32-dense-u16-range-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.0515436373802405,
+          "native_over_rust_min": 1.0327474309774507,
+          "native_over_rust_max": 1.0567408036344896
+        },
+        {
+          "case": "u32-dense-u16-range-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 4,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.0905329164849087,
+          "native_over_rust_min": 1.0801231299672152,
+          "native_over_rust_max": 1.1138638474359641
+        }
+      ]
+    },
+    {
+      "commit": "7374c8d3583e33e5a01ab7fb95314325e98e6ad9",
+      "os": "windows",
+      "arch": "aarch64",
+      "cpu": "ARMv8 (64-bit) Family 8 Model D49 Revision   0, MICROSOFT CORPORATION",
+      "allocated_cpus": 4,
+      "worker_counts": [
+        1,
+        4
+      ],
+      "repeats": 5,
+      "benchmark_source_sha256": "f8c6000740a16123ec767bc68ae1f83356c0ed46e612bd61872a2452b4a14f5c",
+      "fixture_generator_sha256": "afd17e20d4159b9e540fc23b7168c5edefad84e9e03a2df1a4d1ee28a6f33e6f",
+      "reader_source_sha256": "b59ae90547114456a2a7f8a0287c7c158d08e34d2e2ac6767327d63304ebd696",
+      "native_shim_source_sha256": "0b61e18ac773b868f899f70d85ff030ba818361e061f80126e478cccac3d5859",
+      "runner": "windows-11-arm",
+      "artifact": {
+        "id": 13928107659,
+        "name": "codec-benchmark-windows-11-arm",
+        "digest": "sha256:b751a2ee65f7f4aafbcc23cd67e158d1460dc03c34bd11ad71505f03db2724cd",
+        "run_id": 43180447512,
+        "commit": "7374c8d3583e33e5a01ab7fb95314325e98e6ad9"
+      },
+      "validation_passes": 88,
+      "all_counts_match": true,
+      "lz4_comparisons": [
+        {
+          "case": "u16-sparse-1m",
+          "dtype": "u16",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.3725273020914464,
+          "native_over_rust_min": 1.368244160386393,
+          "native_over_rust_max": 1.388545889842426
+        },
+        {
+          "case": "u16-sparse-1m",
+          "dtype": "u16",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 4,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.3249478540054531,
+          "native_over_rust_min": 1.2293723118501063,
+          "native_over_rust_max": 1.4348171497052589
+        },
+        {
+          "case": "u16-dense-1m",
+          "dtype": "u16",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.0774273260337963,
+          "native_over_rust_min": 1.0665424144870879,
+          "native_over_rust_max": 1.0830884131219845
+        },
+        {
+          "case": "u16-dense-1m",
+          "dtype": "u16",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 4,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.050891253588125,
+          "native_over_rust_min": 1.0369842015846575,
+          "native_over_rust_max": 1.0613817600476145
+        },
+        {
+          "case": "u16-small-64",
+          "dtype": "u16",
+          "shape": [
+            32,
+            64,
+            64
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 0.9950606909193386,
+          "native_over_rust_min": 0.980952892947382,
+          "native_over_rust_max": 1.0053255818621596
+        },
+        {
+          "case": "u16-small-64",
+          "dtype": "u16",
+          "shape": [
+            32,
+            64,
+            64
+          ],
+          "workers": 4,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.0015615067849544,
+          "native_over_rust_min": 0.9794943166907332,
+          "native_over_rust_max": 1.0193956817782075
+        },
+        {
+          "case": "u16-tiny-8",
+          "dtype": "u16",
+          "shape": [
+            64,
+            8,
+            8
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 0.9922240066250342,
+          "native_over_rust_min": 0.9736036536231034,
+          "native_over_rust_max": 1.0246755094057822
+        },
+        {
+          "case": "u16-tiny-8",
+          "dtype": "u16",
+          "shape": [
+            64,
+            8,
+            8
+          ],
+          "workers": 4,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.0176628321736207,
+          "native_over_rust_min": 0.9886800045921901,
+          "native_over_rust_max": 1.0199063467687117
+        },
+        {
+          "case": "u16-tail-65x63",
+          "dtype": "u16",
+          "shape": [
+            32,
+            65,
+            63
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.0056633743684444,
+          "native_over_rust_min": 0.9846499021457853,
+          "native_over_rust_max": 1.0303199584654616
+        },
+        {
+          "case": "u16-tail-65x63",
+          "dtype": "u16",
+          "shape": [
+            32,
+            65,
+            63
+          ],
+          "workers": 4,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 0.9859738288554974,
+          "native_over_rust_min": 0.9759661589360024,
+          "native_over_rust_max": 1.014159188237139
+        },
+        {
+          "case": "u32-sparse-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.4947385224442882,
+          "native_over_rust_min": 1.487714999488857,
+          "native_over_rust_max": 1.5056724114097606
+        },
+        {
+          "case": "u32-sparse-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 4,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.4590735704605222,
+          "native_over_rust_min": 1.3329162940023886,
+          "native_over_rust_max": 1.6592131996266866
+        },
+        {
+          "case": "u32-dense-full-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.1013626467736253,
+          "native_over_rust_min": 1.0934106399383192,
+          "native_over_rust_max": 1.1143137942087298
+        },
+        {
+          "case": "u32-dense-full-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 4,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.089421347542207,
+          "native_over_rust_min": 1.0783847288705564,
+          "native_over_rust_max": 1.1079443063375642
+        },
+        {
+          "case": "u32-small-64",
+          "dtype": "u32",
+          "shape": [
+            32,
+            64,
+            64
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.020314052719468,
+          "native_over_rust_min": 1.0092031139091464,
+          "native_over_rust_max": 1.030910775834463
+        },
+        {
+          "case": "u32-small-64",
+          "dtype": "u32",
+          "shape": [
+            32,
+            64,
+            64
+          ],
+          "workers": 4,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.0054735250152111,
+          "native_over_rust_min": 0.9892796126307943,
+          "native_over_rust_max": 1.0115942462617906
+        },
+        {
+          "case": "u32-tiny-8",
+          "dtype": "u32",
+          "shape": [
+            64,
+            8,
+            8
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.0088402207183076,
+          "native_over_rust_min": 0.9882085384460374,
+          "native_over_rust_max": 1.0253586295002521
+        },
+        {
+          "case": "u32-tiny-8",
+          "dtype": "u32",
+          "shape": [
+            64,
+            8,
+            8
+          ],
+          "workers": 4,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 0.9990693029412746,
+          "native_over_rust_min": 0.9977720070378658,
+          "native_over_rust_max": 1.0231058476683033
+        },
+        {
+          "case": "u32-tail-65x63",
+          "dtype": "u32",
+          "shape": [
+            32,
+            65,
+            63
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.009016698984802,
+          "native_over_rust_min": 0.9976509801000165,
+          "native_over_rust_max": 1.0279991879712775
+        },
+        {
+          "case": "u32-tail-65x63",
+          "dtype": "u32",
+          "shape": [
+            32,
+            65,
+            63
+          ],
+          "workers": 4,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 1.0025837190883127,
+          "native_over_rust_min": 0.9910488848900253,
+          "native_over_rust_max": 1.02294063616091
+        },
+        {
+          "case": "u32-dense-u16-range-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 0.9209081567848018,
+          "native_over_rust_min": 0.9200504857726706,
+          "native_over_rust_max": 0.9263481101339047
+        },
+        {
+          "case": "u32-dense-u16-range-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 4,
+          "unshuffle": "Neon",
+          "automatic_unshuffle": "Neon",
+          "native_over_rust_median": 0.9538858763898014,
+          "native_over_rust_min": 0.9480378720587765,
+          "native_over_rust_max": 0.9658703735206202
+        }
+      ]
+    },
+    {
+      "commit": "7374c8d3583e33e5a01ab7fb95314325e98e6ad9",
+      "os": "windows",
+      "arch": "x86_64",
+      "cpu": "AMD64 Family 26 Model 2 Stepping 1, AuthenticAMD",
+      "allocated_cpus": 4,
+      "worker_counts": [
+        1,
+        4
+      ],
+      "repeats": 5,
+      "benchmark_source_sha256": "f8c6000740a16123ec767bc68ae1f83356c0ed46e612bd61872a2452b4a14f5c",
+      "fixture_generator_sha256": "afd17e20d4159b9e540fc23b7168c5edefad84e9e03a2df1a4d1ee28a6f33e6f",
+      "reader_source_sha256": "b59ae90547114456a2a7f8a0287c7c158d08e34d2e2ac6767327d63304ebd696",
+      "native_shim_source_sha256": "0b61e18ac773b868f899f70d85ff030ba818361e061f80126e478cccac3d5859",
+      "runner": "windows-latest",
+      "artifact": {
+        "id": 13926722505,
+        "name": "codec-benchmark-windows-latest",
+        "digest": "sha256:1bc71e900b50d78dc241d26094647213c2a6696f2cdc8b7e4d24a76d8f2d46e9",
+        "run_id": 43180447512,
+        "commit": "7374c8d3583e33e5a01ab7fb95314325e98e6ad9"
+      },
+      "validation_passes": 132,
+      "all_counts_match": true,
+      "lz4_comparisons": [
+        {
+          "case": "u16-sparse-1m",
+          "dtype": "u16",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 2.0142032781906365,
+          "native_over_rust_min": 1.6460248875939578,
+          "native_over_rust_max": 2.1622433785597064
+        },
+        {
+          "case": "u16-sparse-1m",
+          "dtype": "u16",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 4,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.7269253737796257,
+          "native_over_rust_min": 1.5912639057679723,
+          "native_over_rust_max": 1.8628075634471801
+        },
+        {
+          "case": "u16-dense-1m",
+          "dtype": "u16",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.1349506714666533,
+          "native_over_rust_min": 0.9702039204867073,
+          "native_over_rust_max": 1.7247829618359625
+        },
+        {
+          "case": "u16-dense-1m",
+          "dtype": "u16",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 4,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.1223300914610737,
+          "native_over_rust_min": 1.0305498605979795,
+          "native_over_rust_max": 1.1378019366094114
+        },
+        {
+          "case": "u16-small-64",
+          "dtype": "u16",
+          "shape": [
+            32,
+            64,
+            64
+          ],
+          "workers": 1,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.0089042167731996,
+          "native_over_rust_min": 0.9735595222003259,
+          "native_over_rust_max": 1.0459842158230193
+        },
+        {
+          "case": "u16-small-64",
+          "dtype": "u16",
+          "shape": [
+            32,
+            64,
+            64
+          ],
+          "workers": 4,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 0.9791222015772844,
+          "native_over_rust_min": 0.9738475811212683,
+          "native_over_rust_max": 1.0159755829300483
+        },
+        {
+          "case": "u16-tiny-8",
+          "dtype": "u16",
+          "shape": [
+            64,
+            8,
+            8
+          ],
+          "workers": 1,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.005449755087745,
+          "native_over_rust_min": 0.9440582303129591,
+          "native_over_rust_max": 1.0373197983484432
+        },
+        {
+          "case": "u16-tiny-8",
+          "dtype": "u16",
+          "shape": [
+            64,
+            8,
+            8
+          ],
+          "workers": 4,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.0218621692518248,
+          "native_over_rust_min": 0.9883306618988255,
+          "native_over_rust_max": 1.0560183764243922
+        },
+        {
+          "case": "u16-tail-65x63",
+          "dtype": "u16",
+          "shape": [
+            32,
+            65,
+            63
+          ],
+          "workers": 1,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.0034393615825559,
+          "native_over_rust_min": 0.9974301108807467,
+          "native_over_rust_max": 1.0803290259187173
+        },
+        {
+          "case": "u16-tail-65x63",
+          "dtype": "u16",
+          "shape": [
+            32,
+            65,
+            63
+          ],
+          "workers": 4,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 0.9994620435011187,
+          "native_over_rust_min": 0.9648206591038407,
+          "native_over_rust_max": 1.0022457795213118
+        },
+        {
+          "case": "u32-sparse-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 3.9264335946824334,
+          "native_over_rust_min": 3.426308599679084,
+          "native_over_rust_max": 4.637555671993713
+        },
+        {
+          "case": "u32-sparse-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 4,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 2.7993998858189832,
+          "native_over_rust_min": 2.337428756572068,
+          "native_over_rust_max": 3.3087391087581017
+        },
+        {
+          "case": "u32-dense-full-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.2141155416363736,
+          "native_over_rust_min": 1.1764108870749768,
+          "native_over_rust_max": 1.2376271714330207
+        },
+        {
+          "case": "u32-dense-full-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 4,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.1968900707621581,
+          "native_over_rust_min": 1.1748439877395311,
+          "native_over_rust_max": 1.2778950540527791
+        },
+        {
+          "case": "u32-small-64",
+          "dtype": "u32",
+          "shape": [
+            32,
+            64,
+            64
+          ],
+          "workers": 1,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.0119169867121234,
+          "native_over_rust_min": 0.9631130280009425,
+          "native_over_rust_max": 1.0906653305661724
+        },
+        {
+          "case": "u32-small-64",
+          "dtype": "u32",
+          "shape": [
+            32,
+            64,
+            64
+          ],
+          "workers": 4,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.010903252166201,
+          "native_over_rust_min": 0.9961189443723477,
+          "native_over_rust_max": 1.018247892600687
+        },
+        {
+          "case": "u32-tiny-8",
+          "dtype": "u32",
+          "shape": [
+            64,
+            8,
+            8
+          ],
+          "workers": 1,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 0.9956064348144543,
+          "native_over_rust_min": 0.9824792893773889,
+          "native_over_rust_max": 1.0820155515071403
+        },
+        {
+          "case": "u32-tiny-8",
+          "dtype": "u32",
+          "shape": [
+            64,
+            8,
+            8
+          ],
+          "workers": 4,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.0167009541810337,
+          "native_over_rust_min": 0.9837378837927113,
+          "native_over_rust_max": 1.019120790578611
+        },
+        {
+          "case": "u32-tail-65x63",
+          "dtype": "u32",
+          "shape": [
+            32,
+            65,
+            63
+          ],
+          "workers": 1,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 0.9934399968307968,
+          "native_over_rust_min": 0.8981274061577765,
+          "native_over_rust_max": 0.9939064380283045
+        },
+        {
+          "case": "u32-tail-65x63",
+          "dtype": "u32",
+          "shape": [
+            32,
+            65,
+            63
+          ],
+          "workers": 4,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 0.9968416809358093,
+          "native_over_rust_min": 0.9640835759796982,
+          "native_over_rust_max": 1.024224452782677
+        },
+        {
+          "case": "u32-dense-u16-range-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 1,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.0457617660616942,
+          "native_over_rust_min": 0.9497658497608854,
+          "native_over_rust_max": 1.0685918759599702
+        },
+        {
+          "case": "u32-dense-u16-range-1m",
+          "dtype": "u32",
+          "shape": [
+            4,
+            1024,
+            1024
+          ],
+          "workers": 4,
+          "unshuffle": "Avx2",
+          "automatic_unshuffle": "Avx2",
+          "native_over_rust_median": 1.061926842553667,
+          "native_over_rust_min": 0.9567396261580478,
+          "native_over_rust_max": 1.1050592749099228
+        }
+      ]
+    }
+  ]
+}

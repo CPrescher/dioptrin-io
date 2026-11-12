@@ -2,7 +2,8 @@
 
 The default decision below is historical. The subsequent
 [dense, uint16 and small-frame qualification](../2026-11-12-codec-qualification/README.md)
-selects native LZ4 by default on macOS ARM64 while retaining Rust elsewhere,
+and cross-platform CI comparison select native LZ4 on the five
+qualified targets, retaining Rust on other targets,
 automatic fallback for larger configured block budgets and explicit overrides.
 The measurements in this report remain unchanged.
 

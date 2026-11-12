@@ -2,9 +2,10 @@
 
 ## Decision
 
-Use the existing bounded native LZ4 decoder by default for `RawReader` on macOS
-ARM64. Retain checked Rust LZ4 on other platforms, an explicit Rust/native
-override, and automatic Rust selection if the configured chunk budget exceeds
+Use the existing bounded native LZ4 decoder by default for `RawReader` on
+Linux/Windows x86-64 and macOS/Linux/Windows ARM64. Retain checked Rust LZ4 on
+other targets, an explicit Rust/native override, and automatic Rust selection
+if the configured chunk budget exceeds
 `i32::MAX`. This conservative per-reader fallback preserves the accepted size
 range without attempting a native call with out-of-range encoded/decoded sizes.
 The total file size is unrelated to this individual-block API limit.
@@ -135,8 +136,11 @@ covered by an independent fixture regression test.
 
 ## Cross-platform CI comparison
 
-Every [Rust CI matrix job](https://github.com/CPrescher/dioptrin-io/actions/workflows/ci.yml)
-runs the same small factorial benchmark: both explicit
+The qualification runs originally used every Rust CI matrix job. Routine CI
+now omits benchmarks; there is no schedule. The separate
+[manual benchmark workflow](https://github.com/CPrescher/dioptrin-io/actions/workflows/codec-benchmark.yml)
+can be explicitly dispatched for a future codec change. It runs the same small
+factorial benchmark: both explicit
 LZ4 choices with every available scalar/SSE2/AVX2/NEON kernel on that host, five
 matched samples targeting 80 ms on the Auto+Rust baseline, one and up to four
 workers (bounded by allocated CPUs). Unsupported kernels are skipped explicitly.
@@ -152,7 +156,7 @@ absolute rates from different machines do not compare operating systems.
 Count mismatches and incomplete paired records fail CI. Performance does not
 have a threshold: shared-runner load, scheduling and compiler changes can alter
 small differences. CI rankings identify candidates for longer qualification;
-they do not automatically change defaults on other platforms. The manual links
+they do not automatically change defaults. The manual links
 this method so later runs remain inspectable when runner hardware changes.
 
 The previous long Windows SIMD example remains manually available. Historical
@@ -183,7 +187,47 @@ same run's job summaries/artifacts.
 The M1 and Linux ARM results show that native LZ4 can be roughly 6–10% slower
 for the dense-16-bit-range uint32 pattern, despite winning the other large
 patterns. This exception is retained explicitly; it is not hidden by an aggregate
-score. It reinforces the Rust override and retaining other platforms' defaults
-pending fuller application qualification. The Mac result supports native for
+score. It reinforces the Rust override for these workloads, even though Native is
+the selected general default on the qualified targets. The Mac result supports native for
 large sparse/full-width workloads on another Apple CPU, without establishing
 universal superiority for every Apple Silicon workload.
+
+## Fixed defaults after cross-platform qualification
+
+[The completed second run](https://github.com/CPrescher/dioptrin-io/actions/runs/43180447512)
+at `7374c8d3583e33e5a01ab7fb95314325e98e6ad9` passed all five Rust platform jobs,
+all six Python wheel jobs, inventory and strict documentation checks. The five
+artifact archive digests, source hashes (Windows CRLF accounted for), exact
+original frame hashes and regenerated summaries were verified. All **528**
+original-count validation passes matched. The [retained per-platform comparisons](ci-platform-comparisons.json)
+record paired native/Rust medians and full ranges with the automatic kernel.
+
+| Target | General choice | Large sparse native/Rust medians | Large full-width dense medians |
+| --- | --- | ---: | ---: |
+| macOS ARM64, virtual M1 | NEON + Native | 2.42–2.84× | 1.09–1.22× |
+| Linux ARM64 | NEON + Native | 1.55–1.59× | 1.11–1.16× |
+| Windows ARM64 | NEON + Native | 1.33–1.50× | 1.05–1.10× |
+| Linux x86-64, EPYC 7763 | AVX2 + Native | 2.23–3.28× | 1.19–1.26× |
+| Windows x86-64, AMD | AVX2 + Native | 1.73–3.93× | 1.12–1.21× |
+
+Ranges here span uint16/uint32 and the tested worker counts, not uncertainty
+intervals. Per-pass timing ranges are retained in the JSON. Native is the
+consistent general choice for large sparse/full-width dense patterns on all five
+hosts. Dense 16-bit-range uint32 remains an ARM exception: Linux/Windows ARM
+medians favored Rust; virtual M1 results varied with worker count/run. Tiny-frame
+rankings are noisy. Explicit Rust/native and scalar/SIMD overrides remain.
+
+Keep automatic AVX2 dispatch on supporting x86-64 CPUs and NEON on supporting
+ARM64 builds, with existing SSE2/scalar fallbacks. SSE2 versus AVX2 was within
+roughly 0–3% for large uint16 cases on the measured x86 runners, sometimes mixed
+within the matched samples, while AVX2 had clear uint32 gains. Do not encode
+individual runner CPU names or tiny-frame timing winners as new dispatch rules.
+Worker counts remain the consumer's choice; these comparisons did not establish
+a universal optimal number of workers.
+
+These are fixed defaults; there is no runtime auto-tuning. Automatic selection
+still falls back to Rust for configured chunk budgets above `i32::MAX` and on
+unqualified targets. No benchmark is run on push, pull request or a schedule.
+The manual workflow is retained for explicitly requested future qualification;
+this default-selection change reuses the existing measurements without rerunning
+them.

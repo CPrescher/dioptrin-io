@@ -38,7 +38,20 @@ fn independent() -> PathBuf {
 
 #[test]
 fn automatic_lz4_and_large_limit_fallback_keep_original_counts_and_overrides() {
-    let preference = if cfg!(all(target_os = "macos", target_arch = "aarch64")) {
+    let preference = if cfg!(any(
+        all(
+            target_arch = "aarch64",
+            any(
+                target_os = "macos",
+                target_os = "linux",
+                target_os = "windows"
+            )
+        ),
+        all(
+            target_arch = "x86_64",
+            any(target_os = "linux", target_os = "windows")
+        )
+    )) {
         Lz4Backend::Native
     } else {
         Lz4Backend::Rust

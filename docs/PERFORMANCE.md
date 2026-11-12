@@ -76,7 +76,8 @@ from Rust LZ4 to native LZ4 produced these paired median speedups:
 All original counts matched the independent h5py references for every codec
 configuration. Timed consumer outputs were bit-identical between configurations
 for each workload. Following the dense, uint16 and small-frame qualification
-below, **native LZ4 is the default on macOS ARM64**. Other platforms retain
+below and the subsequent cross-platform CI comparison, **native LZ4 is the
+default on the five qualified targets** listed below. Unqualified targets retain
 checked Rust LZ4. Complete-workflow gains still depend on the workload.
 Automatic bit-unshuffle selection remains AVX2 when supported on x86-64, and
 NEON on the tested ARM64 builds.
@@ -191,8 +192,29 @@ cores are used because another processing stage or shared resource limits it.
 
 ## LZ4 defaults, fallback and override
 
-`RawReader` now selects bounded native LZ4 on **macOS ARM64 (Apple Silicon)**
-and checked Rust LZ4 elsewhere. Native uses the already bundled
+`RawReader` uses these fixed general defaults, chosen from the completed
+[CI comparison](https://github.com/CPrescher/dioptrin-io/actions/runs/43180447512):
+
+| Target | Automatic bit-unshuffle | Default LZ4 |
+| --- | --- | --- |
+| Linux x86-64 | AVX2 when supported; otherwise SSE2, then scalar | Native |
+| Windows x86-64 | AVX2 when supported; otherwise SSE2, then scalar | Native |
+| macOS ARM64 (Apple Silicon) | NEON when available; otherwise scalar | Native |
+| Linux ARM64 | NEON when available; otherwise scalar | Native |
+| Windows ARM64 | NEON when available; otherwise scalar | Native |
+| Other targets, including untested macOS x86-64 | Available automatic kernel | Rust |
+
+These are general defaults, not a claim that one combination wins every image.
+No runtime benchmark or image-content probe is performed. Worker counts remain
+a consumer choice constrained by the processing workload and memory budget.
+Native LZ4 won the large sparse and full-width dense cases on all five runners.
+SSE2's small uint16 advantages varied by runner, while AVX2 clearly improved
+uint32 decoding, so automatic SIMD dispatch is retained. The
+[retained CI comparisons](benchmarks/2026-11-12-codec-qualification/ci-platform-comparisons.json)
+include every automatically selected kernel's LZ4 ratio and range; all 528
+original-count validation passes matched.
+
+Native uses the already bundled
 `LZ4_decompress_safe`, with exact input/output bounds and decoded-length checks.
 Bit-unshuffle selection remains independent: this change keeps the optimized
 NEON kernel on Apple Silicon.
@@ -236,20 +258,21 @@ regression. The raw samples and ranges are retained in the report. Together with
 the acquired Eiger and complete-consumer comparisons, this supports the Apple
 Silicon default. It does not establish the best default for all CPUs or files.
 
-### Small benchmarks in CI
+### Benchmarks are manual only
 
-The [Rust workflow](https://github.com/CPrescher/dioptrin-io/actions/workflows/ci.yml)
-runs `benchmark_codecs` on Linux x86-64/ARM64, macOS ARM64 and
-Windows x86-64/ARM64. Each host compares Rust/native LZ4 with every locally
-available scalar/SIMD unshuffle kernel at one and up to four allocated workers.
-The job summary shows paired LZ4 comparisons and the fastest observed combination
-for each workload. Download `codec-benchmark-<runner>` artifacts for raw JSON,
-source/compiler/CPU metadata, count hashes and the generated summary.
+**Routine push and pull-request CI does not run performance benchmarks. There is
+no scheduled benchmark.** Count/correctness, build, lint and consumer checks stay
+in routine CI. Existing measurements are retained and are not recalculated for
+each change.
 
-CI uses five short matched samples per configuration. Count mismatches or
-incomplete results fail the job; timing differences do not. Shared runners can
-change hardware and load, so use the per-case ratios and ranges to identify
-candidates for longer qualification. CI does not automatically rewrite defaults.
+The separate [Codec benchmark (manual) workflow](https://github.com/CPrescher/dioptrin-io/actions/workflows/codec-benchmark.yml)
+can be explicitly dispatched if a future codec change needs qualification. It
+compares Rust/native LZ4 and every locally available scalar/SIMD kernel on the
+five runner types, using five short matched samples per configuration and one
+and up to four allocated workers. It publishes per-workload job summaries and
+`codec-benchmark-<runner>` raw/summary JSON artifacts. It never changes defaults
+automatically. Count mismatches or incomplete results fail that manual job;
+timing differences do not, because shared-runner load can distort small gains.
 
 The [first codec CI run](https://github.com/CPrescher/dioptrin-io/actions/runs/43178638558)
 also illustrates a workload-specific exception. For dense 16-bit-range values
@@ -257,7 +280,7 @@ also illustrates a workload-specific exception. For dense 16-bit-range values
 M1 (one/three workers), and 0.937×/0.931× on Linux ARM64 (one/four workers).
 Rust was faster in these cases, while native won the large sparse and full-width
 dense cases on both hosts. Linux x86-64 favored native for this pattern too
-(1.042×/1.067×). The Apple default is therefore a general choice based on the
+(1.042×/1.067×). The native defaults are therefore general choices based on the
 qualified workloads; use the Rust override when your own data favors it.
 Reproduce a short run, or a longer Auto-kernel LZ4 comparison, with:
 
@@ -268,8 +291,8 @@ cargo run --locked --release --features hdf5 --example benchmark_codecs -- quali
 ```
 
 The older Windows SIMD benchmark below remains a historical comparison with Rust
-LZ4 fixed. Its larger example remains manually runnable; routine CI now uses the
-smaller cross-platform comparison of both LZ4 choices.
+LZ4 fixed. Both benchmark examples remain manually runnable; routine CI runs
+correctness checks without repeating these performance measurements.
 
 ## Windows read/decode measurements
 

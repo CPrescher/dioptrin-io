@@ -1,0 +1,33 @@
+name: Codec benchmark (manual)
+
+# Performance qualification is an explicit experiment, never routine CI.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  benchmark:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-15, windows-latest, windows-11-arm]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.13"
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+      - name: Benchmark small codec workloads
+        run: cargo run --locked --release --features hdf5 --example benchmark_codecs -- codec-benchmark.json
+      - name: Summarize codec choices
+        run: python scripts/report_codec_ci.py codec-benchmark.json codec-benchmark-summary.json
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: codec-benchmark-${{ matrix.os }}
+          path: codec-benchmark*.json
+          if-no-files-found: error

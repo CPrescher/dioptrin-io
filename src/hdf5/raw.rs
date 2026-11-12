@@ -90,8 +90,8 @@ impl UnshuffleBackend {
 /// Bounded LZ4 block decompressor. Both require the exact decoded block length.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Lz4Backend {
-    /// Checked Rust decoder; default outside macOS ARM64 and the automatic
-    /// fallback for reader limits exceeding the native API's signed range.
+    /// Checked Rust decoder; portable default on unqualified targets and the
+    /// automatic fallback for limits exceeding the native API's signed range.
     Rust,
     /// Reuse the bounded LZ4 decoder bundled with the HDF5 Bitshuffle filter.
     /// Reads reject encoded or decoded blocks larger than `i32::MAX` bytes.
@@ -100,7 +100,20 @@ pub enum Lz4Backend {
 
 impl Default for Lz4Backend {
     fn default() -> Self {
-        if cfg!(all(target_os = "macos", target_arch = "aarch64")) {
+        if cfg!(any(
+            all(
+                target_arch = "aarch64",
+                any(
+                    target_os = "macos",
+                    target_os = "linux",
+                    target_os = "windows"
+                )
+            ),
+            all(
+                target_arch = "x86_64",
+                any(target_os = "linux", target_os = "windows")
+            )
+        )) {
             Self::Native
         } else {
             Self::Rust
@@ -419,9 +432,10 @@ impl RawReader {
         self.codec.lz4 = backend;
         self
     }
-    /// Actual selected LZ4 decoder. Automatic selection uses Native on macOS
-    /// ARM64 unless the configured chunk budget exceeds `i32::MAX`; elsewhere
-    /// it uses Rust. An explicit override takes precedence.
+    /// Actual selected LZ4 decoder. Automatic selection uses Native on the
+    /// qualified Linux/Windows x86-64 and macOS/Linux/Windows ARM64 targets,
+    /// unless the configured chunk budget exceeds `i32::MAX`; other targets
+    /// use Rust. An explicit override takes precedence.
     #[must_use]
     pub fn lz4_backend(&self) -> Lz4Backend {
         self.codec.lz4
