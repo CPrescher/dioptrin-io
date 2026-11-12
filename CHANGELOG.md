@@ -2,6 +2,31 @@
 
 ## Unreleased
 
+## 0.4.0 — 2026-11-12 (Rust source)
+
+- Add bounded native LZ4 selection to the indexed HDF5 `RawReader`. Use native
+  LZ4 by default on Linux/Windows x86-64 and macOS/Linux/Windows ARM64, paired
+  with the existing automatic AVX2/SSE2/NEON/scalar bit-unshuffle dispatch.
+- Retain explicit Rust/native overrides, exact decoded-length checks and Rust
+  fallback when configured chunk budgets exceed the native signed-size range.
+  Other targets retain Rust LZ4 by default.
+- Preserve original counts, native sample types, reserved values, stored
+  orientation and existing source/resource contracts. Integration mathematics
+  and numerical precision are unchanged.
+- Expand the manual with acquired-file and dense/uint16/small-frame codec
+  comparisons, fixed platform defaults, independent count checks and known
+  workload-specific exceptions. KCB remains a preserved experiment.
+- Make performance benchmarks manual-only: no runs on pushes, pull requests or
+  a schedule. Keep ordinary correctness, lint, build and consumer CI checks.
+
+## 0.2.1 — 2026-11-12 (Python distribution)
+
+- Bundle Rust reader 0.4.0, including the qualified native LZ4 defaults for the
+  indexed/fused HDF5 path. The basic Python reader API and fused float64 output
+  contracts remain unchanged.
+- Include the updated codec documentation and retained native-codec notices in
+  the source distribution. Python and Rust versions remain independent.
+
 ## 0.3.0 — 2026-11-11 (Rust source)
 
 - Resolve exact declared HDF5 master/VDS/raw companion paths with the native

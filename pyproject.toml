@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "dioptrin-io"
-version = "0.2.0"
+version = "0.2.1"
 description = "Native detector-file readers returning original counts as NumPy arrays"
 authors = [{ name = "Clemens Prescher" }]
 readme = "python/README.md"

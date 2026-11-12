@@ -3,6 +3,11 @@
 Native detector-file readers with NumPy image arrays. All decoding uses the
 existing Rust library; FabIO and h5py are not runtime dependencies.
 
+Version 0.2.1 bundles Rust reader 0.4.0. Its indexed/fused HDF5 path uses the
+[qualified codec defaults](https://dioptrin-io.readthedocs.io/en/latest/PERFORMANCE.html#lz4-defaults-fallback-and-override),
+with original counts and float64 integration precision preserved. The basic
+Python reading interface is unchanged; benchmarks are manual-only.
+
 Install from PyPI:
 
 ```sh
