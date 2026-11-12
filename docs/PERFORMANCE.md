@@ -33,6 +33,59 @@ The consumer owns orientation changes, masks, corrections and integration. A
 consumer must opt into dioptrin-io; installing Dioptrin or choosing an integration
 layout does not automatically switch its file reader.
 
+## Codec speed at a glance
+
+For the supported Eiger HDF5 chunks, decoding has two stages: LZ4 decompression,
+then **bit-unshuffle**, which restores the original arrangement of the integer
+bits. Rust and native LZ4 are alternative implementations of the first stage.
+Scalar, SSE2, AVX2, NEON and KCB are implementations of the second stage. KCB is
+Kal Conley's alternative Bitshuffle implementation; it preserves the same counts.
+
+### Acquired Eiger9M file on Apple M4 Pro
+
+This comparison read and decoded all 625 uint32 frames of shape 3262 × 3108.
+It used eight frame workers and five complete-file passes per configuration,
+with alternating/rotating order, a warm OS file cache and no decoded-image cache.
+The rates include file reads, decoding and worker/buffer setup, and exclude
+source indexing, integration and correctness hashing.
+
+| Bit-unshuffle + LZ4 configuration | Median fps (full range) | Paired speedup | Availability |
+| --- | ---: | ---: | --- |
+| NEON + checked Rust LZ4 | 746.2 (736.1–756.2) | 1.000× | Default on the tested Apple ARM64 host |
+| NEON + bounded native LZ4 | 804.3 (785.8–807.4) | 1.075× | Explicit Rust `RawReader` option |
+| KCB + checked Rust LZ4 | 580.4 (562.4–597.5) | 0.773× | Preserved experiment |
+| KCB + bounded native LZ4 | 615.1 (586.0–628.3) | 0.819× | Preserved experiment |
+
+Paired speedups are medians of the baseline/candidate time ratios within each
+pass; they need not equal ratios of the FPS medians. On this acquired file,
+native LZ4 improved read/decode throughput by **7.5%**. KCB reduced it by about
+**23%** against the current optimized NEON path, so KCB remains experimental.
+
+### Effect on the complete integration workflow
+
+Decoder speed is only one part of producing a diffraction pattern. With the same
+source, mask, calibration, float64 weights and 2000-bin integration plan, switching
+from Rust LZ4 to native LZ4 produced these paired median speedups:
+
+| Complete read-to-pattern workload | Native LZ4 speedup | Interpretation |
+| --- | ---: | --- |
+| Complete uint32 frame, intensity only; eight frame workers | 0.999× | Essentially neutral median; individual passes were mixed |
+| Complete uint32 frame, intensity + Poisson std; eight frame workers | 1.026× | Modest improvement in all five matched pairs |
+| One image at a time; eight block workers within that image | 1.016× intensity / 1.022× with Poisson std | Modest latency improvement; separate from whole-file throughput |
+
+All original counts matched the independent h5py references for every codec
+configuration. Timed consumer outputs were bit-identical between configurations
+for each workload. **Checked Rust LZ4 remains the default on every platform**;
+native LZ4 is opt-in because the complete-workflow gain depends on the workload.
+Automatic bit-unshuffle selection remains AVX2 when supported on x86-64, and
+NEON on the tested ARM64 builds.
+
+The [full comparison](benchmarks/2026-11-11-codecs/README.md) records exact source
+revisions, hardware, input provenance, validation and every timing. The Windows
+table below compares Scalar, SSE2, AVX2 and NEON on matched synthetic inputs.
+Compare configurations within each table: the Apple and Windows measurements
+use different hosts and input distributions.
+
 ## Sparse and dense images
 
 Here, **sparse** describes an image with many zero-valued pixels. **Dense**
