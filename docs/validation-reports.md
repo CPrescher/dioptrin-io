@@ -21,6 +21,7 @@ benchmarks/2026-11-07-windows-simd/README
 benchmarks/2026-11-07-fused-fixed/README
 benchmarks/2026-11-07-qt-combined/README
 benchmarks/2026-11-11-codecs/README
+benchmarks/2026-11-12-codec-qualification/README
 edf-recovery/2026-11-06-updated-edf-audit
 fabio-parity/README
 metadata-parity/HEADER_ATTRIBUTES

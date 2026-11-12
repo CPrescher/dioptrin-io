@@ -1,6 +1,12 @@
 # KCB and native LZ4 against current main
 
-## Decision
+The default decision below is historical. The subsequent
+[dense, uint16 and small-frame qualification](../2026-11-12-codec-qualification/README.md)
+selects native LZ4 by default on macOS ARM64 while retaining Rust elsewhere,
+automatic fallback for larger configured block budgets and explicit overrides.
+The measurements in this report remain unchanged.
+
+## Decision at the measured revision
 
 Retain the current automatic unshuffle policy and checked Rust LZ4 default.
 Add the already bundled, bounded native LZ4 implementation as an explicit

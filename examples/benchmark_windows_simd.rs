@@ -1,16 +1,17 @@
 //! Matched native scalar/SIMD read+decode on deterministic synthetic 9M frames.
 //! No detector data is uploaded. Run release mode; results are machine-local.
+#[path = "support/codec_fixture.rs"]
+mod fixture;
 use dioptrin_io::{
     PixelBuffer,
     hdf5::{
         Limits,
-        raw::{FrameBuffer, RawReader, UnshuffleBackend},
+        raw::{FrameBuffer, Lz4Backend, RawReader, UnshuffleBackend},
     },
 };
 use sha2::{Digest, Sha256};
 use std::{
     error::Error,
-    ffi::c_void,
     sync::atomic::{AtomicUsize, Ordering},
     time::Instant,
 };
@@ -19,98 +20,26 @@ const COLS: usize = 3108;
 const FRAMES: usize = 32;
 const SCANS: usize = 4;
 const REPEATS: usize = 5;
-unsafe extern "C" {
-    fn bshuf_compress_lz4_bound(size: usize, width: usize, block: usize) -> usize;
-    fn bshuf_compress_lz4(
-        input: *const c_void,
-        output: *mut c_void,
-        size: usize,
-        width: usize,
-        block: usize,
-    ) -> i64;
-    fn H5Dwrite_chunk(
-        dataset: i64,
-        dxpl: i64,
-        mask: u32,
-        offset: *const u64,
-        size: usize,
-        data: *const c_void,
-    ) -> i32;
-}
 fn create(path: &std::path::Path, sparse: bool) -> Result<Vec<String>, Box<dyn Error>> {
-    hdf5_backend::sync::sync(hdf5_bitshuffle::register_bitshuffle_plugin);
-    let file = hdf5_backend::File::create(path)?;
-    let ds = file
-        .new_dataset::<u32>()
-        .shape((FRAMES, ROWS, COLS))
-        .chunk((1, ROWS, COLS))
-        .set_filters(&[hdf5_backend::filters::Filter::user(32008, &[0, 2])])
-        .create("data")?;
-    let count = ROWS * COLS;
-    let mut pixels = vec![0_u32; count];
-    // SAFETY: positive supported width; trusted generated input of this size.
-    let bound = unsafe { bshuf_compress_lz4_bound(count, 4, 0) };
-    let mut encoded = vec![0_u8; bound + 12];
-    let mut hashes = Vec::new();
-    for frame in 0..FRAMES {
-        for (i, pixel) in pixels.iter_mut().enumerate() {
-            let mut x = (i as u32).wrapping_add((frame as u32).wrapping_mul(0x9E3779B9));
-            x ^= x >> 16;
-            x = x.wrapping_mul(0x7FEB352D);
-            x ^= x >> 15;
-            *pixel = if sparse {
-                if x & 127 == 0 {
-                    1 + ((x >> 8) % 2500)
-                } else {
-                    0
-                }
+    fixture::create(
+        path,
+        fixture::Case {
+            name: if sparse {
+                "sparse-1-in-128"
             } else {
-                (x >> 8) & 65535
-            };
-        }
-        pixels[0] = u32::MAX;
-        pixels[1] = 0;
-        pixels[2] = 1 << 31;
-        hashes.push(format!(
-            "{:x}",
-            Sha256::digest(bytemuck::cast_slice(&pixels))
-        ));
-        encoded[..8].copy_from_slice(&((count * 4) as u64).to_be_bytes());
-        encoded[8..12].fill(0);
-        // SAFETY: trusted native input, allocated codec-declared output bound.
-        // This compression helper is benchmark generation only, never the raw
-        // reader's untrusted compressed-input path (which stays checked Rust).
-        let n = unsafe {
-            bshuf_compress_lz4(
-                pixels.as_ptr().cast(),
-                encoded[12..].as_mut_ptr().cast(),
-                count,
-                4,
-                0,
-            )
-        };
-        if n < 0 || n as usize > bound {
-            return Err("synthetic compression failed".into());
-        }
-        let offset = [frame as u64, 0, 0];
-        // SAFETY: live rank-3 dataset, exact compressed extent, codec-compatible
-        // header; HDF5 access serialized with the same upstream library mutex.
-        let rc = hdf5_backend::sync::sync(|| unsafe {
-            H5Dwrite_chunk(
-                ds.id(),
-                0,
-                0,
-                offset.as_ptr(),
-                n as usize + 12,
-                encoded.as_ptr().cast(),
-            )
-        });
-        if rc < 0 {
-            return Err("synthetic chunk write failed".into());
-        }
-    }
-    file.flush()?;
-    Ok(hashes)
+                "dense-u16-range"
+            },
+            rows: ROWS,
+            cols: COLS,
+            frames: FRAMES,
+            width: 4,
+            pattern: if sparse {
+                fixture::Pattern::Sparse
+            } else {
+                fixture::Pattern::Dense16
+            },
+        },
+    )
 }
 fn pass(
     reader: &RawReader,
@@ -189,7 +118,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     for (case, sparse) in [("sparse-1-in-128", true), ("dense-u16-range", false)] {
         let path = temp.path().join("synthetic.h5");
         let hashes = create(&path, sparse)?;
-        let reader = RawReader::open_snapshot(&path, "data", Limits::default())?;
+        let reader = RawReader::open_snapshot(&path, "data", Limits::default())?
+            .with_lz4_backend(Lz4Backend::Rust);
         selected = Some(format!("{:?}", reader.unshuffle_backend()));
         drop(reader);
         sources.push(serde_json::json!({"case":case,"file_bytes":std::fs::metadata(&path)?.len(),
@@ -197,7 +127,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         for &workers in &[1, 8] {
             for &backend in &backends {
                 let reader = RawReader::open_snapshot(&path, "data", Limits::default())?
-                    .with_unshuffle_backend(backend)?;
+                    .with_unshuffle_backend(backend)?
+                    .with_lz4_backend(Lz4Backend::Rust);
                 pass(&reader, workers, 1, Some(&hashes))?;
                 validation.push(serde_json::json!({"case":case,"workers":workers,"backend":format!("{backend:?}"),"frames":FRAMES,"all_counts_match":true}));
             }
@@ -211,7 +142,8 @@ fn main() -> Result<(), Box<dyn Error>> {
                 };
                 for backend in order {
                     let reader = RawReader::open_snapshot(&path, "data", Limits::default())?
-                        .with_unshuffle_backend(backend)?;
+                        .with_unshuffle_backend(backend)?
+                        .with_lz4_backend(Lz4Backend::Rust);
                     let seconds = pass(&reader, workers, SCANS, None)?;
                     let fps = (FRAMES * SCANS) as f64 / seconds;
                     println!("{case} {backend:?} {workers} workers, repeat {repeat}: {fps:.2} fps");

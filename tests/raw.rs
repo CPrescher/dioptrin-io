@@ -37,6 +37,49 @@ fn independent() -> PathBuf {
 }
 
 #[test]
+fn automatic_lz4_and_large_limit_fallback_keep_original_counts_and_overrides() {
+    let preference = if cfg!(all(target_os = "macos", target_arch = "aarch64")) {
+        Lz4Backend::Native
+    } else {
+        Lz4Backend::Rust
+    };
+    assert_eq!(Lz4Backend::default(), preference);
+    let reference = Reader::open(independent(), "detector/data", Limits::default()).unwrap();
+    // Exercise the signed C API boundary without allocating a multi-GB image.
+    for (limit, selected) in [
+        (Limits::default().chunk_bytes, preference),
+        (i32::MAX as usize, preference),
+        (i32::MAX as usize + 1, Lz4Backend::Rust),
+    ] {
+        let mut reader = RawReader::open_snapshot(
+            independent(),
+            "detector/data",
+            Limits {
+                chunk_bytes: limit,
+                ..Limits::default()
+            },
+        )
+        .unwrap();
+        assert_eq!(reader.lz4_backend(), selected);
+        let mut buffer = FrameBuffer::default();
+        reader.read_frame_into(0, &mut buffer).unwrap();
+        assert_eq!(
+            buffer.pixels(),
+            Some(&PixelBuffer::U32(reference.read_frame(0).unwrap().pixels))
+        );
+        for backend in [Lz4Backend::Rust, Lz4Backend::Native] {
+            reader = reader.with_lz4_backend(backend);
+            assert_eq!(reader.lz4_backend(), backend);
+            reader.read_frame_into(1, &mut buffer).unwrap();
+            assert_eq!(
+                buffer.pixels(),
+                Some(&PixelBuffer::U32(reference.read_frame(1).unwrap().pixels))
+            );
+        }
+    }
+}
+
+#[test]
 fn codec_backends_preserve_independent_counts_and_existing_endian_admission() {
     use sha2::{Digest, Sha256};
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/codec-backends");

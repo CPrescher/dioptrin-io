@@ -313,11 +313,14 @@ The vendored `hdf5-bitshuffle` backend backports the upstream ARM NEON bulk
 movemask kernels and their MSVC portability fix. Its original sources and MIT
 notices are retained; `vendor/hdf5-bitshuffle-1.0.0/UPSTREAM.json` records the
 baseline hashes and upstream commits, and `PATCHES.md` describes the build.
-The indexed reader retains checked Rust LZ4 decoding by default and original pixel types,
-and reuses worker-owned scratch for native bit unshuffle.
-An explicit `raw::Lz4Backend::Native` option reuses the bundled bounded LZ4 decoder;
-the [current-main comparison](docs/benchmarks/2026-11-11-codecs/README.md) documents
-its measured gains, mixed intensity-only results, and rejection of the older KCB path.
+The indexed reader preserves original pixel types and reuses worker-owned scratch
+for native bit unshuffle. It defaults to bounded native LZ4 on macOS ARM64 and
+checked Rust LZ4 elsewhere. A configured chunk budget above `i32::MAX` selects
+Rust automatically; `with_lz4_backend(Lz4Backend::Rust)` retains an explicit override.
+The [codec qualification](docs/benchmarks/2026-11-12-codec-qualification/README.md)
+records dense, uint16 and small-frame measurements and the cross-platform CI
+benchmark method. The [acquired-file comparison](docs/benchmarks/2026-11-11-codecs/README.md)
+records measured consumer gains, mixed intensity-only results and rejection of KCB.
 Matched Eiger9M read/decode measurements are documented in
 [`docs/benchmarks/2026-11-06-neon-eiger/`](docs/benchmarks/2026-11-06-neon-eiger/);
 the subsequent scratch-reuse comparison is in

@@ -51,8 +51,8 @@ source indexing, integration and correctness hashing.
 
 | Bit-unshuffle + LZ4 configuration | Median fps (full range) | Paired speedup | Availability |
 | --- | ---: | ---: | --- |
-| NEON + checked Rust LZ4 | 746.2 (736.1–756.2) | 1.000× | Default on the tested Apple ARM64 host |
-| NEON + bounded native LZ4 | 804.3 (785.8–807.4) | 1.075× | Explicit Rust `RawReader` option |
+| NEON + checked Rust LZ4 | 746.2 (736.1–756.2) | 1.000× | Explicit Rust override; default at the measured revision |
+| NEON + bounded native LZ4 | 804.3 (785.8–807.4) | 1.075× | Current default on macOS ARM64 |
 | KCB + checked Rust LZ4 | 580.4 (562.4–597.5) | 0.773× | Preserved experiment |
 | KCB + bounded native LZ4 | 615.1 (586.0–628.3) | 0.819× | Preserved experiment |
 
@@ -75,8 +75,9 @@ from Rust LZ4 to native LZ4 produced these paired median speedups:
 
 All original counts matched the independent h5py references for every codec
 configuration. Timed consumer outputs were bit-identical between configurations
-for each workload. **Checked Rust LZ4 remains the default on every platform**;
-native LZ4 is opt-in because the complete-workflow gain depends on the workload.
+for each workload. Following the dense, uint16 and small-frame qualification
+below, **native LZ4 is the default on macOS ARM64**. Other platforms retain
+checked Rust LZ4. Complete-workflow gains still depend on the workload.
 Automatic bit-unshuffle selection remains AVX2 when supported on x86-64, and
 NEON on the tested ARM64 builds.
 
@@ -188,20 +189,78 @@ Eight workers do not mean eight physical CPU cores. More workers than allocated
 CPUs can oversubscribe a machine, and throughput may stop increasing before all
 cores are used because another processing stage or shared resource limits it.
 
-## Optional bounded native LZ4
+## LZ4 defaults, fallback and override
 
-The raw reader's LZ4 stage defaults to checked Rust decoding. Rust consumers can
-explicitly select `reader.with_lz4_backend(Lz4Backend::Native)` to reuse the
-already bundled `LZ4_decompress_safe` implementation, with exact input/output
-bounds and decoded-length checks. Bit-unshuffle selection is independent.
+`RawReader` now selects bounded native LZ4 on **macOS ARM64 (Apple Silicon)**
+and checked Rust LZ4 elsewhere. Native uses the already bundled
+`LZ4_decompress_safe`, with exact input/output bounds and decoded-length checks.
+Bit-unshuffle selection remains independent: this change keeps the optimized
+NEON kernel on Apple Silicon.
 
-The [November 11 current-main comparison](benchmarks/2026-11-11-codecs/README.md)
-found a 7.5% paired read/decode gain on the acquired Eiger9M file on an M4 Pro,
-and modest Poisson integration gains. Intensity-only complete-frame results were
-mixed, so the default remains unchanged on every platform. All original counts
-and complete timed consumer outputs matched exactly between codec variants.
-KCB was slower than the current optimized NEON path and was not retained in the
-production decoder. These are macOS measurements, not Windows performance claims.
+If `Limits::chunk_bytes` exceeds `i32::MAX`, automatic reader selection falls
+back to Rust, preserving the existing admitted size range. This is a conservative
+per-reader decision based on the configured encoded-chunk/decoded-block budget,
+not the total file size. An explicit native override still rejects individual
+encoded or decoded blocks outside the signed C API range.
+
+Rust consumers can force either decoder and inspect the selected implementation:
+
+```rust
+use dioptrin_io::hdf5::{Limits, raw::{Lz4Backend, RawReader}};
+
+let reader = RawReader::open_snapshot("scan.h5", "entry/data", Limits::default())?
+    .with_lz4_backend(Lz4Backend::Rust); // Portable override on Apple Silicon too.
+assert_eq!(reader.lz4_backend(), Lz4Backend::Rust);
+```
+
+### Dense, uint16 and small-frame qualification
+
+The [November 12 qualification](benchmarks/2026-11-12-codec-qualification/README.md)
+used known original uint16/uint32 counts, dense full-width values, sparse images,
+8×8 and 64×64 frames, and 65×63 frames with codec tails. On the M4 Pro, nine
+alternating matched pairs with automatic NEON and one/four workers gave:
+
+| Synthetic workload | Native/Rust paired median, 1 worker | 4 workers |
+| --- | ---: | ---: |
+| uint16 sparse, 1024×1024 | 2.692× | 2.788× |
+| uint16 dense, 1024×1024 | 1.147× | 1.143× |
+| uint32 sparse, 1024×1024 | 3.910× | 4.056× |
+| uint32 dense full-width, 1024×1024 | 1.287× | 1.180× |
+| uint32 dense 16-bit range, 1024×1024 | 1.042× | 1.033× |
+| All six small/tail cases | 0.989–1.077× | 0.981–1.063× |
+
+Every original-count check matched. Large workloads favor native LZ4. Small
+frames are largely limited by reading/source checks and show substantial sample
+noise; these runs do not establish a small-frame speedup or a repeatable material
+regression. The raw samples and ranges are retained in the report. Together with
+the acquired Eiger and complete-consumer comparisons, this supports the Apple
+Silicon default. It does not establish the best default for all CPUs or files.
+
+### Small benchmarks in CI
+
+The [Rust workflow](https://github.com/CPrescher/dioptrin-io/actions/workflows/ci.yml)
+runs `benchmark_codecs` on Linux x86-64/ARM64, macOS ARM64 and
+Windows x86-64/ARM64. Each host compares Rust/native LZ4 with every locally
+available scalar/SIMD unshuffle kernel at one and up to four allocated workers.
+The job summary shows paired LZ4 comparisons and the fastest observed combination
+for each workload. Download `codec-benchmark-<runner>` artifacts for raw JSON,
+source/compiler/CPU metadata, count hashes and the generated summary.
+
+CI uses five short matched samples per configuration. Count mismatches or
+incomplete results fail the job; timing differences do not. Shared runners can
+change hardware and load, so use the per-case ratios and ranges to identify
+candidates for longer qualification. CI does not automatically rewrite defaults.
+Reproduce a short run, or a longer Auto-kernel LZ4 comparison, with:
+
+```sh
+cargo run --locked --release --features hdf5 --example benchmark_codecs -- codec-benchmark.json
+python scripts/report_codec_ci.py codec-benchmark.json codec-benchmark-summary.json
+cargo run --locked --release --features hdf5 --example benchmark_codecs -- qualification.json --qualify
+```
+
+The older Windows SIMD benchmark below remains a historical comparison with Rust
+LZ4 fixed. Its larger example remains manually runnable; routine CI now uses the
+smaller cross-platform comparison of both LZ4 choices.
 
 ## Windows read/decode measurements
 

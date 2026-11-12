@@ -136,3 +136,7 @@ required-features = ["wrappers"]
 [[example]]
 name = "benchmark_windows_simd"
 required-features = ["hdf5"]
+
+[[example]]
+name = "benchmark_codecs"
+required-features = ["hdf5"]

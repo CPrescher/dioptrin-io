@@ -36,17 +36,14 @@ jobs:
       - name: Report and verify native Bitshuffle backend
         run: cargo test --locked --features hdf5 --test bitshuffle_neon linked_backend -- --nocapture
       - run: python scripts/check_consumer.py --all-features
-      - name: Benchmark scalar versus SIMD on synthetic 9M frames
-        if: startsWith(matrix.os, 'windows')
-        run: cargo run --locked --release --features hdf5 --example benchmark_windows_simd -- simd-benchmark.json
-      - name: Summarize native benchmark
-        if: startsWith(matrix.os, 'windows')
-        run: python scripts/report_simd_benchmark.py simd-benchmark.json
+      - name: Benchmark small codec workloads
+        run: cargo run --locked --release --features hdf5 --example benchmark_codecs -- codec-benchmark.json
+      - name: Summarize codec choices
+        run: python scripts/report_codec_ci.py codec-benchmark.json codec-benchmark-summary.json
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
-        if: startsWith(matrix.os, 'windows')
         with:
-          name: simd-benchmark-${{ matrix.os }}
-          path: simd-benchmark.json
+          name: codec-benchmark-${{ matrix.os }}
+          path: codec-benchmark*.json
           if-no-files-found: error
 
   inventory:
@@ -60,3 +57,4 @@ jobs:
           python-version: "3.13"
       - run: python scripts/inventory_fabio.py --check
       - run: python -m unittest discover -s scripts -p test_inventory_fabio.py
+      - run: python -m unittest discover -s scripts -p test_report_codec_ci.py

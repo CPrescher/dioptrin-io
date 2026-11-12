@@ -26,16 +26,22 @@ The original `hdf5::Reader` remains available for its validated 3D u16/u32 scope
 and bundled HDF5 filter path. `read_frame` retains its exact u32 compatibility
 output. The new `hdf5::raw::RawReader::open_snapshot` is opt-in, not an automatic
 replacement. It indexes one allocated full-frame chunk per frame once, then
-uses Unix/Windows positional reads, checked Rust LZ4 block decompression by default and the
+uses Unix/Windows positional reads, bounded LZ4 block decompression and the
 already bundled native Bitshuffle unshuffle function outside the HDF5 mutex.
 Only admitted decompressed slices reach native bit-unshuffle; native unbounded
 compressed-input decoding is never called by this path.
 
-`with_lz4_backend(Lz4Backend::Native)` explicitly selects the already bundled
-`LZ4_decompress_safe` implementation instead. Both encoded and decoded block
+On macOS ARM64, the default selects the already bundled
+`LZ4_decompress_safe` implementation. Both encoded and decoded block
 lengths are checked against the C API's signed 32-bit limit before calling it,
-and the returned length must exactly match the declared output. The default
-remains Rust on every platform. The [matched four-way comparison](benchmarks/2026-11-11-codecs/README.md)
+and the returned length must exactly match the declared output. Other platforms
+retain checked Rust LZ4. If the configured `Limits::chunk_bytes` exceeds
+`i32::MAX`, automatic selection uses Rust even on macOS ARM64. Explicit
+`with_lz4_backend(Lz4Backend::Rust)` / `Native` overrides remain available;
+`lz4_backend()` reports the selected decoder. Explicit native selection retains
+its strict block-size rejection. See the
+[dense/uint16/small-frame qualification](benchmarks/2026-11-12-codec-qualification/README.md).
+The [matched four-way comparison](benchmarks/2026-11-11-codecs/README.md)
 records independent count checks and complete consumer timings; the rejected
 KCB unshuffle alternative is preserved as an experiment, not a production backend.
 

@@ -88,14 +88,36 @@ impl UnshuffleBackend {
 }
 
 /// Bounded LZ4 block decompressor. Both require the exact decoded block length.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Lz4Backend {
-    /// Checked Rust decoder; remains the default on every platform.
-    #[default]
+    /// Checked Rust decoder; default outside macOS ARM64 and the automatic
+    /// fallback for reader limits exceeding the native API's signed range.
     Rust,
     /// Reuse the bounded LZ4 decoder bundled with the HDF5 Bitshuffle filter.
     /// Reads reject encoded or decoded blocks larger than `i32::MAX` bytes.
     Native,
+}
+
+impl Default for Lz4Backend {
+    fn default() -> Self {
+        if cfg!(all(target_os = "macos", target_arch = "aarch64")) {
+            Self::Native
+        } else {
+            Self::Rust
+        }
+    }
+}
+
+impl Lz4Backend {
+    fn for_chunk_limit(limit: usize) -> Self {
+        // Both encoded chunks and decoded codec blocks obey this budget.
+        // Retain the Rust reader's admitted size range when callers raise it.
+        if limit > i32::MAX as usize {
+            Self::Rust
+        } else {
+            Self::default()
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -373,7 +395,10 @@ impl RawReader {
             max_encoded,
             chunk_limit: limits.chunk_bytes,
             configured_block,
-            codec: UnshuffleBackend::Auto.resolve()?.into(),
+            codec: CodecOptions {
+                unshuffle: UnshuffleBackend::Auto.resolve()?,
+                lz4: Lz4Backend::for_chunk_limit(limits.chunk_bytes),
+            },
         })
     }
     /// Override the kernel while retaining identical IO and decoding semantics.
@@ -394,6 +419,9 @@ impl RawReader {
         self.codec.lz4 = backend;
         self
     }
+    /// Actual selected LZ4 decoder. Automatic selection uses Native on macOS
+    /// ARM64 unless the configured chunk budget exceeds `i32::MAX`; elsewhere
+    /// it uses Rust. An explicit override takes precedence.
     #[must_use]
     pub fn lz4_backend(&self) -> Lz4Backend {
         self.codec.lz4

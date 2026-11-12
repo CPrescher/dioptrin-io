@@ -1,0 +1,274 @@
+//! Short matched codec qualification: original native counts, warm positional IO.
+#[path = "support/codec_fixture.rs"]
+mod fixture;
+use dioptrin_io::{
+    PixelBuffer,
+    hdf5::{
+        Limits,
+        raw::{FrameBuffer, Lz4Backend, RawReader, UnshuffleBackend},
+    },
+};
+use fixture::{Case, Pattern};
+use serde_json::json;
+use sha2::{Digest, Sha256};
+use std::{
+    error::Error,
+    sync::atomic::{AtomicUsize, Ordering},
+    time::Instant,
+};
+
+fn cases() -> Vec<Case> {
+    let mut cases = Vec::new();
+    for width in [2, 4] {
+        let names = if width == 2 {
+            [
+                "u16-sparse-1m",
+                "u16-dense-1m",
+                "u16-small-64",
+                "u16-tiny-8",
+                "u16-tail-65x63",
+            ]
+        } else {
+            [
+                "u32-sparse-1m",
+                "u32-dense-full-1m",
+                "u32-small-64",
+                "u32-tiny-8",
+                "u32-tail-65x63",
+            ]
+        };
+        for (name, rows, cols, frames, pattern) in [
+            (names[0], 1024, 1024, 4, Pattern::Sparse),
+            (names[1], 1024, 1024, 4, Pattern::DenseFull),
+            (names[2], 64, 64, 32, Pattern::DenseFull),
+            (names[3], 8, 8, 64, Pattern::DenseFull),
+            (names[4], 65, 63, 32, Pattern::DenseFull),
+        ] {
+            cases.push(Case {
+                name,
+                rows,
+                cols,
+                frames,
+                width,
+                pattern,
+            });
+        }
+    }
+    cases.push(Case {
+        name: "u32-dense-u16-range-1m",
+        rows: 1024,
+        cols: 1024,
+        frames: 4,
+        width: 4,
+        pattern: Pattern::Dense16,
+    });
+    cases
+}
+
+fn pixels(buffer: &FrameBuffer) -> &[u8] {
+    match buffer
+        .pixels()
+        .expect("successful frame must expose pixels")
+    {
+        PixelBuffer::U16(v) => bytemuck::cast_slice(v),
+        PixelBuffer::U32(v) => bytemuck::cast_slice(v),
+        _ => panic!("source dtype changed"),
+    }
+}
+
+fn pass(
+    reader: &RawReader,
+    workers: usize,
+    scans: usize,
+    hashes: Option<&[String]>,
+) -> Result<f64, String> {
+    if reader.worker_payload_bytes().saturating_mul(workers) > 256 * 1024 * 1024 {
+        return Err("benchmark decoder budget exceeded".into());
+    }
+    let next = AtomicUsize::new(0);
+    let frames = reader.shape()[0];
+    let total = frames
+        .checked_mul(scans)
+        .ok_or("benchmark frame overflow")?;
+    let start = Instant::now();
+    std::thread::scope(|scope| {
+        let handles: Vec<_> = (0..workers)
+            .map(|_| {
+                scope.spawn(|| -> Result<usize, String> {
+                    let mut buffer = FrameBuffer::default();
+                    let mut done = 0;
+                    loop {
+                        let i = next.fetch_add(1, Ordering::Relaxed);
+                        if i >= total {
+                            break;
+                        }
+                        let frame = i % frames;
+                        reader
+                            .read_frame_into(frame, &mut buffer)
+                            .map_err(|e| e.to_string())?;
+                        let bytes = pixels(&buffer);
+                        if let Some(hashes) = hashes {
+                            if format!("{:x}", Sha256::digest(bytes)) != hashes[frame] {
+                                return Err(format!("original count mismatch in frame {frame}"));
+                            }
+                        } else {
+                            std::hint::black_box(bytes);
+                        }
+                        done += 1;
+                    }
+                    Ok(done)
+                })
+            })
+            .collect();
+        let mut done = 0;
+        for h in handles {
+            done += h.join().map_err(|_| "benchmark worker panicked")??;
+        }
+        if done != total {
+            return Err("incomplete benchmark pass".to_string());
+        }
+        Ok(())
+    })?;
+    Ok(start.elapsed().as_secs_f64())
+}
+
+fn cpu_model() -> Option<String> {
+    if let Ok(model) = std::env::var("PROCESSOR_IDENTIFIER") {
+        return Some(model);
+    }
+    if cfg!(target_os = "macos") {
+        return std::process::Command::new("sysctl")
+            .args(["-n", "machdep.cpu.brand_string"])
+            .output()
+            .ok()
+            .map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string());
+    }
+    std::fs::read_to_string("/proc/cpuinfo").ok().and_then(|s| {
+        s.lines()
+            .find(|l| l.starts_with("model name") || l.starts_with("Hardware"))
+            .map(str::to_owned)
+    })
+}
+
+fn main() -> Result<(), Box<dyn Error>> {
+    let args: Vec<_> = std::env::args_os().collect();
+    let output = args
+        .get(1)
+        .ok_or("usage: benchmark_codecs OUTPUT_JSON [--qualify]")?;
+    let qualify = args.iter().any(|a| a.to_str() == Some("--qualify"));
+    let repeats = if qualify { 9 } else { 5 };
+    let target_seconds = if qualify { 0.25 } else { 0.08 };
+    let temp = tempfile::tempdir()?;
+    let cpus = std::thread::available_parallelism()?.get();
+    let mut worker_counts = vec![1, cpus.min(4)];
+    worker_counts.sort();
+    worker_counts.dedup();
+    let kernels: Vec<_> = if qualify {
+        vec![UnshuffleBackend::Auto]
+    } else {
+        [
+            UnshuffleBackend::Scalar,
+            UnshuffleBackend::Sse2,
+            UnshuffleBackend::Avx2,
+            UnshuffleBackend::Neon,
+        ]
+        .into_iter()
+        .filter(|b| b.is_available())
+        .collect()
+    };
+    let mut record = json!({"schema":1,"arch":std::env::consts::ARCH,"os":std::env::consts::OS,"cpu":cpu_model(),"allocated_cpus":cpus,"worker_counts":worker_counts,"repeats":repeats,"target_seconds_per_sample":target_seconds,"qualification":qualify,"commit":std::env::var("GITHUB_SHA").ok(),
+        "benchmark_source_sha256":format!("{:x}",Sha256::digest(include_bytes!("benchmark_codecs.rs"))),
+        "fixture_generator_sha256":format!("{:x}",Sha256::digest(include_bytes!("support/codec_fixture.rs"))),
+        "oracle":"Deterministic original plaintext hashes before stock upstream compression; source dtype, extrema and high bits retained. Hash bytes use host byte order.",
+        "byte_order":if cfg!(target_endian="little"){"little"}else{"big"},
+        "scope":"Synthetic uint16/uint32; warm file-cache reads, source checks, decode, thread/buffer allocation and typed sample delivery included. Generation, opening/indexing and count hashing excluded; no decoded cache or integration mathematics. Shared-runner rankings are diagnostic, not performance pass/fail thresholds.",
+        "sources":[],"validation":[],"samples":[]});
+    record["started_unix_seconds"] = json!(
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)?
+            .as_secs()
+    );
+    record["load_at_start"] = json!(
+        std::process::Command::new("uptime")
+            .output()
+            .ok()
+            .map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string())
+    );
+    record["reader_source_sha256"] = json!(format!(
+        "{:x}",
+        Sha256::digest(include_bytes!("../src/hdf5/raw.rs"))
+    ));
+    record["native_shim_source_sha256"] = json!(format!(
+        "{:x}",
+        Sha256::digest(include_bytes!(
+            "../vendor/hdf5-bitshuffle-1.0.0/dioptrin_unshuffle.c"
+        ))
+    ));
+    for case in cases() {
+        let path = temp.path().join("fixture.h5");
+        let hashes = fixture::create(&path, case)?;
+        let auto = RawReader::open_snapshot(&path, "data", Limits::default())?;
+        let auto_kernel = auto.unshuffle_backend();
+        record["sources"].as_array_mut().unwrap().push(json!({"case":case.name,"shape":[case.frames,case.rows,case.cols],"dtype":format!("u{}",case.width*8),"pattern":format!("{:?}",case.pattern),"file_bytes":std::fs::metadata(&path)?.len(),"hashes":hashes,"automatic_unshuffle":format!("{auto_kernel:?}"),"automatic_lz4":format!("{:?}",auto.lz4_backend())}));
+        pass(&auto, 1, 1, Some(&hashes))?;
+        drop(auto);
+        for &workers in &worker_counts {
+            let mut readers = Vec::new();
+            for &kernel in &kernels {
+                for lz4 in [Lz4Backend::Rust, Lz4Backend::Native] {
+                    let reader = RawReader::open_snapshot(&path, "data", Limits::default())?
+                        .with_unshuffle_backend(kernel)?
+                        .with_lz4_backend(lz4);
+                    let kernel = reader.unshuffle_backend();
+                    pass(&reader, workers, 1, Some(&hashes))?;
+                    record["validation"].as_array_mut().unwrap().push(json!({"case":case.name,"unshuffle":format!("{kernel:?}"),"lz4":format!("{lz4:?}"),"workers":workers,"frames":case.frames,"all_counts_match":true}));
+                    readers.push((kernel, lz4, reader));
+                }
+            }
+            let baseline = readers
+                .iter()
+                .find(|(k, l, _)| *k == auto_kernel && *l == Lz4Backend::Rust)
+                .unwrap();
+            let mut scans = 1;
+            let mut elapsed = pass(&baseline.2, workers, scans, None)?;
+            while elapsed < 0.025 && scans < 65536 {
+                scans *= 2;
+                elapsed = pass(&baseline.2, workers, scans, None)?;
+            }
+            scans = ((scans as f64 * target_seconds / elapsed).ceil() as usize).clamp(1, 65536);
+            for repeat in 0..repeats {
+                let pairs = readers.len() / 2;
+                for j in 0..pairs {
+                    let k = (repeat + j) % pairs;
+                    let order = if (repeat + j) % 2 == 0 {
+                        [2 * k, 2 * k + 1]
+                    } else {
+                        [2 * k + 1, 2 * k]
+                    };
+                    for i in order {
+                        let (kernel, lz4, reader) = &readers[i];
+                        let seconds = pass(reader, workers, scans, None)?;
+                        let total = case.frames * scans;
+                        record["samples"].as_array_mut().unwrap().push(json!({"case":case.name,"unshuffle":format!("{kernel:?}"),"lz4":format!("{lz4:?}"),"workers":workers,"repeat":repeat,"frames":total,"seconds":seconds,"fps":total as f64/seconds,"decoded_mib_s":(total*case.rows*case.cols*case.width) as f64/1048576./seconds}));
+                    }
+                }
+            }
+        }
+        std::fs::write(&output, serde_json::to_vec_pretty(&record)?)?;
+        eprintln!(
+            "{}: original counts verified; paired timings complete",
+            case.name
+        );
+        std::fs::remove_file(path)?;
+    }
+    // Keep a complete record even if this benchmark is called outside CI.
+    record["rustc"] = json!(
+        std::process::Command::new("rustc")
+            .arg("-Vv")
+            .output()
+            .ok()
+            .map(|o| String::from_utf8_lossy(&o.stdout).to_string())
+    );
+    std::fs::write(output, serde_json::to_vec_pretty(&record)?)?;
+    Ok(())
+}
