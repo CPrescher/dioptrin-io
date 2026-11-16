@@ -7,7 +7,13 @@ use std::{
 };
 #[derive(Debug, Clone, Copy)]
 pub struct Limits {
+    /// Bound on a gzip/bzip2-wrapped file or captured stream before decoding.
     pub encoded_bytes: u64,
+    /// Bound on decoded wrapper output staged on disk, and on unwrapped files
+    /// handed to decoders that may consume the whole source. A path opened
+    /// with `wrapped::Input` and read as dense or sparse HDF5 is not held to
+    /// it: those readers fetch metadata and chunks on demand under their own
+    /// frame, chunk, event and metadata limits.
     pub source_bytes: u64,
 }
 impl Default for Limits {
@@ -37,8 +43,26 @@ pub(crate) struct PreparedSource {
     #[cfg(feature = "wrappers")]
     origin: Option<std::path::PathBuf>,
 }
+/// Whether an unwrapped file is checked against `Limits::source_bytes` while
+/// it is prepared, or later by the consumer that knows how it will be read.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum PlainBound {
+    Prepare,
+    #[cfg(feature = "wrappers")]
+    Deferred,
+}
 impl PreparedSource {
     pub fn open(path: impl AsRef<Path>, limits: Limits) -> Result<Self, Error> {
+        Self::open_as(path, limits, PlainBound::Prepare)
+    }
+    /// Staged wrapper output is always bounded here. With `Deferred`, an
+    /// unwrapped file is admitted at any size and the caller must apply
+    /// `require_plain_bound` before a whole-file decoder reads it.
+    pub(crate) fn open_as(
+        path: impl AsRef<Path>,
+        limits: Limits,
+        plain: PlainBound,
+    ) -> Result<Self, Error> {
         if limits.encoded_bytes == 0
             || limits.encoded_bytes == u64::MAX
             || limits.source_bytes == 0
@@ -85,7 +109,7 @@ impl PreparedSource {
             staged = Some(temp);
         } else {
             bytes = snapshot.bytes();
-            if bytes > limits.source_bytes {
+            if plain == PlainBound::Prepare && bytes > limits.source_bytes {
                 return Err(Error("source exceeds file size limit".into()));
             }
         }
@@ -152,6 +176,14 @@ impl PreparedSource {
     }
     pub fn compression(&self) -> Compression {
         self.compression
+    }
+    /// The bound a `Deferred` preparation skipped. Staged output already met it.
+    #[cfg(feature = "wrappers")]
+    pub(crate) fn require_plain_bound(&self, limits: Limits) -> Result<(), Error> {
+        if self.compression == Compression::None && self.bytes > limits.source_bytes {
+            return Err(Error("source exceeds file size limit".into()));
+        }
+        Ok(())
     }
     pub fn check_input_handle(&self, file: &File) -> Result<(), Error> {
         self.staged_snapshot

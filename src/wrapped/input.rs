@@ -1,7 +1,7 @@
 use super::{Error, Format, Limits, Reader, native, tiff};
 use crate::{
     discovery::{self, Codec, Detection},
-    transport::PreparedSource,
+    transport::{PlainBound, PreparedSource},
 };
 use std::{
     io::{Read, Seek, SeekFrom},
@@ -29,11 +29,19 @@ pub struct Input {
 }
 impl Input {
     /// Prepare a path using its actual parent as the relative-link origin.
+    /// Wrapped files are bounded while staging. An unwrapped file meets
+    /// `Limits::source_bytes` when `read` (or `read_discovered` for a non-HDF5
+    /// codec) hands it to a whole-file decoder. HDF5 dense and sparse readers
+    /// fetch it on demand under their own limits, so a large Eiger file opens.
     /// # Errors
     /// Source mutation, invalid transport or I/O/output bounds.
     pub fn open(path: impl AsRef<Path>, transport: Limits) -> Result<Self, Error> {
         Ok(Self {
-            source: std::sync::Arc::new(PreparedSource::open(path, transport)?),
+            source: std::sync::Arc::new(PreparedSource::open_as(
+                path,
+                transport,
+                PlainBound::Deferred,
+            )?),
             transport,
         })
     }
@@ -148,6 +156,7 @@ impl Input {
         image: native::Limits,
         tiff: tiff::Limits,
     ) -> Result<Reader, Error> {
+        self.source.require_plain_bound(self.transport)?;
         Reader::from_prepared(self.source, format, self.transport, image, tiff)
     }
     /// Open unambiguous discovered content with native stored-data defaults.

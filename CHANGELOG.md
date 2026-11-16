@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- `wrapped::Input::open` admits an unwrapped file of any size. Dense and sparse
+  HDF5 readers (`read_hdf5*`, `read_sparse`, and `read_discovered` for HDF5
+  conventions) read it on demand under their own frame, chunk, event and
+  metadata limits, so single Eiger files above 8 GiB open with default limits.
+  The Python `Reader` opens them the same way.
+- `Limits::source_bytes` still bounds staged gzip/bzip2 output, captured
+  streams, `Reader::open`, EDF sources and recovery. For a path opened with
+  `Input::open`, `Input::read` (and `read_discovered` for non-HDF5 codecs) now
+  applies it just before decoding, with the same "source exceeds file size
+  limit" error that `Input::open` returned before.
+
 ## 0.4.0 — 2026-11-12 (Rust source)
 
 - Add bounded native LZ4 selection to the indexed HDF5 `RawReader`. Use native

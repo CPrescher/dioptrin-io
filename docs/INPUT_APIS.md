@@ -30,6 +30,11 @@ without selecting a sample codec or constructing an image.
 
 Encoded input is copied to a private temporary file under `encoded_bytes`.
 Gzip/bzip2 decoding uses the existing streaming transport under `source_bytes`.
+An unwrapped path given to `Input::open` meets `source_bytes` only when `read`
+(or `read_discovered` for a non-HDF5 codec) hands it to a whole-file decoder.
+Dense and sparse HDF5 readers fetch metadata and chunks on demand under their
+own limits, so a single Eiger file larger than `source_bytes` still opens. Captured streams
+and `Reader::open` keep checking `source_bytes` up front.
 Both limits must be positive and finite. A failed read, corrupt complete-reader
 wrapper or exhausted budget produces an error and releases the temporary files.
 A stream clone shares its immutable capture; readers can independently open
