@@ -1,9 +1,18 @@
 name: Python package
 
+# Branch commits are tested once, through their pull request; pushes to main
+# and manual dispatches (e.g. a release candidate without a PR) run directly.
 on:
   push:
-    branches: ["**"]
+    branches: [main]
   pull_request:
+  workflow_dispatch:
+
+# A newer commit on the same pull request supersedes its running checks; runs
+# on main and dispatched runs always finish.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read

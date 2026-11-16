@@ -70,9 +70,11 @@ For a Python release:
 
 1. Set matching versions in `pyproject.toml` and `python/Cargo.toml`, updating
    `python/Cargo.lock`. Do not move or replace the original Rust `v0.1.0` tag.
-2. Push the candidate branch `codex/python-pypi-release` (or dispatch the wheel
-   workflow) and require its complete wheel matrix, source archive, Rust CI and
-   Python CI to pass. Keep the successful wheel workflow run ID.
+2. Push the candidate branch `codex/python-pypi-release`, which runs the wheel
+   workflow (or dispatch it), and open a pull request from it, which runs Rust CI
+   and Python CI (or dispatch both on the branch). Require the complete wheel
+   matrix, source archive, Rust CI and Python CI to pass. Keep the successful
+   wheel workflow run ID.
 3. Fast-forward `main` to that tested commit, then tag it `python-vVERSION`.
 4. Dispatch `pypi-publish.yml` at that tag with `artifact_run_id` and `release_tag`.
    It verifies that the successful build run and release tag point to its exact
@@ -98,8 +100,9 @@ No long-lived PyPI token is stored in the repository.
    `python scripts/check_consumer.py --all-features`.
 4. Commit a candidate and check that exact Git revision without root patches:
    `python scripts/check_consumer.py --all-features --git file:///path/to/dioptrin-io --rev COMMIT`.
-5. Push the candidate branch and require the Linux/macOS/Windows CI and inventory
-   jobs to pass. Advance the default branch only by fast-forward from the verified
+5. Push the candidate branch and open a pull request from it (or dispatch the
+   `Rust` workflow on the branch); branch pushes alone do not start CI. Require
+   the Linux/macOS/Windows CI and inventory jobs to pass. Advance the default branch only by fast-forward from the verified
    remote head, then tag the tested commit `vVERSION`.
 6. Publish the GitHub release with this scope and links to
    [unsupported variants](READING_GAPS.md), then verify a consumer resolves the
