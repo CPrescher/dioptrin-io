@@ -21,7 +21,8 @@ On Windows use `py -3.13 -m venv .venv-docs` and activate with
 
 Open `docs/_build/html/index.html`, or serve the output with
 `python -m http.server --directory docs/_build/html 8000`.
-The Documentation workflow runs the strict build for pushes and pull requests.
+The Documentation workflow runs the strict build for pushes to `main` and pull
+requests into it.
 
 ## Source and evidence links
 
