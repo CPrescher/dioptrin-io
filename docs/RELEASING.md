@@ -1,7 +1,9 @@
 # Source release and Rust desktop consumption
 
-The current Rust source release is `v0.4.0`, accompanied by the independently
-versioned Python distribution 0.2.1. The indexed/fused HDF5 reader uses the
+The current Rust source release is `v0.4.1`. It admits unwrapped HDF5 files
+larger than `Limits::source_bytes` through `wrapped::Input`; see the changelog.
+The independently versioned Python distribution remains 0.2.1 (Rust reader
+0.4.0). The indexed/fused HDF5 reader uses the
 [qualified codec defaults](PERFORMANCE.md#lz4-defaults-fallback-and-override),
 retaining Rust overrides and resource-limit fallback. Performance benchmarks
 are manual-only; ordinary release CI checks correctness and packaging.
@@ -18,7 +20,7 @@ do not retroactively change the original `v0.1.0` archives.
 
 ```toml
 [dependencies]
-dioptrin-io = { git = "https://github.com/CPrescher/dioptrin-io.git", tag = "v0.4.0", features = ["wrappers", "hdf5", "jpeg", "jpeg2000", "mar345"] }
+dioptrin-io = { git = "https://github.com/CPrescher/dioptrin-io.git", tag = "v0.4.1", features = ["wrappers", "hdf5", "jpeg", "jpeg2000", "mar345"] }
 ```
 
 Select any additional formats required by the application: `containers`,
@@ -37,7 +39,7 @@ metadata from a separate temporary Cargo project, without a patch section.
 Registry publication is disabled (`publish = false`). Cargo would strip path
 references and select unpatched registry TIFF/fax versions. Publishing patched
 backends or incorporating them differently is a separate packaging task; this
-release does not advertise `dioptrin-io = "0.4.0"` on crates.io.
+release does not advertise `dioptrin-io = "0.4.1"` on crates.io.
 
 ## Runtime and build requirements
 
