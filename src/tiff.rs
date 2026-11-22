@@ -535,7 +535,13 @@ impl Reader {
         // Move the allocation back even on failure; no partial frame is exposed.
         let decoded = self.decoder.read_image_to_buffer(&mut native);
         self.decoder.inner().get_mut().end_samples();
-        buffer.pixels = from_native(native)?;
+        buffer.pixels = match from_native(native)? {
+            // Same bits; only the sample interpretation chosen in metadata differs.
+            PixelBuffer::U32(v) if page.pixel_type == PixelType::I32 => {
+                PixelBuffer::I32(v.into_iter().map(|x| x as i32).collect())
+            }
+            pixels => pixels,
+        };
         // Discard sample prefetch before permitting subsequent metadata reads.
         discard_prefetch(self.decoder.inner())?;
         let layout = decoded?;
@@ -633,9 +639,9 @@ fn metadata(
                 .into(),
         )),
     };
-    let formats = decoder
-        .find_tag_unsigned_vec::<u16>(Tag::SampleFormat)?
-        .unwrap_or_else(|| vec![1]);
+    let declared_formats = decoder.find_tag_unsigned_vec::<u16>(Tag::SampleFormat)?;
+    let declared_format = declared_formats.is_some();
+    let formats = declared_formats.unwrap_or_else(|| vec![1]);
     let format = *formats
         .first()
         .ok_or_else(|| Error("empty TIFF SampleFormat".into()))?;
@@ -766,6 +772,11 @@ fn metadata(
     let pixel_type = match (format, bits) {
         (1, 1 | 2 | 4 | 8) => PixelType::U8,
         (1, 16) => PixelType::U16,
+        // Detector software (e.g. Varex/PerkinElmer flat panels) writes signed,
+        // dark-subtracted 32-bit counts without a SampleFormat tag. PIL, which
+        // Qt Dioptas reads TIFFs with, decodes such samples as signed; an
+        // explicit SampleFormat=1 keeps the unsigned interpretation.
+        (1, 32) if !declared_format && channels == 1 => PixelType::I32,
         (1, 32) => PixelType::U32,
         (1, 64) => PixelType::U64,
         (2, 8) => PixelType::I8,

@@ -178,7 +178,7 @@ dependencies = [
 
 [[package]]
 name = "dioptrin-io"
-version = "0.4.2"
+version = "0.4.3"
 dependencies = [
  "bytemuck",
  "bzip2",
