@@ -4,11 +4,11 @@
 
 ## 0.4.3 — 2026-11-22 (Rust source)
 
-- Read single-channel 32-bit integer TIFFs without a SampleFormat tag as signed
-  `I32`, as PIL does. Flat-panel software (e.g. Varex `ngMultiXRD`) writes
-  dark-subtracted counts this way; read as `U32`, the negative pixels became
-  values near 2^32. An explicit SampleFormat keeps its declared type, and the
-  stored bits are unchanged.
+- Read 32-bit integer TIFFs from Varex ngMultiXRD (`Software` tag) without a
+  SampleFormat tag as signed `I32`. That software writes dark-subtracted,
+  negative counts this way; read as `U32`, they became values near 2^32. Other
+  untagged 32-bit TIFFs (tifffile, FabIO-compatible) stay unsigned, a declared
+  SampleFormat always wins, and the stored bits are unchanged.
 
 ## 0.4.2 — 2026-11-22 (Rust and Python)
 

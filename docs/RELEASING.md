@@ -1,7 +1,7 @@
 # Source release and Rust desktop consumption
 
-The current Rust source release is `v0.4.3`. It reads 32-bit integer TIFFs
-without SampleFormat as signed, matching PIL; see the changelog. The Python
+The current Rust source release is `v0.4.3`. It reads untagged 32-bit TIFFs
+from Varex ngMultiXRD as signed; see the changelog. The Python
 0.4.2 distribution bundles Rust reader 0.4.2. The indexed/fused HDF5 reader uses the
 [qualified codec defaults](PERFORMANCE.md#lz4-defaults-fallback-and-override),
 retaining Rust overrides and resource-limit fallback. Performance benchmarks

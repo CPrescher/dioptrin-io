@@ -641,6 +641,19 @@ fn metadata(
     };
     let declared_formats = decoder.find_tag_unsigned_vec::<u16>(Tag::SampleFormat)?;
     let declared_format = declared_formats.is_some();
+    // Writers known to store signed 32-bit counts without SampleFormat. The TIFF
+    // default (and FabIO/tifffile) is unsigned, so only these are reinterpreted.
+    let signed_untagged_writer = !declared_format
+        && decoder
+            .find_tag(Tag::Software)
+            .ok()
+            .flatten()
+            .and_then(|v| v.into_string().ok())
+            .is_some_and(|software| {
+                SIGNED_UNTAGGED_32_BIT_WRITERS
+                    .iter()
+                    .any(|w| software.trim_start().starts_with(w))
+            });
     let formats = declared_formats.unwrap_or_else(|| vec![1]);
     let format = *formats
         .first()
@@ -772,11 +785,7 @@ fn metadata(
     let pixel_type = match (format, bits) {
         (1, 1 | 2 | 4 | 8) => PixelType::U8,
         (1, 16) => PixelType::U16,
-        // Detector software (e.g. Varex/PerkinElmer flat panels) writes signed,
-        // dark-subtracted 32-bit counts without a SampleFormat tag. PIL, which
-        // Qt Dioptas reads TIFFs with, decodes such samples as signed; an
-        // explicit SampleFormat=1 keeps the unsigned interpretation.
-        (1, 32) if !declared_format && channels == 1 => PixelType::I32,
+        (1, 32) if signed_untagged_writer && channels == 1 => PixelType::I32,
         (1, 32) => PixelType::U32,
         (1, 64) => PixelType::U64,
         (2, 8) => PixelType::I8,
@@ -1076,6 +1085,12 @@ fn validate_jpeg_chunks(
     snapshot.check_handle(&source).map_err(Error)?;
     Ok(())
 }
+
+/// `Software` prefixes of writers that store signed, dark-subtracted 32-bit
+/// counts without a SampleFormat tag. Varex ngMultiXRD (e.g. XRD 4343 flat
+/// panels) writes negative pixels this way; read as unsigned they become values
+/// near 2^32. PIL, and so Qt Dioptas, reads every 32-bit TIFF as signed.
+const SIGNED_UNTAGGED_32_BIT_WRITERS: &[&str] = &["ngMultiXRD"];
 
 fn into_native(pixels: PixelBuffer) -> DecodingResult {
     match pixels {
