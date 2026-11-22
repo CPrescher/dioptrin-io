@@ -46,6 +46,13 @@ impl From<hdf5_backend::Error> for Error {
     }
 }
 
+fn external_count(plist: &hdf5_backend::plist::DatasetCreate) -> Result<usize, Error> {
+    // SAFETY: the DCPL handle remains live while HDF5 inspects its count.
+    let count =
+        hdf5_backend::sync::sync(|| unsafe { hdf5_sys::h5p::H5Pget_external_count(plist.id()) });
+    usize::try_from(count).map_err(|_| Error("cannot inspect raw external windows".into()))
+}
+
 /// Allocation/shape admission before reading detector pixels.
 #[derive(Clone, Copy, Debug)]
 pub struct Limits {

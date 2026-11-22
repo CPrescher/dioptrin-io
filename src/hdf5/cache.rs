@@ -76,7 +76,7 @@ impl CachedReader {
         if budget > 0 {
             let actual = std::fs::canonicalize(reader.dataset.filename())
                 .map_err(|e| Error(e.to_string()))?;
-            if actual != path || !reader.dataset.dcpl()?.get_external()?.is_empty() {
+            if actual != path || super::external_count(&reader.dataset.dcpl()?)? != 0 {
                 return Err(Error(
                     "decoded cache requires a self-contained source dataset".into(),
                 ));

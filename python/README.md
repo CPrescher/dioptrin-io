@@ -3,7 +3,7 @@
 Native detector-file readers with NumPy image arrays. All decoding uses the
 existing Rust library; FabIO and h5py are not runtime dependencies.
 
-Version 0.4.1 bundles Rust reader 0.4.1. Plain HDF5 files above 8 GiB are
+Version 0.4.2 bundles Rust reader 0.4.2. Plain HDF5 files above 8 GiB are
 read frame by frame under the native reader's normal limits. The indexed/fused
 HDF5 path retains the [qualified codec defaults](https://dioptrin-io.readthedocs.io/en/latest/PERFORMANCE.html#lz4-defaults-fallback-and-override).
 

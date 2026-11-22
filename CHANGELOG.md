@@ -2,7 +2,9 @@
 
 ## Unreleased
 
-## 0.4.1 — Python distribution
+## 0.4.2 — 2026-11-22 (Rust and Python)
+
+- Read external raw offsets with the native HDF5 2.x width on Windows.
 
 - Align the Python version with the bundled Rust reader. Plain HDF5 files larger
   than 8 GiB can now be opened and read one frame at a time.

@@ -4,7 +4,7 @@ use super::{
 };
 use crate::hdf5::sources::Sources;
 use hdf5_backend::{Dataset, dataset::Layout};
-use hdf5_sys::h5p::{H5Pget_external, H5Pget_external_count};
+use hdf5_sys::h5p::H5Pget_external;
 use std::{collections::BTreeSet, path::PathBuf};
 
 #[derive(Clone, Copy, Debug, Default)]
@@ -75,6 +75,59 @@ impl<'a> Bindings<'a> {
         Ok(())
     }
 }
+pub(crate) fn window(
+    plist: &hdf5_backend::plist::DatasetCreate,
+    index: u32,
+    limits: Limits,
+) -> Result<(String, u64, Option<u64>), Error> {
+    hdf5_backend::sync::sync(|| {
+        // One additional byte distinguishes a complete bounded name from
+        // a native truncated/NUL-terminated prefix at the caller's limit.
+        let bound = limits
+            .text_bytes
+            .min(limits.metadata_bytes)
+            .checked_add(2)
+            .ok_or_else(|| Error("raw filename bound overflow".into()))?;
+        let mut name = vec![0xffu8; bound];
+        // Bundled HDF5 2.x uses int64_t for HDoff_t on Windows. The sys
+        // binding declares libc::off_t, which is only 32 bits there.
+        #[cfg(windows)]
+        let mut offset = 0i64;
+        #[cfg(not(windows))]
+        let mut offset = 0;
+        let mut size = 0;
+        #[cfg(windows)]
+        let offset_ptr = (&raw mut offset).cast();
+        #[cfg(not(windows))]
+        let offset_ptr = &raw mut offset;
+        // SAFETY: live property list and bounded writable name/offset/size.
+        if unsafe {
+            H5Pget_external(
+                plist.id(),
+                index,
+                bound,
+                name.as_mut_ptr().cast(),
+                offset_ptr,
+                &mut size,
+            )
+        } < 0
+        {
+            return Err(Error("cannot inspect raw external window".into()));
+        }
+        let end = name
+            .iter()
+            .position(|&v| v == 0)
+            .filter(|&n| n <= limits.text_bytes.min(limits.metadata_bytes))
+            .ok_or_else(|| Error("raw external filename exceeds text bound".into()))?;
+        name.truncate(end);
+        let name = String::from_utf8(name)
+            .map_err(|_| Error("non-UTF8 raw external filename unsupported".into()))?;
+        let offset =
+            u64::try_from(offset).map_err(|_| Error("negative raw external offset".into()))?;
+        Ok((name, offset, (size != u64::MAX).then_some(size)))
+    })
+}
+
 pub(super) fn admit(
     dataset: &Dataset,
     sources: &mut Sources,
@@ -89,9 +142,7 @@ pub(super) fn admit(
         ));
     }
     let plist = dataset.dcpl()?;
-    let count = hdf5_backend::sync::sync(|| unsafe { H5Pget_external_count(plist.id()) });
-    let count =
-        usize::try_from(count).map_err(|_| Error("cannot inspect raw external windows".into()))?;
+    let count = crate::hdf5::external_count(&plist)?;
     if count == 0 || count > limits.group_members {
         return Err(Error("raw external window count limit".into()));
     }
@@ -103,43 +154,7 @@ pub(super) fn admit(
     let mut windows = Vec::new();
     let mut logical = 0u64;
     for index in 0..count {
-        let (name, offset, declared) = hdf5_backend::sync::sync(|| {
-            // One additional byte distinguishes a complete bounded name from
-            // a native truncated/NUL-terminated prefix at the caller's limit.
-            let bound = limits
-                .text_bytes
-                .min(limits.metadata_bytes)
-                .checked_add(2)
-                .ok_or_else(|| Error("raw filename bound overflow".into()))?;
-            let mut name = vec![0xffu8; bound];
-            let mut offset = 0;
-            let mut size = 0;
-            // SAFETY: live property list and bounded writable name/offset/size.
-            if unsafe {
-                H5Pget_external(
-                    plist.id(),
-                    index as u32,
-                    bound,
-                    name.as_mut_ptr().cast(),
-                    &mut offset,
-                    &mut size,
-                )
-            } < 0
-            {
-                return Err(Error("cannot inspect raw external window".into()));
-            }
-            let end = name
-                .iter()
-                .position(|&v| v == 0)
-                .filter(|&n| n <= limits.text_bytes.min(limits.metadata_bytes))
-                .ok_or_else(|| Error("raw external filename exceeds text bound".into()))?;
-            name.truncate(end);
-            let name = String::from_utf8(name)
-                .map_err(|_| Error("non-UTF8 raw external filename unsupported".into()))?;
-            let offset =
-                u64::try_from(offset).map_err(|_| Error("negative raw external offset".into()))?;
-            Ok((name, offset, (size != u64::MAX).then_some(size)))
-        })?;
+        let (name, offset, declared) = window(&plist, index as u32, limits)?;
         if declared.is_none() && index + 1 != count {
             return Err(Error(
                 "unlimited raw external reservation must be final".into(),

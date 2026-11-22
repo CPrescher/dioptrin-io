@@ -11,8 +11,7 @@ use super::{
 };
 use hdf5_backend::{Dataset, LocationToken, dataset::Layout, plist::DatasetCreate};
 use hdf5_sys::h5p::{
-    H5Pequal, H5Pget_external, H5Pget_external_count, H5Pget_virtual_count,
-    H5Pget_virtual_dsetname, H5Pget_virtual_filename,
+    H5Pequal, H5Pget_virtual_count, H5Pget_virtual_dsetname, H5Pget_virtual_filename,
 };
 use std::{
     collections::BTreeMap,
@@ -471,45 +470,16 @@ impl Walker<'_> {
         })
     }
     fn raw_dataset(&mut self, source: usize, plist: &DatasetCreate) -> Result<(), Error> {
-        let count = hdf5_backend::sync::sync(|| unsafe { H5Pget_external_count(plist.id()) });
-        if count < 0 || count as usize > self.options.limits.group_members {
+        let count = super::external_count(plist)?;
+        if count > self.options.limits.group_members {
             return Err(Error("raw external window count limit".into()));
         }
-        for index in 0..count as u32 {
-            let bound = self
-                .options
-                .limits
-                .text_bytes
-                .min(self.options.limits.metadata_bytes);
-            let mut bytes = vec![
-                0xff;
-                bound
-                    .checked_add(2)
-                    .ok_or_else(|| Error("raw filename bound overflow".into()))?
-            ];
-            let (mut offset, mut size) = (0, 0);
-            if hdf5_backend::sync::sync(|| unsafe {
-                H5Pget_external(
-                    plist.id(),
-                    index,
-                    bytes.len(),
-                    bytes.as_mut_ptr().cast(),
-                    &mut offset,
-                    &mut size,
-                )
-            }) < 0
-            {
-                return Err(Error("cannot inspect raw filename".into()));
-            }
-            let length = bytes
-                .iter()
-                .position(|b| *b == 0)
-                .filter(|n| *n <= bound)
-                .ok_or_else(|| Error("raw filename text limit".into()))?;
-            bytes.truncate(length);
-            self.result.sources.charge(length.saturating_add(128))?;
-            let filename =
-                String::from_utf8(bytes).map_err(|_| Error("non-UTF8 raw filename".into()))?;
+        for index in 0..count {
+            let (filename, _, _) =
+                typed::external_raw::window(plist, index as u32, self.options.limits)?;
+            self.result
+                .sources
+                .charge(filename.len().saturating_add(128))?;
             self.filename(source, &filename, FileKind::ExternalRaw)?;
         }
         Ok(())

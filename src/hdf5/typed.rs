@@ -2,7 +2,7 @@
 //! complete tracking of the local files traversed by admitted external links.
 pub use super::sources::{Link, Source};
 #[path = "external_raw.rs"]
-mod external_raw;
+pub(super) mod external_raw;
 pub use super::vds::{
     FilenameBinding, FillRegion, Mapping as VdsMapping, PrintfDeclaration, PrintfExpansion,
     PrintfMapping, SelectionLayout, SelectionRecord as VdsSelection, UnmappedRegions, VdsMetadata,
@@ -268,7 +268,7 @@ impl Reader {
                 .checked_add(count)
                 .filter(|&n| n <= limits.frames)
                 .ok_or_else(|| Error("HDF5 sequence exceeds frame limit".into()))?;
-            let has_raw = !dataset.dcpl()?.get_external()?.is_empty();
+            let has_raw = super::external_count(&dataset.dcpl()?)? != 0;
             let (raw, external_raw, raw_storage) = if has_raw {
                 if raw_bindings.is_none() {
                     let policy = raw_options.ok_or_else(|| {
@@ -550,7 +550,7 @@ pub(super) fn admit_filters(
 ) -> Result<Vec<Filter>, Error> {
     let plist = dataset.dcpl()?;
     if dataset.layout() == hdf5_backend::dataset::Layout::Virtual
-        || !plist.get_external()?.is_empty()
+        || super::external_count(&plist)? != 0
     {
         return Err(Error(
             "HDF5 virtual datasets/external raw storage require separate source contracts".into(),
@@ -738,7 +738,7 @@ pub(super) fn read_text(
     if !attribute {
         let dataset = container.as_dataset()?;
         if dataset.layout() == hdf5_backend::dataset::Layout::Virtual
-            || !dataset.dcpl()?.get_external()?.is_empty()
+            || super::external_count(&dataset.dcpl()?)? != 0
         {
             return Err(Error(
                 "HDF5 discovery text cannot use VDS or raw external storage".into(),
