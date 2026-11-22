@@ -11,6 +11,8 @@ def main():
     parser.add_argument("directory", type=Path)
     args = parser.parse_args()
     version = tomllib.loads(Path("pyproject.toml").read_text())["project"]["version"]
+    for manifest in ("Cargo.toml", "python/Cargo.toml"):
+        assert tomllib.loads(Path(manifest).read_text())["package"]["version"] == version, manifest
     common = {"linux-x86_64", "linux-aarch64", "macos-x86_64", "macos-arm64", "windows-x86_64"}
     expected = {(f"cp3{minor}", target) for minor in range(10, 16) for target in common}
     expected.update((f"cp3{minor}", "windows-arm64") for minor in range(13, 16))

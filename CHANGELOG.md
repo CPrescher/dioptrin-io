@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## 0.4.2 — 2026-11-22 (Rust and Python)
+
+- Read external raw offsets with the native HDF5 2.x width on Windows.
+
+- Align the Python version with the bundled Rust reader. Plain HDF5 files larger
+  than 8 GiB can now be opened and read one frame at a time.
+- Expose native HDF5 source contracts through `open(..., hdf5_sources=...)`:
+  snapshot external links, resolve declared VDS and external raw files, inspect
+  missing requirements, select exact replacements and bound printf mappings.
+
 ## 0.4.1 — 2026-11-16 (Rust source)
 
 - `wrapped::Input::open` admits an unwrapped file of any size. Dense and sparse

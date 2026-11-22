@@ -381,3 +381,29 @@ def test_concurrent_reads_and_source_limit(tmp_path):
     path.write_bytes(b"\x93NUMPY\x01\x00" + struct.pack("<H", len(header)) + header)
     with pytest.raises(OSError):
         dio.open(path)
+
+
+def test_hdf5_external_master_discovery(tmp_path, h5py):
+    target = tmp_path / "part.h5"
+    master = tmp_path / "master.h5"
+    counts = np.array([[0, 17, 65535]], dtype=np.uint16)
+    with h5py.File(target, "w") as f:
+        f.create_dataset("/counts", data=counts)
+    with h5py.File(master, "w") as f:
+        f.create_group("/entry/data")["data_000001"] = h5py.ExternalLink(target.name, "/counts")
+    with dio.open(master, hdf5_sources=dio.Hdf5Sources(follow_external_links=True)) as scan:
+        np.testing.assert_array_equal(scan[0].data, counts)
+
+
+@pytest.mark.skipif(os.name != "posix", reason="requires sparse file extension via truncate")
+def test_plain_hdf5_above_eight_gib(tmp_path, h5py):
+    path = tmp_path / "large.h5"
+    expected = np.array([[[0, 23]], [[65535, 8]]], dtype=np.uint16)
+    with h5py.File(path, "w") as f:
+        f.create_dataset("/entry/data/data", data=expected)
+    with path.open("r+b") as f:
+        f.truncate(8 * 1024**3 + 1)
+    for options in ({}, {"dataset": "/entry/data/data"}):
+        with dio.open(path, **options) as scan:
+            assert scan.nframes == 2
+            np.testing.assert_array_equal(scan[1].data, expected[1])

@@ -3,10 +3,9 @@
 Native detector-file readers with NumPy image arrays. All decoding uses the
 existing Rust library; FabIO and h5py are not runtime dependencies.
 
-Version 0.2.1 bundles Rust reader 0.4.0. Its indexed/fused HDF5 path uses the
-[qualified codec defaults](https://dioptrin-io.readthedocs.io/en/latest/PERFORMANCE.html#lz4-defaults-fallback-and-override),
-with original counts and float64 integration precision preserved. The basic
-Python reading interface is unchanged; benchmarks are manual-only.
+Version 0.4.2 bundles Rust reader 0.4.2. Plain HDF5 files above 8 GiB are
+read frame by frame under the native reader's normal limits. The indexed/fused
+HDF5 path retains the [qualified codec defaults](https://dioptrin-io.readthedocs.io/en/latest/PERFORMANCE.html#lz4-defaults-fallback-and-override).
 
 Install from PyPI:
 
@@ -70,11 +69,28 @@ all returned Images in memory; ordinary iteration does not retain earlier Images
 
 Paths accept strings, bytes and `os.PathLike` objects. Content discovery, not the
 extension, selects a reader. Eiger, LImA and Lambda HDF5 conventions can be
-discovered; other HDF5 files need `dataset=`. This initial Python API rejects
-external HDF5 links and does not expose VDS policies, raw layouts, partial-source
-recovery, sparse reconstruction, file series or format-specific compatibility
-options. Such inputs fail explicitly. Only paths, not Python file-like objects,
-are accepted in this initial interface.
+discovered; other HDF5 files need `dataset=`.
+
+For HDF5 virtual datasets (VDS) or external raw storage, pass
+`hdf5_sources=dioptrin_io.Hdf5Sources()`. This opts into resolving declared
+paths relative to the file that owns each declaration. To read an Eiger master
+with external links, opt into following and snapshotting those links:
+
+```python
+sources = dioptrin_io.Hdf5Sources(follow_external_links=True)
+with dioptrin_io.open("master.h5", hdf5_sources=sources) as scan:
+    image = scan[0]
+```
+
+Missing VDS/raw files and unbounded printf mappings raise
+`Hdf5SourcesRequired`. Its `.requirements` list identifies the physical
+`owner` and `stored_filename` for each declaration. Supply replacements with
+`Hdf5Sources(file_choices=(FileChoice(owner, stored_filename, actual_file),))`
+using absolute owner and replacement paths. For a printf requirement, pass a
+`PrintfMapping(dataset, mapping_index, stored_filename, declared_dataset,
+blocks, source_file=owner)` in `printf_mappings`, choosing the finite number
+of blocks explicitly. Set `declared_fill=True` to accept the original fill
+value in genuinely unmapped regions. Missing source data always raises an error.
 
 Arrays preserve stored axes, original counts and reserved values. Integer
 widths stay integer; complex values stay complex. Color arrays use

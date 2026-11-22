@@ -271,7 +271,7 @@ fn descriptors(
     indexed_datasets: &mut usize,
 ) -> Result<Vec<Descriptor>, Error> {
     let plist = dataset.dcpl()?;
-    if !plist.get_external()?.is_empty() || !dataset.filters().is_empty() {
+    if super::external_count(&plist)? != 0 || !dataset.filters().is_empty() {
         return Err(Error(
             "VDS master cannot contain raw external storage or filters".into(),
         ));

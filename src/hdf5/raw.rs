@@ -304,7 +304,7 @@ impl RawReader {
         let reader = Reader::open(&snapshot.path, dataset, limits)?;
         let actual =
             std::fs::canonicalize(reader.dataset.filename()).map_err(|e| Error(e.to_string()))?;
-        if actual != snapshot.path || !reader.dataset.dcpl()?.get_external()?.is_empty() {
+        if actual != snapshot.path || super::external_count(&reader.dataset.dcpl()?)? != 0 {
             return Err(Error(
                 "raw snapshot requires a self-contained source dataset".into(),
             ));
