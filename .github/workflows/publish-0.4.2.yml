@@ -1,0 +1,73 @@
+name: Complete Dioptrin-IO 0.4.2 release
+on:
+  push:
+    branches: [release/publish-0.4.2]
+    paths: [.github/workflows/publish-0.4.2.yml]
+
+permissions: {}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      actions: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: CPrescher/dioptrin-io
+      SOURCE: 43d7575614fb8b19405f0b148b970954db3c6912
+      BUILD_ID: "44997631016"
+    steps:
+      - name: Check the merged source and completed release build
+        run: |
+          set -eu
+          test "$(gh api repos/$GH_REPO/pulls/5 --jq '.merged')" = true
+          test "$(gh api repos/$GH_REPO/pulls/5 --jq '.head.sha')" = "$SOURCE"
+          test "$(gh api repos/$GH_REPO/commits/main --jq '.commit.tree.sha')" = "$(gh api repos/$GH_REPO/commits/$SOURCE --jq '.commit.tree.sha')"
+          gh api repos/$GH_REPO/actions/runs/$BUILD_ID | jq -e --arg sha "$SOURCE" '.head_sha == $sha and .path == ".github/workflows/python-release.yml" and .conclusion == "success"'
+      - name: Tag the tested source and start the existing trusted publisher
+        run: |
+          set -eu
+          for tag in v0.4.2 python-v0.4.2; do
+            if ! gh api repos/$GH_REPO/git/ref/tags/$tag >/dev/null 2>&1; then
+              gh api --method POST repos/$GH_REPO/git/refs -f ref="refs/tags/$tag" -f sha="$SOURCE"
+            fi
+            test "$(gh api repos/$GH_REPO/commits/$tag --jq '.sha')" = "$SOURCE"
+          done
+          gh workflow run pypi-publish.yml --ref python-v0.4.2 -f artifact_run_id="$BUILD_ID" -f release_tag=python-v0.4.2
+      - name: Match PyPI digests to the original build and install a wheel
+        run: |
+          set -eu
+          gh run download "$BUILD_ID" --pattern 'pypi-*' --dir artifacts
+          mkdir dist
+          cp artifacts/*/*.whl artifacts/*/*.tar.gz dist/
+          python3 - <<'PY'
+          import hashlib, json, pathlib, time, urllib.error, urllib.request
+          expected = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in pathlib.Path("dist").iterdir()}
+          assert len(expected) == 34
+          for _ in range(50):
+              try:
+                  request = urllib.request.Request("https://pypi.org/pypi/dioptrin-io/0.4.2/json", headers={"Cache-Control": "no-cache"})
+                  with urllib.request.urlopen(request, timeout=15) as stream:
+                      actual = {f["filename"]: f["digests"]["sha256"] for f in json.load(stream)["urls"]}
+              except urllib.error.HTTPError as exc:
+                  if exc.code != 404:
+                      raise
+              else:
+                  if actual == expected:
+                      break
+                  assert actual.items() <= expected.items(), "Unexpected PyPI distribution"
+              time.sleep(10)
+          else:
+              raise SystemExit("PyPI verification timed out")
+          print("All 34 distributions on PyPI match the tested wheels and sdist")
+          PY
+          python3 -m venv smoke
+          smoke/bin/python -m pip install --only-binary=:all: --index-url https://pypi.org/simple dioptrin-io==0.4.2
+          smoke/bin/python -c 'import dioptrin_io as d; assert d.__version__ == "0.4.2"; print(d.Hdf5Sources())'
+      - name: Publish matching GitHub releases
+        run: |
+          set -eu
+          gh release create v0.4.2 --verify-tag --title 'Rust 0.4.2 — Windows HDF5 external raw storage' --notes 'Fixes external raw storage on Windows by reading the 64-bit file offsets used by the bundled HDF5 library. Python 0.4.2 bundles this same revision.'
+          gh release create python-v0.4.2 dist/* --verify-tag --latest=false --title 'Python 0.4.2 — HDF5 source snapshots' --notes 'Python and Rust now share version 0.4.2. Python can read plain HDF5 files above 8 GiB and use the native source contracts for external master links, virtual datasets and external raw storage. This release fixes external raw file offsets on Windows. Install with `python -m pip install --upgrade dioptrin-io==0.4.2`. The attached wheels and source archive match PyPI by SHA-256.'
