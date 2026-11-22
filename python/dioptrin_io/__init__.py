@@ -4,18 +4,19 @@ Stored axes, original counts and reserved values are preserved. Arrays use nativ
 byte order; each Image carries matching header fields and additional metadata.
 """
 
+from ._hdf5 import FileChoice, Hdf5Sources, Hdf5SourcesRequired, PrintfMapping
 from ._native import Image, Reader, __version__
 
-__all__ = ["Image", "Reader", "__version__", "open"]
+__all__ = ["FileChoice", "Hdf5Sources", "Hdf5SourcesRequired", "PrintfMapping", "Image", "Reader", "__version__", "open"]
 
 
-def open(path, *, dataset=None):
+def open(path, *, dataset=None, hdf5_sources=None):
     """Open an immutable file snapshot for frame-by-frame reading.
 
     ``path`` accepts strings, bytes and path-like objects. Format detection uses
     file content. Generic HDF5 files require an explicit ``dataset`` path; known
-    Eiger/LImA/Lambda conventions can be discovered. External HDF5 links are
-    rejected. Close the reader explicitly or use it as a context manager.
+    Eiger/LImA/Lambda conventions can be discovered. Pass ``hdf5_sources=Hdf5Sources(...)`` to resolve declared
+    virtual datasets and external storage under explicit snapshot policies. Close the reader explicitly or use it as a context manager.
 
     ``reader.nframes`` exposes the detected frame count. Opening prepares the
     reader and indexes metadata; it does not load the complete image stack into
@@ -27,4 +28,4 @@ def open(path, *, dataset=None):
     Images remain usable after the reader is closed.
     Compressed outer wrappers may be staged to a temporary file on disk.
     """
-    return Reader(path, dataset=dataset)
+    return Reader(path, dataset=dataset, hdf5_sources=hdf5_sources)

@@ -2,8 +2,7 @@
 
 The current Rust source release is `v0.4.1`. It admits unwrapped HDF5 files
 larger than `Limits::source_bytes` through `wrapped::Input`; see the changelog.
-The independently versioned Python distribution remains 0.2.1 (Rust reader
-0.4.0). The indexed/fused HDF5 reader uses the
+The Python 0.4.1 distribution bundles the matching Rust reader. The indexed/fused HDF5 reader uses the
 [qualified codec defaults](PERFORMANCE.md#lz4-defaults-fallback-and-override),
 retaining Rust overrides and resource-limit fallback. Performance benchmarks
 are manual-only; ordinary release CI checks correctness and packaging.
@@ -59,7 +58,7 @@ of PyO3/NumPy and integration mathematics. The Python default `fused` feature
 links a pinned Dioptrin implementation and supplies `dioptrin_io_fused` in the
 same wheel. Every release wheel checks counts and float64 patterns against
 recorded independent reference results. The Python default features enable supported dense readers;
-specialized source/recovery policies remain outside this initial Python API.
+Python exposes the HDF5 source-contract policies via `Hdf5Sources`.
 
 The `Python release wheels` workflow (`python-release.yml`) builds and tests 33
 portable wheels: CPython 3.10–3.15 for macOS Intel/Apple Silicon, Windows x64 and
@@ -70,7 +69,7 @@ checks the binding crate and representative Python versions on all three OSes.
 
 For a Python release:
 
-1. Set matching versions in `pyproject.toml` and `python/Cargo.toml`, updating
+1. Match `pyproject.toml` and `python/Cargo.toml` to the bundled core version, updating
    `python/Cargo.lock`. Do not move or replace the original Rust `v0.1.0` tag.
 2. Push the candidate branch `codex/python-pypi-release`, which runs the wheel
    workflow (or dispatch it), and open a pull request from it, which runs Rust CI

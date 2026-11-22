@@ -10,6 +10,8 @@ use std::{path::PathBuf, sync::Mutex};
 #[cfg(feature = "fused")]
 #[path = "../../python-fused/src/bridge.rs"]
 mod fused;
+#[cfg(feature = "hdf5")]
+mod hdf5;
 mod headers;
 
 fn read_error(error: impl std::fmt::Display) -> PyErr {
@@ -79,8 +81,23 @@ impl Reader {
 #[pymethods]
 impl Reader {
     #[new]
-    #[pyo3(signature = (path, *, dataset=None))]
-    fn new(py: Python<'_>, path: &Bound<'_, PyAny>, dataset: Option<String>) -> PyResult<Self> {
+    #[pyo3(signature = (path, *, dataset=None, hdf5_sources=None))]
+    fn new(
+        py: Python<'_>,
+        path: &Bound<'_, PyAny>,
+        dataset: Option<String>,
+        hdf5_sources: Option<&Bound<'_, PyAny>>,
+    ) -> PyResult<Self> {
+        #[cfg(feature = "hdf5")]
+        let sources = hdf5_sources
+            .map(|s| s.extract::<hdf5::Sources>())
+            .transpose()?;
+        #[cfg(not(feature = "hdf5"))]
+        if hdf5_sources.is_some() {
+            return Err(PyValueError::new_err(
+                "HDF5 support is disabled in this build",
+            ));
+        }
         // PyO3's PathBuf extractor does not accept bytes on every platform.
         // fsdecode also preserves Unix non-UTF8 names via surrogateescape.
         let path: PathBuf = py
@@ -89,6 +106,10 @@ impl Reader {
             .extract()?;
         let reader = py.detach(move || {
             let input = wrapped::Input::open(path, Default::default()).map_err(read_error)?;
+            #[cfg(feature = "hdf5")]
+            if let Some(sources) = sources {
+                return sources.open(input, dataset.as_deref());
+            }
             if let Some(dataset) = dataset {
                 #[cfg(feature = "hdf5")]
                 return input
